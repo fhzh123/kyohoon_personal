@@ -1,0 +1,769 @@
+import React, { useState, useEffect } from 'react';
+import { internationalPublications_, domesticPublications_ } from './PublicationsData';
+import { projects_ } from './projectsData';
+import { experience_, experienceEN_ } from './experienceData';
+import { lectures_, honors_ } from './lectureHonorData';
+import socialLinks_ from './socialLinkData';
+import patentDetails_ from './patentData';
+
+const App = () => {
+  // State to manage the active tab in the menu bar
+  const [activeTab, setActiveTab] = useState('Experience'); // Default to Experience based on new order
+  // State to manage the visibility and content of the project detail modal
+  const [selectedProject, setSelectedProject] = useState(null);
+  // State to manage the active paper type in Publications
+  const [activePaperType, setActivePaperType] = useState('International'); // Default to International
+  // State to manage the active content type in Lecture & Honors
+  const [activeLectureHonorsType, setActiveLectureHonorsType] = useState('Lecture'); // Default to Lecture
+  // State to manage the visibility of the KakaoTalk QR modal
+  const [showKakaoQr, setShowKakaoQr] = useState(false);
+  // State to manage the background image URL dynamically
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState('');
+  // State to manage the flip state of the profile picture
+  const [isFlipped, setIsFlipped] = useState(false);
+  // State to manage image loading in the project modal
+  const [isLoadingImage, setIsLoadingImage] = useState(true);
+  // State for language toggle
+  const [language, setLanguage] = useState('ko'); // Default to Korean
+  
+  // Effect to set background image based on screen width
+  useEffect(() => {
+    const updateBackground = () => {
+      // Check if window object is defined (for SSR compatibility)
+      if (typeof window !== 'undefined') {
+        if (window.innerWidth >= 1024) { // Corresponds to Tailwind's 'lg' breakpoint
+          setBackgroundImageUrl('https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/background_test.png?raw=true'); // Desktop background
+        } else {
+          setBackgroundImageUrl('https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/background_test_mobile.png?raw=true'); // Mobile background
+        }
+      }
+    };
+
+    // Set initial background image
+    updateBackground();
+
+    // Add event listener for window resize
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', updateBackground);
+    }
+
+    // Cleanup event listener on component unmount
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', updateBackground);
+      }
+    };
+  }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+
+  // Effect for initial flip animation on component mount
+  useEffect(() => {
+    // Set a timeout to flip the image after a short delay (e.g., 500ms)
+    const flipTimeout = setTimeout(() => {
+      setIsFlipped(true); // Flip to backside
+
+      // Set another timeout to flip it back after a duration (e.g., 1000ms for the animation + 500ms pause)
+      const unflipTimeout = setTimeout(() => {
+        setIsFlipped(false); // Flip back to frontside
+      }, 1300); // Total duration for one flip cycle (animation duration + pause)
+
+      return () => clearTimeout(unflipTimeout); // Cleanup the unflip timeout
+    }, 1200); // Initial delay before the first flip
+
+    return () => clearTimeout(flipTimeout); // Cleanup the initial flip timeout
+  }, []); // Empty dependency array ensures this runs only once on mount
+
+  // Effect to reset image loading state when a new project is selected
+  useEffect(() => {
+    if (selectedProject) {
+      setIsLoadingImage(true); // Reset to true to show spinner for new image
+    }
+  }, [selectedProject]); // Re-run this effect whenever selectedProject changes
+
+  // Effect to update data when language changes
+  useEffect(() => {
+    if (language === 'ko') {
+      setCurrentData(koData);
+    } else {
+      setCurrentData(enData);
+    }
+  }, [language]);
+
+  // Placeholder for icons (user will insert images here)
+  const IconPlaceholder = ({ src, alt }) => (
+    <div className="w-6 h-6 mr-2 flex-shrink-0 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
+      {src && <img src={src} alt={alt} className="w-full h-full object-cover" />}
+    </div>
+  );
+
+  // Korean Data
+  const koData = {
+    header: {
+      name: 'Kyohoon Jin | 진교훈',
+      title: 'AI Research Engineer',
+      at: 'Selectstar',
+      about: `저는 셀렉트스타에서 AI Research Engineer로 근무하고 있는 진교훈입니다. 저는 중앙대학교에서 박사학위를 취득하였으며 한국 고문서 분석 및 반사실적 텍스트 데이터 증강을 주로 연구하였습니다. 저는 40여편의 국내외 논문을 발표하여 200여 이상이 넘는 인용을 얻어내는 등 활발한 연구 활동을 이어가고 있습니다.`,
+      contactTitle: 'Contact',
+      contactMessage: '언제든 편하게 연락주세요!',
+    },
+    menu: {
+      experience: 'Experience',
+      education: 'Education',
+      projects: 'Projects',
+      publications: 'Publications',
+      lectureHonors: 'Lecture & Honors',
+      patent: 'Patent',
+    },
+    buttons: {
+      viewDetails: '자세히 보기',
+      internationalPaper: '🌐 International Paper',
+      domesticPaper: '🇰🇷 Domestic Paper',
+      lecture: '👨‍🏫 Lecture',
+      honors: '🏆 Honors',
+      transcript: '[Transcript] 🔗',
+    },
+    experienceDetails: experience_,
+    educationDetails: [
+    {
+      degree: 'Ph.D',
+      university: '중앙대학교, 영상학과 & AI학과',
+      period: 'Mar 2021 - Feb 2025',
+      grade: '4.20/4.5',
+      subjects: 'Deep Learning, Natural Language Processing',
+      thesis: 'Counterbias Text Generation: Mitigate Spurious Correlation and Bias via Revisiting Counterfactual', // Added thesis for PhD
+      icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/PhD_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+    {
+      degree: 'MS',
+      university: '중앙대학교, 영상학과 & AI학과',
+      period: 'Mar 2019 - Feb 2021',
+      grade: '4.38/4.5',
+      subjects: 'Machine Learning, Deep Learning, Natural Language Processing',
+      thesis: '병렬형 트랜스포머 모델을 활용한 한국 고문서 번역 및 분석', // Added thesis for MS
+      icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/MS_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+    {
+      degree: 'BS',
+      university: '가천대학교, 응용통계학과',
+      period: 'Mar 2013 - Feb 2019',
+      grade: '3.65/4.5',
+      subjects: 'Mathematical Statistics, Multivariate Data Analysis',
+      icon: <IconPlaceholder src="https://i.ibb.co/JL7VBL0/1.png" alt="Gachon University Logo Placeholder" />, // Placeholder for Gachon University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/BS_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+  ],
+    projects: projects_,
+    internationalPublications: internationalPublications_,
+    domesticPublications: domesticPublications_,
+    lectures: lectures_,
+    honors: honors_,
+    patent: patentDetails_,
+  };
+
+  const enData = {
+    header: {
+      name: 'Kyohoon Jin | 진교훈',
+      title: 'AI Research Engineer',
+      at: 'Selectstar',
+      about: `I am Kyohoon Jin, an AI Research Engineer at Selectstar. I received my Ph.D. from Chung-Ang University, where my primary research focused on the analysis of Korean ancient documents and counterfactual text data augmentation. I maintain an active research profile, having published approximately 40 domestic and international papers and accumulating over 200 citations.`,
+      contactTitle: 'Contact',
+      contactMessage: 'Feel free to reach out anytime!',
+    },
+    menu: {
+      experience: 'Experience',
+      education: 'Education',
+      projects: 'Projects',
+      publications: 'Publications',
+      lectureHonors: 'Lecture & Honors',
+      patent: 'Patent',
+    },
+    buttons: {
+      viewDetails: '자세히 보기',
+      internationalPaper: '🌐 International Paper',
+      domesticPaper: '🇰🇷 Domestic Paper',
+      lecture: '👨‍🏫 Lecture',
+      honors: '🏆 Honors',
+      transcript: '[Transcript] 🔗',
+    },
+    experienceDetails: experienceEN_,
+    educationDetails: [
+    {
+      degree: 'Ph.D',
+      university: 'Chungang University, Department of Image Science and Arts',
+      period: 'Mar 2021 - Feb 2025',
+      grade: '4.20/4.5',
+      subjects: 'Deep Learning, Natural Language Processing',
+      thesis: 'Counterbias Text Generation: Mitigate Spurious Correlation and Bias via Revisiting Counterfactual', // Added thesis for PhD
+      icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/PhD_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+    {
+      degree: 'MS',
+      university: 'Chungang University, Department of Image Science and Arts',
+      period: 'Mar 2019 - Feb 2021',
+      grade: '4.38/4.5',
+      subjects: 'Machine Learning, Deep Learning, Natural Language Processing',
+      thesis: '병렬형 트랜스포머 모델을 활용한 한국 고문서 번역 및 분석', // Added thesis for MS
+      icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/MS_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+    {
+      degree: 'BS',
+      university: 'Gachon University, Applied Statistics',
+      period: 'Mar 2013 - Feb 2019',
+      grade: '3.65/4.5',
+      subjects: 'Mathematical Statistics, Multivariate Data Analysis',
+      icon: <IconPlaceholder src="https://i.ibb.co/JL7VBL0/1.png" alt="Gachon University Logo Placeholder" />, // Placeholder for Gachon University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/BS_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+  ],
+    projects: projects_,
+    internationalPublications: internationalPublications_,
+    domesticPublications: domesticPublications_,
+    lectures: lectures_,
+    honors: honors_,
+    patent: patentDetails_,
+  };
+
+ // Sample data for Experience
+  const experienceDetails = experience_;
+
+  // Sample data for Education
+  const educationDetails = [
+    {
+      degree: 'Ph.D',
+      university: 'Chungang University, Department of Image Science and Arts',
+      period: 'Mar 2021 - Feb 2025',
+      grade: '4.20/4.5',
+      subjects: 'Deep Learning, Natural Language Processing',
+      thesis: 'Counterbias Text Generation: Mitigate Spurious Correlation and Bias via Revisiting Counterfactual', // Added thesis for PhD
+      icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/PhD_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+    {
+      degree: 'MS',
+      university: 'Chungang University, Department of Image Science and Arts',
+      period: 'Mar 2019 - Feb 2021',
+      grade: '4.38/4.5',
+      subjects: 'Machine Learning, Deep Learning, Natural Language Processing',
+      thesis: '병렬형 트랜스포머 모델을 활용한 한국 고문서 번역 및 분석', // Added thesis for MS
+      icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/MS_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+    {
+      degree: 'BS',
+      university: 'Gachon University, Applied Statistics',
+      period: 'Mar 2013 - Feb 2019',
+      grade: '3.65/4.5',
+      subjects: 'Mathematical Statistics, Multivariate Data Analysis',
+      icon: <IconPlaceholder src="https://i.ibb.co/JL7VBL0/1.png" alt="Gachon University Logo Placeholder" />, // Placeholder for Gachon University Logo
+      transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/BS_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
+    },
+  ];
+
+  // Define a consistent height for the content area
+  const contentFixedHeightClass = "h-[615px]"; // Adjusted height to ensure consistency and prevent overflow
+
+  // Social media links and corresponding icons (using IconPlaceholder for images)
+  const socialLinks = socialLinks_;
+
+  // State to manage the currently displayed data
+  const [currentData, setCurrentData] = useState(koData);
+
+  // Function to render content based on active tab
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'Experience':
+        return (
+          <div key="experience-content" className={`px-6 md:px-8 pt-0 md:pt-0 ${contentFixedHeightClass} overflow-y-auto animate-tabContentFadeIn`}>
+            {currentData.experienceDetails.map((exp, index) => (
+              <div key={index} className={`bg-gray-800 p-3 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:bg-gray-700 hover:translate-y-[-3px] ${index < currentData.experienceDetails.length - 1 ? 'border-b border-gray-700 pb-4' : ''} mb-2`}>
+                <div className="flex items-center text-lg md:text-xl font-bold mb-1 text-sky-400">
+                  {exp.icon}
+                  {exp.title}
+                </div>
+                <div className="text-sm md:text-base text-gray-400 mb-1">{exp.company}</div>
+                <div className="text-sm md:text-base text-gray-400 mb-2">{exp.period}</div>
+                <p className="text-sm md:text-base text-gray-300" dangerouslySetInnerHTML={{ __html: exp.description }}></p>
+              </div>
+            ))}
+          </div>
+        );
+      case 'Education':
+        return (
+          <div key="education-content" className={`px-6 md:px-8 pt-0 md:pt-0 ${contentFixedHeightClass} overflow-y-auto animate-tabContentFadeIn`}>
+            {currentData.educationDetails.map((edu, index) => (
+              <div key={index} className={`bg-gray-800 p-3 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:bg-gray-700 hover:translate-y-[-3px] ${index < currentData.educationDetails.length - 1 ? 'border-b border-gray-700 pb-4' : ''} mb-2`}>
+                <div className="flex items-center text-lg md:text-xl font-bold mb-1 text-sky-400">
+                  {edu.icon}
+                  {edu.degree} - {edu.university}
+                </div>
+                <div className="text-sm md:text-base text-gray-400 mb-2">{edu.period}</div>
+                <div className="text-sm md:text-base text-gray-300 flex items-center mb-1">
+                  {language === 'ko' ? '학점: ' : 'Grade: '}{edu.grade}
+                  {edu.transcriptLink && (
+                    <a
+                      href={edu.transcriptLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-2 text-blue-400 hover:underline text-sm md:text-base"
+                    >
+                      {currentData.buttons.transcript}
+                    </a>
+                  )}
+                </div>
+                <div className="text-sm md:text-base text-gray-400">{language === 'ko' ? '주요 과목: ' : 'Subjects: '}{edu.subjects}</div>
+                {(edu.degree === 'MS' || edu.degree === 'Ph.D') && edu.thesis && (
+                  <div className="text-sm md:text-base text-gray-300 mt-1">{language === 'ko' ? '졸업 논문: ' : 'Thesis: '}{edu.thesis}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      case 'Projects':
+        return (
+          <div key="projects-content" className={`px-6 md:px-8 pt-0 md:pt-1 ${contentFixedHeightClass} flex flex-col justify-between overflow-y-auto animate-tabContentFadeIn`}>
+            <div>
+              {currentData.projects.map((project, index) => (
+                <div key={index} className={`bg-gray-800 p-3 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:bg-gray-700 hover:translate-y-[-3px] ${index < currentData.projects.length - 1 ? 'border-b border-gray-700 pb-5' : ''} mb-2`}>
+                  <div className="flex items-center text-lg md:text-xl font-bold mb-1 text-sky-400">
+                    {project.icon}
+                    {project.icon2 && <span className="ml-0">{project.icon2}</span>}
+                    {project.title}
+                  </div>
+                  <div className="text-sm md:text-base text-gray-400 mb-2">{project.period}</div>
+                  <p className="text-sm md:text-base text-gray-300 mb-2" dangerouslySetInnerHTML={{ __html: project.description }}></p>
+                  <button
+                    onClick={() => setSelectedProject(project)}
+                    className="text-blue-400 hover:underline text-sm md:text-base cursor-pointer"
+                  >
+                    {currentData.buttons.viewDetails}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'Publications':
+        const currentPublications = activePaperType === 'International' ? currentData.internationalPublications : currentData.domesticPublications;
+        return (
+          <div key="publications-content" className={`p-3 md:p-3 ${contentFixedHeightClass} flex flex-col justify-between overflow-y-auto animate-tabContentFadeIn`}>
+            {/* Publication Type Selector */}
+            <div className="flex justify-center mt-[-0.5rem] mb-0.5 bg-gray-700 rounded-lg p-2">
+              <button
+                onClick={() => setActivePaperType('International')}
+                className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md font-semibold transition-colors duration-200 text-sm md:text-base ${
+                  activePaperType === 'International' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {currentData.buttons.internationalPaper}
+              </button>
+              <button
+                onClick={() => setActivePaperType('Domestic')}
+                className={`ml-2 md:ml-4 px-3 py-1.5 md:px-4 md:py-2 rounded-md font-semibold transition-colors duration-200 text-sm md:text-base ${
+                  activePaperType === 'Domestic' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {currentData.buttons.domesticPaper}
+              </button>
+            </div>
+
+            <div key={activePaperType} className="animate-tabContentFadeIn"> {/* Added key and animation for sub-tab content */}
+              {currentPublications.map((pub, index) => (
+                <div key={index} className={`bg-gray-800 p-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:bg-gray-700 hover:translate-y-[-3px] ${index < currentPublications.length - 1 ? 'border-b border-gray-700 pb-3' : ''} mb-2`}>
+                  <div className="flex items-center text-lg md:text-xl font-bold mb-1 text-sky-400">
+                    {pub.icon}
+                    {pub.title}
+                  </div>
+                  <div className="text-sm md:text-base text-gray-400 mb-1" dangerouslySetInnerHTML={{ __html: `${language === 'ko' ? '저자: ' : 'Author: '}${pub.author}` }}></div>
+                  <div className="text-sm md:text-base text-gray-400 mb-2">{pub.journal} ({pub.year})</div>
+                  <a
+                    href={pub.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:underline text-sm md:text-base"
+                  >
+                    {currentData.buttons.viewDetails}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'Lecture & Honors':
+        const currentLectureHonors = activeLectureHonorsType === 'Lecture' ? currentData.lectures : currentData.honors;
+        return (
+          <div key="lecture-honors-content" className={`px-6 md:px-8 pt-0 md:pt-1 ${contentFixedHeightClass} flex flex-col justify-between overflow-y-auto animate-tabContentFadeIn`}>
+            {/* Lecture/Honors Type Selector */}
+            <div className="flex justify-center mt-[-0.0rem] mb-0 bg-gray-700 rounded-lg p-2">
+              <button
+                onClick={() => setActiveLectureHonorsType('Lecture')}
+                className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md font-semibold transition-colors duration-200 text-sm md:text-base ${
+                  activeLectureHonorsType === 'Lecture' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {currentData.buttons.lecture}
+              </button>
+              <button
+                onClick={() => setActiveLectureHonorsType('Honors')}
+                className={`ml-2 md:ml-4 px-3 py-1.5 md:px-4 md:py-2 rounded-md font-semibold transition-colors duration-200 text-sm md:text-base ${
+                  activeLectureHonorsType === 'Honors' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {currentData.buttons.honors}
+              </button>
+            </div>
+
+            <div key={activeLectureHonorsType} className="animate-tabContentFadeIn"> {/* Added key and animation for sub-tab content */}
+              {currentLectureHonors.map((item, index) => (
+                <div key={index} className={`bg-gray-800 p-5 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:bg-gray-700 hover:translate-y-[-3px] ${index < currentLectureHonors.length - 1 ? 'border-b border-gray-700 pb-2' : ''} mb-2`}>
+                  <div className="flex items-center text-lg md:text-xl font-bold mb-1 text-sky-400">
+                    {item.icon}
+                    {item.title}
+                  </div>
+                  {activeLectureHonorsType === 'Lecture' ? (
+                    <>
+                      <div className="text-sm md:text-base text-gray-400 mb-2">{item.date}</div>
+                      <div className="text-sm md:text-base text-gray-300">{language === 'ko' ? '장소: ' : 'Venue: '}{item.venue}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-sm md:text-base text-gray-400 mb-2">{item.awarder}</div>
+                      <div className="text-sm md:text-base text-gray-300">{item.year}</div>
+                      <p className="text-sm md:text-base text-gray-300 mt-2">{item.description}</p>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'Patent': // New case for Patent
+        return (
+          <div key="patent-content" className={`px-3 md:px-4 pt-0 md:pt-1 ${contentFixedHeightClass} overflow-y-auto animate-tabContentFadeIn`}>
+            {currentData.patent.map((patent, index) => (
+              <div key={index} className={`bg-gray-800 p-5 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:bg-gray-700 hover:translate-y-[-3px] ${index < currentData.patent.length - 1 ? 'border-b border-gray-700 pb-2' : ''} mb-2`}>
+                <div className="flex items-center text-lg md:text-xl font-bold mb-1 text-sky-400">
+                  {patent.icon}
+                  {patent.title}
+                </div>
+                <div className="text-sm md:text-base text-gray-400 mb-1" dangerouslySetInnerHTML={{ __html: `${language === 'ko' ? '발명자: ' : 'Inventors: '}${patent.inventors}` }}></div>
+                <div className="text-sm md:text-base text-gray-400 mb-1">{language === 'ko' ? '출원번호: ' : 'Application No.: '}{patent.applicationNumber}</div>
+                <div className="text-sm md:text-base text-gray-400 mb-2">{language === 'ko' ? '등록번호: ' : 'Registration No.: '}{patent.registrationNumber} ({patent.date})</div>
+                <p className="text-sm md:text-base text-gray-300 mb-2">{patent.description}</p>
+                {patent.link !== '#' && (
+                  <a
+                    href={patent.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:underline text-sm md:text-base"
+                  >
+                    {currentData.buttons.viewDetails}
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div
+      className="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center justify-start p-12 md:p-16 bg-fixed bg-cover animate-backgroundPulse pt-16"
+      style={{
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        minWidth: '100%',
+        minHeight: '100vh',
+      }}
+    >
+      {/* Top Bar - About Me */}
+      <div className="w-full max-w-7xl bg-gray-800 p-4 md:p-5 rounded-lg shadow-lg mb-4 md:mb-5 flex items-center justify-between animate-fadeIn">
+        {/* Name and Icon */}
+        <span className="text-2xl md:text-3xl font-bold text-sky-400 mr-2 md:mr-3 flex items-center">
+          <img src="https://images.icon-icons.com/683/PNG/512/happy-4_icon-icons.com_61130.png" alt="Star Icon" className="w-6 h-6 mr-2" />
+          {currentData.header.name}
+        </span>
+
+        {/* Language Toggle Button for Desktop - FIXED AND IMPROVED */}
+        {/* The toggle is now more robust by using flexbox for equal spacing and simpler positioning for the sliding background. */}
+        <div className="hidden lg:flex items-center relative h-10 w-28 bg-gray-700 rounded-full p-1 transition-all duration-300">
+          {/* Sliding background element. The position and size are now more accurately
+              calculated relative to the container's padding. */}
+          <div
+            className={`absolute top-1 left-1 h-[calc(100%-0.5rem)] w-[calc(50%-0.25rem)] rounded-full bg-blue-600 transition-transform duration-300 ease-in-out z-0
+            ${language === 'en' ? 'transform translate-x-full' : 'transform translate-x-0'}`}
+          ></div>
+          <label
+            htmlFor="ko-lang-desktop"
+            className={`relative z-10 flex-1 text-center font-bold cursor-pointer transition-colors duration-300 py-2 rounded-full ${
+              language === 'ko' ? 'text-white' : 'text-gray-400'
+            }`}
+          >
+            KO
+          </label>
+          <input type="radio" id="ko-lang-desktop" name="lang-desktop" checked={language === 'ko'} onChange={() => setLanguage('ko')} className="hidden" />
+          <label
+            htmlFor="en-lang-desktop"
+            className={`relative z-10 flex-1 text-center font-bold cursor-pointer transition-colors duration-300 py-2 rounded-full ${
+              language === 'en' ? 'text-white' : 'text-gray-400'
+            }`}
+          >
+            EN
+          </label>
+          <input type="radio" id="en-lang-desktop" name="lang-desktop" checked={language === 'en'} onChange={() => setLanguage('en')} className="hidden" />
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4 md:gap-5 animate-fadeIn">
+        {/* Left Profile Section */}
+        <div className="flex-1 bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg flex flex-col items-center">
+          {/* Profile Picture with Flip Animation and added effects */}
+          <div
+            className="w-32 h-32 md:w-48 md:h-48 mb-4 md:mb-6 perspective-1000 cursor-pointer rounded-full overflow-hidden border-4 border-blue-500 transition-transform duration-300 hover:scale-105 animate-glowPulse"
+            onClick={() => setIsFlipped(!isFlipped)}
+          >
+            <div
+              className={`relative w-full h-full transition-transform duration-700`}
+              style={{
+                transformStyle: 'preserve-3d',
+                transformOrigin: 'center',
+                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+              }}
+            >
+              {/* Front Face */}
+              <div
+                className="absolute inset-0 w-full h-full"
+                style={{
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(0deg)'
+                }}
+              >
+                <img
+                  src="https://raw.githubusercontent.com/fhzh123/fhzh123/refs/heads/main/KyohoonJin_%ED%94%84%EB%A1%9C%ED%95%84%EC%82%AC%EC%A7%84.jpg"
+                  alt="Profile Front"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Back Face */}
+              <div
+                className="absolute inset-0 w-full h-full transform rotate-y-180"
+                style={{
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)'
+                }}
+              >
+                <img
+                  src="https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/kyohoon_back_profile.png?raw=true"
+                  alt="Profile Back"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Emphasized 'AI Research Engineer' text */}
+          <div className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-center">
+            <span className="text-sky-400">{currentData.header.title}</span> {language === 'ko' ? 'at' : 'at'} {currentData.header.at}
+          </div>
+          {/* About Me Text with Dynamic Font Sizing (No Scrollbar) */}
+          <p className={`leading-relaxed text-center mb-3 md:mb-4 transition-all duration-300
+            ${language === 'en' ? 'text-sm md:text-small' : 'text-base md:text-lg'}
+          `}>
+            {currentData.header.about}
+          </p>
+
+          {/* Contact Box */}
+          <div className="mt-auto w-full bg-gray-700 p-4 md:p-5 rounded-lg shadow-md border border-gray-600">
+            <h3 className="text-lg md:text-xl font-bold text-sky-400 mb-2 text-center">{currentData.header.contactTitle}</h3>
+            <p className="text-xs md:text-sm text-gray-300 mb-3 md:mb-4 text-center">{currentData.header.contactMessage}</p>
+            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+              {socialLinks.map((link, index) => (
+                <a
+                  key={index}
+                  onClick={link.kakaoQrImageUrl ? () => setShowKakaoQr(true) : null}
+                  href={link.url || '#'}
+                  target={link.url ? "_blank" : "_self"}
+                  rel={link.url ? "noopener noreferrer" : ""}
+                  className="text-blue-400 cursor-pointer transition-transform duration-300 hover:scale-125 active:scale-95"
+                  title={link.name}
+                >
+                  {link.icon}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Content Section */}
+        <div className="flex-[2] bg-gray-800 rounded-lg shadow-lg flex flex-col">
+          {/* Menu Bar: Updated order and colors */}
+          <div className="bg-blue-900 p-3 md:p-4 text-center rounded-t-lg mb-4 md:mb-5 flex flex-wrap justify-around items-center">
+            <span
+              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Experience' ? 'text-blue-300 scale-105' : 'text-white'}`}
+              onClick={() => setActiveTab('Experience')}
+            >
+              {currentData.menu.experience}
+            </span>
+            <span
+              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Education' ? 'text-blue-300 scale-105' : 'text-white'}`}
+              onClick={() => setActiveTab('Education')}
+            >
+              {currentData.menu.education}
+            </span>
+            <span
+              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Projects' ? 'text-blue-300 scale-105' : 'text-white'}`}
+              onClick={() => setActiveTab('Projects')}
+            >
+              {currentData.menu.projects}
+            </span>
+            <span
+              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Publications' ? 'text-blue-300 scale-105' : 'text-white'}`}
+              onClick={() => setActiveTab('Publications')}
+            >
+              {currentData.menu.publications}
+            </span>
+            <span
+              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Lecture & Honors' ? 'text-blue-300 scale-105' : 'text-white'}`}
+              onClick={() => setActiveTab('Lecture & Honors')}
+            >
+              {currentData.menu.lectureHonors}
+            </span>
+            <span
+              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Patent' ? 'text-blue-300 scale-105' : 'text-white'}`}
+              onClick={() => setActiveTab('Patent')}
+            >
+              {currentData.menu.patent}
+            </span>
+          </div>
+
+          {/* Dynamically rendered content based on activeTab */}
+          {renderContent()}
+        </div>
+      </div>
+
+      {/* Floating Language Toggle for Mobile */}
+      <button
+        onClick={() => setLanguage(language === 'ko' ? 'en' : 'ko')}
+        className="lg:hidden fixed bottom-6 right-6 bg-blue-600 text-white text-3xl p-3 rounded-full shadow-lg transition-transform duration-300 hover:scale-110 active:scale-95 animate-pulse"
+        title="Toggle Language"
+      >
+        🌐
+      </button>
+
+      {/* Footer / Copyright */}
+      <footer className="w-full max-w-7xl text-center text-gray-500 text-xs md:text-sm mt-8 md:mt-10 p-3 md:p-4">
+        © 2025 Kyohoon Jin. All rights reserved.
+      </footer>
+
+      {/* Project Detail Modal */}
+      {selectedProject && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 animate-fadeIn"
+          onClick={(e) => {
+            // Close modal only if clicked on the backdrop (not on the modal content itself)
+            if (e.target === e.currentTarget) {
+              setSelectedProject(null);
+            }
+          }}
+        >
+          <div className="bg-gray-800 rounded-lg shadow-xl p-6 md:p-8 w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
+            <button
+              onClick={() => setSelectedProject(null)}
+              className="absolute top-3 right-3 md:top-4 md:right-4 text-gray-400 hover:text-white text-2xl md:text-3xl font-bold transition-colors duration-200"
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl md:text-3xl font-bold text-sky-400 mb-3 md:mb-4">{selectedProject.title}</h2>
+            {selectedProject.imageUrl && (
+              <>
+                {isLoadingImage && (
+                  <div className="flex items-center justify-center h-48 bg-gray-700 rounded-lg mb-4 md:mb-6">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+                  </div>
+                )}
+                <img
+                  src={selectedProject.imageUrl}
+                  alt={selectedProject.title}
+                  className={`w-full h-auto rounded-lg object-cover ${isLoadingImage ? 'hidden' : 'block'}`}
+                  onLoad={() => setIsLoadingImage(false)}
+                  onError={() => setIsLoadingImage(false)} // Handle error case as well
+                />
+              </>
+            )}
+            {selectedProject.subtitle && (
+              <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-2 md:mb-3">{selectedProject.subtitle}</h3>
+            )}
+            <p className="text-sm md:text-base text-gray-200 mb-3 md:mb-4 leading-relaxed">{selectedProject.fullDescription}</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 text-xs md:text-sm text-gray-300 mb-4 md:mb-6">
+              {selectedProject.companyOrInstitution && (
+                <div>
+                  <span className="font-semibold text-sky-300">{language === 'ko' ? '협력 기관/업체:' : 'Institution:'}</span> {selectedProject.companyOrInstitution}
+                </div>
+              )}
+              {selectedProject.period && (
+                <div>
+                  <span className="font-semibold text-sky-300">{language === 'ko' ? '프로젝트 기한:' : 'Period:'}</span> {selectedProject.period}
+                </div>
+              )}
+              {selectedProject.role && (
+                <div className="md:col-span-2">
+                  <span className="font-semibold text-sky-300">{language === 'ko' ? '역할:' : 'Role:'}</span> {selectedProject.role}
+                </div>
+              )}
+            </div>
+
+            {selectedProject.externalLinks && selectedProject.externalLinks.length > 0 && (
+              <div className="mt-4 md:mt-6 border-t border-gray-700 pt-4 md:pt-6">
+                <h4 className="text-base md:text-lg font-semibold text-sky-400 mb-2 md:mb-3">{language === 'ko' ? '추가 정보' : 'External Links'}</h4>
+                <div className="flex flex-wrap gap-2 md:gap-3">
+                  {selectedProject.externalLinks.map((link, idx) => (
+                    <a
+                      key={idx}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-700 hover:bg-blue-600 text-white py-1.5 px-3 md:py-2 md:px-4 rounded-md transition-colors duration-200 text-xs md:text-sm"
+                    >
+                      {link.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* KakaoTalk QR Modal */}
+      {showKakaoQr && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="bg-gray-800 rounded-lg shadow-xl p-6 md:p-8 w-full max-w-sm relative text-center">
+            <button
+              onClick={() => setShowKakaoQr(false)}
+              className="absolute top-3 right-3 md:top-4 md:right-4 text-gray-400 hover:text-white text-2xl md:text-3xl font-bold transition-colors duration-200"
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl md:text-3xl font-bold text-sky-400 mb-4">{language === 'ko' ? '카카오톡 QR 코드' : 'KakaoTalk QR Code'}</h2>
+            <img
+              src={socialLinks.find(link => link.name === 'KakaoTalk')?.kakaoQrImageUrl}
+              alt="카카오톡 QR 코드"
+              className="w-48 h-48 mx-auto rounded-lg object-cover border-2 border-blue-500"
+            />
+            <p className="text-sm text-gray-300 mt-4">{language === 'ko' ? '카카오톡 앱으로 QR 코드를 스캔해주세요.' : 'Please scan the QR code with the KakaoTalk app.'}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;

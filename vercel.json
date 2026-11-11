@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "functions": {
+    "api/index.mjs": {
+      "includeFiles": "{server,views,work-app,public}/**",
+      "excludeFiles": "{private,Assets,assets-extracted,assets-generated,artifacts}/**"
+    }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }]
+}

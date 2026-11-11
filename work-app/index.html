@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111d34">
+  <meta name="description" content="셀렉트스타 연구 일정, 목표, 로드맵과 연구 노트를 연결하는 로컬 연구 작업 공간">
+  <title>Research Atlas · 셀렉트스타 연구 기획</title>
+  <link rel="icon" href="/work/app/assets/celdong-logo.png">
+  <link rel="stylesheet" href="styles.css?v=20261110-12">
+  <link rel="stylesheet" href="details.css?v=20261110-12">
+  <link rel="stylesheet" href="planning.css?v=20261110-12">
+  <link rel="stylesheet" href="hierarchy.css?v=20261110-12">
+  <link rel="stylesheet" href="taxonomy.css?v=20261110-12">
+  <link rel="stylesheet" href="integration.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="연구 공간 메뉴">
+      <a class="brand" href="#roadmap" aria-label="Research Atlas 연구 로드맵">
+        <span class="brand-symbol"><img src="/work/app/assets/celdong-logo.png" alt="셀동이"></span>
+        <span class="brand-copy"><strong>Research Atlas</strong><small>SELECTSTAR LAB</small></span>
+      </a>
+      <div class="nav-section-label">RESEARCH WORKSPACE</div>
+      <nav class="side-nav" id="navigation"></nav>
+      <div class="sidebar-bottom">
+        <div class="mascot-card"><img src="/work/app/assets/celdong.png" alt="연구를 응원하는 셀동이"><strong>큰 목표를, 작은 한 걸음으로.</strong><p>생각을 정리하고 연결하며<br>우리의 다음 연구를 그려요.</p></div>
+        <div class="workspace-note"><span class="save-dot"></span><span id="storage-status">이 브라우저에 자동 저장</span></div>
+        <button class="sidebar-backup" id="backup-open">백업 · 가져오기 ↗</button>
+      </div>
+    </aside>
+    <main class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb"><span>연구 기획</span><span>/</span><strong id="breadcrumb-view">연구 로드맵</strong></div>
+        <div class="topbar-actions"><a class="secondary-button home-link" href="/work">업무 홈</a><a class="secondary-button home-link" href="/">홈으로</a><form id="work-logout" action="/api/auth/logout" method="post"><button class="secondary-button" type="submit">로그아웃</button></form>
+          <label class="search-box"><span aria-hidden="true">⌕</span><input id="global-search" type="search" placeholder="연구 주제 검색" aria-label="연구 주제 검색"></label>
+          <button class="icon-button" id="backup-top" title="백업 및 가져오기" aria-label="백업 및 가져오기">↥</button>
+          <button class="primary-button" id="add-task"><span aria-hidden="true">＋</span> 연구 구간 추가</button>
+        </div>
+      </header>
+      <div class="page-content"><div class="integration-notice" id="integration-notice" role="status">업무 연결을 확인하고 있습니다.</div>
+        <div class="page-heading"><div class="eyebrow">DESIGN THE NEXT DISCOVERY</div><h1 id="page-title">연구의 다음 장을 계획해요</h1><p class="page-description" id="page-description">주차에서 연도까지, 연구의 방향과 흐름을 그립니다.</p></div>
+        <div id="workspace-notice" class="workspace-notice" hidden></div>
+        <div id="stats" class="stats-row"></div>
+        <div id="view-host"></div>
+        <footer class="app-footer"><span class="footer-brand"><img src="/work/app/assets/selectstar-logo.png" alt="셀렉트스타 로고">SELECTSTAR · RESEARCH ATLAS</span><span>2026.11 — 열린 연구 계획</span></footer>
+      </div>
+    </main>
+  </div>
+  <dialog id="task-dialog" class="drawer" aria-labelledby="task-dialog-title"></dialog>
+  <dialog id="utility-dialog" class="modal" aria-labelledby="utility-title"></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <noscript>연구 계획 앱을 사용하려면 브라우저의 JavaScript를 켜 주세요.</noscript>
+  <script src="bootstrap.js" defer></script>
+</body>
+</html>

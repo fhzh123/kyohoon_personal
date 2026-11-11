@@ -1,0 +1,11 @@
+node_modules/
+.cache/
+.env*
+!.env.example
+private/
+artifacts/
+Assets/
+assets-extracted/
+assets-generated/
+dist/
+.vercel/
