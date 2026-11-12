@@ -1,0 +1,110 @@
+/* One typography system for the public pages, Resume and private workspaces. */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+
+:root {
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --font-weight-body: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-heading: 700;
+  --font-weight-display: 900;
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea,
+.loading-eyebrow,
+.tool-icon {
+  font-family: var(--font-sans);
+}
+
+h1,
+.home-shell .intro h1,
+.spaces-hub .hub-intro h1,
+.login-art h1,
+.demo-heading h1,
+.construction-main h1,
+.page-heading h1,
+.intro-row h1 {
+  font-weight: var(--font-weight-display);
+  letter-spacing: -0.035em;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6,
+.login-card h2,
+.research-loading h2,
+.spaces-hub .tool-card h3 {
+  font-weight: var(--font-weight-heading);
+}
+
+.portal h2,
+.portal-grid .portal-title h2 {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.wordmark,
+.brand-copy strong {
+  font-weight: 800;
+}
+
+button,
+.primary-button,
+.primary,
+.secondary-button,
+.danger-button,
+.tool-action,
+.demo-launch,
+.home-return,
+.theme-toggle {
+  font-weight: var(--font-weight-semibold);
+}
+
+.nav-item,
+.text-link,
+.back-link,
+form label,
+th,
+.eyebrow,
+.section-kicker,
+.tool-eyebrow,
+.portal-index,
+.portal-detail,
+.private-badge,
+.loading-eyebrow {
+  font-weight: var(--font-weight-medium);
+}
+
+.nav-item.active,
+.workspace-toolbar nav button[aria-pressed="true"] {
+  font-weight: var(--font-weight-semibold);
+}
+
+.stat-value,
+.metric strong,
+.month-health strong {
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The archived Resume source stays intact; its document opts into this system. */
+body[data-typography="resume"] #root > div > div:first-child > span {
+  font-weight: var(--font-weight-display);
+  letter-spacing: -0.025em;
+}
+
+/* Keep technical snippets and taxonomy identifiers in their existing monospace. */
