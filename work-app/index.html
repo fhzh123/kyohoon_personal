@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0d1422">
-  <script src="/theme.js?v=20261112"></script>
+  <script src="/theme.js?v=20261112-3"></script>
   <meta name="description" content="셀렉트스타 연구 일정, 목표, 로드맵과 연구 노트를 연결하는 로컬 연구 작업 공간">
   <title>Research Atlas · 셀렉트스타 연구 기획</title>
   <link rel="icon" href="/mascot/brand.png">
-  <link rel="stylesheet" href="workspace.bundle.css?v=20261112-2">
-  <link rel="stylesheet" href="/theme.css?v=20261112">
+  <link rel="stylesheet" href="workspace.bundle.css?v=20261112-3">
+  <link rel="stylesheet" href="/theme.css?v=20261112-3">
 </head>
 <body aria-busy="true">
-  <div id="research-loading" class="research-loading" role="status" aria-live="polite"><div class="research-loading-card"><span class="loading-eyebrow">RESEARCH ATLAS</span><div class="mascot-walk-track" aria-hidden="true"><span class="mascot-walker"></span><span class="loading-track-line"></span></div><h2>연구 로드맵을 불러오는 중<span class="loading-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></h2><p id="research-loading-stage">연구 공간을 준비하고 있습니다.</p><div class="loading-actions" hidden><button type="button" data-loading-retry>다시 시도</button><a href="/work">업무 홈으로</a></div></div></div>
+  <div id="research-loading" class="research-loading" role="status" aria-live="polite"><div class="research-loading-card"><span class="loading-eyebrow">RESEARCH ATLAS</span><div class="mascot-walk-track" aria-hidden="true"><span class="mascot-walker"></span><span class="loading-track-line"></span></div><h2>연구 로드맵을 불러오는 중<span class="loading-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></h2><p id="research-loading-stage">연구 공간을 준비하고 있습니다.</p><div class="loading-actions" hidden><button type="button" data-loading-retry>다시 시도</button><a href="/work">Selectstar 홈으로</a></div></div></div>
   <div class="app-shell" inert>
     <aside class="sidebar" aria-label="연구 공간 메뉴">
       <a class="brand" href="#roadmap" aria-label="Research Atlas 연구 로드맵">
@@ -22,7 +22,7 @@
       <div class="nav-section-label">RESEARCH WORKSPACE</div>
       <nav class="side-nav" id="navigation"></nav>
       <div class="sidebar-bottom">
-        <div class="mascot-card"><img width="320" height="320" src="/mascot/sidebar.png" alt="책상에서 연구 문서를 정리하는 마스코트"><strong>큰 목표를, 작은 한 걸음으로.</strong><p>생각을 정리하고 연결하며<br>우리의 다음 연구를 그려요.</p></div>
+        <div class="mascot-card"><img width="320" height="320" src="/mascot/journal.webp" alt="책상에서 연구 문서를 정리하는 마스코트"><strong>큰 목표를, 작은 한 걸음으로.</strong><p>생각을 정리하고 연결하며<br>우리의 다음 연구를 그려요.</p></div>
         <div class="workspace-note"><span class="save-dot"></span><span id="storage-status">이 브라우저에 자동 저장</span></div>
         <button class="sidebar-backup" id="backup-open">백업 · 가져오기 ↗</button>
       </div>
@@ -30,7 +30,7 @@
     <main class="workspace">
       <header class="topbar">
         <div class="breadcrumb"><span>연구 기획</span><span>/</span><strong id="breadcrumb-view">연구 로드맵</strong></div>
-        <div class="topbar-actions"><button type="button" class="theme-toggle" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true">☀ 라이트 모드</button><a class="secondary-button home-link" href="/work">업무 홈</a><a class="secondary-button home-link" href="/">홈으로</a><form id="work-logout" action="/api/auth/logout" method="post"><button class="secondary-button" type="submit">로그아웃</button></form>
+        <div class="topbar-actions"><a class="secondary-button home-link" href="/work">Selectstar 홈</a><a class="secondary-button home-link" href="/">홈으로</a><form id="work-logout" action="/api/auth/logout" method="post"><button class="secondary-button" type="submit">로그아웃</button></form>
           <label class="search-box"><span aria-hidden="true">⌕</span><input id="global-search" type="search" placeholder="연구 주제 검색" aria-label="연구 주제 검색"></label>
           <button class="icon-button" id="backup-top" title="백업 및 가져오기" aria-label="백업 및 가져오기">↥</button>
           <button class="primary-button" id="add-task"><span aria-hidden="true">＋</span> 연구 구간 추가</button>
@@ -51,7 +51,7 @@
   <input id="import-file" type="file" accept="application/json,.json" hidden>
   <noscript>연구 계획 앱을 사용하려면 브라우저의 JavaScript를 켜 주세요.</noscript>
   <!--WORK_INITIAL_DATA-->
-  <script src="/loading.js?v=20261112-2" defer></script>
-  <script src="workspace.bundle.js?v=20261112-2" defer></script>
+  <script src="/loading.js?v=20261112-3" defer></script>
+  <script src="workspace.bundle.js?v=20261112-3" defer></script>
 </body>
 </html>

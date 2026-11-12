@@ -11,7 +11,7 @@ const demos = [
   'https://selectstar-ai-vertical-research-feasibility.kyohoon-jin.chatgpt.site/',
   'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/',
 ];
-const titles = ['연구일지', 'Ontology 연구 데모', 'Document Parsing 연구 데모'];
+const titles = ['연구일지', '데모', '품의 사용내역'];
 const servers = [];
 let development;
 let production;
@@ -49,7 +49,7 @@ test('unauthenticated Work contains login only and hides Draft tools and demo UR
   for (const origin of [development, production]) {
     const { response, text } = await request(origin, '/work');
     assert.equal(response.status, 200);
-    assert.match(text, /Work 로그인/);
+    assert.match(text, /Selectstar 로그인/);
     for (const title of titles.slice(1)) assert.ok(!text.includes(title), 'private demo title is hidden');
     assert.ok(!text.includes('<h3>연구일지</h3>'), 'private journal launch slot is hidden');
     for (const demo of demos) assert.ok(!text.includes(demo), 'private demo URL is hidden');
@@ -58,24 +58,23 @@ test('unauthenticated Work contains login only and hides Draft tools and demo UR
   }
 });
 
-test('authorized local Work provides four tools and three disabled placeholders', async () => {
+test('authorized local Work groups demos and provides three illustrated tools', async () => {
   const cookie = await localCookie();
   const { response, text } = await request(development, '/work', { cookie });
   assert.equal(response.status, 200);
   const links = [...text.matchAll(/<a class="tool-card"[^>]+>/g)].map(match => match[0]);
   const pending = [...text.matchAll(/<button class="tool-card is-pending"[^>]*>/g)].map(match => match[0]);
-  assert.equal(links.length, 4);
-  assert.equal(pending.length, 3);
-  assert.match(links[3], /href="\/work\/expenses\/"/);
+  assert.equal(links.length, 3);
+  assert.equal(pending.length, 0);
+  assert.match(links[2], /href="\/work\/expenses\/"/);
   assert.match(links[0], /href="\/work\/app\/index\.html"/);
-  for (let i = 0; i < demos.length; i++) {
-    assert.ok(links[i + 1].includes(`href="${demos[i]}"`));
-    assert.match(links[i + 1], /target="_blank"/);
-    assert.match(links[i + 1], /rel="noopener noreferrer"/);
-  }
+  assert.match(links[1],/href="\/work\/demos"/);
+  const picker=await request(development,'/work/demos',{cookie});
+  for(const demo of demos)assert.ok(picker.text.includes(demo));
+  assert.equal((picker.text.match(/rel="noopener noreferrer"/g)||[]).length,2);
   for (const title of titles) assert.ok(text.includes(`<h3>${title}</h3>`));
   for (const button of pending) assert.match(button, /\sdisabled(?:\s|>)/);
-  assert.equal((text.match(/공사 중/g) || []).length, 3);
+  assert.equal((text.match(/공사 중/g) || []).length, 0);
   assert.match(text, /href="\/">← 홈으로/);
   assert.match(text, /<form action="\/api\/auth\/logout" method="post">/);
   assert.match(text, /localhost 전용/);
@@ -98,15 +97,15 @@ test('production refuses preview despite local flag and does not show authentica
   const devCookie = await localCookie();
   const result = await request(production, '/work', { cookie: devCookie });
   assert.equal(result.response.status, 200);
-  assert.match(result.text, /Work 로그인/);
+  assert.match(result.text, /Selectstar 로그인/);
   assert.ok(!result.text.includes('class="tool-grid"'));
   for (const demo of demos) assert.ok(!result.text.includes(demo));
 });
 
-test('main retains two image-before-text whole-card links after adding Work hub', async () => {
+test('main retains three image-before-text whole-card links after adding Work hub', async () => {
   const { text } = await request(production, '/');
   const cards = [...text.matchAll(/<a class="portal[^\"]*"[^>]*>([\s\S]*?)<\/a>/g)];
-  assert.equal(cards.length, 2);
+  assert.equal(cards.length, 3);
   assert.match(cards[0][0], /href="\/resume"/);
   assert.match(cards[1][0], /href="\/work"/);
   for (const card of cards) assert.ok(card[1].indexOf('<img') < card[1].indexOf('<h2'));

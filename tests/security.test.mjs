@@ -57,7 +57,7 @@ function noPrivateContent(response) {
   assert.equal(response.headers['x-content-type-options'], 'nosniff');
 }
 
-test('public homepage exposes only the two public navigation targets', async () => {
+test('public homepage exposes only the three public navigation targets', async () => {
   const handler = createHandler({ rootDir: await fixture(), environment: baseEnvironment });
   const response = await request(handler, '/');
   assert.equal(response.status, 200);
@@ -332,4 +332,24 @@ test('preview policy requires every independent environment and network conditio
   const allowed = { enabled: true, development: true, vercel: false, host: '[::1]:3000', address: '::1' };
   assert.equal(previewAllowed(allowed), true);
   for (const disabled of [{ enabled: false }, { development: false }, { vercel: true }, { host: 'evil.example' }, { address: '192.0.2.10' }]) assert.equal(previewAllowed({ ...allowed, ...disabled }), false);
+});
+
+test('Personal and demo picker enforce existing allowed membership, with allowlisted login destinations',async()=>{
+ let allowed=true;
+ const fetcher=async url=>{
+  if(url.includes('/auth/v1/token?grant_type=password'))return jsonResponse({access_token:'synthetic-private',refresh_token:'synthetic-refresh',user:{id:'space-user'}});
+  if(url.endsWith('/auth/v1/user'))return jsonResponse({id:'space-user'});
+  if(url.includes('/workspace_members?'))return jsonResponse(allowed?[{user_id:'space-user',role:'reader'}]:[]);
+  throw Error('New spaces must not fetch research data');
+ };
+ const handler=createHandler({rootDir:await fixture(),environment:remoteEnvironment,fetcher});
+ const anonymous=await request(handler,'/personal');assert.match(anonymous.text,/Personal 로그인/);assert.ok(!anonymous.text.includes('personal-build.webp'));
+ assert.equal((await request(handler,'/work/demos')).status,303);
+ const headers={cookie:'kh_access=synthetic-private'};
+ const personal=await request(handler,'/personal',{headers});assert.match(personal.text,/personal-build.webp/);assert.match(personal.headers['cache-control'],/no-store/);
+ assert.match((await request(handler,'/work/demos',{headers})).text,/Document Parsing/);
+ for(const [space,destination]of [['personal','/personal'],['selectstar','/work'],['https://outside.invalid','/work']]){
+  const r=await request(handler,'/api/auth/login',{method:'POST',headers:{'content-type':'application/json'},body:{space,email:'fixture@example.invalid',password:'synthetic'}});assert.equal(r.headers.location,destination);
+ }
+ allowed=false;assert.match((await request(handler,'/personal',{headers})).text,/Personal 로그인/);
 });
