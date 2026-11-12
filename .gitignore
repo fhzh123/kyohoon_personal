@@ -9,3 +9,6 @@ assets-extracted/
 assets-generated/
 dist/
 .vercel/
+
+work-app/workspace.bundle.js
+work-app/workspace.bundle.css

@@ -7,5 +7,13 @@
       "excludeFiles": "{private,Assets,assets-extracted,assets-generated,artifacts}/**"
     }
   },
-  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index"
+    }
+  ],
+  "regions": [
+    "hnd1"
+  ]
 }
