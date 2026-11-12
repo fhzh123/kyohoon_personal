@@ -8,16 +8,12 @@
   <meta name="description" content="셀렉트스타 연구 일정, 목표, 로드맵과 연구 노트를 연결하는 로컬 연구 작업 공간">
   <title>Research Atlas · 셀렉트스타 연구 기획</title>
   <link rel="icon" href="/mascot/brand.png">
-  <link rel="stylesheet" href="styles.css?v=20261110-12">
-  <link rel="stylesheet" href="details.css?v=20261110-12">
-  <link rel="stylesheet" href="planning.css?v=20261110-12">
-  <link rel="stylesheet" href="hierarchy.css?v=20261110-12">
-  <link rel="stylesheet" href="taxonomy.css?v=20261110-12">
-  <link rel="stylesheet" href="integration.css">
+  <link rel="stylesheet" href="workspace.bundle.css?v=20261112-2">
   <link rel="stylesheet" href="/theme.css?v=20261112">
 </head>
-<body>
-  <div class="app-shell">
+<body aria-busy="true">
+  <div id="research-loading" class="research-loading" role="status" aria-live="polite"><div class="research-loading-card"><span class="loading-eyebrow">RESEARCH ATLAS</span><div class="mascot-walk-track" aria-hidden="true"><span class="mascot-walker"></span><span class="loading-track-line"></span></div><h2>연구 로드맵을 불러오는 중<span class="loading-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></h2><p id="research-loading-stage">연구 공간을 준비하고 있습니다.</p><div class="loading-actions" hidden><button type="button" data-loading-retry>다시 시도</button><a href="/work">업무 홈으로</a></div></div></div>
+  <div class="app-shell" inert>
     <aside class="sidebar" aria-label="연구 공간 메뉴">
       <a class="brand" href="#roadmap" aria-label="Research Atlas 연구 로드맵">
         <span class="brand-symbol"><img width="128" height="128" src="/mascot/brand.png" alt="마스코트"></span>
@@ -54,6 +50,8 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <input id="import-file" type="file" accept="application/json,.json" hidden>
   <noscript>연구 계획 앱을 사용하려면 브라우저의 JavaScript를 켜 주세요.</noscript>
-  <script src="bootstrap.js" defer></script>
+  <!--WORK_INITIAL_DATA-->
+  <script src="/loading.js?v=20261112-2" defer></script>
+  <script src="workspace.bundle.js?v=20261112-2" defer></script>
 </body>
 </html>

@@ -45,18 +45,20 @@ export function createHandler({localPreview = false, rootDir = root, environment
     if (preview(req) && secureEqual(cookies.kh_local,localToken)) return {mode:'local',role:'editor',userId:'localhost',token:''};
     if (!configured || !cookies.kh_access) return null;
     let token = cookies.kh_access;
-    let response = await authFetch('/auth/v1/user', {headers:bearer(token)});
+    // Validate identity and membership concurrently; authorization still requires both.
+    let [response, membership] = await Promise.all([
+      authFetch('/auth/v1/user', {headers:bearer(token)}), member(token)
+    ]);
     if (response.status === 401 && cookies.kh_refresh) {
       const refreshed = await authFetch('/auth/v1/token?grant_type=refresh_token', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:cookies.kh_refresh})});
       if (!refreshed.ok) return null;
       const session = await refreshed.json();
       token = session.access_token;
-      response = await authFetch('/auth/v1/user',{headers:bearer(token)});
+      [response, membership] = await Promise.all([authFetch('/auth/v1/user',{headers:bearer(token)}),member(token)]);
       if (response.ok) res.setHeader('Set-Cookie',[setCookie('kh_access',token),setCookie('kh_refresh',session.refresh_token,60*60*24*7)]);
     }
     if (!response.ok) return null;
     const user = await response.json();
-    const membership = await member(token);
     if (!membership || membership.user_id !== user.id) return null;
     return {mode:'supabase',role:membership.role,userId:user.id,token};
   }
@@ -74,6 +76,21 @@ export function createHandler({localPreview = false, rootDir = root, environment
     if (access.mode === 'local') return localEnvelope();
     const record = await remoteRecord(access);
     return {revision:String(record.revision), state:record.state,updatedAt:record.updated_at};
+  }
+  async function bootstrapEnvelope(access) {
+    let workspace,taxonomySource,legacySeed;
+    if (access.mode === 'local') {
+      [workspace,taxonomySource,legacySeed] = await Promise.all([
+        localEnvelope(),
+        readFile(path.join(rootDir,'private/work/taxonomy-source.json'),'utf8').then(JSON.parse),
+        readFile(path.join(rootDir,'private/work/legacy-seed.json'),'utf8').then(JSON.parse)
+      ]);
+    } else {
+      const row = await remoteRecord(access);
+      workspace={revision:String(row.revision),state:row.state,updatedAt:row.updated_at};
+      taxonomySource=row.taxonomy_source; legacySeed=row.legacy_seed;
+    }
+    return {workspace,taxonomySource,legacySeed,context:{mode:access.mode,storageKey:`kyohoon-work-${access.mode}-${access.userId}`,role:access.role}};
   }
   async function serveFile(req,res,base,relative) {
     const safe = safeRelativePath(relative);
@@ -125,20 +142,22 @@ export function createHandler({localPreview = false, rootDir = root, environment
         return send(res,200,loginPage({configured,preview:preview(req)}),'text/html; charset=utf-8');
       }
       if (pathname.startsWith('/work/app/') || pathname === '/api/research-state' || pathname === '/api/work-bootstrap') {
+        const authStart = performance.now();
         const access = await authorize(req,res);
         if (!access) return send(res,401,{error:'허용된 사용자로 로그인해 주세요.'});
+        const authTiming = `auth;dur=${(performance.now()-authStart).toFixed(1)}`;
+        res.setHeader('Server-Timing',authTiming);
+        if (pathname === '/work/app/index.html' && ['GET','HEAD'].includes(req.method)) {
+          const dataStart=performance.now();
+          const [html,value]=await Promise.all([readFile(path.join(rootDir,'work-app/index.html'),'utf8'),bootstrapEnvelope(access)]);
+          // Escape script delimiters before embedding confidential JSON in an authorized response.
+          const json=JSON.stringify(value).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+          const document=html.replace('<!--WORK_INITIAL_DATA-->',()=>`<script id="work-initial-data" type="application/json">${json}</script>`);
+          res.setHeader('Server-Timing',`${authTiming}, data;dur=${(performance.now()-dataStart).toFixed(1)}`);
+          return send(res,200,req.method==='HEAD'?'':document,'text/html; charset=utf-8');
+        }
         if (pathname === '/api/work-bootstrap' && req.method === 'GET') {
-          let workspace,taxonomySource,legacySeed;
-          if (access.mode === 'local') {
-            workspace = await localEnvelope();
-            taxonomySource = JSON.parse(await readFile(path.join(rootDir,'private/work/taxonomy-source.json'),'utf8'));
-            legacySeed = JSON.parse(await readFile(path.join(rootDir,'private/work/legacy-seed.json'),'utf8'));
-          } else {
-            const row = await remoteRecord(access);
-            workspace={revision:String(row.revision),state:row.state,updatedAt:row.updated_at};
-            taxonomySource=row.taxonomy_source; legacySeed=row.legacy_seed;
-          }
-          return send(res,200,{workspace,taxonomySource,legacySeed,context:{mode:access.mode,storageKey:`kyohoon-work-${access.mode}-${access.userId}`,role:access.role}});
+          return send(res,200,await bootstrapEnvelope(access));
         }
         if (pathname === '/api/research-state') {
           if (req.method === 'GET') return send(res,200,await stateEnvelope(access));

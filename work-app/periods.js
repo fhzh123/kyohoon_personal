@@ -49,7 +49,7 @@
     const monday = addDays(startOfWeek(`${match[1]}-01-04`), (+match[2] - 1) * 7);
     return toWeek(monday) === value ? monday : '';
   }
-  const weekLabel = value => { const d = date(value); return `${d.getMonth() + 1}/${d.getDate()}주`; };
+  const weekLabel = value => { const monday=startOfWeek(value),d=date(monday),first=monthStart(monday); const firstMonday=addDays(first,(8-date(first).getDay())%7); const n=Math.floor(daysBetween(monday,firstMonday)/7); return `${d.getMonth()+1}월 ${['첫째','둘째','셋째','넷째','다섯째'][n]}주`; };
   function columns(anchor, unit) {
     if (!validDate(anchor) || !bounds[unit]) throw new Error('올바른 기간을 입력하세요.');
     anchor = anchor < MIN_DATE ? MIN_DATE : anchor;
@@ -78,5 +78,5 @@
     const firstYear = date(first < MIN_DATE ? MIN_DATE : first).getFullYear(), lastYear = date(last < MIN_DATE ? MIN_DATE : last).getFullYear();
     return `${firstYear} · ${firstLabel} — ${firstYear === lastYear ? '' : lastYear + ' · '}${lastLabel} · ${count}주`;
   }
-  window.ResearchPeriods = { MIN_DATE, iso, date, addDays, daysBetween, validDate, startOfWeek, endOfWeek, monthStart, monthEnd, yearStart, yearEnd, step, cover, columns, spanLabel, toWeek, fromWeek };
+  window.ResearchPeriods = { MIN_DATE, iso, date, addDays, daysBetween, validDate, startOfWeek, endOfWeek, monthStart, monthEnd, yearStart, yearEnd, step, cover, columns, spanLabel, weekLabel, toWeek, fromWeek };
 })();

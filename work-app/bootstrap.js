@@ -3,14 +3,21 @@
   'use strict';
   const notice = document.querySelector('#integration-notice');
   try {
-    const response = await fetch('/api/work-bootstrap', { credentials: 'same-origin', cache: 'no-store' });
-    if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? '업무 접근 권한을 확인해 주세요.' : '업무 자료를 불러오지 못했습니다.');
-    const value = await response.json();
+    window.ResearchLoading?.stage('저장된 연구 계획을 확인하고 있습니다.');
+    const initial = document.querySelector('#work-initial-data');
+    let value;
+    if (initial) { value = JSON.parse(initial.textContent); initial.remove(); }
+    else {
+      const response = await fetch('/api/work-bootstrap', { credentials: 'same-origin', cache: 'no-store', signal:AbortSignal.timeout(20000) });
+      if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? '업무 접근 권한을 확인해 주세요. 업무 홈에서 다시 로그인할 수 있습니다.' : '업무 자료를 불러오지 못했습니다.');
+      value = await response.json();
+    }
     if (!value.workspace?.state || !value.taxonomySource || !value.legacySeed || !value.context?.storageKey) throw new Error('연결된 업무 데이터 형식을 확인해 주세요.');
     window.RESEARCH_SEED = value.workspace.state;
     window.RESEARCH_TAXONOMY_SOURCE = value.taxonomySource;
     window.RESEARCH_LEGACY_SEED = value.legacySeed;
     window.WORK_CONTEXT = value.context;
+    window.WORK_INITIAL_ENVELOPE = value.workspace;
     notice.textContent = value.context.mode === 'local'
       ? 'localhost 전용 · 로컬 원본 사본 — 연구일지의 변경은 이 프로젝트의 사본에만 저장됩니다.'
       : 'Supabase 연결 · 허용 사용자 연구일지';
@@ -18,7 +25,9 @@
       notice.textContent += ' 읽기 전용 계정입니다. 검색·탐색·상세 읽기만 사용할 수 있습니다.';
       installReadOnly();
     }
-    for (const name of ['taxonomy.js', 'notebook.js', 'periods.js', 'hierarchy.js', 'timeline.js', 'workspace-sync.js', 'app.js']) {
+    window.ResearchLoading?.stage('기술과 세부 연구를 로드맵에 배치하고 있습니다.');
+    if (window.startResearchAtlas) window.startResearchAtlas();
+    else for (const name of ['papers.js', 'taxonomy.js', 'notebook.js', 'periods.js', 'hierarchy.js', 'timeline.js', 'workspace-sync.js', 'app.js']) {
       await new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = '/work/app/' + name;
@@ -27,14 +36,17 @@
         document.body.append(script);
       });
     }
+    if (!window.ResearchAtlas) throw new Error('연구 화면을 준비하지 못했습니다. 다시 시도해 주세요.');
+    window.ResearchLoading?.done();
   } catch (error) {
-    notice.textContent = error.message || '업무 연결에 실패했습니다.';
+    notice.textContent = error.name === 'TimeoutError' ? '연결 시간이 길어지고 있습니다. 다시 시도해 주세요.' : error.message || '업무 연결에 실패했습니다.';
     notice.classList.add('is-error');
+    window.ResearchLoading?.fail(notice.textContent);
   }
 
   function installReadOnly() {
     const fieldsAllowed = '#global-search,#goal-filter,#category-filter,#status-filter,[data-note-search]';
-    const mutations = '#add-task,#editor-add-child,#fit-children-range,#task-delete,#task-duplicate,#reset-colors,#import-json,#import-confirm,#restore-recovery,#restore-old-version,#sync-use-local,[data-add-child],[data-add-month],[data-add-goal],[data-add-phase],[data-delete-goal],[data-delete-phase],[data-new-note],[data-new-paper],[data-delete-note],[data-place],[data-complete],[data-reorder-task],.timeline-cell';
+    const mutations = '#add-task,#editor-add-child,#fit-children-range,#task-delete,#task-duplicate,#reset-colors,#import-json,#import-confirm,#restore-recovery,#restore-old-version,#sync-use-local,#visibility-apply,[data-paper-add],[data-paper-remove],[data-paper-clear-figure],[data-add-child],[data-add-month],[data-add-goal],[data-add-phase],[data-delete-goal],[data-delete-phase],[data-new-note],[data-new-paper],[data-delete-note],[data-place],[data-complete],[data-reorder-task],.timeline-cell';
     const deny = event => { event.preventDefault(); event.stopImmediatePropagation(); };
     const apply = () => {
       document.body.dataset.access = 'reader';

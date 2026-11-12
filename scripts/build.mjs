@@ -13,3 +13,13 @@ if(!handler.includes('localPreview: false')) throw new Error('Production preview
 await mkdir(path.join(root,'artifacts'),{recursive:true});
 await writeFile(path.join(root,'artifacts/build-result.json'),JSON.stringify({builtAt:new Date().toISOString(),resume:'source built',typecheck:'policy and workspace contracts',productionPreview:false},null,2));
 console.log('Build passed: Resume, assets, syntax, policy types and deployment preview guard.');
+
+const researchScripts = ['papers.js','taxonomy.js','notebook.js','periods.js','hierarchy.js','timeline.js','workspace-sync.js','app.js'];
+const researchStyles = ['styles.css','details.css','planning.css','hierarchy.css','taxonomy.css','integration.css','features.css'];
+const scripts = await Promise.all(researchScripts.map(file => readFile(path.join(root,'work-app',file),'utf8')));
+const css = await Promise.all(researchStyles.map(file => readFile(path.join(root,'work-app',file),'utf8')));
+const bootstrap = await readFile(path.join(root,'work-app/bootstrap.js'),'utf8');
+await writeFile(path.join(root,'work-app/workspace.bundle.js'),'window.startResearchAtlas = function () {\n'+scripts.join('\n;\n')+'\n};\n'+bootstrap);
+await writeFile(path.join(root,'work-app/workspace.bundle.css'),css.join('\n'));
+execFileSync(process.execPath,['--check','work-app/workspace.bundle.js'],{cwd:root,stdio:'inherit'});
+console.log('Research UI bundled: one script and one stylesheet; private data excluded.');

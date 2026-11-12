@@ -92,5 +92,9 @@
       return range.start && range.end && (range.start < task.start || range.end > task.end);
     });
   }
-  window.ResearchHierarchy = { ordered, childrenOf, descendantsOf, ancestorsOf, rootOf, leafTasks, effectiveRange, progress, validate, canParent, findOverflow };
+  function isRoadmapVisible(tasks,id) {
+    const task=byId(tasks,id);
+    return !!task&&!task.roadmapHidden&&ancestorsOf(tasks,id).every(ancestor=>!ancestor.roadmapHidden);
+  }
+  window.ResearchHierarchy = { isRoadmapVisible, ordered, childrenOf, descendantsOf, ancestorsOf, rootOf, leafTasks, effectiveRange, progress, validate, canParent, findOverflow };
 })();
