@@ -45,9 +45,9 @@ test('home has two keyboard-native whole-card links with image above title and t
     const label = index === 0 ? 'resume-label' : 'work-label';
     assert.ok(portal[0].includes(`aria-labelledby="${label}"`) && portal[1].includes(`id="${label}"`));
   }
-  assert.match(text, /<html lang="ko">/);
+  assert.match(text, /<html lang="ko" data-theme="dark">/);
   assert.match(text, /<main id="main">/);
-  assert.equal(/<script\b/i.test(text), false, 'home needs no client script');
+  assert.match(text, /<script src="\/theme\.js\?v=20261112"><\/script>/, 'small appearance script is shared by public and protected pages');
 });
 
 test('all local home and login images/styles/font references resolve over actual HTTP', async () => {
