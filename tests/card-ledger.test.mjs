@@ -95,8 +95,8 @@ test('settings persist with revisions and a reader cannot mutate settings or upl
   const remote=createHandler({environment:{SUPABASE_URL:'https://example.invalid',SUPABASE_ANON_KEY:'fixture'},fetcher});
   for(const [url,method]of [['/api/card-ledger/inspect','POST'],['/api/card-ledger/upload','POST'],['/api/card-ledger/settings','PUT']])assert.equal((await request(remote,url,{method,headers:{cookie:'kh_access=fixture'},body:{}})).status,403);
 });
-test('Work hub exposes expenses as fourth tool',async()=>{
-  const {handler,headers}=await context();const r=await request(handler,'/work',{headers});assert.equal(r.status,200);assert.match(r.data,/href="\/work\/expenses\/"/);assert.match(r.data,/4개의 공간/);assert.match(r.data,/05<\/span>/);
+test('Selectstar retains approval expenses',async()=>{
+  const {handler,headers}=await context();const r=await request(handler,'/work',{headers});assert.equal(r.status,200);assert.match(r.data,/href="\/work\/expenses\/"/);assert.match(r.data,/3개의 도구/);assert.match(r.data,/href="\/work\/demos"/);
 });
 
 async function ui(role='editor'){

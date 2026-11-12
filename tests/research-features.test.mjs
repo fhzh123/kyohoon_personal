@@ -195,3 +195,12 @@ test('annual overview month calendar filters by owner and reveals a selected day
     d.querySelector('[data-calendar-month]').value='2027-01';d.querySelector('[data-calendar-month]').dispatchEvent(new w.Event('change',{bubbles:true}));assert.match(d.querySelector('.year-toolbar h2').textContent,/2027/);assert.equal(d.querySelector('[data-calendar-month]').value,'2027-01');
   }finally{f.close();}
 });
+
+test('appearance is only in Settings and library bookmarks return to roadmap',async()=>{
+ const f=await fixture();try{
+  const d=f.document;assert.equal(d.querySelector('[data-theme-toggle]'),null);assert.equal(d.querySelector('[data-view="references"]'),null);
+  d.querySelector('[data-view="settings"]').click();await tick();
+  assert.deepEqual([...d.querySelectorAll('[data-theme-value]')].map(x=>x.dataset.themeValue),['dark','light','system']);
+  f.w.location.hash='references';await tick();assert.equal(d.querySelector('#breadcrumb-view').textContent,'연구 로드맵');
+ }finally{f.close();}
+});

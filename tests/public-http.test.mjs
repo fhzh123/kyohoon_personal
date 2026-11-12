@@ -32,27 +32,27 @@ test('public direct routes return independent HTML documents', async () => {
   }
 });
 
-test('home has two keyboard-native whole-card links with image above title and text', async () => {
+test('home has three keyboard-native whole-card links with image above title and text', async () => {
   const { text } = await get('/');
   const portals = [...text.matchAll(/<a\s+class="portal[^\"]*"[^>]*>([\s\S]*?)<\/a>/g)];
-  assert.equal(portals.length, 2);
+  assert.equal(portals.length, 3);
   assert.match(portals[0][0], /href="\/resume"/);
   assert.match(portals[1][0], /href="\/work"/);
   for (const [index, portal] of portals.entries()) {
     assert.ok(portal[1].indexOf('<img') < portal[1].indexOf('<h2'));
     assert.match(portal[1], /<img[^>]+alt="[^"]+"[^>]+width="\d+"[^>]+height="\d+"/);
     assert.match(portal[1], /<p>[^<]+<\/p>/);
-    const label = index === 0 ? 'resume-label' : 'work-label';
+    const label = ['resume-label','work-label','personal-label'][index];
     assert.ok(portal[0].includes(`aria-labelledby="${label}"`) && portal[1].includes(`id="${label}"`));
   }
   assert.match(text, /<html lang="ko" data-theme="dark">/);
   assert.match(text, /<main id="main">/);
-  assert.match(text, /<script src="\/theme\.js\?v=20261112"><\/script>/, 'small appearance script is shared by public and protected pages');
+  assert.match(text, /<script src="\/theme\.js\?v=20261112-3"><\/script>/, 'small appearance script is shared by public and protected pages');
 });
 
 test('all local home and login images/styles/font references resolve over actual HTTP', async () => {
   const html = (await get('/')).text + (await get('/work')).text;
-  const sources = new Set([...html.matchAll(/(?:src|href)="([^"#]+)"/g)].map(match => match[1]).filter(p => /\.(?:png|css)$/.test(p)));
+  const sources = new Set([...html.matchAll(/(?:src|href)="([^"#]+)"/g)].map(match => match[1]).filter(p => /\.(?:png|webp|css|js)(?:\?[^#]*)?$/.test(p)));
   sources.add('/fonts/WantedSans-Medium.ttf');
   for (const source of sources) {
     const response = await fetch(origin + source);
