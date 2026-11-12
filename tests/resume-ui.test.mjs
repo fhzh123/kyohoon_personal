@@ -74,8 +74,8 @@ test('Resume original source copies retain all 36 recorded SHA-256 values', asyn
 test('Resume document uses its isolated styles plus the shared typography', async () => {
   const dom = new JSDOM(html, { url: 'http://localhost:3000/resume' });
   const document = dom.window.document;
-  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1']);
-  assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/resume/resume.js']);
+  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261112-1']);
+  assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261112-4', '/resume/resume.js']);
   assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/resume/smile_emoji2.ico');
   assert.equal(document.querySelectorAll('iframe').length, 0);
   assert.ok(!html.includes('/main.css') && !html.includes('/work.css') && !html.includes('_next'));

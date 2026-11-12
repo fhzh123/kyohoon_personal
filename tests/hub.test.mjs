@@ -62,7 +62,7 @@ test('authorized local Work groups demos and provides three illustrated tools', 
   const cookie = await localCookie();
   const { response, text } = await request(development, '/work', { cookie });
   assert.equal(response.status, 200);
-  const links = [...text.matchAll(/<a class="tool-card"[^>]+>/g)].map(match => match[0]);
+  const links = [...text.matchAll(/<a class="tool-card(?: [^"]*)?"[^>]+>/g)].map(match => match[0]);
   const pending = [...text.matchAll(/<button class="tool-card is-pending"[^>]*>/g)].map(match => match[0]);
   assert.equal(links.length, 3);
   assert.equal(pending.length, 0);
@@ -72,10 +72,10 @@ test('authorized local Work groups demos and provides three illustrated tools', 
   const picker=await request(development,'/work/demos',{cookie});
   for(const demo of demos)assert.ok(picker.text.includes(demo));
   assert.equal((picker.text.match(/rel="noopener noreferrer"/g)||[]).length,2);
-  for (const title of titles) assert.ok(text.includes(`<h3>${title}</h3>`));
+  for (const title of titles) assert.ok(text.includes(`<h2>${title}</h2>`));
   for (const button of pending) assert.match(button, /\sdisabled(?:\s|>)/);
   assert.equal((text.match(/공사 중/g) || []).length, 0);
-  assert.match(text, /href="\/">← 홈으로/);
+  assert.match(text, /href="\/">홈으로/);
   assert.match(text, /<form action="\/api\/auth\/logout" method="post">/);
   assert.match(text, /localhost 전용/);
   assert.match(text, /이 프로젝트 사본에 저장/);

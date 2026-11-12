@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   let delayed;
-  const markup = `<div class="research-loading-card"><span class="loading-eyebrow">RESEARCH ATLAS</span><div class="mascot-walk-track" aria-hidden="true"><span class="mascot-walker"></span><span class="loading-track-line"></span></div><h2>연구 로드맵을 불러오는 중<span class="loading-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></h2><p id="research-loading-stage">연구 공간을 준비하고 있습니다.</p><div class="loading-actions" hidden><button type="button" data-loading-retry>다시 시도</button><a href="/work">Selectstar 홈으로</a></div></div>`;
+  const markup = `<div class="research-loading-card"><h2>연구일지를 불러오는 중</h2><p id="research-loading-stage">연구 공간을 준비하고 있습니다.</p><div class="loading-actions" hidden><button type="button" data-loading-retry>다시 시도</button><a href="/work">Selectstar 홈으로</a></div></div>`;
   const element = () => document.querySelector('#research-loading');
   function show(message = '연구 공간에 연결하고 있습니다.') {
     let overlay = element();
