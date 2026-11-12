@@ -53,11 +53,12 @@
         report('offline', '이 브라우저에 저장됨 · 업무 저장 연결 확인 필요');
       } finally { running = false; }
     };
-    const refresh = async () => {
+    const refresh = async (initialEnvelope = null) => {
       if (running) return false;
       const before = stable(readState());
       try {
-        const {value} = await request('GET');
+        const {value} = initialEnvelope ? {value:copy(initialEnvelope)} : await request('GET');
+        if(options.normalizeState&&value.state)value.state=options.normalizeState(value.state);
         revision = value.revision; ready = true;
         const local = readState();
         const localPrint = stable(local), remotePrint = stable(value.state);
@@ -103,7 +104,7 @@
       exportConflict() { return conflict ? {...copy(conflict), local:copy(readState())} : null; },
       getStatus() { return {...status, paused, ready}; }
     };
-    if (window.WORK_CONTEXT && ['local','supabase'].includes(window.WORK_CONTEXT.mode)) await refresh();
+    if (window.WORK_CONTEXT && ['local','supabase'].includes(window.WORK_CONTEXT.mode)) await refresh(options.initialEnvelope);
     else report('local', '이 브라우저에 자동 저장 · 업무 저장은 로컬 서버에서 사용');
     return controller;
   }
