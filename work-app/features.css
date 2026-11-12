@@ -23,3 +23,57 @@
 .paper-figure-dialog{width:min(1100px,92vw);max-height:90vh;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:16px}
 .paper-figure-dialog img{display:block;max-width:100%;max-height:75vh;object-fit:contain;margin:12px auto;background:#fff}.paper-figure-dialog::backdrop{background:#02060dcc}
 @media(max-width:700px){.paper-preview{flex-direction:column}.paper-figure-link{width:100%;max-height:200px}.paper-figure{height:180px}.papers-heading{flex-wrap:wrap}.visibility-row.is-child{margin-left:12px}}
+
+/* Owner and hierarchy remain visible without hovering over a bar. */
+.research-timeline .timeline-task-open{min-width:0}
+.research-timeline .timeline-task-open .timeline-row-owner{display:block;margin-top:7px;font-size:12px;font-weight:700;color:var(--ink);line-height:1.5;white-space:normal}
+.research-timeline .timeline-task-open .timeline-row-owner.is-unassigned{font-weight:450;color:var(--muted);font-size:11px}
+.research-timeline .timeline-row .timeline-lane{min-height:104px}
+.research-timeline .timeline-row.level-l5 .timeline-lane{min-height:92px}
+.research-timeline .timeline-bar{height:62px;top:20px;border-radius:9px}
+.research-timeline .timeline-bar.is-subtask{height:54px;top:19px;border-style:dashed;border-left-style:solid;border-radius:3px 11px 11px 3px;box-shadow:none}
+.research-timeline .timeline-bar-heading{display:flex;gap:7px;align-items:center;min-width:0;line-height:1.5}
+.research-timeline .timeline-bar-level{flex:none;font-size:9px;line-height:1.4;border:1px solid currentColor;border-radius:4px;padding:1px 4px;opacity:.9}
+.research-timeline .timeline-bar.is-subtask .timeline-bar-level{border-style:dashed}
+.research-timeline .timeline-bar-title{flex:1;min-width:0}
+.research-timeline .timeline-bar .timeline-bar-meta{opacity:1;gap:8px}
+.research-timeline .timeline-bar-owner{font-weight:750;font-size:11px;max-width:none!important}
+.research-timeline .timeline-bar-owner.is-unassigned{font-weight:450;opacity:.7}
+.timeline-context-menu{position:fixed;z-index:9000;min-width:205px;max-width:290px;background:var(--surface,#fff);color:var(--ink,#17273e);border:1px solid var(--line,#dce5f0);border-radius:12px;box-shadow:0 12px 45px #0005;padding:7px}
+.timeline-context-menu p{font-size:11px;line-height:1.6;color:var(--muted);padding:5px 9px 9px;margin:0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.timeline-context-menu button{display:block;width:100%;text-align:left;padding:11px 10px;border:0;border-radius:7px;color:inherit;background:transparent;font:inherit;font-size:12px;cursor:pointer}
+.timeline-context-menu button:hover,.timeline-context-menu button:focus-visible{background:color-mix(in srgb,var(--blue,#477fe5) 15%,transparent);outline:none}
+.timeline-context-menu button.is-danger{color:#d86979}.timeline-context-menu button:disabled{opacity:.45;cursor:default}.timeline-context-menu small{display:block;padding:8px;color:var(--muted);font-size:11px}
+
+.month-planning{background:var(--surface,#fff);border:1px solid var(--line);border-radius:15px;overflow:hidden;margin-bottom:24px}
+.month-planning-toolbar{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:22px 24px 15px}
+.month-planning h2{font-size:20px;line-height:1.5;margin:6px 0 0}.month-controls{display:flex;align-items:center;gap:9px}
+.month-controls input,.month-calendar-filters select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-size:12px}
+.month-calendar-filters{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:0 24px 12px;font-size:12px;color:var(--muted)}
+.month-calendar-filters label{display:flex;gap:9px;align-items:center}.calendar-visibility input{accent-color:var(--blue);width:16px;height:16px}
+.calendar-count-note{margin:0;padding:0 24px 17px;color:var(--muted);font-size:11px;line-height:1.8}
+.overlap-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border-block:1px solid var(--line);background:var(--line)}
+.overlap-summary>div{padding:16px 24px;background:var(--surface)}.overlap-summary span{font-size:11px;color:var(--muted);display:block}.overlap-summary strong{font-size:26px;line-height:1.7}.overlap-summary small{font-size:11px;font-weight:450;color:var(--muted);margin-left:5px}
+.month-calendar-scroll{overflow:auto;max-height:780px;scrollbar-color:var(--line) transparent}
+.month-calendar{min-width:760px}.calendar-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);font-size:11px;font-weight:650;text-align:right}
+.calendar-weekdays span{padding:11px 12px}.calendar-weekdays span:nth-last-child(-n+2){color:#ca9a95}
+.calendar-week{position:relative;border-bottom:1px solid var(--line);background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100% / 7 - 1px),var(--line) calc(100% / 7 - 1px),var(--line) calc(100% / 7))}
+.calendar-week-dates{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.calendar-date{border:0;color:var(--ink);background:transparent;min-width:0;display:flex;justify-content:space-between;align-items:center;gap:4px;padding:9px 10px;font:inherit;font-size:12px;text-align:right;cursor:pointer}
+.calendar-date small{font-size:9px;color:var(--muted)}.calendar-date.has-overlap small{background:#c2793920;color:#d39255;border-radius:4px;padding:2px 4px;font-weight:650}
+.calendar-date.is-outside{color:var(--muted);opacity:.35;cursor:default}.calendar-date[aria-pressed=true]{background:color-mix(in srgb,var(--blue) 15%,transparent);box-shadow:inset 0 0 0 1px var(--blue)}
+.calendar-week-events{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(var(--week-lanes),44px);gap:4px 0;padding:0 0 9px}
+.calendar-research-bar{display:flex;flex-direction:column;gap:3px;justify-content:center;min-width:0;margin:0 3px;border:1px solid color-mix(in srgb,var(--event-color) 50%,var(--line));border-left:3px solid var(--event-color);border-radius:6px;background:color-mix(in srgb,var(--event-color) 13%,var(--surface));color:var(--ink);padding:5px 7px;cursor:pointer;text-align:left;overflow:hidden}
+.calendar-research-bar>span,.calendar-research-bar small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:1.3;font-weight:600}
+.calendar-research-bar small{font-size:10px;font-weight:700;color:var(--muted)}.calendar-level{font-size:8px;font-weight:500;opacity:.75;margin-right:4px}
+.calendar-research-bar.is-subtask{border-style:dashed;border-left-style:solid;border-radius:3px 8px 8px 3px}.calendar-research-bar.status-done{opacity:.6}.calendar-research-bar.status-paused{opacity:.65}
+.calendar-research-bar:hover,.calendar-research-bar:focus-visible{outline:2px solid var(--event-color);outline-offset:-2px}
+.calendar-day-detail{padding:18px 24px;border-bottom:1px solid var(--line)}.calendar-day-detail[hidden]{display:none}.calendar-day-detail h3{font-size:14px;margin:0 0 12px}.calendar-day-detail h3 small{font-size:11px;font-weight:450;color:var(--muted);margin-left:10px}
+.calendar-day-task{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);padding:11px 0;text-align:left;font:inherit;font-size:12px;cursor:pointer}.calendar-day-task strong{flex:none;font-size:11px;color:var(--muted)}
+.owner-overlap-section{padding:22px 24px}.owner-overlap-section h3{font-size:15px}.owner-overlap-section p{font-size:11px;color:var(--muted);line-height:1.8}
+.owner-table-scroll{overflow:auto}.owner-overlap-table{border-collapse:collapse;width:100%;font-size:12px;min-width:440px;text-align:left}
+.owner-overlap-table th,.owner-overlap-table td{padding:12px;border-bottom:1px solid var(--line)}.owner-overlap-table thead{color:var(--muted);font-size:11px;font-weight:450}
+.owner-overlap-table button{font:inherit;background:transparent;border:0;color:var(--ink);padding:0;cursor:pointer;text-align:left}.owner-overlap-table .is-selected{background:color-mix(in srgb,var(--blue) 10%,transparent)}.owner-overlap-table .is-selected button{color:var(--blue)}
+.overlap-count{padding:3px 8px;border-radius:5px;background:color-mix(in srgb,var(--blue) 8%,transparent)}.overlap-count.is-busy{background:#c2793920;color:#d39255;font-weight:700}
+.annual-quarter-summary>summary{padding:15px 0;font-size:13px;color:var(--muted);cursor:pointer}.annual-quarter-summary[open]>summary{margin-bottom:10px}
+@media(max-width:760px){.month-planning-toolbar{align-items:flex-start;flex-wrap:wrap;padding:18px}.month-calendar-filters{padding-inline:18px}.calendar-count-note{padding-inline:18px}.overlap-summary>div{padding:14px}.overlap-summary strong{font-size:22px}.owner-overlap-section,.calendar-day-detail{padding:18px}.calendar-day-task{flex-direction:column;gap:6px}}
