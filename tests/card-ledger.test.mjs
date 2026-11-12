@@ -34,6 +34,7 @@ test('duplicate transactions in the same workbook are excluded once, different c
 test('approval matching respects whole numbers and accepts Korean prefixes',()=>{
   assert.equal(approvalNumber('품의번호 2026-0785'),'2026-785');assert.equal(approvalNumber('2026-785 trailing'),'');
   assert.deepEqual(approvalsIn('품의 2026-785 / 2026-7850 / 2026-785'),['2026-785','2026-7850']);
+  const m=parseLedger(workbook([row('1','20260102',1000,'"2026-02 팀 구독" 품의에 따른 구독','2026-786')]),options);assert.deepEqual(m.rows[0].approvals,['2026-786']);
 });
 test('report includes pending, excludes rejected positive entries, subtracts refunds and deduplicates across files',()=>{
   const m=parse(),r=reportFor([m,{...m,id:'other',uploaded_at:'2020-01-01'}],'2026-999');
