@@ -63,7 +63,10 @@ export function parseLedger(bytes,{fileName,year,month,asOf,complete=false,fileM
     const cardLast4=String(get('card')).replace(/\D/g,'').slice(-4);if(!/^\d{4}$/.test(cardLast4))throw fail(`${i+1}행의 카드 끝 4자리를 확인할 수 없습니다.`);cards.add(cardLast4);
     const text=k=>String(get(k)).normalize('NFC').trim().slice(0,4000);
     const row={date,amount,vat:Number.isFinite(amountOf(get('vat')))?amountOf(get('vat')):0,users:text('users'),memo:text('memo'),required:text('required'),merchant:text('merchant'),number:text('number'),status:text('status')||'미기재',purpose:text('purpose'),cardLast4,sheet:sheetName,sourceRow:i+1};
-    row.approvals=approvalsIn(row.required+' '+row.memo);row.service=classify(row.merchant,row.memo);
+    // The dedicated approval field wins over incidental numbers in the memo
+    // (for example a title such as "2026-02 team subscriptions").
+    const declared=approvalsIn(row.required);
+    row.approvals=declared.length?declared:approvalsIn(row.memo);row.service=classify(row.merchant,row.memo);
     row.key=createHash('sha256').update([cardLast4,text('approval'),row.number,date,text('time'),amount,row.merchant].join('|')).digest('hex').slice(0,32);
     if(seen.has(row.key)){duplicates++;continue;}seen.add(row.key);rows.push(row);
   }
