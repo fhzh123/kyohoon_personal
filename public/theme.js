@@ -7,7 +7,7 @@
  try{const saved=localStorage.getItem(key);if(valid(saved))preference=saved;}catch{}
  function refresh(){
   for(const button of document.querySelectorAll('[data-theme-toggle]')){
-   button.textContent=theme==='dark'?'☀ 라이트 모드':'☾ 다크 모드';
+   button.textContent=theme==='dark'?'라이트 모드':'다크 모드';
    button.setAttribute('aria-label',theme==='dark'?'라이트 모드로 전환':'다크 모드로 전환');
    button.setAttribute('aria-pressed',String(theme==='dark'));
    button.title=preference==='system'?'시스템 설정을 따르는 중':theme==='dark'?'현재 다크 모드':'현재 라이트 모드';
@@ -20,7 +20,7 @@
   if(!valid(value))return;
   preference=value;theme=value==='system'?(media?.matches?'dark':'light'):value;
   root.dataset.theme=theme;root.dataset.appearance=value;root.style.colorScheme=theme;
-  const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='dark'?'#0d1422':'#f4f7fc';
+  const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==='dark'?'#131517':'#eef0f3';
   if(persist)try{localStorage.setItem(key,value);}catch{}
   refresh();
  }
