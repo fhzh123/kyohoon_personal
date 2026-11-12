@@ -66,6 +66,26 @@ test('public homepage exposes only the two public navigation targets', async () 
   noPrivateContent(response);
 });
 
+test('authorized HTML contains one escaped bootstrap record, no tokens and no extra bootstrap read', async () => {
+  const rootDir=await fixture(),calls=[];
+  await writeFile(path.join(rootDir,'work-app/index.html'),'<!doctype html><!--WORK_INITIAL_DATA--><script src="workspace.bundle.js" defer></script>');
+  const malicious='</script><script>alert("fixture")</script>';
+  const fetcher=async url=>{
+    calls.push(url);
+    if(url.endsWith('/auth/v1/user'))return jsonResponse({id:'fixture-editor'});
+    if(url.includes('/workspace_members?'))return jsonResponse([{user_id:'fixture-editor',role:'editor'}]);
+    if(url.includes('/workspaces?'))return jsonResponse([{state:state(malicious),revision:4,taxonomy_source:{},legacy_seed:{}}]);
+    throw Error('unexpected upstream request');
+  };
+  const handler=createHandler({rootDir,environment:remoteEnvironment,fetcher});
+  const result=await request(handler,'/work/app/index.html',{headers:{cookie:'kh_access=synthetic-secret-token'}});
+  assert.equal(result.status,200);assert.equal(calls.length,3);assert.ok(!result.text.includes(malicious));assert.ok(!result.text.includes('synthetic-secret-token'));
+  const json=result.text.match(/<script id="work-initial-data" type="application\/json">([\s\S]*?)<\/script>/)[1];
+  assert.equal(JSON.parse(json).workspace.state.tasks[0].title,malicious);
+  assert.match(result.headers['cache-control'],/no-store/);assert.match(result.headers['server-timing'],/auth;dur=.*data;dur=/);
+  const denied=await request(handler,'/work/app/workspace.bundle.js');assert.equal(denied.status,401);
+});
+
 test('unauthenticated API, application code and attachments are all guarded before reading', async () => {
   const handler = createHandler({ rootDir: await fixture(), environment: baseEnvironment, fetcher() { throw new Error('must not contact upstream'); } });
   for (const url of ['/api/research-state', '/api/work-bootstrap', '/work/app/index.html', '/work/app/taxonomy.js', '/work/app/assets/fixture.png']) {
