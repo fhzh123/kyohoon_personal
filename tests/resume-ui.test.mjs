@@ -55,17 +55,20 @@ function exact(document, selector, text) {
 }
 
 async function selectTab(window, text) {
-  const tab = exact(window.document, 'span.cursor-pointer', text);
+  const tab = exact(window.document, 'button.resume-tab', text);
   tab.click();
-  await waitFor(() => tab.classList.contains('text-blue-300'), `Tab becomes active: ${text}`);
+  await waitFor(() => tab.classList.contains('is-active'), `Tab becomes active: ${text}`);
   await pause(5);
 }
 
-test('Resume original source copies retain all 36 recorded SHA-256 values', async () => {
+test('Resume static archived assets retain their recorded SHA-256 values', async () => {
   const legacy = path.join(project, 'legacy', 'resume');
   const manifest = JSON.parse(await fs.readFile(path.join(legacy, 'source-manifest.json'), 'utf8'));
   assert.equal(Object.keys(manifest.files).length, 36);
   for (const [relative, expected] of Object.entries(manifest.files)) {
+    // Source files are now editable; the manifest records the original migration.
+    if (relative.startsWith('src/') && !relative.startsWith('src/fonts/')) continue;
+    if (relative === 'public/index.html') continue;
     const actual = createHash('sha256').update(await fs.readFile(path.join(legacy, relative))).digest('hex');
     assert.equal(actual, expected, relative);
   }
@@ -74,9 +77,9 @@ test('Resume original source copies retain all 36 recorded SHA-256 values', asyn
 test('Resume document uses its isolated styles plus the shared typography', async () => {
   const dom = new JSDOM(html, { url: 'http://localhost:3000/resume' });
   const document = dom.window.document;
-  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261112-1']);
-  assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261112-4', '/resume/resume.js']);
-  assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/resume/smile_emoji2.ico');
+  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261113-1']);
+  assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261113-1', '/atmosphere.js?v=20261113-1', '/resume/resume.js']);
+  assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/mascot/face.png');
   assert.equal(document.querySelectorAll('iframe').length, 0);
   assert.ok(!html.includes('/main.css') && !html.includes('/work.css') && !html.includes('_next'));
   for (const node of document.querySelectorAll('script[src],link[href]:not([rel=preconnect])')) {
@@ -93,11 +96,11 @@ test('Resume mounts original identity, intro, six navigation tabs and profile as
   const window = await mount(t);
   const { document } = window;
   assert.match(document.body.textContent, /저는 셀렉트스타에서 AI Research Engineer로 근무/);
-  for (const label of ['Experience', 'Education', 'Projects', 'Publications', 'Lecture & Honors', 'Patent']) exact(document, 'span.cursor-pointer', label);
-  assert.ok(exact(document, 'span.cursor-pointer', 'Experience').classList.contains('text-blue-300'));
+  for (const label of ['Experience', 'Education', 'Projects', 'Publications', 'Lecture & Honors', 'Patent']) exact(document, 'button.resume-tab', label);
+  assert.ok(exact(document, 'button.resume-tab', 'Experience').classList.contains('is-active'));
   assert.match(document.querySelector('img[alt="Profile Front"]').getAttribute('src'), /^https:\/\/raw\.githubusercontent\.com\//);
   assert.match(document.querySelector('img[alt="Profile Back"]').getAttribute('src'), /^https:\/\/github\.com\//);
-  for (const image of document.querySelectorAll('img')) assert.match(image.getAttribute('src'), /^https:\/\//);
+  for (const image of document.querySelectorAll('img')) assert.match(image.getAttribute('src'), /^(https:\/\/|\/icons\/|\/mascot\/)/);
 });
 
 test('Resume tab navigation and publication/lecture sub-tabs update actual content', async t => {
@@ -122,7 +125,7 @@ test('Resume tab navigation and publication/lecture sub-tabs update actual conte
   assert.ok([...document.querySelectorAll('a[target=_blank]')].some(node => node.textContent.trim() === '자세히 보기'));
   await selectTab(window, 'Lecture & Honors');
   assert.match(document.body.textContent, /장소:/);
-  const honors = [...document.querySelectorAll('button')].find(node => node.textContent.includes('Honors'));
+  const honors = [...document.querySelectorAll('button')].find(node => !node.classList.contains('resume-tab') && node.textContent.includes('Honors'));
   assert.ok(honors);
   honors.click();
   await waitFor(() => document.body.textContent.includes('우수 논문상'), 'Honors content appears');
@@ -144,31 +147,60 @@ test('Resume desktop and mobile language controls preserve Korean/English behavi
   assert.ok(document.getElementById('ko-lang-desktop').checked);
 });
 
-test('Resume selects original desktop/mobile backgrounds on resize (no layout rendering)', async t => {
+test('English names apply to patents while Domestic Paper keeps Korean authors', async t => {
   const window = await mount(t);
-  const outer = window.document.getElementById('root').firstElementChild;
-  assert.match(outer.style.backgroundImage, /background_test\.png/);
-  window.innerWidth = 390;
-  window.dispatchEvent(new window.Event('resize'));
-  await waitFor(() => outer.style.backgroundImage.includes('background_test_mobile.png'), 'Mobile background is selected');
-  window.innerWidth = 1280;
-  window.dispatchEvent(new window.Event('resize'));
-  await waitFor(() => outer.style.backgroundImage.includes('background_test.png'), 'Desktop background is restored');
+  const {document} = window;
+  document.getElementById('en-lang-desktop').click();
+  await waitFor(() => document.documentElement.lang === 'en', 'English language is selected');
+  await selectTab(window, 'Patent');
+  for (const name of ['Kyohoon Jin','Youngbin Kim','Jaewon Kim','Soojin Jang','Junho Lee','Jungmin Yun','Juhwan Choi']) assert.ok(document.body.textContent.includes(name), name);
+  assert.ok(!document.body.textContent.includes('김영빈'));
+  await selectTab(window, 'Publications');
+  const paper = document.querySelector('a[href="https://arxiv.org/abs/2611.07246v2"]');
+  assert.ok(paper, 'New paper is linked');
+  assert.match(document.body.textContent, /WSDM 2027/);
+  [...document.querySelectorAll('button')].find(node => node.textContent.includes('Domestic Paper')).click();
+  await waitFor(() => document.body.textContent.includes('진교훈'), 'Korean domestic authors are preserved');
+  assert.ok(document.body.textContent.includes('김영빈'));
 });
 
-test('Resume project detail modal opens, handles image error, and closes by button/backdrop', async t => {
+test('Exactly six copied projects are pending and Samsung keeps its detail and image', async t => {
+  const window = await mount(t);
+  const {document} = window;
+  await selectTab(window, 'Projects');
+  assert.equal((document.body.textContent.match(/\(수정예정\)/g) || []).length, 6);
+  const buttons = [...document.querySelectorAll('button')].filter(node => node.textContent.trim() === '자세히 보기');
+  buttons[6].click();
+  await waitFor(() => document.querySelector('h2')?.textContent.includes('[삼성생명 C-Lab]'), 'Original Samsung detail opens');
+  assert.match(document.querySelector('h2').parentElement.textContent, /삼성생명은 독자적으로/);
+  assert.ok(document.querySelector('h2').parentElement.querySelector('img[src*="Project_ATA.png"]'));
+});
+
+test('Resume theme and background pause controls preserve icons and preferences', async t => {
+  const window = await mount(t);
+  window.eval(await fs.readFile(path.join(project,'public/theme.js'),'utf8'));
+  window.eval(await fs.readFile(path.join(project,'public/atmosphere.js'),'utf8'));
+  const d=window.document;
+  d.querySelector('[data-theme-toggle]').click();
+  assert.equal(d.documentElement.dataset.theme,'light');
+  assert.equal(window.localStorage.getItem('kyohoon-appearance'),'light');
+  assert.equal(d.querySelectorAll('[data-theme-toggle] img').length,2);
+  d.querySelector('[data-ambient-toggle]').click();
+  assert.equal(d.documentElement.dataset.ambientPaused,'true');
+  assert.equal(d.querySelector('[data-ambient-toggle]').getAttribute('aria-pressed'),'true');
+  assert.equal(window.localStorage.getItem('kyohoon-background-paused'),'true');
+});
+
+test('Resume project detail modal opens, shows pending details, and closes by button/backdrop', async t => {
   const window = await mount(t);
   const { document } = window;
   await selectTab(window, 'Projects');
   const open = () => exact(document, 'button', '자세히 보기').click();
   open();
-  await waitFor(() => document.querySelector('h2')?.textContent.includes('DATUMO'), 'Project detail heading appears');
-  assert.match(document.body.textContent, /정형데이터 연결 및 내제지식화 기술 개발/);
-  assert.ok(document.querySelector('h2').closest('div').querySelector('a[href="https://wowtale.net/2025/10/30/249506/"]'));
-  const image = [...document.querySelectorAll('img')].find(node => node.alt === 'DATUMO 플랫폼 내 모니터링 대시보드 개발');
-  assert.ok(image);
-  image.dispatchEvent(new window.Event('error'));
-  await waitFor(() => image.classList.contains('block'), 'Original image-error handler removes loading state');
+  await waitFor(() => document.querySelector('h2')?.textContent.includes('(수정예정) DATUMO'), 'Project detail heading appears');
+  assert.match(document.querySelector('h2').parentElement.textContent, /수정 예정입니다/);
+  assert.equal(document.querySelector('h2').parentElement.querySelector('img'),null);
+  assert.ok(!document.querySelector('h2').parentElement.textContent.includes('삼성생명'));
   exact(document, 'button', '×').click();
   await waitFor(() => !document.querySelector('h2'), 'Close button closes project detail');
   open();
