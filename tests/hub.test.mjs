@@ -58,14 +58,15 @@ test('unauthenticated Work contains login only and hides Draft tools and demo UR
   }
 });
 
-test('authorized local Work implements Draft seven slots: three tools and four disabled placeholders', async () => {
+test('authorized local Work provides four tools and three disabled placeholders', async () => {
   const cookie = await localCookie();
   const { response, text } = await request(development, '/work', { cookie });
   assert.equal(response.status, 200);
   const links = [...text.matchAll(/<a class="tool-card"[^>]+>/g)].map(match => match[0]);
   const pending = [...text.matchAll(/<button class="tool-card is-pending"[^>]*>/g)].map(match => match[0]);
-  assert.equal(links.length, 3);
-  assert.equal(pending.length, 4);
+  assert.equal(links.length, 4);
+  assert.equal(pending.length, 3);
+  assert.match(links[3], /href="\/work\/expenses\/"/);
   assert.match(links[0], /href="\/work\/app\/index\.html"/);
   for (let i = 0; i < demos.length; i++) {
     assert.ok(links[i + 1].includes(`href="${demos[i]}"`));
@@ -74,7 +75,7 @@ test('authorized local Work implements Draft seven slots: three tools and four d
   }
   for (const title of titles) assert.ok(text.includes(`<h3>${title}</h3>`));
   for (const button of pending) assert.match(button, /\sdisabled(?:\s|>)/);
-  assert.equal((text.match(/공사 중/g) || []).length, 4);
+  assert.equal((text.match(/공사 중/g) || []).length, 3);
   assert.match(text, /href="\/">← 홈으로/);
   assert.match(text, /<form action="\/api\/auth\/logout" method="post">/);
   assert.match(text, /localhost 전용/);
