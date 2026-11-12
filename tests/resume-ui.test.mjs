@@ -71,22 +71,21 @@ test('Resume original source copies retain all 36 recorded SHA-256 values', asyn
   }
 });
 
-test('Resume document uses only its own stylesheet, script, icons and local font', async () => {
+test('Resume document uses its isolated styles plus the shared typography', async () => {
   const dom = new JSDOM(html, { url: 'http://localhost:3000/resume' });
   const document = dom.window.document;
-  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css']);
+  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1']);
   assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/resume/resume.js']);
   assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/resume/smile_emoji2.ico');
   assert.equal(document.querySelectorAll('iframe').length, 0);
   assert.ok(!html.includes('/main.css') && !html.includes('/work.css') && !html.includes('_next'));
-  for (const node of document.querySelectorAll('script[src],link[href]')) {
-    const relative = (node.getAttribute('src') || node.getAttribute('href')).replace('/resume/', '');
-    await fs.access(path.join(resumeDirectory, relative));
+  for (const node of document.querySelectorAll('script[src],link[href]:not([rel=preconnect])')) {
+    const href = (node.getAttribute('src') || node.getAttribute('href')).split('?')[0];
+    await fs.access(path.join(project, 'public', href));
   }
-  const css = await fs.readFile(path.join(resumeDirectory, 'resume.css'), 'utf8');
-  assert.match(css, /WantedSans-Medium/);
-  assert.match(css, /url\(["']?\.\/fonts\/WantedSans-Medium\.ttf["']?\)/);
-  await fs.access(path.join(resumeDirectory, 'fonts', 'WantedSans-Medium.ttf'));
+  const typography = await fs.readFile(path.join(project, 'public', 'typography.css'), 'utf8');
+  assert.match(typography, /Pretendard Variable/);
+  assert.equal(document.body.dataset.typography, 'resume');
   dom.window.close();
 });
 
@@ -196,3 +195,4 @@ test('Resume profile flip and KakaoTalk QR modal retain original interactions', 
   exact(document, 'button', '×').click();
   await waitFor(() => !document.querySelector('h2'), 'Kakao QR modal closes');
 });
+
