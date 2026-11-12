@@ -103,8 +103,9 @@
       const progress = progressOf(task);
       const color = safeColor(colors[task.category]);
       const status = Object.hasOwn(statusLabels, task.status) ? task.status : 'planned';
-      const label = `${displayTitle(task)} · ${spanLabel({...task, ...range})}${parent ? ` · ${progress.done}/${progress.total} 완료` : ''} · Enter로 상세 편집`;
-      return `<div class="timeline-bar status-${status}${parent ? ' is-summary' : ''}${ancestorsOf(task.id).length ? ' is-subtask' : ''}" role="button" tabindex="0" data-timeline-task="${esc(task.id)}" aria-label="${esc(label)}" title="${esc(label)}" style="left:${geo.left}%;width:${geo.width}%;--event-color:${color}"><span class="timeline-resize" data-resize="start" title="시작 ${UNIT_LABELS[unit]} 조정" aria-hidden="true"></span><span class="timeline-bar-copy"><strong class="timeline-bar-title">${esc(task.title)}</strong><span class="timeline-bar-meta">${task.owner ? `<span>${esc(task.owner)}</span>` : ''}<span>${parent ? `${progress.done}/${progress.total} 완료` : esc(statusLabels[status])}</span>${range.derived ? '<span class="timeline-derived-badge">세부 기간</span>' : ''}</span></span><span class="timeline-resize" data-resize="end" title="종료 ${UNIT_LABELS[unit]} 조정" aria-hidden="true"></span></div>`;
+      const depth=ancestorsOf(task.id).length, level=depth?'L5 하위 연구':'L4 기술', owner=task.owner?.trim()||'담당 미정';
+      const label = `${level} / 담당: ${owner} / ${displayTitle(task)} · ${spanLabel({...task, ...range})}${parent ? ` · ${progress.done}/${progress.total} 완료` : ''} · Enter로 상세 편집`;
+      return `<div class="timeline-bar status-${status}${parent ? ' is-summary' : ''}${ancestorsOf(task.id).length ? ' is-subtask' : ''}" role="button" tabindex="0" data-timeline-task="${esc(task.id)}" aria-label="${esc(label)}" title="${esc(label)}" style="left:${geo.left}%;width:${geo.width}%;--event-color:${color}"><span class="timeline-resize" data-resize="start" title="시작 ${UNIT_LABELS[unit]} 조정" aria-hidden="true"></span><span class="timeline-bar-copy"><span class="timeline-bar-heading"><b class="timeline-bar-level">${depth?'↳ L5':'L4'}</b><strong class="timeline-bar-title">${esc(task.title)}</strong></span><span class="timeline-bar-meta"><span class="timeline-bar-owner ${task.owner?.trim()?'':'is-unassigned'}">담당: ${esc(owner)}</span><span>${parent ? `${progress.done}/${progress.total} 완료` : esc(statusLabels[status])}</span>${range.derived ? '<span class="timeline-derived-badge">세부 기간</span>' : ''}</span></span><span class="timeline-resize" data-resize="end" title="종료 ${UNIT_LABELS[unit]} 조정" aria-hidden="true"></span></div>`;
     }
     function reorderHTML(task) {
       if(!api.reorderTask)return '';
@@ -119,7 +120,7 @@
       const expanded = showChildren && !collapsedTasks.has(task.id);
       const overflow = H?.findOverflow(allTasks, task.id).length;
       const ancestorOverflow = scheduled && ancestorsOf(task.id).some(ancestor => ancestor.start && ancestor.end && (range.start < ancestor.start || range.end > ancestor.end));
-      return `<div class="timeline-row${!matchedIds.has(task.id) ? ' hierarchy-context-row' : ''}${depth ? ' level-l5' : ' level-l4'}${parent ? ' is-parent' : ''}${depth ? ' is-child' : ''}" style="--task-depth:${depth}" data-task-row="${esc(task.id)}"><div class="timeline-task-label"><div class="timeline-task-label-main">${reorderHTML(task)}${parent ? `<button type="button" class="timeline-task-toggle" data-toggle-task="${esc(task.id)}" aria-expanded="${expanded}" aria-label="${esc(task.title)} 세부 과업 ${expanded ? '접기' : '펼치기'}" title="세부 과업 ${expanded ? '접기' : '펼치기'}">${expanded ? '▾' : '▸'}</button>` : '<span class="timeline-task-toggle-spacer" aria-hidden="true"></span>'}<button type="button" class="timeline-task-open" data-open-task="${esc(task.id)}" title="${esc(task.title)}"><strong>${esc(displayTitle(task))}</strong><small><span class="timeline-level-badge">${depth ? 'L5' : 'L4'}</span> ${depth ? '세부 연구' : '기술 연구'}${outside ? ' · 표시 기간 밖' : ''}${!scheduled ? ' · 기간 미정' : ''}</small></button><button type="button" class="timeline-add-child" data-add-child="${esc(task.id)}" aria-label="${esc(task.title)}에 L5 세부 연구 추가" title="L5 세부 연구 추가">+</button></div>${parent ? `<small class="timeline-child-progress">세부 ${children.length}개 · ${progress.done}/${progress.total} 완료</small>` : ''}${overflow || ancestorOverflow ? `<small class="hierarchy-overflow-badge">${overflow ? '세부 기간 초과' : '상위 기간 밖'}</small>` : ''}</div><div class="timeline-lane" data-goal-id="${esc(goalId)}">${cells(goalId, task)}${barHTML(task)}</div></div>`;
+      return `<div class="timeline-row${!matchedIds.has(task.id) ? ' hierarchy-context-row' : ''}${depth ? ' level-l5' : ' level-l4'}${parent ? ' is-parent' : ''}${depth ? ' is-child' : ''}" style="--task-depth:${depth}" data-task-row="${esc(task.id)}"><div class="timeline-task-label"><div class="timeline-task-label-main">${reorderHTML(task)}${parent ? `<button type="button" class="timeline-task-toggle" data-toggle-task="${esc(task.id)}" aria-expanded="${expanded}" aria-label="${esc(task.title)} 세부 과업 ${expanded ? '접기' : '펼치기'}" title="세부 과업 ${expanded ? '접기' : '펼치기'}">${expanded ? '▾' : '▸'}</button>` : '<span class="timeline-task-toggle-spacer" aria-hidden="true"></span>'}<button type="button" class="timeline-task-open" data-open-task="${esc(task.id)}" title="${esc(task.title)}"><strong>${esc(displayTitle(task))}</strong><small><span class="timeline-level-badge">${depth ? 'L5' : 'L4'}</span> ${depth ? '세부 연구' : '기술 연구'}${outside ? ' · 표시 기간 밖' : ''}${!scheduled ? ' · 기간 미정' : ''}</small><span class="timeline-row-owner ${task.owner?.trim()?'':'is-unassigned'}" title="담당: ${esc(task.owner?.trim()||'담당 미정')}">담당: ${esc(task.owner?.trim()||'담당 미정')}</span></button><button type="button" class="timeline-add-child" data-add-child="${esc(task.id)}" aria-label="${esc(task.title)}에 L5 세부 연구 추가" title="L5 세부 연구 추가">+</button></div>${parent ? `<small class="timeline-child-progress">세부 ${children.length}개 · ${progress.done}/${progress.total} 완료</small>` : ''}${overflow || ancestorOverflow ? `<small class="hierarchy-overflow-badge">${overflow ? '세부 기간 초과' : '상위 기간 밖'}</small>` : ''}</div><div class="timeline-lane" data-goal-id="${esc(goalId)}">${cells(goalId, task)}${barHTML(task)}</div></div>`;
     }
     function sorted(items) {
       return H?.ordered ? H.ordered(items,rangeOf) : items.slice().sort((a,b)=>(rangeOf(a).start||'9999').localeCompare(rangeOf(b).start||'9999')||a.title.localeCompare(b.title));
@@ -161,6 +162,41 @@
     const navigation=api.stepPeriod?`<div class="timeline-period-navigation" role="group" aria-label="표시 기간 이동"><button type="button" data-step-period="-1" ${columns[0].start<=MIN_DATE?'disabled':''}>‹ 이전 1${{week:'주',month:'개월',year:'년'}[unit]}</button><span>${esc(rangeLabel)}</span><button type="button" data-step-period="1">다음 1${{week:'주',month:'개월',year:'년'}[unit]} ›</button></div>`:'';
     const legend=`<div class="timeline-color-legend" aria-label="연구 유형 색상 범례"><strong>색상 · 연구 유형</strong>${Object.entries(api.categories||{research:'연구·조사',experiment:'실험·검증',writing:'논문·문서',meeting:'협의·리뷰',milestone:'핵심 결과'}).map(([key,label])=>`<span><i style="background:${safeColor(colors[key])}" aria-hidden="true"></i>${esc(label)}</span>`).join('')}<small>진한 막대: 전체 기간 · 완료: 흐리게 · 보류: 점선</small></div>`;
     host.innerHTML = `<section class="research-timeline timeline-unit-${unit}" aria-label="${UNIT_LABELS[unit]} 연구 타임라인"><div class="hierarchy-view-controls" role="group" aria-label="세부 과업 표시"><button type="button" data-hierarchy-view="roots" aria-pressed="${!showChildren}">L4 기술만</button><button type="button" data-hierarchy-view="all" aria-pressed="${showChildren}">L5 세부 연구까지</button></div>${navigation}<div class="timeline-scroll" tabindex="0" aria-label="연구 타임라인 가로 스크롤"><div class="timeline-chart" style="--timeline-columns:${columns.length};--timeline-min-column:${unit === 'week' ? 96 : unit === 'month' ? 38 : 86}px"><div class="timeline-header"><div class="timeline-corner"><strong>L3 → L4 → L5</strong><small>기술과 세부 연구 일정</small></div><div class="timeline-axis"><div class="timeline-groups">${periodGroups.map(group => `<div class="timeline-period-group" style="grid-column:span ${group.count}">${esc(group.label)}</div>`).join('')}</div><div class="timeline-columns">${columns.map(column => `<div class="timeline-column"><strong>${esc(column.label)}</strong><small>${esc(column.detail || '')}</small></div>`).join('')}</div></div></div>${groups.map(group => `${groupHeading(group)}${groupRows(group)}`).join('')}</div></div>${navigation}${legend}<div class="timeline-help"><span>⠿ 또는 연구명을 위아래로 끌어 순서 변경 · +로 세부 연구 추가</span><span>막대 이동 · 양 끝으로 기간 조정 · Enter로 상세 편집</span></div><div class="timeline-announcement sr-only" aria-live="polite"></div></section>`;
+
+    let contextMenu=null,contextSource=null;
+    function closeMenu(restoreFocus=false){contextMenu?.remove();contextMenu=null;if(restoreFocus)contextSource?.focus?.({preventScroll:true});}
+    signal.addEventListener('abort',()=>closeMenu(),{once:true});
+    function taskForTarget(target){
+      if(!(target instanceof Element))return null;
+      const row=target.closest('[data-task-row]'),bar=target.closest('[data-timeline-task]');
+      const id=row?.dataset.taskRow||bar?.dataset.timelineTask;return id?taskMap.get(id):null;
+    }
+    function showTaskMenu(task,x,y,source){
+      closeMenu();resetInteraction();contextSource=source;
+      contextMenu=document.createElement('div');contextMenu.className='timeline-context-menu';contextMenu.setAttribute('role','menu');contextMenu.setAttribute('aria-label',task.title+' 연구 메뉴');contextMenu.tabIndex=-1;
+      const disabled=api.readOnly?'disabled':'';
+      contextMenu.innerHTML=`<p>${esc(task.title)}</p><button type="button" role="menuitem" data-context-hide ${disabled}>로드맵에서 숨기기</button><button type="button" role="menuitem" class="is-danger" data-context-delete ${disabled}>삭제</button>${api.readOnly?'<small>읽기 전용 계정입니다.</small>':''}`;
+      document.body.append(contextMenu);
+      const rect=contextMenu.getBoundingClientRect();contextMenu.style.left=Math.max(8,Math.min(x,window.innerWidth-rect.width-8))+'px';contextMenu.style.top=Math.max(8,Math.min(y,window.innerHeight-rect.height-8))+'px';
+      contextMenu.querySelector('[data-context-hide]').onclick=()=>{closeMenu();api.hideTask?.(task.id);};
+      contextMenu.querySelector('[data-context-delete]').onclick=()=>{closeMenu();api.deleteTask?.(task.id);};
+      (contextMenu.querySelector('button:not(:disabled)')||contextMenu).focus({preventScroll:true});
+    }
+    host.addEventListener('contextmenu',event=>{const task=taskForTarget(event.target);if(!task)return;event.preventDefault();showTaskMenu(task,event.clientX,event.clientY,event.target.closest('button,[role=button]'));},{signal});
+    host.addEventListener('keydown',event=>{
+      if(event.key!=='ContextMenu'&&!(event.shiftKey&&event.key==='F10'))return;
+      const task=taskForTarget(event.target);if(!task)return;event.preventDefault();const rect=event.target.getBoundingClientRect();showTaskMenu(task,rect.left+12,rect.bottom,event.target);
+    },{signal});
+    document.addEventListener('pointerdown',event=>{if(contextMenu&&!contextMenu.contains(event.target))closeMenu();},{capture:true,signal});
+    document.addEventListener('keydown',event=>{
+      if(!contextMenu)return;
+      if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeMenu(true);return;}
+      if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+      const buttons=[...contextMenu.querySelectorAll('button:not(:disabled)')];if(!buttons.length)return;
+      event.preventDefault();const at=buttons.indexOf(document.activeElement),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(at+(event.key==='ArrowUp'?-1:1)+buttons.length)%buttons.length;buttons[next].focus();
+    },{signal});
+    window.addEventListener('resize',()=>closeMenu(),{signal});
+    document.addEventListener('scroll',()=>closeMenu(),{capture:true,signal});
 
     function resetInteraction() {
       if (!interaction) return;

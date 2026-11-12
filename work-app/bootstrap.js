@@ -27,7 +27,7 @@
     }
     window.ResearchLoading?.stage('기술과 세부 연구를 로드맵에 배치하고 있습니다.');
     if (window.startResearchAtlas) window.startResearchAtlas();
-    else for (const name of ['papers.js', 'taxonomy.js', 'notebook.js', 'periods.js', 'hierarchy.js', 'timeline.js', 'workspace-sync.js', 'app.js']) {
+    else for (const name of ['papers.js', 'taxonomy.js', 'notebook.js', 'periods.js', 'hierarchy.js', 'timeline.js', 'calendar.js', 'workspace-sync.js', 'app.js']) {
       await new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = '/work/app/' + name;
@@ -45,7 +45,7 @@
   }
 
   function installReadOnly() {
-    const fieldsAllowed = '#global-search,#goal-filter,#category-filter,#status-filter,[data-note-search]';
+    const fieldsAllowed = '#global-search,#goal-filter,#category-filter,#status-filter,[data-note-search],[data-calendar-owner],[data-calendar-month],[data-calendar-visible]';
     const mutations = '#add-task,#editor-add-child,#fit-children-range,#task-delete,#task-duplicate,#reset-colors,#import-json,#import-confirm,#restore-recovery,#restore-old-version,#sync-use-local,#visibility-apply,[data-paper-add],[data-paper-remove],[data-paper-clear-figure],[data-add-child],[data-add-month],[data-add-goal],[data-add-phase],[data-delete-goal],[data-delete-phase],[data-new-note],[data-new-paper],[data-delete-note],[data-place],[data-complete],[data-reorder-task],.timeline-cell';
     const deny = event => { event.preventDefault(); event.stopImmediatePropagation(); };
     const apply = () => {
