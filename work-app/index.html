@@ -7,17 +7,18 @@
   <script src="/theme.js?v=20261112-3"></script>
   <meta name="description" content="셀렉트스타 연구 일정, 목표, 로드맵과 연구 노트를 연결하는 로컬 연구 작업 공간">
   <title>연구일지 | Selectstar</title>
-  <link rel="icon" href="/mascot/brand.png">
-  <link rel="stylesheet" href="workspace.bundle.css?v=20261112-3">
+  <link rel="icon" href="/mascot/face.png">
+  <link rel="stylesheet" href="workspace.bundle.css?v=20261113-review-2">
   <link rel="stylesheet" href="/theme.css?v=20261112-3">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/typography.css?v=20261112-1">  <link rel="stylesheet" href="/taste.css?v=20261112-1">
+<link rel="stylesheet" href="/atmosphere.css?v=20261113-review-2">
 </head>
-<body data-surface="research" aria-busy="true"><a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<body data-surface="research" aria-busy="true"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>
   <div id="research-loading" class="research-loading" role="status" aria-live="polite"><div class="research-loading-card"><h2>연구일지를 불러오는 중<span class="loading-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></h2><p id="research-loading-stage">연구 공간을 준비하고 있습니다.</p><div class="loading-actions" hidden><button type="button" data-loading-retry>다시 시도</button><a href="/work">Selectstar 홈으로</a></div></div></div>
   <div class="app-shell" inert>
     <aside class="sidebar" aria-label="연구 공간 메뉴">
       <a class="brand" href="#roadmap" aria-label="Research Atlas 연구 로드맵">
-        <span class="brand-symbol"><img width="128" height="128" src="/mascot/brand.png" alt="마스코트"></span>
+        <span class="brand-symbol"><img width="128" height="128" src="/mascot/face.png" alt="마스코트"></span>
         <span class="brand-copy"><strong>연구일지</strong><small>Selectstar</small></span>
       </a>
       <div class="nav-section-label">RESEARCH WORKSPACE</div>
@@ -31,18 +32,23 @@
     <main id="main" class="workspace">
       <header class="topbar">
         <div class="breadcrumb"><span>연구 기획</span><span>/</span><strong id="breadcrumb-view">연구 로드맵</strong></div>
-        <div class="topbar-actions"><a class="secondary-button home-link" href="/work">Selectstar 홈</a><a class="secondary-button home-link" href="/">홈으로</a><form id="work-logout" action="/api/auth/logout" method="post"><button class="secondary-button" type="submit">로그아웃</button></form>
-          <label class="search-box"><span aria-hidden="true">⌕</span><input id="global-search" type="search" placeholder="연구 주제 검색" aria-label="연구 주제 검색"></label>
-          <button class="icon-button" id="backup-top" title="백업 및 가져오기" aria-label="백업 및 가져오기">↥</button>
-          <button class="primary-button" id="add-task"><span aria-hidden="true">＋</span> 연구 구간 추가</button>
+        <div class="topbar-actions">
+          <label class="search-box"><img class="ui-icon" src="/icons/ui-search.svg" width="18" height="18" alt="" aria-hidden="true"><input id="global-search" type="search" placeholder="연구 주제 검색" aria-label="연구 주제 검색"></label>
+          <nav class="workspace-quick-nav" aria-label="공간 이동">
+            <a class="secondary-button workspace-hub-link" href="/work" aria-label="Selectstar 홈" title="Selectstar 홈"><img class="ui-icon" src="/icons/ui-briefcase-business.svg" width="18" height="18" alt="" aria-hidden="true"><span>Selectstar</span></a>
+            <a class="icon-button workspace-home-link" href="/" title="홈으로" aria-label="홈으로"><img class="ui-icon" src="/icons/ui-house.svg" width="18" height="18" alt="" aria-hidden="true"></a>
+          </nav>
+          <button class="icon-button" id="backup-top" title="백업 및 가져오기" aria-label="백업 및 가져오기"><img class="ui-icon" src="/icons/ui-upload.svg" width="18" height="18" alt="" aria-hidden="true"></button>
+          <button class="primary-button" id="add-task"><img class="ui-icon" src="/icons/ui-plus.svg" width="18" height="18" alt="" aria-hidden="true"><span>연구 구간 추가</span></button>
+          <form id="work-logout" action="/api/auth/logout" method="post"><button class="workspace-logout-button" type="submit" aria-label="로그아웃" title="로그아웃"><img class="ui-icon" src="/icons/ui-log-out.svg" width="18" height="18" alt="" aria-hidden="true"><span>로그아웃</span></button></form>
         </div>
       </header>
-      <div class="page-content"><div class="integration-notice" id="integration-notice" role="status">업무 연결을 확인하고 있습니다.</div>
+      <div class="page-content">
         <div class="page-heading"><h1 id="page-title">연구 로드맵</h1><p class="page-description" id="page-description">주차에서 연도까지, 연구의 방향과 흐름을 그립니다.</p></div>
         <div id="workspace-notice" class="workspace-notice" hidden></div>
         <div id="stats" class="stats-row"></div>
         <div id="view-host"></div>
-        <footer class="app-footer"><span class="footer-brand">Selectstar 연구일지</span><span>2026.11 — 열린 연구 계획</span></footer>
+        <footer class="app-footer"><div class="workspace-footer-line"><span class="footer-brand">Selectstar 연구일지</span><span>2026.11 — 열린 연구 계획</span></div><div class="integration-notice" id="integration-notice" role="status">업무 연결을 확인하고 있습니다.</div></footer>
       </div>
     </main>
   </div>
@@ -53,7 +59,7 @@
   <noscript>연구 계획 앱을 사용하려면 브라우저의 JavaScript를 켜 주세요.</noscript>
   <!--WORK_INITIAL_DATA-->
   <script src="/loading.js?v=20261112-3" defer></script>
-  <script src="workspace.bundle.js?v=20261112-3" defer></script>
+  <script src="workspace.bundle.js?v=20261113-review-2" defer></script>
 </body>
 </html>
 

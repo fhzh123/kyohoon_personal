@@ -189,6 +189,10 @@ test('annual overview month calendar filters by owner and reveals a selected day
   const f=await fixture();try{
     const {w,document:d}=f;d.querySelector('[data-view="overview"]').click();
     assert.equal(d.querySelector('[data-calendar-month]').value,'2026-11');
+    assert.equal(d.querySelector('.owner-overlap-section'), null);
+    assert.equal(d.querySelector('.calendar-date small'), null);
+    assert.ok(d.querySelector('#integration-notice').closest('.app-footer'));
+    assert.equal(d.querySelector('.topbar-actions').lastElementChild.id, 'work-logout');
     assert.ok(d.querySelector('[data-calendar-task="child"]'));assert.equal(d.querySelector('[data-calendar-task="root"]'),null,'summary period is not counted twice');
     const owner=d.querySelector('[data-calendar-owner]');owner.value='연구자 B';owner.dispatchEvent(new w.Event('change',{bubbles:true}));
     d.querySelector('[data-calendar-day="2026-11-09"]').click();assert.equal(d.querySelector('[data-calendar-day-detail]').hidden,false);assert.match(d.querySelector('[data-calendar-day-detail]').textContent,/연구자 B/);
