@@ -7,6 +7,19 @@ import socialLinks_ from './socialLinkData';
 import patentDetails_ from './patentData';
 
 const UiIcon = ({name}) => <img className="ui-icon" src={`/icons/ui-${name}.svg`} width="18" height="18" alt="" aria-hidden="true" />;
+const phdThesis = {title:'Counterbias text augmentation : mitigation of multiple spurious correlations and dataset bias', href:'https://library.cau.ac.kr/search/i-discovery/9670635'};
+const msThesis = {title:'병렬형 트랜스포머 모델을 활용한 한국 고문서 번역 및 분석', href:'https://library.cau.ac.kr/search/i-discovery/9383361'};
+const universityPublications = internationalPublications_.filter(pub => Number(pub.year) >= 2019 && Number(pub.year) <= 2024);
+const universityJournals = universityPublications.filter(pub => /Vol\./.test(pub.journal)).length;
+const universityConferences = universityPublications.length - universityJournals;
+const PaperReference = ({href,title,children}) => <a href={href} target="_blank" rel="noopener noreferrer" title={title} aria-label={title}>{children}<span aria-hidden="true">↗</span></a>;
+const AcademicResearchSummary = ({language}) => <div className="resume-research-summary">
+  <div className="resume-research-row"><strong>{language === 'ko' ? '박사' : 'Ph.D.'}</strong><span>{language === 'ko' ? '허위 상관관계와 편향 완화를 위한 반사실적 텍스트 증강' : 'Counterfactual text augmentation to mitigate spurious correlations and bias'}</span><PaperReference href="https://aclanthology.org/2025.emnlp-main.520/" title="CoBA: Counterbias Text Augmentation for Mitigating Various Spurious Correlations via Semantic Triples">CoBA (EMNLP 2025)</PaperReference></div>
+  <div className="resume-research-row"><strong>{language === 'ko' ? '석사' : 'M.S.'}</strong><span>{language === 'ko' ? '한국 고문서 복원, 번역 및 분석 모델 개발' : 'Restoration, translation and analysis of Korean historical documents'}</span><PaperReference href="https://aclanthology.org/2021.naacl-main.317/" title="Restoring and Mining the Records of the Joseon Dynasty via Neural Language Modeling and Machine Translation">NAACL 2021</PaperReference><PaperReference href="https://www.mdpi.com/2076-3417/10/21/7939" title="Korean Historical Documents Analysis with Improved Dynamic Word Embedding">Applied Sciences 2020</PaperReference></div>
+  <div className="resume-research-row"><span className="resume-research-meta">{language === 'ko' ? '학위논문' : 'Theses'}</span><PaperReference href={phdThesis.href} title={phdThesis.title}>{language === 'ko' ? '박사 학위논문' : 'Ph.D. thesis'}</PaperReference><PaperReference href={msThesis.href} title={msThesis.title}>{language === 'ko' ? '석사 학위논문' : 'M.S. thesis'}</PaperReference></div>
+  <div className="resume-research-meta">{language === 'ko' ? `국제 저널 ${universityJournals}편, 국제학회 ${universityConferences}편 (2019–2024, Publications 수록 기준)` : `${universityJournals} international journal papers and ${universityConferences} conference papers (2019–2024, listed in Publications)`}</div>
+</div>;
+const projectTitle = project => `${!project.description?.trim() && !project.fullDescription?.trim() ? '(수정예정) ' : ''}${project.title}`;
 const nameMap = {'진교훈':'Kyohoon Jin','김영빈':'Youngbin Kim','김재원':'Jaewon Kim','장수진':'Soojin Jang','이준호':'Junho Lee','윤정민':'Jungmin Yun','최주환':'Juhwan Choi'};
 function englishNames(value, key = '') {
   if (key === 'domesticPublications' || React.isValidElement(value)) return value;
@@ -111,7 +124,8 @@ const App = () => {
       period: 'Mar 2021 - Feb 2025',
       grade: '4.20/4.5',
       subjects: 'Deep Learning, Natural Language Processing',
-      thesis: 'Counterbias Text Generation: Mitigate Spurious Correlation and Bias via Revisiting Counterfactual', // Added thesis for PhD
+      thesis: 'Counterbias text augmentation : mitigation of multiple spurious correlations and dataset bias',
+      thesisLink: 'https://library.cau.ac.kr/search/i-discovery/9670635',
       icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
       transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/PhD_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
     },
@@ -121,7 +135,8 @@ const App = () => {
       period: 'Mar 2019 - Feb 2021',
       grade: '4.38/4.5',
       subjects: 'Machine Learning, Deep Learning, Natural Language Processing',
-      thesis: '병렬형 트랜스포머 모델을 활용한 한국 고문서 번역 및 분석', // Added thesis for MS
+      thesis: '병렬형 트랜스포머 모델을 활용한 한국 고문서 번역 및 분석',
+      thesisLink: 'https://library.cau.ac.kr/search/i-discovery/9383361',
       icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
       transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/MS_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
     },
@@ -176,7 +191,8 @@ const App = () => {
       period: 'Mar 2021 - Feb 2025',
       grade: '4.20/4.5',
       subjects: 'Deep Learning, Natural Language Processing',
-      thesis: 'Counterbias Text Generation: Mitigate Spurious Correlation and Bias via Revisiting Counterfactual', // Added thesis for PhD
+      thesis: 'Counterbias text augmentation : mitigation of multiple spurious correlations and dataset bias',
+      thesisLink: 'https://library.cau.ac.kr/search/i-discovery/9670635',
       icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
       transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/PhD_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
     },
@@ -219,7 +235,7 @@ const App = () => {
       period: 'Mar 2021 - Feb 2025',
       grade: '4.20/4.5',
       subjects: 'Deep Learning, Natural Language Processing',
-      thesis: 'Counterbias Text Generation: Mitigate Spurious Correlation and Bias via Revisiting Counterfactual', // Added thesis for PhD
+      thesis: 'Counterbias text augmentation : mitigation of multiple spurious correlations and dataset bias', // Added thesis for PhD
       icon: <IconPlaceholder src="https://i.ibb.co/fVzmnTgG/1.png" alt="Chungang University Logo" />, // Chungang University Logo
       transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/PhD_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
     },
@@ -267,7 +283,7 @@ const App = () => {
                 </div>
                 <div className="text-sm md:text-base text-gray-400 mb-1">{exp.company}</div>
                 <div className="text-sm md:text-base text-gray-400 mb-2">{exp.period}</div>
-                <p className="text-sm md:text-base text-gray-300" dangerouslySetInnerHTML={{ __html: exp.description }}></p>
+                {exp.title.startsWith('Student Researcher') ? <AcademicResearchSummary language={language} /> : <p className="text-sm md:text-base text-gray-300" dangerouslySetInnerHTML={{ __html: exp.description }}></p>}
               </div>
             ))}
           </div>
@@ -306,7 +322,7 @@ const App = () => {
                 </div>
                 <div className="text-sm md:text-base text-gray-400">{language === 'ko' ? '주요 과목: ' : 'Subjects: '}{edu.subjects}</div>
                 {(edu.degree === 'MS' || edu.degree === 'Ph.D') && edu.thesis && (
-                  <div className="text-sm md:text-base text-gray-300 mt-1">{language === 'ko' ? '졸업 논문: ' : 'Thesis: '}{edu.thesis}</div>
+                  <div className="text-sm md:text-base text-gray-300 mt-1">{language === 'ko' ? '학위논문: ' : 'Thesis: '}<a className="resume-thesis-link" href={edu.degree === 'Ph.D' ? phdThesis.href : msThesis.href} target="_blank" rel="noopener noreferrer">{edu.degree === 'Ph.D' ? phdThesis.title : msThesis.title} <span aria-hidden="true">↗</span></a></div>
                 )}
               </div>
             ))}
@@ -321,7 +337,7 @@ const App = () => {
                   <div className="flex items-center text-lg md:text-xl font-bold mb-1 text-sky-400">
                     {project.icon}
                     {project.icon2 && <span className="ml-0">{project.icon2}</span>}
-                    {project.title}
+                    {projectTitle(project)}
                   </div>
                   <div className="text-sm md:text-base text-gray-400 mb-2">{project.period}</div>
                   <p className="text-sm md:text-base text-gray-300 mb-2" dangerouslySetInnerHTML={{ __html: project.description }}></p>
@@ -373,9 +389,10 @@ const App = () => {
                     href={pub.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-400 hover:underline text-sm md:text-base"
+                    className="resume-paper-link"
+                    aria-label={`${language === 'ko' ? '논문' : 'Paper'}: ${pub.title}`}
                   >
-                    {currentData.buttons.viewDetails}
+                    <span>{language === 'ko' ? '논문' : 'Paper'}</span><span className="external-arrow" aria-hidden="true">↗</span>
                   </a>
                 </div>
               ))}
@@ -464,8 +481,8 @@ const App = () => {
         </span>
 
         <div className="resume-header-actions">
-          {canReturnHome && <a className="btn btn--secondary" href="/" aria-label="홈으로"><UiIcon name="house" /><span>홈으로</span></a>}
-          <button type="button" className="theme-toggle btn btn--secondary" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span className="theme-sun"><UiIcon name="sun" /></span><span className="theme-moon"><UiIcon name="moon" /></span><span data-theme-label>라이트 모드</span></button>
+          {canReturnHome && <a className="resume-icon-action" href="/" aria-label={language === 'ko' ? '홈으로' : 'Home'} title={language === 'ko' ? '홈으로' : 'Home'}><UiIcon name="house" /></a>}
+          <button type="button" className="theme-toggle resume-icon-action" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span className="theme-sun"><UiIcon name="sun" /></span><span className="theme-moon"><UiIcon name="moon" /></span><span data-theme-label hidden>라이트 모드</span></button>
         {/* Language Toggle Button for Desktop - FIXED AND IMPROVED */}
         {/* The toggle is now more robust by using flexbox for equal spacing and simpler positioning for the sliding background. */}
         <div className="resume-language flex items-center relative h-10 w-28 bg-gray-700 rounded-full p-1 transition-all duration-300">
@@ -629,7 +646,7 @@ const App = () => {
             >
               &times;
             </button>
-            <h2 className="text-2xl md:text-3xl font-bold text-sky-400 mb-3 md:mb-4">{selectedProject.title}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-sky-400 mb-3 md:mb-4">{projectTitle(selectedProject)}</h2>
             {selectedProject.imageUrl && (
               <>
                 {isLoadingImage && (

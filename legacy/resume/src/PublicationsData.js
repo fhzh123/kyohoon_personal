@@ -1,7 +1,7 @@
 // Placeholder for icons (user will insert images here)
 const IconPlaceholder = ({ src, alt }) => (
-<div className="resume-publication-icon">
-    {src && <img src={src} alt={alt} width="20" height="20" />}
+<div className={`resume-publication-icon ${src.includes('FcVbAU7d') || src.includes('/acm.svg') ? 'resume-publication-icon--compact' : ''}`}>
+    {src && <img src={src} alt={alt} width="24" height="24" />}
 </div>
 );
 
@@ -20,7 +20,7 @@ const internationalPublications_ = [
     journal: 'The Fifteenth biennial Language Resources and Evaluation Conference (LREC 2026)',
     year: '2026',
     link: 'https://arxiv.org/abs/2504.08756/', // Actual link to paper
-    icon: <IconPlaceholder src="https://www.ilc.cnr.it/wp-content/uploads/2025/07/LREC2026.png" alt="International Pub Icon 1" />,
+    icon: <IconPlaceholder src="https://pbs.twimg.com/profile_images/1838978635316772864/JXCTCOQO.jpg" alt="ELRA" />,
 },
 {
     title: 'CoBA: Counterbias Text Augmentation for Mitigating Various Spurious Correlations via Semantic Triples',
@@ -60,7 +60,7 @@ const internationalPublications_ = [
     journal: 'Engineering Applications of Artificial Intelligence (EAAI) Vol. 139, 2025',
     year: '2025',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0952197624017305',
-    icon: <IconPlaceholder src="https://play-lh.googleusercontent.com/-fK5pT4NYVe3VUJ20sDKNliVPEAdx2bM9sQ--RsUbqggfVy2WIyzXEvUO50JhchyIw=w600-h300-pc0xffffff-pd" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/elsevier.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'PRISM: Personalizing Reporting with Intelligent Summarization through Multiple Frames',
@@ -68,14 +68,14 @@ const internationalPublications_ = [
     journal: 'IEEE Access, Vol. 12, 2024',
     year: '2024',
     link: 'https://ieeexplore.ieee.org/document/10766499',
-    icon: <IconPlaceholder src="https://drmcet.ac.in/wp-content/uploads/2024/09/IEEElogo.png" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/ieee.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'Multi-News+: Cost-efficient Dataset Cleansing via LLM-based Data Annotation',
     author: 'Juhwan Choi, Jungmin Yun, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'The 2024 Conference on Empirical Methods in Natural Language Processing (EMNLP 2024)',
     year: '2024',
-    link: 'https://aclanthology.org/2024.emnlp-main.2/5',
+    link: 'https://aclanthology.org/2024.emnlp-main.2/',
     icon: <IconPlaceholder src="https://pbs.twimg.com/profile_images/1879403450792095744/FcVbAU7d_400x400.jpg" alt="International Pub Icon 5" />,
 },
 {
@@ -84,7 +84,7 @@ const internationalPublications_ = [
     journal: '2024 International Conference On Consumer Electronics Asia (ICCE-Asia 2024)',
     year: '2024',
     link: 'https://ieeexplore.ieee.org/document/10773956/',
-    icon: <IconPlaceholder src="https://drmcet.ac.in/wp-content/uploads/2024/09/IEEElogo.png" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/ieee.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'Enhancing Effectiveness and Robustness in a Low-Resource Regime via Decision-Boundary-aware Data Augmentation',
@@ -116,7 +116,7 @@ const internationalPublications_ = [
     journal: 'Expert Systems with Applications (ESWA) Vol. 237, 2024',
     year: '2024',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0957417423018936',
-    icon: <IconPlaceholder src="https://play-lh.googleusercontent.com/-fK5pT4NYVe3VUJ20sDKNliVPEAdx2bM9sQ--RsUbqggfVy2WIyzXEvUO50JhchyIw=w600-h300-pc0xffffff-pd" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/elsevier.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'Development of Robust Detector Using The Weather Deep Generative Model For Outdoor Monitoring System',
@@ -124,7 +124,7 @@ const internationalPublications_ = [
     journal: 'Expert Systems with Applications (ESWA) Vol. 234, 2023',
     year: '2023',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0957417423014860',
-    icon: <IconPlaceholder src="https://play-lh.googleusercontent.com/-fK5pT4NYVe3VUJ20sDKNliVPEAdx2bM9sQ--RsUbqggfVy2WIyzXEvUO50JhchyIw=w600-h300-pc0xffffff-pd" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/elsevier.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'Time-Enhanced Recommendations: Capturing Dynamic User Preferences through Time-aware Reviews',
@@ -132,7 +132,7 @@ const internationalPublications_ = [
     journal: '2023 International Conference On Consumer Electronics Asia (ICCE-Asia 2023)',
     year: '2023',
     link: 'https://ieeexplore.ieee.org/xpl/conhome/10326218/proceeding',
-    icon: <IconPlaceholder src="https://drmcet.ac.in/wp-content/uploads/2024/09/IEEElogo.png" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/ieee.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'SoftEDA: Rethinking Rule-Based Data Augmentation with Soft Labels',
@@ -148,7 +148,7 @@ const internationalPublications_ = [
     journal: 'Engineering Applications of Artificial Intelligence (EAAI) Vol. 119, 2023',
     year: '2023',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0952197622006960',
-    icon: <IconPlaceholder src="https://play-lh.googleusercontent.com/-fK5pT4NYVe3VUJ20sDKNliVPEAdx2bM9sQ--RsUbqggfVy2WIyzXEvUO50JhchyIw=w600-h300-pc0xffffff-pd" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/elsevier.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'TopAttn: Focusing on Core Tokens With Token Pruned Self-Attention',
@@ -156,7 +156,7 @@ const internationalPublications_ = [
     journal: '2023 International Conference on Electronics, Information, and Communication (ICEIC)',
     year: '2023',
     link: 'https://ieeexplore.ieee.org/xpl/conhome/10049840/proceeding',
-    icon: <IconPlaceholder src="https://drmcet.ac.in/wp-content/uploads/2024/09/IEEElogo.png" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/ieee.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'A Fair Comparison of PLM Based Mathematical Approach for Solving Math Word Problems',
@@ -164,7 +164,7 @@ const internationalPublications_ = [
     journal: '2023 International Conference on Electronics, Information, and Communication (ICEIC)',
     year: '2023',
     link: 'https://ieeexplore.ieee.org/xpl/conhome/10049840/proceeding',
-    icon: <IconPlaceholder src="https://drmcet.ac.in/wp-content/uploads/2024/09/IEEElogo.png" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/ieee.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'Game Effect Sprite Generation with Minimal Data via Conditional GAN',
@@ -172,7 +172,7 @@ const internationalPublications_ = [
     journal: 'Expert Systems with Applications (ESWA) Vol. 211, 2023',
     year: '2023',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0957417422015767',
-    icon: <IconPlaceholder src="https://play-lh.googleusercontent.com/-fK5pT4NYVe3VUJ20sDKNliVPEAdx2bM9sQ--RsUbqggfVy2WIyzXEvUO50JhchyIw=w600-h300-pc0xffffff-pd" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/elsevier.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'Saliency Guided Data Augmentation Strategy for Maximally Utilizing an Object’s Visual Information',
@@ -188,7 +188,7 @@ const internationalPublications_ = [
     journal: '2022 International Conference on ICT Convergence (ICTC 2022)',
     year: '2022',
     link: 'https://ieeexplore.ieee.org/document/9952762',
-    icon: <IconPlaceholder src="https://drmcet.ac.in/wp-content/uploads/2024/09/IEEElogo.png" alt="IEEE Icon" />,
+    icon: <IconPlaceholder src="/icons/ieee.svg" alt="IEEE Icon" />,
 },
 {
     title: 'Application of one-stage instance segmentation with weather conditions in surveillance cameras at construction sites',
@@ -196,7 +196,7 @@ const internationalPublications_ = [
     journal: 'Automation in Construction, Vol. 133, 2022',
     year: '2022',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0926580521004854',
-    icon: <IconPlaceholder src="https://play-lh.googleusercontent.com/-fK5pT4NYVe3VUJ20sDKNliVPEAdx2bM9sQ--RsUbqggfVy2WIyzXEvUO50JhchyIw=w600-h300-pc0xffffff-pd" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/elsevier.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'TrafficBERT: Pre-trained Model with Large-scale Data for Long-range Traffic Flow Forecasting',
@@ -204,7 +204,7 @@ const internationalPublications_ = [
     journal: 'Expert Systems with Applications (ESWA) Vol. 186, 2021',
     year: '2021',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0957417421011179',
-    icon: <IconPlaceholder src="https://play-lh.googleusercontent.com/-fK5pT4NYVe3VUJ20sDKNliVPEAdx2bM9sQ--RsUbqggfVy2WIyzXEvUO50JhchyIw=w600-h300-pc0xffffff-pd" alt="International Pub Icon 5" />,
+    icon: <IconPlaceholder src="/icons/elsevier.svg" alt="International Pub Icon 5" />,
 },
 {
     title: 'Restoring and Mining the Records of the Joseon Dynasty via Neural Language Modeling and Machine Translation',
@@ -236,7 +236,7 @@ const internationalPublications_ = [
     journal: 'IEEE Access, Vol. 8, 2020',
     year: '2020',
     link: 'https://ieeexplore.ieee.org/document/9034187',
-    icon: <IconPlaceholder src="https://drmcet.ac.in/wp-content/uploads/2024/09/IEEElogo.png" alt="IEEE Icon" />,
+    icon: <IconPlaceholder src="/icons/ieee.svg" alt="IEEE Icon" />,
 },
 {
     title: 'Regional Patch-Based Feature Interpolation Method for Effective Regularization',
@@ -244,7 +244,7 @@ const internationalPublications_ = [
     journal: 'IEEE Access, Vol. 8, 2020',
     year: '2020',
     link: 'https://ieeexplore.ieee.org/document/9000503',
-    icon: <IconPlaceholder src="https://drmcet.ac.in/wp-content/uploads/2024/09/IEEElogo.png" alt="IEEE Icon" />,
+    icon: <IconPlaceholder src="/icons/ieee.svg" alt="IEEE Icon" />,
 },
 ];
 

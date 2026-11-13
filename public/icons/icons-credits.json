@@ -222,5 +222,29 @@
     "url": "https://github.com/simple-icons/simple-icons/blob/develop/icons/acm.svg",
     "trademark": true,
     "colour": "#0085CA"
+  },
+  {
+    "file": "elsevier.svg",
+    "icon": "si:elsevier",
+    "name": "Elsevier",
+    "kind": "mono",
+    "source": "simple-icons/develop",
+    "author": "Simple Icons Collaborators",
+    "licence": "CC0-1.0",
+    "url": "https://github.com/simple-icons/simple-icons",
+    "trademark": true,
+    "colour": "one-colour fallback in the brand hex"
+  },
+  {
+    "file": "ieee.svg",
+    "icon": "si:ieee",
+    "name": "IEEE",
+    "kind": "mono",
+    "source": "simple-icons/develop",
+    "author": "Simple Icons Collaborators",
+    "licence": "CC0-1.0",
+    "url": "https://github.com/simple-icons/simple-icons",
+    "trademark": true,
+    "colour": "one-colour fallback in the brand hex"
   }
 ]

@@ -1,6 +1,23 @@
 /* Resume detail treatments share the existing light/dark color tokens. */
 .resume-publication-icon { width:24px; height:24px; min-width:24px; flex:0 0 24px; margin-right:8px; border-radius:50%; background:#fff; display:inline-flex; align-items:center; justify-content:center; overflow:hidden; }
-.resume-publication-icon img { display:block; width:20px; height:20px; max-width:20px; max-height:20px; object-fit:contain; }
+.resume-publication-icon img { display:block; width:24px; height:24px; max-width:none; max-height:none; object-fit:cover; }
+.resume-publication-icon--compact img { width:20px; height:20px; object-fit:contain; }
+.resume-header-actions .resume-icon-action { display:inline-flex; align-items:center; justify-content:center; flex:0 0 44px; width:44px; height:44px; min-height:44px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--ink); }
+.resume-header-actions .resume-icon-action:hover { background:var(--surface-alt); }
+.resume-icon-action .ui-icon { width:20px; height:20px; }
+.resume-paper-link { display:inline-flex; align-items:center; gap:5px; min-height:44px; color:var(--action); font-size:14px; font-weight:500; }
+.resume-paper-link:hover { text-decoration:underline; text-underline-offset:4px; }
+.resume-paper-link .external-arrow { display:inline-block; transition:transform .18s; }
+.resume-paper-link:hover .external-arrow { transform:translate(2px,-2px); }
+.resume-research-summary { display:grid; gap:7px; font-size:14px; line-height:1.65; margin-top:8px; }
+.resume-research-row { display:flex; align-items:baseline; flex-wrap:wrap; gap:2px 10px; }
+.resume-research-row strong { font-weight:600; color:var(--ink); }
+.resume-research-row a { display:inline-flex; align-items:center; gap:3px; min-height:28px; color:var(--action); text-decoration:none; font-size:13px; }
+.resume-research-row a:hover { text-decoration:underline; text-underline-offset:3px; }
+.resume-research-meta { color:var(--muted); font-size:12px; }
+.resume-thesis-link { color:var(--action); text-decoration:underline; text-decoration-color:color-mix(in srgb,var(--action) 35%,transparent); text-underline-offset:4px; }
+.resume-thesis-link:hover { text-decoration-color:var(--action); }
+@media(max-width:480px) { .resume-research-summary { font-size:13px; gap:9px; } .resume-research-row a { min-height:36px; } }
 .resume-contact-icon { display:flex; align-items:center; justify-content:center; width:24px; height:24px; min-width:24px; flex:0 0 24px; border-radius:50%; overflow:hidden; }
 .resume-contact-icon img { display:block; width:24px; height:24px; max-width:24px; max-height:24px; object-fit:contain; }
 .education-lab { display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; margin:0 0 12px; padding:10px 12px; border-left:2px solid var(--action,#5479c6); background:var(--surface-alt,#242a36); border-radius:0 7px 7px 0; font-size:14px; line-height:1.6; }
