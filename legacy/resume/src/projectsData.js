@@ -7,90 +7,90 @@ const IconPlaceholder = ({ src, alt }) => (
 
 const projects_ = [
     {
-      title: '(수정예정) DATUMO 플랫폼 내 모니터링 대시보드 개발',
+      title: 'DATUMO 플랫폼 내 모니터링 대시보드 개발',
       period: 'Feb 2026 - Aug 2026',
-      description: '수정 예정입니다.',
+      description: '',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
       imageUrl: '', // Image for project detail
       subtitle: '',
-      fullDescription: '수정 예정입니다.',
+      fullDescription: '',
       companyOrInstitution: '',
       role: '',
       externalLinks: [],
     },
     {
-      title: '(수정예정) Agentic Flow를 활용한 Dialouge Topic Segmentation',
+      title: 'Agentic Flow를 활용한 Dialouge Topic Segmentation',
       period: 'Feb 2026 - ',
-      description: '수정 예정입니다.',
+      description: '',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
       imageUrl: '', // Image for project detail
       subtitle: '',
-      fullDescription: '수정 예정입니다.',
+      fullDescription: '',
       companyOrInstitution: '',
       role: '',
       externalLinks: [],
     },
     {
-      title: '(수정예정) 자동 프롬프트 튜닝을 통한 Generalized Category Discovery',
+      title: '자동 프롬프트 튜닝을 통한 Generalized Category Discovery',
       period: 'Jan 2026 - ',
-      description: '수정 예정입니다.',
+      description: '',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
       imageUrl: '', // Image for project detail
       subtitle: '',
-      fullDescription: '수정 예정입니다.',
+      fullDescription: '',
       companyOrInstitution: '',
       role: '',
       externalLinks: [],
     },
     {
-      title: '(수정예정) 기업 문서 내 텍스트, 이미지, 표 추출을 위한 OCR & DLA 원천기술 개발',
+      title: '기업 문서 내 텍스트, 이미지, 표 추출을 위한 OCR & DLA 원천기술 개발',
       period: 'Jan 2026 - ',
-      description: '수정 예정입니다.',
+      description: '',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
       imageUrl: '', // Image for project detail
       subtitle: '',
-      fullDescription: '수정 예정입니다.',
+      fullDescription: '',
       companyOrInstitution: '',
       role: '',
       externalLinks: [],
     },
     {
-      title: '(수정예정) 독자 AI 파운데이션 모델 프로젝트 (SKT 컨소시엄)',
+      title: '독자 AI 파운데이션 모델 프로젝트 (SKT 컨소시엄)',
       period: 'Oct 2025 - ',
-      description: '수정 예정입니다.',
+      description: "- 과학, 법률, API 및 DB 분야의 고난도 LLM 학습 데이터 생성 <br /> - LLM 기반 난이도 고도화와 자동 검증 파이프라인 개발",
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       icon2: <IconPlaceholder src="https://static.wikia.nocookie.net/logo-timeline/images/5/50/Network_T.jpeg/revision/latest?cb=20230515203924" alt="Second Project Icon" />, // Added second icon
       // Detailed fields for modal
-      imageUrl: '', // Image for project detail
-      subtitle: '',
-      fullDescription: '수정 예정입니다.',
-      companyOrInstitution: '',
-      role: '',
-      externalLinks: [],
+      imageUrl: "/resume/projects/foundation-data-pipeline.png", // Image for project detail
+      subtitle: "전문 분야의 고난도 학습 데이터 생성 및 검증",
+      fullDescription: "SKT 컨소시엄의 독자 AI 파운데이션 모델 프로젝트에서 셀렉트스타는 대규모 학습 데이터 구축 및 검증을 담당했습니다. 이 가운데 소속 팀은 과학, 법률, API 및 DB 분야의 데이터 생성과 검증을 수행했습니다. 원천자료에서 LLM으로 문항과 풀이를 생성하고, 복합 조건과 추론 단계를 추가해 난이도를 높인 뒤 LLM 검증과 최종 사람 검수를 거치는 파이프라인을 개발했습니다. 과학은 대학원 이상, 법률은 법률 전문가, API 및 DB는 학부 이상 코딩 수준을 목표로 데이터를 구성했습니다.",
+      companyOrInstitution: "SKT 컨소시엄",
+      role: "과학, 법률, API 및 DB 분야 학습 데이터 생성 및 검증 파이프라인 개발",
+      externalLinks: [{ name: '관련 기사 (SK텔레콤)', url: 'https://news.sktelecom.com/219714' }],
     },
     {
-      title: '(수정예정) (경기도 교육청) AI-데이터 중심의 경기교육 디지털 플랫폼 사업',
+      title: '(경기도 교육청) AI-데이터 중심의 경기교육 디지털 플랫폼 사업',
       period: 'Oct 2025 - Dec 2025',
-      description: '수정 예정입니다.',
+      description: "- 초중고 평가계획서 초안 생성을 위한 LLM 데이터 증강 파이프라인 구축 <br /> - LLM-Judge 기반 자동평가 구성",
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       icon2: <IconPlaceholder src="https://www.goe.go.kr/resource/old/BBSMSTR_000000000163/BBS_202203230959030481.png" alt="Second Project Icon" />, // Added second icon
       // Detailed fields for modal
-      imageUrl: '', // Image for project detail
-      subtitle: '',
-      fullDescription: '수정 예정입니다.',
-      companyOrInstitution: '',
-      role: '',
-      externalLinks: [],
+      imageUrl: "/resume/projects/goe-platform.png", // Image for project detail
+      subtitle: "경기교육 AI 플랫폼을 위한 학습 및 평가 데이터 구축",
+      fullDescription: "LG CNS와 협력하여 경기도교육청 AI 플랫폼의 모델 학습 및 평가를 위한 데이터를 구축했습니다. 경기도교육청의 초중고 평가계획서 관련 문서와 예시를 정리하고, 소수의 예시를 입력하면 학교별 평가계획서 초안을 생성하는 LLM 기반 데이터 증강 파이프라인을 개발했습니다. 이와 함께 프롬프트 기반 LLM-Judge 자동평가를 구성했습니다.",
+      companyOrInstitution: "LG CNS",
+      role: "평가계획서 초안 생성 및 데이터 증강 파이프라인 개발, LLM-Judge 자동평가 구성",
+      externalLinks: [{ name: '관련 기사 (경기도교육청)', url: 'https://www.goe.go.kr/goe/na/ntt/selectNttInfo.do?nttSn=108910&mi=10102&searchAt1=ADIT1_COLUMN&searchValue1=%EB%8F%84%EA%B5%90%EC%9C%A1%EC%B2%AD' }],
     },
     {
       title: '[삼성생명 C-Lab] LLM내 정형데이터 연결 및 내제지식화 기술 개발',

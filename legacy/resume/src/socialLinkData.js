@@ -1,7 +1,7 @@
 // Placeholder for icons (user will insert images here)
 const IconPlaceholder = ({ src, alt }) => (
-<div className="w-6 h-6 mr-2 flex-shrink-0 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
-    {src && <img src={src} alt={alt} className="w-full h-full object-cover" />}
+<div className="resume-contact-icon">
+    {src && <img src={src} alt={alt} width="24" height="24" />}
 </div>
 );
 

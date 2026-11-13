@@ -1,7 +1,7 @@
 // Placeholder for icons (user will insert images here)
 const IconPlaceholder = ({ src, alt }) => (
-<div className="w-6 h-6 mr-2 flex-shrink-0 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
-    {src && <img src={src} alt={alt} className="w-full h-full object-cover" />}
+<div className="resume-publication-icon">
+    {src && <img src={src} alt={alt} width="20" height="20" />}
 </div>
 );
 
@@ -12,7 +12,7 @@ const internationalPublications_ = [
     journal: 'ACM International Conference on Web Search and Data Mining (WSDM 2027), Findings',
     year: '2027',
     link: 'https://arxiv.org/abs/2611.07246v2',
-    icon: <IconPlaceholder src="/icons/ui-file-text.svg" alt="Publication" />,
+    icon: <IconPlaceholder src="/icons/acm.svg" alt="ACM" />,
 },
 {
     title: 'MHTS: Multi-Hop Tree Structure Framework for Generating Difficulty-Controllable QA Datasets for RAG Evaluation',

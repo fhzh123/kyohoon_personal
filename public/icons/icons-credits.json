@@ -210,5 +210,17 @@
     "licence": "ISC",
     "url": "https://github.com/lucide-icons/lucide",
     "trademark": false
+  },
+  {
+    "file": "acm.svg",
+    "icon": "si:acm",
+    "name": "ACM",
+    "kind": "mono",
+    "source": "Simple Icons",
+    "author": "Simple Icons Collaborators",
+    "licence": "CC0-1.0",
+    "url": "https://github.com/simple-icons/simple-icons/blob/develop/icons/acm.svg",
+    "trademark": true,
+    "colour": "#0085CA"
   }
 ]

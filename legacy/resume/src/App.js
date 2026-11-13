@@ -21,10 +21,11 @@ const App = () => {
   const [activeTab, setActiveTab] = useState('Experience'); // Default to Experience based on new order
   // State to manage the visibility and content of the project detail modal
   const [selectedProject, setSelectedProject] = useState(null);
+  const canReturnHome = window.RESUME_SESSION?.authenticated === true;
   // State to manage the active paper type in Publications
   const [activePaperType, setActivePaperType] = useState('International'); // Default to International
-  // State to manage the active content type in Lecture & Honors
-  const [activeLectureHonorsType, setActiveLectureHonorsType] = useState('Lecture'); // Default to Lecture
+  // State to manage the active content type in Honors & Lecture
+  const [activeLectureHonorsType, setActiveLectureHonorsType] = useState('Honors'); // Default to Lecture
   // State to manage the visibility of the KakaoTalk QR modal
   const [showKakaoQr, setShowKakaoQr] = useState(false);
   // State to manage the flip state of the profile picture
@@ -91,7 +92,7 @@ const App = () => {
       education: 'Education',
       projects: 'Projects',
       publications: 'Publications',
-      lectureHonors: 'Lecture & Honors',
+      lectureHonors: 'Honors & Lecture',
       patent: 'Patent',
     },
     buttons: {
@@ -156,7 +157,7 @@ const App = () => {
       education: 'Education',
       projects: 'Projects',
       publications: 'Publications',
-      lectureHonors: 'Lecture & Honors',
+      lectureHonors: 'Honors & Lecture',
       patent: 'Patent',
     },
     buttons: {
@@ -281,6 +282,15 @@ const App = () => {
                   {edu.degree} - {edu.university}
                 </div>
                 <div className="text-sm md:text-base text-gray-400 mb-2">{edu.period}</div>
+                {['Ph.D','MS'].includes(edu.degree) && (
+                  <div className="education-lab">
+                    <a href="https://iiplcau.github.io/" target="_blank" rel="noopener noreferrer">
+                      {language === 'ko' ? '지능형정보처리연구실' : 'Intelligent Information Processing Lab.'}
+                      <span aria-hidden="true"> ↗</span>
+                    </a>
+                    <span className="education-advisor">{language === 'ko' ? '지도교수: 김영빈' : 'Advisor: Youngbin Kim'}</span>
+                  </div>
+                )}
                 <div className="text-sm md:text-base text-gray-300 flex items-center mb-1">
                   {language === 'ko' ? '학점: ' : 'Grade: '}{edu.grade}
                   {edu.transcriptLink && (
@@ -358,7 +368,7 @@ const App = () => {
                     {pub.title}
                   </div>
                   <div className="text-sm md:text-base text-gray-400 mb-1" dangerouslySetInnerHTML={{ __html: `${language === 'ko' ? '저자: ' : 'Author: '}${pub.author}` }}></div>
-                  <div className="text-sm md:text-base text-gray-400 mb-2">{pub.journal} ({pub.year})</div>
+                  <div className="text-sm md:text-base text-gray-400 mb-2">{pub.journal}</div>
                   <a
                     href={pub.link}
                     target="_blank"
@@ -372,28 +382,17 @@ const App = () => {
             </div>
           </div>
         );
-      case 'Lecture & Honors':
+      case 'Honors & Lecture':
         const currentLectureHonors = activeLectureHonorsType === 'Lecture' ? currentData.lectures : currentData.honors;
         return (
           <div key="lecture-honors-content" className={`px-6 md:px-8 pt-0 md:pt-1 ${contentFixedHeightClass} flex flex-col justify-between overflow-y-auto animate-tabContentFadeIn`}>
-            {/* Lecture/Honors Type Selector */}
-            <div className="flex justify-center mt-[-0.0rem] mb-0 bg-gray-700 rounded-lg p-2">
-              <button
-                onClick={() => setActiveLectureHonorsType('Lecture')}
-                className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md font-semibold transition-colors duration-200 text-sm md:text-base ${
-                  activeLectureHonorsType === 'Lecture' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                {currentData.buttons.lecture}
-              </button>
-              <button
-                onClick={() => setActiveLectureHonorsType('Honors')}
-                className={`ml-2 md:ml-4 px-3 py-1.5 md:px-4 md:py-2 rounded-md font-semibold transition-colors duration-200 text-sm md:text-base ${
-                  activeLectureHonorsType === 'Honors' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                {currentData.buttons.honors}
-              </button>
+            <div className="flex justify-center mt-0 mb-0 bg-gray-700 rounded-lg p-2">
+              {['Honors','Lecture'].map(type => (
+                <button key={type} onClick={() => setActiveLectureHonorsType(type)}
+                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md font-semibold transition-colors duration-200 text-sm md:text-base ${activeLectureHonorsType === type ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-600'}`}>
+                  {type === 'Honors' ? currentData.buttons.honors : currentData.buttons.lecture}
+                </button>
+              ))}
             </div>
 
             <div key={activeLectureHonorsType} className="animate-tabContentFadeIn"> {/* Added key and animation for sub-tab content */}
@@ -465,7 +464,7 @@ const App = () => {
         </span>
 
         <div className="resume-header-actions">
-          <a className="btn btn--secondary" href="/" aria-label="홈으로"><UiIcon name="house" /><span>Home</span></a>
+          {canReturnHome && <a className="btn btn--secondary" href="/" aria-label="홈으로"><UiIcon name="house" /><span>Home</span></a>}
           <button type="button" className="theme-toggle btn btn--secondary" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span className="theme-sun"><UiIcon name="sun" /></span><span className="theme-moon"><UiIcon name="moon" /></span><span data-theme-label>라이트 모드</span></button>
         {/* Language Toggle Button for Desktop - FIXED AND IMPROVED */}
         {/* The toggle is now more robust by using flexbox for equal spacing and simpler positioning for the sliding background. */}
@@ -586,7 +585,7 @@ const App = () => {
             {[
               ['Experience', 'experience', 'briefcase-business'], ['Education', 'education', 'graduation-cap'],
               ['Projects', 'projects', 'folder-open'], ['Publications', 'publications', 'book-open'],
-              ['Lecture & Honors', 'lectureHonors', 'award'], ['Patent', 'patent', 'scroll-text'],
+              ['Honors & Lecture', 'lectureHonors', 'award'], ['Patent', 'patent', 'scroll-text'],
             ].map(([tab, label, icon]) => <button type="button" key={tab} aria-pressed={activeTab === tab}
               className={activeTab === tab ? 'resume-tab is-active' : 'resume-tab'} onClick={() => setActiveTab(tab)}>
               <UiIcon name={icon} /><span>{currentData.menu[label]}</span>
@@ -643,7 +642,7 @@ const App = () => {
                   alt={selectedProject.title}
                   className={`w-full h-auto rounded-lg object-cover ${isLoadingImage ? 'hidden' : 'block'}`}
                   onLoad={() => setIsLoadingImage(false)}
-                  onError={() => setIsLoadingImage(false)} // Handle error case as well
+                  onError={event => { event.currentTarget.style.display = 'none'; setIsLoadingImage(false); }}
                 />
               </>
             )}

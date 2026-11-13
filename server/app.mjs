@@ -215,7 +215,14 @@ export function createHandler({localPreview = false, rootDir = root, environment
       }
       if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (pathname === '/') return send(res,200,homePage(),'text/html; charset=utf-8');
-      if (pathname === '/resume' || pathname === '/resume/') return serveFile(req,res,path.join(rootDir,'public/resume'),'index.html');
+      if (pathname === '/resume' || pathname === '/resume/') {
+        // Keep the public CV available to everyone; only expose the Home shortcut
+        // after validating the same server-side session used by private spaces.
+        const access = await authorize(req,res);
+        const html = await readFile(path.join(rootDir,'public/resume/index.html'),'utf8');
+        const session = `<script>window.RESUME_SESSION={authenticated:${Boolean(access)}};</script>`;
+        return send(res,200,req.method === 'HEAD' ? '' : html.replace('<head>', '<head>'+session),'text/html; charset=utf-8');
+      }
       // Only public is exposed. Never expose project files, source, private data or docs.
       return serveFile(req,res,path.join(rootDir,'public'),pathname);
     } catch (error) {
@@ -244,3 +251,4 @@ async function body(req,max) {
   for await (const chunk of req) {length+=Buffer.byteLength(chunk);if(length>max){const e=new Error('too large');e.status=413;throw e;}chunks.push(Buffer.from(chunk));}
   return Buffer.concat(chunks).toString('utf8');
 }
+

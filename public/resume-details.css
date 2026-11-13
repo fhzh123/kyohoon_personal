@@ -1,0 +1,10 @@
+/* Resume detail treatments share the existing light/dark color tokens. */
+.resume-publication-icon { width:24px; height:24px; min-width:24px; flex:0 0 24px; margin-right:8px; border-radius:50%; background:#fff; display:inline-flex; align-items:center; justify-content:center; overflow:hidden; }
+.resume-publication-icon img { display:block; width:20px; height:20px; max-width:20px; max-height:20px; object-fit:contain; }
+.resume-contact-icon { display:flex; align-items:center; justify-content:center; width:24px; height:24px; min-width:24px; flex:0 0 24px; border-radius:50%; overflow:hidden; }
+.resume-contact-icon img { display:block; width:24px; height:24px; max-width:24px; max-height:24px; object-fit:contain; }
+.education-lab { display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; margin:0 0 12px; padding:10px 12px; border-left:2px solid var(--action,#5479c6); background:var(--surface-alt,#242a36); border-radius:0 7px 7px 0; font-size:14px; line-height:1.6; }
+.education-lab a { color:var(--action,#79a9f5); font-weight:600; text-decoration:none; }
+.education-lab a:hover { text-decoration:underline; }
+.education-advisor { color:var(--muted,#a0a8b7); font-size:13px; }
+@media(max-width:480px) { .education-lab { align-items:flex-start; flex-direction:column; gap:2px; } }
