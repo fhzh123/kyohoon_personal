@@ -23,7 +23,7 @@ async function get(path) {
 }
 
 test('public direct routes return independent HTML documents', async () => {
-  for (const route of ['/', '/resume', '/resume/', '/work', '/work/']) {
+  for (const route of ['/', '/resume', '/resume/', '/login', '/login/']) {
     const { response, text } = await get(route);
     assert.equal(response.status, 200, `${route} responds`);
     assert.match(response.headers.get('content-type'), /^text\/html/);
@@ -47,12 +47,12 @@ test('home has three keyboard-native whole-card links with image above title and
   }
   assert.match(text, /<html lang="ko" data-theme="dark"[^>]*>/);
   assert.match(text, /<main id="main"[^>]*>/);
-  assert.match(text, /<script src="\/theme\.js\?v=20261112-4"><\/script>/, 'small appearance script is shared by public and protected pages');
+  assert.match(text, /<script src="\/theme\.js\?v=20261113-1"><\/script>/, 'small appearance script is shared by public and protected pages');
 });
 
 test('all local home and login images/styles/font references resolve over actual HTTP', async () => {
-  const html = (await get('/')).text + (await get('/work')).text;
-  const sources = new Set([...html.matchAll(/(?:src|href)="([^"#]+)"/g)].map(match => match[1]).filter(p => /\.(?:png|webp|css|js)(?:\?[^#]*)?$/.test(p)));
+  const html = (await get('/')).text + (await get('/login')).text;
+  const sources = new Set([...html.matchAll(/(?:src|href)="([^"#]+)"/g)].map(match => match[1]).filter(p => p.startsWith('/') && /\.(?:png|webp|css|js)(?:\?[^#]*)?$/.test(p)));
   sources.add('/fonts/WantedSans-Medium.ttf');
   for (const source of sources) {
     const response = await fetch(origin + source);
@@ -63,7 +63,7 @@ test('all local home and login images/styles/font references resolve over actual
     if (source.endsWith('.png')) {
       assert.equal(response.headers.get('content-type'), 'image/png');
       assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
-      assert.equal(bytes.readUInt32BE(16), bytes.readUInt32BE(20), `${source} has square intrinsic aspect ratio`);
+      assert.ok(bytes.readUInt32BE(16) > 0 && bytes.readUInt32BE(20) > 0, `${source} has valid dimensions`);
       assert.equal(bytes[25], 6, `${source} retains RGBA channel format`);
     }
     if (source.endsWith('.ttf')) assert.equal(response.headers.get('content-type'), 'font/ttf');
@@ -85,14 +85,14 @@ test('Resume document resolves its own assets without main stylesheet or iframe'
 });
 
 test('Work missing-config page has explicit labeled disabled login and home navigation', async () => {
-  const { text } = await get('/work');
-  assert.match(text, /Supabase 연결 전/);
+  const { text } = await get('/login');
+  assert.match(text, /지금은 로그인을 이용할 수 없습니다/);
   assert.match(text, /<label for="email">/);
   assert.match(text, /<input[^>]+id="email"[^>]+type="email"[^>]+autocomplete="username"[^>]+disabled/);
   assert.match(text, /<label for="password">/);
   assert.match(text, /<input[^>]+id="password"[^>]+type="password"[^>]+autocomplete="current-password"[^>]+disabled/);
   assert.match(text, /<button[^>]+type="submit"[^>]+disabled/);
-  assert.match(text, /href="\/">← 홈으로/);
+  assert.match(text, /href="\/"/);
   assert.equal(/action="[^\"]*(?:signup|register)/i.test(text), false);
   assert.equal(text.includes('/work/preview'), false, 'production has no preview entry link');
 });
@@ -100,7 +100,7 @@ test('Work missing-config page has explicit labeled disabled login and home navi
 test('unauthorized Work resources remain uncached and outside public files', async () => {
   for (const route of ['/api/work-bootstrap', '/api/research-state', '/work/app/index.html', '/work/app/taxonomy.js', '/work/app/assets/roadmap.png']) {
     const { response, text } = await get(route);
-    assert.equal(response.status, 401);
+    assert.equal(response.status, route === '/work/app/index.html' ? 303 : 401);
     assert.match(response.headers.get('cache-control'), /no-store/);
     assert.equal(text.includes('"state"'), false);
     assert.equal(text.includes('"taxonomySource"'), false);

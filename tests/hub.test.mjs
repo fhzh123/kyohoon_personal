@@ -48,9 +48,9 @@ async function localCookie() {
 
 test('unauthenticated Work contains login only and hides Draft tools and demo URLs', async () => {
   for (const origin of [development, production]) {
-    const { response, text } = await request(origin, '/work');
+    const { response, text } = await request(origin, '/login');
     assert.equal(response.status, 200);
-    assert.match(text, /Selectstar 로그인/);
+    assert.match(text, /id="form-title">로그인/);
     for (const title of titles.slice(1)) assert.ok(!text.includes(title), 'private demo title is hidden');
     assert.ok(!text.includes('<h3>연구일지</h3>'), 'private journal launch slot is hidden');
     for (const demo of demos) assert.ok(!text.includes(demo), 'private demo URL is hidden');
@@ -84,9 +84,11 @@ test('authorized local Work groups demos and provides three illustrated tools', 
   assert.match(text, /Supabase와 동기화되지 않습니다/);
 });
 
-test('forgot-password contact is mailto, with no public signup or prefilled credential', async () => {
-  const { text } = await request(production, '/work');
-  assert.match(text, /href="mailto:fhzh@naver\.com">비밀번호를 잊어버리셨나요\?/);
+test('forgot-password contact opens a dialog, with no public signup or prefilled credential', async () => {
+  const { text } = await request(production, '/login');
+  assert.match(text, /data-contact-open/);
+  assert.match(text, /<dialog id="account-help"/);
+  assert.match(text, /href="mailto:fhzh@naver\.com"/);
   assert.equal(/action="[^\"]*(?:signup|register)/i.test(text), false);
   assert.equal(/<input[^>]+(?:id="password"[^>]+value=|value=[^>]+id="password")/.test(text), false);
   assert.match(text, /type="password"/);
@@ -98,8 +100,8 @@ test('production refuses preview despite local flag and does not show authentica
   assert.equal(response.status, 404);
   const devCookie = await localCookie();
   const result = await request(production, '/work', { cookie: devCookie });
-  assert.equal(result.response.status, 200);
-  assert.match(result.text, /Selectstar 로그인/);
+  assert.equal(result.response.status, 303);
+  assert.equal(result.response.headers.get('location'), '/login?next=%2Fwork');
   assert.ok(!result.text.includes('class="tool-grid"'));
   for (const demo of demos) assert.ok(!result.text.includes(demo));
 });

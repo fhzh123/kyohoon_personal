@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, timingSafeEqual, randomUUID } from 'node:crypto';
 import { homePage, loginPage, workPage, demosPage, personalPage } from '../views/pages.mjs';
-import { previewAllowed, safeRelativePath, validState } from './policy.mjs';
+import { previewAllowed, safeRelativePath, safeLoginDestination, validState } from './policy.mjs';
 import { expenseRoutes } from './expense-routes.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -120,19 +120,26 @@ export function createHandler({localPreview = false, rootDir = root, environment
         if (attempts.size > 500) attempts.delete(attempts.keys().next().value);
         const raw = await body(req,16384);
         const values = String(req.headers['content-type']||'').includes('application/json') ? JSON.parse(raw) : Object.fromEntries(new URLSearchParams(raw));
-        const space=values.space==='personal'?'personal':'selectstar';
+        const next=safeLoginDestination(values.next || (values.space==='personal'?'/personal':'/work')); 
         const result = await authFetch('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:values.email,password:values.password})});
-        if (!result.ok) return send(res,401,loginPage({configured,preview:preview(req),space,message:'이메일 또는 비밀번호를 확인해 주세요.'}),'text/html; charset=utf-8');
+        if (!result.ok) return send(res,401,loginPage({configured,preview:preview(req),next,message:'이메일 또는 비밀번호를 확인해 주세요.'}),'text/html; charset=utf-8');
         const session = await result.json();
         const membership = await member(session.access_token);
-        if (!membership || membership.user_id !== session.user?.id) return send(res,403,loginPage({configured,preview:preview(req),space,message:'이 계정에는 업무 공간 접근 권한이 없습니다.'}),'text/html; charset=utf-8');
-        return redirect(res,space==='personal'?'/personal':'/work',[setCookie('kh_access',session.access_token),setCookie('kh_refresh',session.refresh_token,604800)]);
+        if (!membership || membership.user_id !== session.user?.id) return send(res,403,loginPage({configured,preview:preview(req),next,message:'이 계정에는 업무 공간 접근 권한이 없습니다.'}),'text/html; charset=utf-8');
+        return redirect(res,next,[setCookie('kh_access',session.access_token),setCookie('kh_refresh',session.refresh_token,604800)]);
       }
       if (pathname === '/api/auth/logout' && req.method === 'POST') {
         const access = cookiesOf(req).kh_access;
         if (access && configured) await authFetch('/auth/v1/logout',{method:'POST',headers:bearer(access)}).catch(()=>{});
         res.setHeader('Clear-Site-Data','"cache", "storage"');
-        return redirect(res,'/work',cookieNames.map(n=>setCookie(n,'',0)));
+        return redirect(res,'/',cookieNames.map(n=>setCookie(n,'',0)));
+      }
+      if (pathname === '/login' || pathname === '/login/') {
+        if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
+        const next=safeLoginDestination(requestUrl.searchParams.get('next'));
+        const access=await authorize(req,res);
+        if(access)return redirect(res,next);
+        return send(res,200,req.method==='HEAD'?'':loginPage({configured,preview:preview(req),next}),'text/html; charset=utf-8');
       }
       if (pathname === '/work/preview') {
         if (req.method !== 'GET') return send(res,405,{error:'허용되지 않은 요청입니다.'});
@@ -143,23 +150,27 @@ export function createHandler({localPreview = false, rootDir = root, environment
       if (pathname === '/personal' || pathname === '/personal/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
         const access=await authorize(req,res);
-        return send(res,200,access?personalPage():loginPage({configured,preview:false,space:'personal'}),'text/html; charset=utf-8');
+        if(!access)return redirect(res,'/login?next='+encodeURIComponent(pathname+requestUrl.search));
+        return send(res,200,personalPage(),'text/html; charset=utf-8');
       }
       if (pathname === '/work/demos' || pathname === '/work/demos/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
         const access=await authorize(req,res);
-        if(!access)return redirect(res,'/work');
+        if(!access)return redirect(res,'/login?next='+encodeURIComponent(pathname+requestUrl.search));
         return send(res,200,demosPage(),'text/html; charset=utf-8');
       }
       if (pathname === '/work' || pathname === '/work/') {
         const access = await authorize(req,res);
         if (access) return send(res,200,workPage(access),'text/html; charset=utf-8');
-        return send(res,200,loginPage({configured,preview:preview(req)}),'text/html; charset=utf-8');
+        return redirect(res,'/login?next='+encodeURIComponent(pathname+requestUrl.search));
       }
       if (pathname.startsWith('/work/app/') || pathname === '/api/research-state' || pathname === '/api/work-bootstrap') {
         const authStart = performance.now();
         const access = await authorize(req,res);
-        if (!access) return send(res,401,{error:'허용된 사용자로 로그인해 주세요.'});
+        if (!access) {
+          if (['GET','HEAD'].includes(req.method) && pathname==='/work/app/index.html') return redirect(res,'/login?next='+encodeURIComponent(pathname+requestUrl.search));
+          return send(res,401,{error:'허용된 사용자로 로그인해 주세요.'});
+        }
         const authTiming = `auth;dur=${(performance.now()-authStart).toFixed(1)}`;
         res.setHeader('Server-Timing',authTiming);
         if (pathname === '/work/app/index.html' && ['GET','HEAD'].includes(req.method)) {
@@ -214,7 +225,10 @@ export function createHandler({localPreview = false, rootDir = root, environment
         return serveFile(req,res,path.join(rootDir,'work-app'),relative);
       }
       if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
-      if (pathname === '/') return send(res,200,homePage(),'text/html; charset=utf-8');
+      if (pathname === '/') {
+        const access=await authorize(req,res);
+        return send(res,200,homePage({authenticated:Boolean(access)}),'text/html; charset=utf-8');
+      }
       if (pathname === '/resume' || pathname === '/resume/') {
         // Keep the public CV available to everyone; only expose the Home shortcut
         // after validating the same server-side session used by private spaces.

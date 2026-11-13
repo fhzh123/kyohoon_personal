@@ -14,7 +14,11 @@ export function expenseRoutes({authorize,authFetch,bearer,send,body,serveFile,ro
     const pathname=url.pathname;
     if(!(pathname==='/work/expenses'||pathname.startsWith('/work/expenses/')||pathname==='/api/card-ledger'||pathname.startsWith('/api/card-ledger/')))return false;
     const access=await authorize(req,res);
-    if(!access){send(res,401,{error:'허용된 사용자로 로그인해 주세요.'});return true;}
+    if(!access){
+      if(['GET','HEAD'].includes(req.method)&&['/work/expenses','/work/expenses/','/work/expenses/index.html'].includes(pathname))send(res,303,'','text/plain',{Location:'/login?next='+encodeURIComponent(pathname+url.search)});
+      else send(res,401,{error:'허용된 사용자로 로그인해 주세요.'});
+      return true;
+    }
     try{
       if(pathname==='/work/expenses'||pathname.startsWith('/work/expenses/')){
         if(!['GET','HEAD'].includes(req.method)){send(res,405,{error:'허용되지 않은 요청입니다.'});return true;}

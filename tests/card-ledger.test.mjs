@@ -69,7 +69,7 @@ async function context(){
 }
 const payload=()=>({fileName:options.fileName,fileBase64:bytes().toString('base64'),year:2026,month:1,asOf:options.asOf,complete:true,expectedRevision:null});
 test('unauthenticated users cannot read page, modules, reports, originals or upload previews',async()=>{
-  const {handler}=await context();for(const url of ['/work/expenses/','/work/expenses/app.js','/api/card-ledger?year=2026','/api/card-ledger/file?id=2026-01-1234','/api/card-ledger/inspect']){const r=await request(handler,url);assert.equal(r.status,401);assert.match(r.headers['cache-control'],/no-store/);}
+  const {handler}=await context();for(const url of ['/work/expenses/','/work/expenses/app.js','/api/card-ledger?year=2026','/api/card-ledger/file?id=2026-01-1234','/api/card-ledger/inspect']){const r=await request(handler,url);assert.equal(r.status,url==='/work/expenses/'?303:401);assert.match(r.headers['cache-control'],/no-store/);}
 });
 test('local upload preview is read-only; persistence and replacement are atomic with revision conflicts',async()=>{
   const {handler,headers}=await context();const input=payload();

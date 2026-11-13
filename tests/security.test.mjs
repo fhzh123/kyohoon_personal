@@ -90,7 +90,7 @@ test('unauthenticated API, application code and attachments are all guarded befo
   const handler = createHandler({ rootDir: await fixture(), environment: baseEnvironment, fetcher() { throw new Error('must not contact upstream'); } });
   for (const url of ['/api/research-state', '/api/work-bootstrap', '/work/app/index.html', '/work/app/taxonomy.js', '/work/app/assets/fixture.png']) {
     const response = await request(handler, url);
-    assert.equal(response.status, 401, url);
+    assert.equal(response.status, url === '/work/app/index.html' ? 303 : 401, url);
     noPrivateContent(response);
   }
 });
@@ -106,10 +106,10 @@ test('project private files and source are never served through a static fallbac
 
 test('missing Supabase configuration presents a disabled login and no workspace contents', async () => {
   const handler = createHandler({ rootDir: await fixture(), environment: baseEnvironment });
-  const response = await request(handler, '/work');
+  const response = await request(handler, '/login');
   assert.equal(response.status, 200);
-  assert.match(response.text, /Supabase 연결 전/);
-  assert.match(response.text, /공개 회원가입은 제공하지 않습니다/);
+  assert.match(response.text, /지금은 로그인을 이용할 수 없습니다/);
+  assert.match(response.text, /등록된 계정만 이용할 수 있습니다/);
   assert.match(response.text, /type="password"[^>]*disabled/);
   assert.ok(!response.text.includes('/work/preview'));
   noPrivateContent(response);
@@ -343,7 +343,7 @@ test('Personal and demo picker enforce existing allowed membership, with allowli
   throw Error('New spaces must not fetch research data');
  };
  const handler=createHandler({rootDir:await fixture(),environment:remoteEnvironment,fetcher});
- const anonymous=await request(handler,'/personal');assert.match(anonymous.text,/Personal 로그인/);assert.ok(!anonymous.text.includes('personal-build.webp'));
+ const anonymous=await request(handler,'/personal');assert.equal(anonymous.headers.location,'/login?next=%2Fpersonal');assert.ok(!anonymous.text.includes('personal-build.webp'));
  assert.equal((await request(handler,'/work/demos')).status,303);
  const headers={cookie:'kh_access=synthetic-private'};
  const personal=await request(handler,'/personal',{headers});assert.match(personal.text,/personal-build.webp/);assert.match(personal.headers['cache-control'],/no-store/);
@@ -351,5 +351,5 @@ test('Personal and demo picker enforce existing allowed membership, with allowli
  for(const [space,destination]of [['personal','/personal'],['selectstar','/work'],['https://outside.invalid','/work']]){
   const r=await request(handler,'/api/auth/login',{method:'POST',headers:{'content-type':'application/json'},body:{space,email:'fixture@example.invalid',password:'synthetic'}});assert.equal(r.headers.location,destination);
  }
- allowed=false;assert.match((await request(handler,'/personal',{headers})).text,/Personal 로그인/);
+ allowed=false;assert.equal((await request(handler,'/personal',{headers})).headers.location,'/login?next=%2Fpersonal');
 });

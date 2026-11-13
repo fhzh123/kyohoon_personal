@@ -6,8 +6,8 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 execFileSync(process.execPath,['scripts/build-resume.mjs'],{cwd:root,stdio:'inherit'});
 execFileSync(process.execPath,['node_modules/typescript/lib/tsc.js','--noEmit'],{cwd:root,stdio:'inherit'});
 // The development entry point is intentionally excluded from deployments.
-for(const file of ['server/app.mjs','server/start.mjs','views/pages.mjs','api/index.mjs','server/card-ledger.mjs','server/expense-routes.mjs','work-expenses/app.js','work-expenses/core.js','public/theme.js','public/loading.js','public/galaxy.js']) execFileSync(process.execPath,['--check',file],{cwd:root,stdio:'inherit'});
-for(const file of ['public/resume/index.html','public/mascot/resume.png','public/mascot/work.png','public/site.css','public/spaces.css',...['selectstar-idle','selectstar-hover','personal-idle','personal-build','resume-hover','journal','demo','ontology','parsing','expenses','galaxy'].map(name=>'public/mascot/'+name+'.webp'),'public/mascot/selectstar-logo.png']) await access(path.join(root,file));
+for(const file of ['server/app.mjs','server/start.mjs','views/pages.mjs','api/index.mjs','server/card-ledger.mjs','server/expense-routes.mjs','work-expenses/app.js','work-expenses/core.js','public/theme.js','public/auth.js','public/loading.js','public/galaxy.js']) execFileSync(process.execPath,['--check',file],{cwd:root,stdio:'inherit'});
+for(const file of ['public/resume/index.html','public/mascot/resume.png','public/mascot/login-mascots.png','public/auth.css','public/icons/ui-log-in.svg','public/mascot/work.png','public/site.css','public/spaces.css',...['selectstar-idle','selectstar-hover','personal-idle','personal-build','resume-hover','journal','demo','ontology','parsing','expenses','galaxy'].map(name=>'public/mascot/'+name+'.webp'),'public/mascot/selectstar-logo.png']) await access(path.join(root,file));
 const handler=await readFile(path.join(root,'api/index.mjs'),'utf8');
 if(!handler.includes('localPreview: false')) throw new Error('Production preview guard missing');
 await mkdir(path.join(root,'artifacts'),{recursive:true});

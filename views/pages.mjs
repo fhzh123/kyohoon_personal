@@ -17,15 +17,16 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261113-review-2">
+<link rel="stylesheet" href="/auth.css?v=20261113-1">
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {
   return `<div class="portal-art ${hover && hover !== idle ? 'has-swap' : ''}"><img class="pose-idle" src="/mascot/${idle}" alt="${alt}" width="768" height="768" decoding="async">${hover && hover !== idle ? `<img class="pose-active" src="/mascot/${hover}" alt="" aria-hidden="true" width="768" height="768" decoding="async">` : ''}</div>`;
 }
 
-export const homePage = () => shell('진교훈', `
+export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
 <div class="home-shell">
-  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동"><a class="text-link" href="/resume">${uiIcon('file-text')}<span>Resume</span></a><a class="text-link" href="/work">${uiIcon('briefcase-business')}<span>Work</span></a>${themeButton()}</nav></header>
+  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동"><a class="text-link home-shortcut" href="/resume">${uiIcon('file-text')}<span>Resume</span></a><a class="text-link home-shortcut" href="/work">${uiIcon('briefcase-business')}<span>Work</span></a>${themeButton()}${authenticated ? '<form action="/api/auth/logout" method="post"><button class="btn header-login" type="submit">로그아웃</button></form>' : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
   <main id="main" class="home-main hero hero--split" data-enter aria-labelledby="intro-title">
     <section class="intro hero-text">
       <p class="home-role">AI Research Engineer</p>
@@ -54,26 +55,33 @@ export function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 }
 
-export function loginPage({configured, preview, message = '', space = 'selectstar'}) {
-  const personal = space === 'personal', name = personal ? 'Personal' : 'Selectstar';
-  return shell(name, `
+export function loginPage({configured, preview, message = '', next = '/work'}) {
+  return shell('로그인', `
 <div class="login-shell"><header class="site-header">${brand()}<div class="header-actions"><a class="text-link link" href="/">${uiIcon('house')}<span>홈으로</span></a>${themeButton()}</div></header>
-<main id="main" class="login-main hero" data-enter>
-  <div class="login-art hero-text"><h1>${name}</h1><p>${personal ? '개인 계정으로 사용하는 공간입니다.' : '연구일지와 업무 자료를 관리합니다.'}</p><img src="/mascot/${personal ? 'personal-idle.webp' : 'selectstar-idle.webp'}" alt="" width="320" height="320"></div>
-  <section class="login-card" aria-labelledby="login-title"><h2 id="login-title">${name} 로그인</h2><p class="muted">허용된 계정으로 로그인하세요.</p>
+<main id="main" class="login-main hero" data-enter aria-labelledby="login-title">
+  <div class="login-art hero-text"><p class="login-eyebrow">Kyohoon Jin</p><h1 id="login-title">나의 공간에<br>로그인하세요.</h1><p>연구일지와 개인 공간을<br>등록된 계정으로 이용하세요.</p><div class="auth-mascot auth-mascot--login"><img src="/mascot/login-mascots.png" alt="키 카드를 들고 안내하는 마스코트" width="1920" height="819"></div></div>
+  <section class="login-card" aria-labelledby="form-title"><div class="login-card-heading"><span class="login-symbol" aria-hidden="true">${uiIcon('log-in')}</span><h2 id="form-title">로그인</h2><p class="muted">이메일과 비밀번호를 입력해 주세요.</p></div>
   ${message ? `<p class="notice error" role="alert">${escapeHtml(message)}</p>` : ''}
-  ${!configured ? '<p class="notice">Supabase 연결 전입니다. 계정 설정을 완료하면 로그인할 수 있습니다.</p>' : ''}
-  <form method="post" action="/api/auth/login">
-    <input type="hidden" name="space" value="${personal ? 'personal' : 'selectstar'}">
+  ${!configured ? '<p class="notice" role="status">지금은 로그인을 이용할 수 없습니다. 관리자에게 문의해 주세요.</p>' : ''}
+  <form method="post" action="/api/auth/login" data-login-form>
+    <input type="hidden" name="next" value="${escapeHtml(next)}">
     <label for="email">이메일</label><input id="email" name="email" type="email" autocomplete="username" placeholder="name@example.com" required ${!configured ? 'disabled' : ''}>
-    <label for="password">비밀번호</label><input id="password" name="password" type="password" autocomplete="current-password" required ${!configured ? 'disabled' : ''}>
-    <button class="primary-button btn btn--primary" type="submit" ${!configured ? 'disabled' : ''}>로그인</button>
+    <label for="password">비밀번호</label><div class="password-field"><input id="password" name="password" type="password" autocomplete="current-password" placeholder="비밀번호 입력" required ${!configured ? 'disabled' : ''}><button type="button" class="password-toggle" aria-label="비밀번호 표시" aria-pressed="false" ${!configured ? 'disabled' : ''}>보기</button></div>
+    <button class="primary-button btn btn--primary" type="submit" ${!configured ? 'disabled' : ''}><span>로그인</span><span aria-hidden="true">→</span></button>
   </form>
-  <p class="forgot-link"><a class="link" href="mailto:fhzh@naver.com">비밀번호를 잊어버리셨나요?</a></p>
-  <p class="login-help">공개 회원가입은 제공하지 않습니다.</p>
-  ${preview && !personal ? '<div class="preview-box"><strong>로컬 미리보기</strong><p>localhost 전용 개발 미리보기입니다.</p><a class="secondary-button btn btn--secondary" href="/work/preview">로컬 미리보기 열기 →</a></div>' : ''}
+  <p class="forgot-link"><button type="button" class="link" data-contact-open aria-haspopup="dialog" aria-controls="account-help">비밀번호를 잊어버리셨나요?</button></p>
+  <p class="login-help">등록된 계정만 이용할 수 있습니다.</p>
+  ${preview ? '<div class="preview-box"><strong>로컬 미리보기</strong><p>localhost 전용 개발 미리보기입니다.</p><a class="secondary-button btn btn--secondary" href="/work/preview">로컬 미리보기 열기 →</a></div>' : ''}
   </section>
-</main>${footer()}</div>`, personal ? 'personal-login' : 'selectstar-login');
+</main>${footer()}</div>
+<dialog id="account-help" class="contact-dialog" aria-labelledby="contact-title" aria-describedby="contact-description">
+ <div class="contact-content"><button class="dialog-close" type="button" data-contact-close aria-label="문의 안내 닫기">×</button>
+ <div class="auth-mascot auth-mascot--support" aria-hidden="true"><img src="/mascot/login-mascots.png" alt="" width="1920" height="819"></div>
+ <h2 id="contact-title">계정 도움이 필요하신가요?</h2><p id="contact-description">비밀번호를 잊으셨다면<br>아래 연락처로 관리자에게 직접 문의해 주세요.</p>
+ <div class="contact-methods"><div class="contact-qr"><div class="qr-frame"><img src="https://i.ibb.co/VYhm8hmW/image.png" alt="관리자 카카오톡 QR코드" width="164" height="164"></div><strong>카카오톡으로 문의</strong><p>카카오톡 앱으로 QR코드를 스캔해 주세요.</p></div>
+ <div class="contact-email"><span>관리자 이메일</span><a href="mailto:fhzh@naver.com">fhzh@naver.com</a><button type="button" class="btn" data-copy-email>이메일 주소 복사</button><p class="copy-status" role="status" aria-live="polite"></p></div></div>
+ <button type="button" class="btn btn--primary contact-done" data-contact-close>확인</button></div>
+</dialog><script src="/auth.js?v=20261113-1" defer></script>`, 'login');
 }
 
 function privateHeader(back = '/') {

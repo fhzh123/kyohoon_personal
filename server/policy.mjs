@@ -17,6 +17,18 @@ export function safeRelativePath(pathname) {
   if (decoded.includes('\\') || decoded.includes('\0') || decoded.split('/').some(p => p === '..' || p.startsWith('.'))) return null;
   return decoded.replace(/^\/+/, '');
 }
+/** Only known workspace destinations may receive a post-login redirect.
+ * @param {unknown} value
+ */
+export function safeLoginDestination(value) {
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//') || /[\\\u0000-\u0020\u007f]/.test(value)) return '/work';
+  try {
+    const url = new URL(value, 'https://local.invalid');
+    if (url.origin !== 'https://local.invalid') return '/work';
+    const allowed = ['/work', '/work/', '/work/demos', '/work/demos/', '/work/app/index.html', '/work/expenses', '/work/expenses/', '/work/expenses/index.html', '/personal', '/personal/'];
+    return allowed.includes(url.pathname) ? url.pathname + url.search + url.hash : '/work';
+  } catch { return '/work'; }
+}
 /** @param {unknown} state */
 export function validState(state) {
   if (!state || typeof state !== 'object') return false;
