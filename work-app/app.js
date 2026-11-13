@@ -18,7 +18,7 @@
   let hasUserData=false, workspaceSync=null, workspaceMessage='이 브라우저에 자동 저장';
   let state = validateState(clone(window.RESEARCH_SEED));
   let view='roadmap', unit='week', anchor=MIN_DATE, selectedYear=Number(MIN_DATE.slice(0,4)), overviewMonth=Number(MIN_DATE.slice(5,7));
-  let search='',goalFilter='',categoryFilter='',statusFilter='';
+  let search='',goalFilter=null,categoryFilter='',statusFilter='';
   let dirty=false, storageFailed=false, sourceIssue='', memoryRecovery=null, toastTimer, lastFocus=null;
   let taskSnapshot='', periodEdited=false, editorDraft=null, commitEditor=null, editorEvents=null;
   try { const raw=readOnly?null:localStorage.getItem(KEY); if(raw) {state=validateState(JSON.parse(raw));hasUserData=true;} }
@@ -102,7 +102,7 @@
     next=alias(next);if(!views[next])return;
     const changed=view!==next;view=next;location.hash=next;render();if(changed)window.scrollTo?.(0,0);
   }
-  function filteredTasks() {return state.tasks.filter(t=>(!search||[t.title,t.officialTitle,t.description,t.deliverable,t.notes].join(' ').toLowerCase().includes(search.toLowerCase()))&&(!goalFilter||t.goalId===goalFilter)&&(!categoryFilter||t.category===categoryFilter)&&(!statusFilter||t.status===statusFilter));}
+  function filteredTasks() {return state.tasks.filter(t=>(!search||[t.title,t.officialTitle,t.description,t.deliverable,t.notes].join(' ').toLowerCase().includes(search.toLowerCase()))&&(goalFilter===null||goalFilter.includes(t.goalId||''))&&(!categoryFilter||t.category===categoryFilter)&&(!statusFilter||t.status===statusFilter));}
   function goalOptions(value,empty='모든 L3 연구축') {return `<option value="">${esc(empty)}</option>`+state.goals.map(g=>`<option value="${esc(g.id)}" ${g.id===value?'selected':''}>${esc(g.title)}</option>`).join('');}
   function options(map,value,empty) {return (empty!==undefined?`<option value="">${esc(empty)}</option>`:'')+Object.entries(map).map(([k,v])=>`<option value="${esc(k)}" ${value===k?'selected':''}>${esc(v)}</option>`).join('');}
   function statsHTML() {
@@ -124,14 +124,51 @@
     else if(view==='backlog'){host.innerHTML=backlogHTML();bindFilters();bindTasks(host);}
     else window.ResearchNotebook.render(view,host,{state,readOnly,escape:esc,uid,save,refresh:render,toast,openTask,navigate,rememberRecovery,updateStats,hierarchy:H,categoryLabels:categories,statusLabels:statuses});
   }
+  function goalFilterHTML() {
+    const choices=[...state.goals.map(g=>({id:g.id,title:g.title})),{id:'',title:'L3 연결 전'}];
+    const selected=goalFilter===null?choices.map(g=>g.id):goalFilter;
+    const all=choices.every(g=>selected.includes(g.id));
+    const summary=goalFilter===null?'모든 L3 연구축':selected.length?`L3 연구축 ${selected.length}개 선택`:'L3 선택 없음';
+    return `<details class="goal-filter" id="goal-filter"><summary aria-label="L3 연구축 필터">${esc(summary)}<span aria-hidden="true">⌄</span></summary><div class="goal-filter-menu"><div class="goal-filter-header"><strong>L3 연구축 선택</strong><small>원하는 연구축을 여러 개 선택하세요.</small></div><label class="goal-filter-all"><input type="checkbox" data-goal-filter-all ${all?'checked':''}>전체 선택</label><div class="goal-filter-choices">${choices.map(g=>`<label><input type="checkbox" data-goal-filter-choice value="${esc(g.id)}" ${selected.includes(g.id)?'checked':''}><span>${esc(g.title)}</span></label>`).join('')}</div><div class="goal-filter-footer"><span data-goal-filter-count>${selected.length}개 선택</span><button type="button" class="secondary-button" data-goal-filter-cancel>취소</button><button type="button" class="primary-button" data-goal-filter-apply>적용</button></div></div></details>`;
+  }
   function filtersHTML() {
-    return `<div class="planning-filters"><select id="goal-filter" aria-label="L3 연구축 필터">${goalOptions(goalFilter)}</select><select id="category-filter" aria-label="연구 유형 필터">${options(categories,categoryFilter,'모든 연구 유형')}</select><select id="status-filter" aria-label="상태 필터">${options(statuses,statusFilter,'모든 상태')}</select>${search||goalFilter||categoryFilter||statusFilter?'<button class="text-button" id="clear-filters">필터 초기화</button>':''}</div>`;
+    return `<div class="planning-filters">${goalFilterHTML()}<select id="category-filter" aria-label="연구 유형 필터">${options(categories,categoryFilter,'모든 연구 유형')}</select><select id="status-filter" aria-label="상태 필터">${options(statuses,statusFilter,'모든 상태')}</select>${search||goalFilter!==null||categoryFilter||statusFilter?'<button class="text-button" id="clear-filters">필터 초기화</button>':''}</div>`;
   }
   function bindFilters() {
-    for(const [id,set] of [['goal-filter',v=>goalFilter=v],['category-filter',v=>categoryFilter=v],['status-filter',v=>statusFilter=v]]) {
+    for(const [id,set] of [['category-filter',v=>categoryFilter=v],['status-filter',v=>statusFilter=v]]) {
       const el=$('#'+id);if(el)el.onchange=()=>{set(el.value);render();};
     }
-    if($('#clear-filters'))$('#clear-filters').onclick=()=>{goalFilter=categoryFilter=statusFilter=search='';$('#global-search').value='';render();};
+    const picker=$('#goal-filter');
+    if(picker){
+      const inputs=[...picker.querySelectorAll('[data-goal-filter-choice]')],all=picker.querySelector('[data-goal-filter-all]');
+      const update=()=>{const count=inputs.filter(i=>i.checked).length;all.checked=count===inputs.length;all.indeterminate=count>0&&count<inputs.length;picker.querySelector('[data-goal-filter-count]').textContent=count+'개 선택';};
+      const reset=()=>{inputs.forEach(i=>i.checked=goalFilter===null||goalFilter.includes(i.value));update();};
+      picker.addEventListener('toggle',()=>{if(picker.open)reset();});
+      all.onchange=()=>{inputs.forEach(i=>i.checked=all.checked);update();};
+      inputs.forEach(i=>i.onchange=update);
+      picker.querySelector('[data-goal-filter-cancel]').onclick=()=>{picker.open=false;picker.querySelector('summary').focus();};
+      picker.querySelector('[data-goal-filter-apply]').onclick=()=>{const ids=inputs.filter(i=>i.checked).map(i=>i.value);goalFilter=ids.length===inputs.length?null:ids;render();$('#goal-filter summary')?.focus();};
+      picker.onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();picker.open=false;picker.querySelector('summary').focus();}};
+      update();
+    }
+    if($('#clear-filters'))$('#clear-filters').onclick=()=>{goalFilter=null;categoryFilter=statusFilter=search='';$('#global-search').value='';render();};
+  }
+  function reorderGoal(id,targetId,placement='before'){
+    if(readOnly||id===targetId||!['before','after'].includes(placement))return false;
+    const previous=state.goals,goal=previous.find(g=>g.id===id);
+    if(!goal||!previous.some(g=>g.id===targetId))return false;
+    const next=previous.filter(g=>g.id!==id),at=next.findIndex(g=>g.id===targetId)+(placement==='after'?1:0);
+    next.splice(at,0,goal);if(next.every((g,index)=>g.id===previous[index].id))return false;
+    state.goals=next;
+    if(!save()){state.goals=previous;render();toast('저장하지 못해 L3 이동을 취소했습니다.');return false;}
+    render();[...document.querySelectorAll('[data-reorder-goal]')].find(button=>button.dataset.reorderGoal===id)?.focus({preventScroll:true});
+    toast('L3 순서를 저장했습니다. 하위 L4와 L5도 함께 이동했습니다.');return true;
+  }
+  function moveGoal(id,direction){
+    if(readOnly||![-1,1].includes(direction))return false;
+    const visible=state.goals.filter(g=>goalFilter===null||goalFilter.includes(g.id)),at=visible.findIndex(g=>g.id===id),target=visible[at+direction];
+    if(at<0||!target)return false;
+    return reorderGoal(id,target.id,direction<0?'before':'after');
   }
   function rangeHeading(cols) {
     const a=P.date(cols[0].start),b=P.date(cols.at(-1).end);
@@ -141,8 +178,8 @@
     const hiddenCount=state.tasks.filter(t=>!H.isRoadmapVisible(state.tasks,t.id)).length;
     const cols=P.columns(anchor,unit), focusYear=P.date(anchor).getFullYear();
     const focus=state.annualPlans.find(p=>p.year===focusYear);
-    host.innerHTML=`<section class="planning-panel"><div class="planning-toolbar"><div class="planning-tools"><h2>${rangeHeading(cols)}</h2><button type="button" id="roadmap-visibility" class="secondary-button roadmap-visibility-button">기술 표시 설정${hiddenCount?` <span>숨김 ${hiddenCount}</span>`:''}</button><label class="planning-jump"><span>기준 월</span><input id="anchor-month" type="month" min="2026-11" value="${anchor.slice(0,7)}" aria-label="로드맵 기준 월"></label></div><div class="planning-scale segmented-control" role="group" aria-label="로드맵 시간 단위">${Object.entries(units).map(([key,label])=>`<button data-unit="${key}" class="${unit===key?'active':''}" aria-pressed="${unit===key}">${label}</button>`).join('')}</div></div>${filtersHTML()}<div class="planning-caption"><span>${unit==='week'?'13주를 한눈에 · 월요일부터 일요일까지, 매월 첫 월요일이 첫째주':unit==='month'?'12개월을 한눈에 · 연구를 월 단위로 배치':'5년을 한눈에 · 장기 연구 방향을 배치'}</span><span>구간 드래그로 연구 배치 ↔</span></div><div id="timeline-host"></div></section><div class="bigpicture-strip"><div class="strategy-side-card"><div class="section-label">${focusYear}년의 연구 방향 <button class="text-button" id="edit-year-direction">방향 정리 ↗</button></div><p class="strategy-note">${esc(focus?.focus||'이 해의 핵심 질문을 먼저 정해 보세요. 어떤 가능성을 검증하고, 어떤 성과로 이어갈까요?')}</p></div><div class="strategy-side-card"><div class="section-label">L3별 배치</div><div class="year-goal-summary">${state.goals.map(g=>`<span class="strategy-meter"><span>${esc(g.title)}</span><strong>${state.tasks.filter(t=>t.goalId===g.id&&t.start).length}<small>개</small></strong></span>`).join('')}</div></div><div class="strategy-side-card"><div class="section-label">기획의 기준</div><p class="strategy-note">“언제까지 무엇을 밝혀낼까?”</p><p class="focus-help">하루의 할 일보다 연구 질문과 구간별 결과물에 집중해 보세요. 자세한 생각은 연구 노트에 이어서 남길 수 있어요.</p></div></div>${candidateHTML(6)}`;
-    window.ResearchTimeline.render($('#timeline-host'),{state,unit,anchor,escape:esc,filteredTasks,openTask,reschedule,toast,periods:P,categories,statusLabels:statuses,colors:palette(),hierarchy:H,addChild,goalFilter,moveTask,reorderTask,stepPeriod,readOnly,hideTask,deleteTask:confirmDeleteTask,onSelectL3:id=>{goalFilter=id;render();}});
+    host.innerHTML=`<section class="planning-panel"><div class="planning-toolbar"><div class="planning-tools"><h2>${rangeHeading(cols)}</h2><button type="button" id="roadmap-visibility" class="secondary-button roadmap-visibility-button">기술 표시 설정${hiddenCount?` <span>숨김 ${hiddenCount}</span>`:''}</button><label class="planning-jump"><span>기준 월</span><input id="anchor-month" type="month" min="2026-11" value="${anchor.slice(0,7)}" aria-label="로드맵 기준 월"></label></div><div class="planning-scale segmented-control" role="group" aria-label="로드맵 시간 단위">${Object.entries(units).map(([key,label])=>`<button data-unit="${key}" class="${unit===key?'active':''}" aria-pressed="${unit===key}">${label}</button>`).join('')}</div></div>${filtersHTML()}<div class="planning-caption"><span>${unit==='week'?'13주를 한눈에 · 월요일부터 일요일까지, 매월 첫 월요일이 첫째주':unit==='month'?'12개월을 한눈에 · 연구를 월 단위로 배치':'5년을 한눈에 · 장기 연구 방향을 배치'}</span><span>구간 드래그로 연구 배치 ↔</span></div><div id="timeline-host"></div></section><div class="bigpicture-strip"><div class="strategy-side-card"><div class="section-label">${focusYear}년의 연구 방향 <button class="text-button" id="edit-year-direction">방향 정리 ↗</button></div><p class="strategy-note">${esc(focus?.focus||'이 해의 핵심 질문을 먼저 정해 보세요. 어떤 가능성을 검증하고, 어떤 성과로 이어갈까요?')}</p></div><div class="strategy-side-card"><div class="section-label">L3별 배치</div><div class="year-goal-summary">${state.goals.filter(g=>goalFilter===null||goalFilter.includes(g.id)).map(g=>`<span class="strategy-meter"><span>${esc(g.title)}</span><strong>${state.tasks.filter(t=>t.goalId===g.id&&t.start).length}<small>개</small></strong></span>`).join('')}</div></div><div class="strategy-side-card"><div class="section-label">기획의 기준</div><p class="strategy-note">“언제까지 무엇을 밝혀낼까?”</p><p class="focus-help">하루의 할 일보다 연구 질문과 구간별 결과물에 집중해 보세요. 자세한 생각은 연구 노트에 이어서 남길 수 있어요.</p></div></div>${candidateHTML(6)}`;
+    window.ResearchTimeline.render($('#timeline-host'),{state,unit,anchor,escape:esc,filteredTasks,openTask,reschedule,toast,periods:P,categories,statusLabels:statuses,colors:palette(),hierarchy:H,addChild,selectedL3Ids:goalFilter,moveTask,reorderTask,stepPeriod,readOnly,hideTask,deleteTask:confirmDeleteTask,reorderGoal,moveGoal});
     $('#roadmap-visibility').onclick=openRoadmapVisibility;
     bindFilters();bindTasks(host);
     host.querySelectorAll('[data-unit]').forEach(button=>button.onclick=()=>{unit=button.dataset.unit;render();});
@@ -241,7 +278,7 @@
     if(selectedYear===2026&&overviewMonth<11)overviewMonth=11;
     const year=selectedYear, tasks=filteredTasks().map(t=>({...t,...H.effectiveRange(state.tasks,t.id)})).filter(t=>t.start&&t.start<=`${year}-12-31`&&t.end>=`${year}-01-01`);
     const plan=state.annualPlans.find(p=>p.year===year)||{focus:'',success:'',notes:''};
-    host.innerHTML=`<div class="year-toolbar"><div class="button-row"><button class="icon-button" id="previous-year" aria-label="이전 연도" ${year===2026?'disabled':''}>‹</button><h2>${year}년의 연구 지도</h2><button class="icon-button" id="next-year" aria-label="다음 연도">›</button></div><button class="secondary-button" id="year-to-months">이 해를 월별 로드맵으로 보기 ↗</button></div><section class="year-focus-panel"><div class="year-focus-field"><label for="annual-focus">이 해에 풀고 싶은 핵심 질문</label><textarea id="annual-focus" placeholder="예: 취약점 진단과 온톨로지를 어떻게 하나의 개선 흐름으로 연결할까?">${esc(plan.focus)}</textarea></div><div class="year-focus-field"><label for="annual-success">연말에 무엇을 확보하면 성공일까요?</label><textarea id="annual-success" placeholder="검증할 가설, 남길 기술과 성과, 의사 결정 기준을 적어 보세요.">${esc(plan.success)}</textarea></div><div class="year-focus-field year-focus-notes"><label for="annual-notes">아직 열어 두고 싶은 선택지 · 제약</label><textarea id="annual-notes" placeholder="채용, 외부 협업, 선행 결과에 따라 달라질 연구 방향을 남겨 두세요.">${esc(plan.notes)}</textarea></div><span class="field-help" id="annual-save-status">입력하면 자동 저장됩니다.</span></section>${filtersHTML()}<div id="monthly-calendar-host"></div><details class="annual-quarter-summary"><summary>분기별 연구 목록과 연구축 보기</summary><div class="quarter-grid">${[0,1,2,3].map(q=>`<section class="quarter-card"><div class="quarter-header"><span>Q${q+1}</span><strong>${q*3+1} — ${q*3+3}월</strong></div>${[1,2,3].map(k=>{const n=q*3+k,m=`${year}-${String(n).padStart(2,'0')}`,afterMin=m>='2026-11',list=tasks.filter(t=>t.start<=P.monthEnd(m+'-01')&&t.end>=m+'-01');return `<div class="quarter-month ${!afterMin?'before-project':''}"><div class="quarter-month-title"><strong>${n}월</strong>${afterMin?`<button class="text-button" data-add-month="${m}" aria-label="${year}년 ${n}월에 연구 추가">＋</button>`:'<small>계획 시작 전</small>'}</div>${list.map(t=>`<button class="year-research-pill ${t.parentId?'is-subtask':''}" style="--event-color:${palette()[t.category]}" data-task="${esc(t.id)}"><span>${esc(t.title)}</span><small>${t.parentId?`↳ ${esc(taskPath(t))}`:esc(state.goals.find(g=>g.id===t.goalId)?.title||categories[t.category])}</small></button>`).join('')||`<p class="quarter-empty">${afterMin?'열려 있는 연구 구간':''}</p>`}</div>`;}).join('')}</section>`).join('')}</div><section class="year-goal-summary"><div class="candidate-header"><div><h2>이 해의 연구축</h2><p>한 해에 배치한 연구를 목표별로 점검하세요.</p></div></div><div class="candidate-grid">${state.goals.map(g=>{const list=tasks.filter(t=>t.goalId===g.id);return `<article class="year-goal-card"><h3>${esc(g.title)}</h3><p>${esc(g.metric)}</p><strong>${list.length}<small>개 연구 구간</small></strong><div class="button-row">${list.map(t=>`<button class="text-button" data-task="${esc(t.id)}">${esc(t.title)}</button>`).join('')||'<span class="field-help">아직 배치한 연구가 없습니다.</span>'}</div></article>`;}).join('')}</div></section></details>`;
+    host.innerHTML=`<div class="year-toolbar"><div class="button-row"><button class="icon-button" id="previous-year" aria-label="이전 연도" ${year===2026?'disabled':''}>‹</button><h2>${year}년의 연구 지도</h2><button class="icon-button" id="next-year" aria-label="다음 연도">›</button></div><button class="secondary-button" id="year-to-months">이 해를 월별 로드맵으로 보기 ↗</button></div><section class="year-focus-panel"><div class="year-focus-field"><label for="annual-focus">이 해에 풀고 싶은 핵심 질문</label><textarea id="annual-focus" placeholder="예: 취약점 진단과 온톨로지를 어떻게 하나의 개선 흐름으로 연결할까?">${esc(plan.focus)}</textarea></div><div class="year-focus-field"><label for="annual-success">연말에 무엇을 확보하면 성공일까요?</label><textarea id="annual-success" placeholder="검증할 가설, 남길 기술과 성과, 의사 결정 기준을 적어 보세요.">${esc(plan.success)}</textarea></div><div class="year-focus-field year-focus-notes"><label for="annual-notes">아직 열어 두고 싶은 선택지 · 제약</label><textarea id="annual-notes" placeholder="채용, 외부 협업, 선행 결과에 따라 달라질 연구 방향을 남겨 두세요.">${esc(plan.notes)}</textarea></div><span class="field-help" id="annual-save-status">입력하면 자동 저장됩니다.</span></section>${filtersHTML()}<div id="monthly-calendar-host"></div><details class="annual-quarter-summary"><summary>분기별 연구 목록과 연구축 보기</summary><div class="quarter-grid">${[0,1,2,3].map(q=>`<section class="quarter-card"><div class="quarter-header"><span>Q${q+1}</span><strong>${q*3+1} — ${q*3+3}월</strong></div>${[1,2,3].map(k=>{const n=q*3+k,m=`${year}-${String(n).padStart(2,'0')}`,afterMin=m>='2026-11',list=tasks.filter(t=>t.start<=P.monthEnd(m+'-01')&&t.end>=m+'-01');return `<div class="quarter-month ${!afterMin?'before-project':''}"><div class="quarter-month-title"><strong>${n}월</strong>${afterMin?`<button class="text-button" data-add-month="${m}" aria-label="${year}년 ${n}월에 연구 추가">＋</button>`:'<small>계획 시작 전</small>'}</div>${list.map(t=>`<button class="year-research-pill ${t.parentId?'is-subtask':''}" style="--event-color:${palette()[t.category]}" data-task="${esc(t.id)}"><span>${esc(t.title)}</span><small>${t.parentId?`↳ ${esc(taskPath(t))}`:esc(state.goals.find(g=>g.id===t.goalId)?.title||categories[t.category])}</small></button>`).join('')||`<p class="quarter-empty">${afterMin?'열려 있는 연구 구간':''}</p>`}</div>`;}).join('')}</section>`).join('')}</div><section class="year-goal-summary"><div class="candidate-header"><div><h2>이 해의 연구축</h2><p>한 해에 배치한 연구를 목표별로 점검하세요.</p></div></div><div class="candidate-grid">${state.goals.filter(g=>goalFilter===null||goalFilter.includes(g.id)).map(g=>{const list=tasks.filter(t=>t.goalId===g.id);return `<article class="year-goal-card"><h3>${esc(g.title)}</h3><p>${esc(g.metric)}</p><strong>${list.length}<small>개 연구 구간</small></strong><div class="button-row">${list.map(t=>`<button class="text-button" data-task="${esc(t.id)}">${esc(t.title)}</button>`).join('')||'<span class="field-help">아직 배치한 연구가 없습니다.</span>'}</div></article>`;}).join('')}</div></section></details>`;
     window.ResearchCalendar.render($('#monthly-calendar-host'),{month:`${year}-${String(overviewMonth).padStart(2,'0')}`,tasks:filteredTasks(),state,hierarchy:H,colors:palette(),escape:esc,openTask,onMonthChange:month=>{selectedYear=Number(month.slice(0,4));overviewMonth=Number(month.slice(5,7));render();}});
     $('#previous-year').onclick=()=>{if(selectedYear>2026){selectedYear--;render();}};$('#next-year').onclick=()=>{if(selectedYear<9998){selectedYear++;render();}};
     $('#year-to-months').onclick=()=>{anchor=`${year}-${year===2026?'11':'01'}-01`;unit='month';navigate('roadmap');};
@@ -360,7 +397,7 @@
     const original=id?state.tasks.find(t=>t.id===id):null;if(id&&!original)return;
     editorEvents?.abort();editorEvents=new AbortController();
     lastFocus=document.activeElement;
-    const task={title:'',start:'',end:'',status:'backlog',category:'research',goalId:goalFilter,phaseId:'',description:'',deliverable:'',notes:'',dependencies:[],owner:'',planUnit:unit,parentId:'',...clone(original||{}),...defaults};
+    const task={title:'',start:'',end:'',status:'backlog',category:'research',goalId:goalFilter?.length===1?goalFilter[0]:'',phaseId:'',description:'',deliverable:'',notes:'',dependencies:[],owner:'',planUnit:unit,parentId:'',...clone(original||{}),...defaults};
     if(task.parentId)task.goalId=H.rootOf(state.tasks,task.parentId)?.goalId||'';
     if(task.start&&task.status==='backlog')task.status='planned';
     editorDraft=task;periodEdited=!!defaults.start;
@@ -498,7 +535,7 @@
     $('#import-cancel').onclick=()=>$('#utility-dialog').close();$('#import-confirm').onclick=()=>{rememberRecovery();state=incoming;storageFailed=false;save();$('#utility-dialog').close();render();toast('연구 계획을 가져왔습니다. 기존 기간도 보존했습니다.');};
   }
   $('#import-file').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{if(f.size>30*1024*1024)throw Error('30MB 이하의 JSON 파일을 선택해 주세요.');confirmImport(validateState(JSON.parse(await f.text())),f.name);}catch(error){toast('가져오기 실패: '+error.message);}};
-  document.addEventListener('click',e=>{const target=e.target.closest('[data-view]');if(target)navigate(target.dataset.view);});
+  document.addEventListener('click',e=>{const picker=$('#goal-filter');if(picker?.open&&!picker.contains(e.target))picker.open=false;const target=e.target.closest('[data-view]');if(target)navigate(target.dataset.view);});
   $('#global-search').oninput=e=>{search=e.target.value;if(!['roadmap','overview','backlog'].includes(view))navigate('backlog');else render();};
   $('#add-task').onclick=()=>openTask(null,view==='roadmap'?defaultPeriod():view==='overview'?{start:`${selectedYear}-${selectedYear===2026?'11':'01'}-01`,end:`${selectedYear}-12-31`,planUnit:'year'}:{planUnit:unit});
   $('#backup-open').onclick=$('#backup-top').onclick=openBackup;
@@ -507,9 +544,9 @@
   window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue)toast('다른 창에서 계획이 변경됐습니다. 현재 내용을 백업한 뒤 새로고침해 주세요.');});
   const initialParams=new URLSearchParams(location.search||'');
   if(Object.hasOwn(units,initialParams.get('unit')))unit=initialParams.get('unit');
-  if(state.goals.some(g=>g.id===initialParams.get('l3')))goalFilter=initialParams.get('l3');
+  if(state.goals.some(g=>g.id===initialParams.get('l3')))goalFilter=[initialParams.get('l3')];
   const requested=alias(location.hash.slice(1));if(views[requested])view=requested;
   render();if(sourceIssue)toast(sourceIssue);
   if(window.ResearchWorkspaceSync&&!sourceIssue)initWorkspace();
-  window.ResearchAtlas={getState:()=>clone(state),validateState,dateUtils:P,hierarchy:H,operations:{openRoadmapVisibility,hideTask,openTask,addChild,reschedule,deleteTask,duplicateTask,moveTask,reorderTask,stepPeriod}};
+  window.ResearchAtlas={getState:()=>clone(state),validateState,dateUtils:P,hierarchy:H,operations:{reorderGoal,moveGoal,openRoadmapVisibility,hideTask,openTask,addChild,reschedule,deleteTask,duplicateTask,moveTask,reorderTask,stepPeriod}};
 })();

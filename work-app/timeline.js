@@ -55,10 +55,11 @@
     const visibleIds = new Set(tasks.map(task => task.id));
     const goalIds = new Set(goals.map(goal => goal.id));
     const rootGoalId = task => rootOf(task.id)?.goalId || '';
-    const selectedL3 = api.selectedL3Id || api.goalFilter || '';
-    const groups = goals.filter(goal => !selectedL3 || goal.id === selectedL3).map(goal => ({...goal, tasks: tasks.filter(task => rootGoalId(task) === goal.id)}));
+    const legacySelection=api.selectedL3Id||api.goalFilter;
+    const selectedL3=Array.isArray(api.selectedL3Ids)?new Set(api.selectedL3Ids):legacySelection?new Set([legacySelection]):null;
+    const groups = goals.filter(goal => !selectedL3 || selectedL3.has(goal.id)).map(goal => ({...goal, tasks: tasks.filter(task => rootGoalId(task) === goal.id)}));
     const unlinked = tasks.filter(task => !goalIds.has(rootGoalId(task)));
-    if (!selectedL3 && unlinked.length) groups.push({id: '', title: 'L3 연결 전', tasks: unlinked});
+    if ((!selectedL3||selectedL3.has('')) && unlinked.length) groups.push({id: '', title: 'L3 연결 전', tasks: unlinked});
     const displayTitle = task => !task.parentId && task.assetId ? (task.officialTitle||task.title).split(/\s*->\s*/)[0].trim() : task.title;
     const matchedIds = new Set(matches.map(task => task.id));
     const visibleStart = columns[0].start;
@@ -150,7 +151,7 @@
       const roots = group.tasks.filter(task => !task.parentId);
       const title = api.groupLabel ? api.groupLabel(group) : group.title;
       const label = `<span class="timeline-level-badge">L3</span><strong>${esc(title)}</strong>`;
-      return `<div class="timeline-goal-heading" data-l3-group="${esc(group.id)}"><div class="timeline-l3-label">${group.l2Title ? `<span class="timeline-l2-eyebrow">L2 · ${esc(group.l2Title)}</span>` : ''}${api.onSelectL3 && group.id ? `<button type="button" class="timeline-l3-select" data-select-l3="${esc(group.id)}" title="이 L3만 보기">${label}</button>` : `<div class="timeline-l3-title">${label}</div>`}</div><small>${roots.length}개 L4 · ${group.tasks.length - roots.length}개 L5</small></div>`;
+      return `<div class="timeline-goal-heading" data-l3-group="${esc(group.id)}"><div class="timeline-l3-label">${group.l2Title ? `<span class="timeline-l2-eyebrow">L2 · ${esc(group.l2Title)}</span>` : ''}${api.reorderGoal && !api.readOnly && group.id ? `<button type="button" class="timeline-l3-drag" data-reorder-goal="${esc(group.id)}" aria-label="${esc(title)} L3 순서 끌어 바꾸기" title="이 L3 줄을 끌어 순서 변경 · 하위 L4/L5도 함께 이동 · 키보드 ↑ ↓"><span class="timeline-l3-grip" aria-hidden="true">⠿</span>${label}<span class="timeline-l3-drag-hint" aria-hidden="true">끌어서 순서 변경</span></button>` : `<div class="timeline-l3-title">${label}</div>`}</div><small>${roots.length}개 L4 · ${group.tasks.length - roots.length}개 L5</small></div>`;
     }
     const periodGroups = [];
     columns.forEach(column => {
@@ -161,7 +162,7 @@
     const rangeLabel=columns[0].start.replaceAll('-','.')+' — '+columns.at(-1).end.replaceAll('-','.');
     const navigation=api.stepPeriod?`<div class="timeline-period-navigation" role="group" aria-label="표시 기간 이동"><button type="button" data-step-period="-1" ${columns[0].start<=MIN_DATE?'disabled':''}>‹ 이전 1${{week:'주',month:'개월',year:'년'}[unit]}</button><span>${esc(rangeLabel)}</span><button type="button" data-step-period="1">다음 1${{week:'주',month:'개월',year:'년'}[unit]} ›</button></div>`:'';
     const legend=`<div class="timeline-color-legend" aria-label="연구 유형 색상 범례"><strong>색상 · 연구 유형</strong>${Object.entries(api.categories||{research:'연구·조사',experiment:'실험·검증',writing:'논문·문서',meeting:'협의·리뷰',milestone:'핵심 결과'}).map(([key,label])=>`<span><i style="background:${safeColor(colors[key])}" aria-hidden="true"></i>${esc(label)}</span>`).join('')}<small>진한 막대: 전체 기간 · 완료: 흐리게 · 보류: 점선</small></div>`;
-    host.innerHTML = `<section class="research-timeline timeline-unit-${unit}" aria-label="${UNIT_LABELS[unit]} 연구 타임라인"><div class="hierarchy-view-controls" role="group" aria-label="세부 과업 표시"><button type="button" data-hierarchy-view="roots" aria-pressed="${!showChildren}">L4 기술만</button><button type="button" data-hierarchy-view="all" aria-pressed="${showChildren}">L5 세부 연구까지</button></div>${navigation}<div class="timeline-scroll" tabindex="0" aria-label="연구 타임라인 가로 스크롤"><div class="timeline-chart" style="--timeline-columns:${columns.length};--timeline-min-column:${unit === 'week' ? 96 : unit === 'month' ? 38 : 86}px"><div class="timeline-header"><div class="timeline-corner"><strong>L3 → L4 → L5</strong><small>기술과 세부 연구 일정</small></div><div class="timeline-axis"><div class="timeline-groups">${periodGroups.map(group => `<div class="timeline-period-group" style="grid-column:span ${group.count}">${esc(group.label)}</div>`).join('')}</div><div class="timeline-columns">${columns.map(column => `<div class="timeline-column"><strong>${esc(column.label)}</strong><small>${esc(column.detail || '')}</small></div>`).join('')}</div></div></div>${groups.map(group => `${groupHeading(group)}${groupRows(group)}`).join('')}</div></div>${navigation}${legend}<div class="timeline-help"><span>⠿ 또는 연구명을 위아래로 끌어 순서 변경 · +로 세부 연구 추가</span><span>막대 이동 · 양 끝으로 기간 조정 · Enter로 상세 편집</span></div><div class="timeline-announcement sr-only" aria-live="polite"></div></section>`;
+    host.innerHTML = `<section class="research-timeline timeline-unit-${unit}" aria-label="${UNIT_LABELS[unit]} 연구 타임라인"><div class="hierarchy-view-controls" role="group" aria-label="세부 과업 표시"><button type="button" data-hierarchy-view="roots" aria-pressed="${!showChildren}">L4 기술만</button><button type="button" data-hierarchy-view="all" aria-pressed="${showChildren}">L5 세부 연구까지</button></div>${navigation}<div class="timeline-scroll" tabindex="0" aria-label="연구 타임라인 가로 스크롤"><div class="timeline-chart" style="--timeline-columns:${columns.length};--timeline-min-column:${unit === 'week' ? 96 : unit === 'month' ? 38 : 86}px"><div class="timeline-header"><div class="timeline-corner"><strong>L3 → L4 → L5</strong><small>기술과 세부 연구 일정</small></div><div class="timeline-axis"><div class="timeline-groups">${periodGroups.map(group => `<div class="timeline-period-group" style="grid-column:span ${group.count}">${esc(group.label)}</div>`).join('')}</div><div class="timeline-columns">${columns.map(column => `<div class="timeline-column"><strong>${esc(column.label)}</strong><small>${esc(column.detail || '')}</small></div>`).join('')}</div></div></div>${groups.map(group => `${groupHeading(group)}${groupRows(group)}`).join('')}${selectedL3?.size===0?'<p class="timeline-filter-empty">선택한 L3가 없습니다. L3 연구축 필터에서 표시할 항목을 선택해 주세요.</p>':''}</div></div>${navigation}${legend}<div class="timeline-help"><span>L3 제목 줄을 끌면 하위 L4/L5도 함께 이동 · 연구명으로 L4/L5 순서 변경</span><span>막대 이동 · 양 끝으로 기간 조정 · Enter로 상세 편집</span></div><div class="timeline-announcement sr-only" aria-live="polite"></div></section>`;
 
     let contextMenu=null,contextSource=null;
     function closeMenu(restoreFocus=false){contextMenu?.remove();contextMenu=null;if(restoreFocus)contextSource?.focus?.({preventScroll:true});}
@@ -200,7 +201,7 @@
 
     function resetInteraction() {
       if (!interaction) return;
-      if(interaction.kind==='order'){
+      if(['order','goal-order'].includes(interaction.kind)){
         cancelAnimationFrame(orderFrame);orderFrame=null;
         interaction.ghost?.remove();interaction.line?.remove();
         host.querySelectorAll('.is-order-source').forEach(row=>row.classList.remove('is-order-source'));
@@ -220,7 +221,33 @@
       const ids=new Set([id,...(H?.descendantsOf(allTasks,id)||[]).map(t=>t.id)]);
       return Array.from(host.querySelectorAll('[data-task-row]')).filter(row=>ids.has(row.dataset.taskRow));
     }
+    function goalBlock(id){
+      const heading=[...host.querySelectorAll('[data-l3-group]')].find(row=>row.dataset.l3Group===id);if(!heading)return [];
+      const rows=[heading];let next=heading.nextElementSibling;
+      while(next&&!next.matches('[data-l3-group]')){if(next.matches('[data-task-row],.timeline-row'))rows.push(next);next=next.nextElementSibling;}
+      return rows;
+    }
+    function paintGoalOrder(){
+      const drag=interaction;if(!drag||drag.kind!=='goal-order'||!drag.moved)return;
+      if(!drag.ghost){
+        drag.ghost=document.createElement('div');drag.ghost.className='timeline-order-ghost';drag.ghost.textContent='L3 '+drag.goal.title+' — L4/L5 함께 이동';document.body.appendChild(drag.ghost);
+        drag.line=document.createElement('div');drag.line.className='timeline-drop-indicator';document.body.appendChild(drag.line);
+        goalBlock(drag.goal.id).forEach(row=>row.classList.add('is-order-source'));document.body.classList.add('is-reordering-research');
+      }
+      drag.ghost.style.left=Math.min(Math.max(8,drag.clientX+16),Math.max(8,window.innerWidth-300))+'px';drag.ghost.style.top=drag.clientY+14+'px';
+      const blocks=groups.filter(g=>g.id&&g.id!==drag.goal.id).map(goal=>{const rows=goalBlock(goal.id);return rows.length?{goal,first:rows[0].getBoundingClientRect(),last:rows.at(-1).getBoundingClientRect()}:null;}).filter(Boolean);
+      const own=goalBlock(drag.goal.id),rect=host.getBoundingClientRect();
+      const top=Math.min(...blocks.map(b=>b.first.top),own[0]?.getBoundingClientRect().top??Infinity),bottom=Math.max(...blocks.map(b=>b.last.bottom),own.at(-1)?.getBoundingClientRect().bottom??-Infinity);
+      drag.drop=null;drag.line.hidden=true;
+      if(!blocks.length||drag.clientY<top-20||drag.clientY>bottom+20||drag.clientX<rect.left-20||drag.clientX>rect.right+20)return;
+      let target=blocks.find(b=>drag.clientY<(b.first.top+b.first.bottom)/2),placement='before';
+      if(!target){target=blocks.at(-1);placement='after';}
+      drag.drop={id:target.goal.id,placement};
+      const left=Math.max(0,rect.left),right=Math.min(window.innerWidth,rect.right);
+      drag.line.style.cssText=`left:${left}px;width:${right-left}px;top:${placement==='before'?target.first.top:target.last.bottom}px`;drag.line.hidden=false;
+    }
     function paintOrder(){
+      if(interaction?.kind==='goal-order'){paintGoalOrder();return;}
       const drag=interaction;if(!drag||drag.kind!=='order'||!drag.moved)return;
       if(!drag.ghost){
         drag.ghost=document.createElement('div');drag.ghost.className='timeline-order-ghost';drag.ghost.textContent=drag.task.title;document.body.appendChild(drag.ghost);
@@ -243,7 +270,7 @@
       drag.line.hidden=false;
     }
     function animateOrder(){
-      if(!interaction||interaction.kind!=='order'||!interaction.moved)return;
+      if(!interaction||!['order','goal-order'].includes(interaction.kind)||!interaction.moved)return;
       const y=interaction.clientY,edge=65,delta=y<edge?-Math.ceil((edge-y)/5):y>window.innerHeight-edge?Math.ceil((y-window.innerHeight+edge)/5):0;
       if(delta){window.scrollBy(0,delta);paintOrder();}
       orderFrame=requestAnimationFrame(animateOrder);
@@ -269,6 +296,12 @@
       if (event.button !== 0 || interaction || event.isPrimary === false) return;
       const target = event.target instanceof Element ? event.target : null;
       if (!target) return;
+      const goalHeading=target.closest('[data-l3-group]');
+      if(goalHeading&&api.reorderGoal&&!api.readOnly&&goalHeading.dataset.l3Group&&host.contains(goalHeading)){
+        const goal=goals.find(g=>g.id===goalHeading.dataset.l3Group);if(!goal)return;
+        event.preventDefault();goalHeading.querySelector('[data-reorder-goal]')?.focus({preventScroll:true});
+        interaction={kind:'goal-order',goal,pointerId:event.pointerId,x:event.clientX,y:event.clientY,clientX:event.clientX,clientY:event.clientY,moved:false,drop:null};interactionActive=true;return;
+      }
       const handle=target.closest('[data-reorder-task]'),label=target.closest('[data-open-task]');
       if(api.reorderTask&&(handle||label)&&host.contains(handle||label)){
         const task=taskMap.get(handle?.dataset.reorderTask||label.dataset.openTask);if(!task)return;
@@ -295,7 +328,7 @@
     }
     function move(event) {
       if (!interaction || event.pointerId !== interaction.pointerId) return;
-      if(interaction.kind==='order'){
+      if(['order','goal-order'].includes(interaction.kind)){
         interaction.clientX=event.clientX;interaction.clientY=event.clientY;
         interaction.moved ||= Math.hypot(event.clientX-interaction.x,event.clientY-interaction.y)>5;
         if(interaction.moved){paintOrder();if(orderFrame===null)orderFrame=requestAnimationFrame(animateOrder);}return;
@@ -328,6 +361,11 @@
       move(event);
       const completed = interaction;
       resetInteraction();
+      if(completed.kind==='goal-order'){
+        suppressClick=true;setTimeout(()=>{suppressClick=false;},0);
+        if(completed.moved&&completed.drop)api.reorderGoal(completed.goal.id,completed.drop.id,completed.drop.placement);
+        return;
+      }
       if(completed.kind==='order'){
         suppressClick=true;setTimeout(()=>{suppressClick=false;},0);
         if(!completed.moved&&completed.openOnClick)api.openTask(completed.task.id);
@@ -365,11 +403,9 @@
       if(suppressClick){event.preventDefault();return;}
       const target = event.target instanceof Element ? event.target : null;
       if (!target) return;
-      if(target.closest('[data-reorder-task]'))return;
+      if(target.closest('[data-reorder-task],[data-reorder-goal]'))return;
       const step=target.closest('[data-step-period]');
       if(step&&host.contains(step)){api.stepPeriod?.(Number(step.dataset.stepPeriod));return;}
-      const group = target.closest('[data-select-l3]');
-      if (group && host.contains(group)) { api.onSelectL3?.(group.dataset.selectL3); return; }
       const view = target.closest('[data-hierarchy-view]');
       if (view && host.contains(view)) {
         showChildren = view.dataset.hierarchyView === 'all';
@@ -397,6 +433,8 @@
     }, {signal});
     host.addEventListener('keydown', event => {
       if (event.key === 'Escape' && interaction) { event.preventDefault(); resetInteraction(); return; }
+      const goalHandle=event.target.closest('[data-reorder-goal]');
+      if(goalHandle&&['ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();api.moveGoal?.(goalHandle.dataset.reorderGoal,event.key==='ArrowUp'?-1:1);return;}
       const handle=event.target.closest('[data-reorder-task]');
       if(handle&&['ArrowUp','ArrowDown'].includes(event.key)){event.preventDefault();api.moveTask?.(handle.dataset.reorderTask,event.key==='ArrowUp'?-1:1);return;}
       if (!['Enter', ' '].includes(event.key)) return;
