@@ -77,8 +77,8 @@ test('Resume static archived assets retain their recorded SHA-256 values', async
 test('Resume document uses its isolated styles plus the shared typography', async () => {
   const dom = new JSDOM(html, { url: 'http://localhost:3000/resume' });
   const document = dom.window.document;
-  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261113-1']);
-  assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261113-1', '/atmosphere.js?v=20261113-1', '/resume/resume.js']);
+  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261113-review-2']);
+  assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261113-1', '/resume/resume.js']);
   assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/mascot/face.png');
   assert.equal(document.querySelectorAll('iframe').length, 0);
   assert.ok(!html.includes('/main.css') && !html.includes('/work.css') && !html.includes('_next'));
@@ -176,19 +176,15 @@ test('Exactly six copied projects are pending and Samsung keeps its detail and i
   assert.ok(document.querySelector('h2').parentElement.querySelector('img[src*="Project_ATA.png"]'));
 });
 
-test('Resume theme and background pause controls preserve icons and preferences', async t => {
+test('Resume theme preserves its icons and preference without playback controls', async t => {
   const window = await mount(t);
   window.eval(await fs.readFile(path.join(project,'public/theme.js'),'utf8'));
-  window.eval(await fs.readFile(path.join(project,'public/atmosphere.js'),'utf8'));
   const d=window.document;
   d.querySelector('[data-theme-toggle]').click();
   assert.equal(d.documentElement.dataset.theme,'light');
   assert.equal(window.localStorage.getItem('kyohoon-appearance'),'light');
   assert.equal(d.querySelectorAll('[data-theme-toggle] img').length,2);
-  d.querySelector('[data-ambient-toggle]').click();
-  assert.equal(d.documentElement.dataset.ambientPaused,'true');
-  assert.equal(d.querySelector('[data-ambient-toggle]').getAttribute('aria-pressed'),'true');
-  assert.equal(window.localStorage.getItem('kyohoon-background-paused'),'true');
+  assert.equal(d.querySelector('[data-ambient-toggle]'), null);
 });
 
 test('Resume project detail modal opens, shows pending details, and closes by button/backdrop', async t => {

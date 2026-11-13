@@ -466,7 +466,6 @@ const App = () => {
 
         <div className="resume-header-actions">
           <a className="btn btn--secondary" href="/" aria-label="홈으로"><UiIcon name="house" /><span>Home</span></a>
-          <button type="button" className="ambient-toggle btn btn--secondary" data-ambient-toggle aria-label="배경 움직임 일시정지" aria-pressed="false" title="배경 움직임 일시정지"><UiIcon name="pause" /></button>
           <button type="button" className="theme-toggle btn btn--secondary" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span className="theme-sun"><UiIcon name="sun" /></span><span className="theme-moon"><UiIcon name="moon" /></span><span data-theme-label>라이트 모드</span></button>
         {/* Language Toggle Button for Desktop - FIXED AND IMPROVED */}
         {/* The toggle is now more robust by using flexbox for equal spacing and simpler positioning for the sliding background. */}

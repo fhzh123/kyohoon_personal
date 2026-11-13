@@ -1,5 +1,4 @@
 const uiIcon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="18" height="18" alt="" aria-hidden="true">`;
-const motionButton = () => `<button type="button" class="ambient-toggle btn btn--secondary" data-ambient-toggle aria-label="배경 움직임 일시정지" aria-pressed="false" title="배경 움직임 일시정지">${uiIcon('pause')}</button>`;
 const themeButton = () => `<button type="button" class="theme-toggle btn btn--secondary" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span class="theme-sun">${uiIcon('sun')}</span><span class="theme-moon">${uiIcon('moon')}</span><span data-theme-label>라이트 모드</span></button>`;
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
@@ -17,7 +16,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <link rel="stylesheet" href="/taste.css?v=20261113-1"><link rel="stylesheet" href="/assets/taste/motion/motion.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
-<link rel="stylesheet" href="/atmosphere.css?v=20261113-1"><script src="/atmosphere.js?v=20261113-1" defer></script>
+<link rel="stylesheet" href="/atmosphere.css?v=20261113-review-2">
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {
@@ -26,7 +25,7 @@ function artwork(idle, hover, alt) {
 
 export const homePage = () => shell('진교훈', `
 <div class="home-shell">
-  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동"><a class="text-link" href="/resume">${uiIcon('file-text')}<span>Resume</span></a><a class="text-link" href="/work">${uiIcon('briefcase-business')}<span>Work</span></a>${motionButton()}${themeButton()}</nav></header>
+  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동"><a class="text-link" href="/resume">${uiIcon('file-text')}<span>Resume</span></a><a class="text-link" href="/work">${uiIcon('briefcase-business')}<span>Work</span></a>${themeButton()}</nav></header>
   <main id="main" class="home-main hero hero--split" data-enter aria-labelledby="intro-title">
     <section class="intro hero-text">
       <p class="home-role">AI Research Engineer</p>
@@ -58,7 +57,7 @@ export function escapeHtml(value) {
 export function loginPage({configured, preview, message = '', space = 'selectstar'}) {
   const personal = space === 'personal', name = personal ? 'Personal' : 'Selectstar';
   return shell(name, `
-<div class="login-shell"><header class="site-header">${brand()}<div class="header-actions"><a class="text-link link" href="/">${uiIcon('house')}<span>홈으로</span></a>${motionButton()}${themeButton()}</div></header>
+<div class="login-shell"><header class="site-header">${brand()}<div class="header-actions"><a class="text-link link" href="/">${uiIcon('house')}<span>홈으로</span></a>${themeButton()}</div></header>
 <main id="main" class="login-main hero" data-enter>
   <div class="login-art hero-text"><h1>${name}</h1><p>${personal ? '개인 계정으로 사용하는 공간입니다.' : '연구일지와 업무 자료를 관리합니다.'}</p><img src="/mascot/${personal ? 'personal-idle.webp' : 'selectstar-idle.webp'}" alt="" width="320" height="320"></div>
   <section class="login-card" aria-labelledby="login-title"><h2 id="login-title">${name} 로그인</h2><p class="muted">허용된 계정으로 로그인하세요.</p>
@@ -78,7 +77,7 @@ export function loginPage({configured, preview, message = '', space = 'selectsta
 }
 
 function privateHeader(back = '/') {
-  return `<header class="site-header">${brand()}<div class="hub-header-actions"><a class="text-link link" href="${back}">${uiIcon(back === '/' ? 'house' : 'briefcase-business')}<span>${back === '/' ? '홈으로' : 'Selectstar 홈'}</span></a>${motionButton()}${themeButton()}<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form></div></header>`;
+  return `<header class="site-header">${brand()}<div class="hub-header-actions"><a class="text-link link" href="${back}">${uiIcon(back === '/' ? 'house' : 'briefcase-business')}<span>${back === '/' ? '홈으로' : 'Selectstar 홈'}</span></a>${themeButton()}<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form></div></header>`;
 }
 
 export function workPage({mode, role}) {
