@@ -1,5 +1,5 @@
 const uiIcon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="18" height="18" alt="" aria-hidden="true">`;
-const themeButton = () => `<button type="button" class="theme-toggle btn btn--secondary" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span class="theme-sun">${uiIcon('sun')}</span><span class="theme-moon">${uiIcon('moon')}</span><span data-theme-label>라이트 모드</span></button>`;
+const themeButton = () => `<button type="button" class="theme-toggle theme-toggle--icon btn btn--secondary" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span class="theme-sun">${uiIcon('sun')}</span><span class="theme-moon">${uiIcon('moon')}</span><span data-theme-label hidden>라이트 모드</span></button>`;
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 const shell = (title, body, surface = '') => `<!doctype html>
@@ -17,7 +17,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261113-review-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-1">
+<link rel="stylesheet" href="/auth.css?v=20261113-2">
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {

@@ -1,7 +1,9 @@
 /* Shared authentication, using the site's existing palette and typography. */
 .site-footer { justify-content: flex-end; text-align: right; }
 .header-actions form { margin: 0; }
-.site-header .header-login { background: var(--ink); color: var(--bg); border-color: var(--ink); white-space: nowrap; }
+.site-header .header-login { background: var(--surface); color: var(--ink); border-color: var(--line); white-space: nowrap; }
+.site-header .header-login:hover { background: var(--surface-alt); }
+.site-header .theme-toggle--icon { width: 44px; height: 44px; padding: 0; flex: 0 0 44px; gap: 0; }
 .login-main { grid-template-columns: minmax(0,1fr) minmax(320px,420px); gap: clamp(48px,8vw,120px); padding: 48px 0; }
 .login-art { position: relative; }
 .login-eyebrow { color: var(--action); font-size: 14px !important; font-weight: 600; margin-bottom: 20px !important; }
