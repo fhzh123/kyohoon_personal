@@ -127,6 +127,10 @@ test('DOM simulation: reader can navigate/search/read details but cannot edit, d
     assert.equal(f.document.querySelector('#global-search').readOnly,false);
     assert.equal(f.document.querySelector('[data-goal-filter-choice]').disabled,false);
     assert.equal(f.document.querySelector('[data-goal-filter-all]').disabled,false);
+    for(const name of ['category','status','owner']){
+      assert.equal(f.document.querySelector(`[data-${name}-filter-choice]`).disabled,false);
+      assert.equal(f.document.querySelector(`[data-${name}-filter-all]`).disabled,false);
+    }
     assert.equal(f.document.querySelector('[data-order-goals]'),null);
     assert.equal(f.document.querySelector('[data-reorder-task]').disabled,true);
     await f.navigate('overview');

@@ -18,7 +18,7 @@
   let hasUserData=false, workspaceSync=null, workspaceMessage='이 브라우저에 자동 저장';
   let state = validateState(clone(window.RESEARCH_SEED));
   let view='roadmap', unit='week', anchor=MIN_DATE, selectedYear=Number(MIN_DATE.slice(0,4)), overviewMonth=Number(MIN_DATE.slice(5,7));
-  let search='',goalFilter=null,categoryFilter='',statusFilter='';
+  let search='',goalFilter=null,categoryFilter=null,statusFilter=null,ownerFilter=null;
   let dirty=false, storageFailed=false, sourceIssue='', memoryRecovery=null, toastTimer, lastFocus=null;
   let taskSnapshot='', periodEdited=false, editorDraft=null, commitEditor=null, editorEvents=null;
   try { const raw=readOnly?null:localStorage.getItem(KEY); if(raw) {state=validateState(JSON.parse(raw));hasUserData=true;} }
@@ -102,7 +102,8 @@
     next=alias(next);if(!views[next])return;
     const changed=view!==next;view=next;location.hash=next;render();if(changed)window.scrollTo?.(0,0);
   }
-  function filteredTasks() {return state.tasks.filter(t=>(!search||[t.title,t.officialTitle,t.description,t.deliverable,t.notes].join(' ').toLowerCase().includes(search.toLowerCase()))&&(goalFilter===null||goalFilter.includes(t.goalId||''))&&(!categoryFilter||t.category===categoryFilter)&&(!statusFilter||t.status===statusFilter));}
+  const taskOwners=task=>{const names=window.ResearchCalendar.ownersOf(task);return names.length?names:[''];};
+  function filteredTasks() {return state.tasks.filter(t=>(!search||[t.title,t.officialTitle,t.description,t.deliverable,t.notes].join(' ').toLowerCase().includes(search.toLowerCase()))&&(goalFilter===null||goalFilter.includes(t.goalId||''))&&(categoryFilter===null||categoryFilter.includes(t.category))&&(statusFilter===null||statusFilter.includes(t.status))&&(ownerFilter===null||taskOwners(t).some(name=>ownerFilter.includes(name))));}
   function goalOptions(value,empty='모든 L3 연구축') {return `<option value="">${esc(empty)}</option>`+state.goals.map(g=>`<option value="${esc(g.id)}" ${g.id===value?'selected':''}>${esc(g.title)}</option>`).join('');}
   function options(map,value,empty) {return (empty!==undefined?`<option value="">${esc(empty)}</option>`:'')+Object.entries(map).map(([k,v])=>`<option value="${esc(k)}" ${value===k?'selected':''}>${esc(v)}</option>`).join('');}
   function statsHTML() {
@@ -124,34 +125,38 @@
     else if(view==='backlog'){host.innerHTML=backlogHTML();bindFilters();bindTasks(host);}
     else window.ResearchNotebook.render(view,host,{state,readOnly,escape:esc,uid,save,refresh:render,toast,openTask,navigate,rememberRecovery,updateStats,hierarchy:H,categoryLabels:categories,statusLabels:statuses});
   }
-  function goalFilterHTML() {
-    const choices=[...state.goals.map(g=>({id:g.id,title:g.title})),{id:'',title:'L3 연결 전'}];
-    const selected=goalFilter===null?choices.map(g=>g.id):goalFilter;
-    const all=choices.every(g=>selected.includes(g.id));
-    const summary=goalFilter===null?'모든 L3 연구축':selected.length?`L3 연구축 ${selected.length}개 선택`:'L3 선택 없음';
-    return `<details class="goal-filter" id="goal-filter"><summary aria-label="L3 연구축 필터">${esc(summary)}<span aria-hidden="true">⌄</span></summary><div class="goal-filter-menu"><div class="goal-filter-header"><strong>L3 연구축 선택</strong><small>원하는 연구축을 여러 개 선택하세요.</small></div><label class="goal-filter-all"><input type="checkbox" data-goal-filter-all ${all?'checked':''}>전체 선택</label><div class="goal-filter-choices">${choices.map(g=>`<label><input type="checkbox" data-goal-filter-choice value="${esc(g.id)}" ${selected.includes(g.id)?'checked':''}><span>${esc(g.title)}</span></label>`).join('')}</div><div class="goal-filter-footer"><span data-goal-filter-count>${selected.length}개 선택</span><button type="button" class="secondary-button" data-goal-filter-cancel>취소</button><button type="button" class="primary-button" data-goal-filter-apply>적용</button></div></div></details>`;
+  function filterConfigs(){
+    const people=[...new Set(state.tasks.flatMap(t=>window.ResearchCalendar.ownersOf(t)))].sort((a,b)=>a.localeCompare(b,'ko'));
+    return [
+      {name:'goal',id:'goal-filter',title:'L3 연구축',allLabel:'모든 L3 연구축',emptyLabel:'L3 선택 없음',unit:'개',hint:'원하는 연구축을 여러 개 선택하세요.',choices:[...state.goals.map(g=>({id:g.id,title:g.title})),{id:'',title:'L3 연결 전'}],selected:goalFilter,set:v=>goalFilter=v},
+      {name:'category',id:'category-filter',title:'연구 유형',allLabel:'모든 연구 유형',emptyLabel:'연구 유형 선택 없음',unit:'개',hint:'보고 싶은 연구 유형을 선택하세요.',choices:Object.entries(categories).map(([id,title])=>({id,title})),selected:categoryFilter,set:v=>categoryFilter=v},
+      {name:'status',id:'status-filter',title:'상태',allLabel:'모든 상태',emptyLabel:'상태 선택 없음',unit:'개',hint:'보고 싶은 진행 상태를 선택하세요.',choices:Object.entries(statuses).map(([id,title])=>({id,title})),selected:statusFilter,set:v=>statusFilter=v},
+      {name:'owner',id:'owner-filter',title:'담당자',allLabel:'모든 담당자',emptyLabel:'담당자 선택 없음',unit:'명',hint:'여러 담당자를 선택할 수 있으며 공동 담당 연구도 포함됩니다.',choices:[...people.map(name=>({id:name,title:name})),{id:'',title:'담당 미정'}],selected:ownerFilter,set:v=>ownerFilter=v}
+    ];
+  }
+  function checkboxFilterHTML(config){
+    const {name,id,title,allLabel,emptyLabel,unit,hint,choices}=config,selected=config.selected===null?choices.map(c=>c.id):config.selected;
+    const summary=config.selected===null?allLabel:selected.length?`${title} ${selected.length}${unit} 선택`:emptyLabel;
+    return `<details class="goal-filter task-filter" id="${id}" data-filter-kind="${name}"><summary aria-label="${title} 필터">${esc(summary)}<span aria-hidden="true">⌄</span></summary><div class="goal-filter-menu"><div class="goal-filter-header"><strong>${title} 선택</strong><small>${esc(hint)}</small></div><label class="goal-filter-all"><input type="checkbox" data-filter-all data-${name}-filter-all ${choices.every(c=>selected.includes(c.id))?'checked':''}>전체 선택</label><div class="goal-filter-choices">${choices.map(c=>`<label><input type="checkbox" data-filter-choice data-${name}-filter-choice value="${esc(c.id)}" ${selected.includes(c.id)?'checked':''}><span>${esc(c.title)}</span></label>`).join('')}</div><div class="goal-filter-footer"><span data-filter-count data-${name}-filter-count>${selected.length}${unit} 선택</span><button type="button" class="secondary-button" data-filter-cancel data-${name}-filter-cancel>취소</button><button type="button" class="primary-button" data-filter-apply data-${name}-filter-apply>적용</button></div></div></details>`;
   }
   function filtersHTML() {
-    return `<div class="planning-filters">${goalFilterHTML()}<select id="category-filter" aria-label="연구 유형 필터">${options(categories,categoryFilter,'모든 연구 유형')}</select><select id="status-filter" aria-label="상태 필터">${options(statuses,statusFilter,'모든 상태')}</select>${search||goalFilter!==null||categoryFilter||statusFilter?'<button class="text-button" id="clear-filters">필터 초기화</button>':''}</div>`;
+    return `<div class="planning-filters">${filterConfigs().map(checkboxFilterHTML).join('')}${search||[goalFilter,categoryFilter,statusFilter,ownerFilter].some(v=>v!==null)?'<button class="text-button" id="clear-filters">필터 초기화</button>':''}</div>`;
   }
   function bindFilters() {
-    for(const [id,set] of [['category-filter',v=>categoryFilter=v],['status-filter',v=>statusFilter=v]]) {
-      const el=$('#'+id);if(el)el.onchange=()=>{set(el.value);render();};
-    }
-    const picker=$('#goal-filter');
-    if(picker){
-      const inputs=[...picker.querySelectorAll('[data-goal-filter-choice]')],all=picker.querySelector('[data-goal-filter-all]');
-      const update=()=>{const count=inputs.filter(i=>i.checked).length;all.checked=count===inputs.length;all.indeterminate=count>0&&count<inputs.length;picker.querySelector('[data-goal-filter-count]').textContent=count+'개 선택';};
-      const reset=()=>{inputs.forEach(i=>i.checked=goalFilter===null||goalFilter.includes(i.value));update();};
-      picker.addEventListener('toggle',()=>{if(picker.open)reset();});
+    for(const config of filterConfigs()){
+      const picker=$('#'+config.id);if(!picker)continue;
+      const inputs=[...picker.querySelectorAll('[data-filter-choice]')],all=picker.querySelector('[data-filter-all]');
+      const update=()=>{const count=inputs.filter(i=>i.checked).length;all.checked=count===inputs.length;all.indeterminate=count>0&&count<inputs.length;picker.querySelector('[data-filter-count]').textContent=count+config.unit+' 선택';};
+      const reset=()=>{inputs.forEach(i=>i.checked=config.selected===null||config.selected.includes(i.value));update();};
+      picker.addEventListener('toggle',()=>{if(picker.open){document.querySelectorAll('.task-filter[open]').forEach(other=>{if(other!==picker)other.open=false;});reset();}});
       all.onchange=()=>{inputs.forEach(i=>i.checked=all.checked);update();};
       inputs.forEach(i=>i.onchange=update);
-      picker.querySelector('[data-goal-filter-cancel]').onclick=()=>{picker.open=false;picker.querySelector('summary').focus();};
-      picker.querySelector('[data-goal-filter-apply]').onclick=()=>{const ids=inputs.filter(i=>i.checked).map(i=>i.value);goalFilter=ids.length===inputs.length?null:ids;render();$('#goal-filter summary')?.focus();};
+      picker.querySelector('[data-filter-cancel]').onclick=()=>{picker.open=false;picker.querySelector('summary').focus();};
+      picker.querySelector('[data-filter-apply]').onclick=()=>{const ids=inputs.filter(i=>i.checked).map(i=>i.value);config.set(ids.length===inputs.length?null:ids);render();$('#'+config.id+' summary')?.focus();};
       picker.onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();picker.open=false;picker.querySelector('summary').focus();}};
       update();
     }
-    if($('#clear-filters'))$('#clear-filters').onclick=()=>{goalFilter=null;categoryFilter=statusFilter=search='';$('#global-search').value='';render();};
+    if($('#clear-filters'))$('#clear-filters').onclick=()=>{goalFilter=categoryFilter=statusFilter=ownerFilter=null;search='';$('#global-search').value='';render();};
   }
   function reorderGoal(id,targetId,placement='before'){
     if(readOnly||id===targetId||!['before','after'].includes(placement))return false;
@@ -179,7 +184,7 @@
     const cols=P.columns(anchor,unit), focusYear=P.date(anchor).getFullYear();
     const focus=state.annualPlans.find(p=>p.year===focusYear);
     host.innerHTML=`<section class="planning-panel"><div class="planning-toolbar"><div class="planning-tools"><h2>${rangeHeading(cols)}</h2><button type="button" id="roadmap-visibility" class="secondary-button roadmap-visibility-button">기술 표시 설정${hiddenCount?` <span>숨김 ${hiddenCount}</span>`:''}</button><label class="planning-jump"><span>기준 월</span><input id="anchor-month" type="month" min="2026-11" value="${anchor.slice(0,7)}" aria-label="로드맵 기준 월"></label></div><div class="planning-scale segmented-control" role="group" aria-label="로드맵 시간 단위">${Object.entries(units).map(([key,label])=>`<button data-unit="${key}" class="${unit===key?'active':''}" aria-pressed="${unit===key}">${label}</button>`).join('')}</div></div>${filtersHTML()}<div class="planning-caption"><span>${unit==='week'?'13주를 한눈에 · 월요일부터 일요일까지, 매월 첫 월요일이 첫째주':unit==='month'?'12개월을 한눈에 · 연구를 월 단위로 배치':'5년을 한눈에 · 장기 연구 방향을 배치'}</span><span>구간 드래그로 연구 배치 ↔</span></div><div id="timeline-host"></div></section><div class="bigpicture-strip"><div class="strategy-side-card"><div class="section-label">${focusYear}년의 연구 방향 <button class="text-button" id="edit-year-direction">방향 정리 ↗</button></div><p class="strategy-note">${esc(focus?.focus||'이 해의 핵심 질문을 먼저 정해 보세요. 어떤 가능성을 검증하고, 어떤 성과로 이어갈까요?')}</p></div><div class="strategy-side-card"><div class="section-label">L3별 배치</div><div class="year-goal-summary">${state.goals.filter(g=>goalFilter===null||goalFilter.includes(g.id)).map(g=>`<span class="strategy-meter"><span>${esc(g.title)}</span><strong>${state.tasks.filter(t=>t.goalId===g.id&&t.start).length}<small>개</small></strong></span>`).join('')}</div></div><div class="strategy-side-card"><div class="section-label">기획의 기준</div><p class="strategy-note">“언제까지 무엇을 밝혀낼까?”</p><p class="focus-help">하루의 할 일보다 연구 질문과 구간별 결과물에 집중해 보세요. 자세한 생각은 연구 노트에 이어서 남길 수 있어요.</p></div></div>${candidateHTML(6)}`;
-    window.ResearchTimeline.render($('#timeline-host'),{state,unit,anchor,escape:esc,filteredTasks,openTask,reschedule,toast,periods:P,categories,statusLabels:statuses,colors:palette(),hierarchy:H,addChild,selectedL3Ids:goalFilter,moveTask,reorderTask,stepPeriod,readOnly,hideTask,deleteTask:confirmDeleteTask,reorderGoal,moveGoal});
+    window.ResearchTimeline.render($('#timeline-host'),{state,unit,anchor,escape:esc,filteredTasks,openTask,reschedule,toast,periods:P,categories,statusLabels:statuses,colors:palette(),hierarchy:H,addChild,selectedL3Ids:goalFilter,strictTaskFilter:[categoryFilter,statusFilter,ownerFilter].some(v=>v!==null),hideEmptyGroups:!!search||[categoryFilter,statusFilter,ownerFilter].some(v=>v!==null),moveTask,reorderTask,stepPeriod,readOnly,hideTask,deleteTask:confirmDeleteTask,reorderGoal,moveGoal});
     $('#roadmap-visibility').onclick=openRoadmapVisibility;
     bindFilters();bindTasks(host);
     host.querySelectorAll('[data-unit]').forEach(button=>button.onclick=()=>{unit=button.dataset.unit;render();});
@@ -535,7 +540,7 @@
     $('#import-cancel').onclick=()=>$('#utility-dialog').close();$('#import-confirm').onclick=()=>{rememberRecovery();state=incoming;storageFailed=false;save();$('#utility-dialog').close();render();toast('연구 계획을 가져왔습니다. 기존 기간도 보존했습니다.');};
   }
   $('#import-file').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{if(f.size>30*1024*1024)throw Error('30MB 이하의 JSON 파일을 선택해 주세요.');confirmImport(validateState(JSON.parse(await f.text())),f.name);}catch(error){toast('가져오기 실패: '+error.message);}};
-  document.addEventListener('click',e=>{const picker=$('#goal-filter');if(picker?.open&&!picker.contains(e.target))picker.open=false;const target=e.target.closest('[data-view]');if(target)navigate(target.dataset.view);});
+  document.addEventListener('click',e=>{document.querySelectorAll('.task-filter[open]').forEach(picker=>{if(!picker.contains(e.target))picker.open=false;});const target=e.target.closest('[data-view]');if(target)navigate(target.dataset.view);});
   $('#global-search').oninput=e=>{search=e.target.value;if(!['roadmap','overview','backlog'].includes(view))navigate('backlog');else render();};
   $('#add-task').onclick=()=>openTask(null,view==='roadmap'?defaultPeriod():view==='overview'?{start:`${selectedYear}-${selectedYear===2026?'11':'01'}-01`,end:`${selectedYear}-12-31`,planUnit:'year'}:{planUnit:unit});
   $('#backup-open').onclick=$('#backup-top').onclick=openBackup;
