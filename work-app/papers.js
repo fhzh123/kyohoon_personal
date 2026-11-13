@@ -19,7 +19,7 @@
       return paper;
     });
   }
-  function mount(host, task, {readOnly = false, onChange, toast, uid}) {
+  function mount(host, task, {readOnly = false, onChange, toast, uid, autosave = false}) {
     task.papers = normalize(task.papers);
     let processing=0;
     const render = (openId = '') => {
@@ -27,14 +27,18 @@
         const prefix = 'paper-' + index, figure = safeURL(paper.figure, true), url = safeURL(paper.url);
         const field = (name, label, type = 'text') => `<div class="form-field ${['title','summary','url','figure'].includes(name)?'field-full':''}"><label for="${prefix}-${name}">${label}</label>${name === 'summary' ? `<textarea id="${prefix}-${name}" data-paper-field="summary" rows="3" ${readOnly?'readonly':''}>${escape(paper.summary)}</textarea>` : `<input id="${prefix}-${name}" data-paper-field="${name}" type="${type}" value="${escape(name==='figure'&&paper.figure.startsWith('data:')?'':paper[name])}" ${name==='title'?'required maxlength="500"':''} ${name==='year'?'min="1800" max="9999"':''} ${readOnly?'readonly':''} ${name==='figure'?'placeholder="이미지 URL 또는 아래에서 파일 선택"':''}>`}</div>`;
         return `<article class="paper-card" data-paper-id="${escape(paper.id)}"><div class="paper-preview">${figure?`<a href="${escape(figure)}" target="_blank" rel="noopener noreferrer" class="paper-figure-link" aria-label="${escape(paper.title||'논문')} 대표 Figure 크게 보기"><img class="paper-figure" src="${escape(figure)}" alt="${escape(paper.title||'논문')} 대표 Figure" loading="lazy" referrerpolicy="no-referrer"></a>`:''}<div><span class="paper-meta">${escape([paper.venue,paper.year].filter(Boolean).join(' / ')||'학회와 연도 미입력')}</span><h4>${escape(paper.title||'새로운 논문')}</h4>${paper.summary?`<p class="paper-summary">${escape(paper.summary)}</p>`:''}${url?`<a class="text-link" href="${escape(url)}" target="_blank" rel="noopener noreferrer">논문 열기 ↗</a>`:''}</div></div><details class="paper-fields" ${paper.id===openId?'open':''}><summary>${readOnly?'논문 정보 보기':'논문 정보 편집'}</summary><div class="form-grid">${field('title','논문명')}${field('venue','학회 또는 저널')}${field('year','연도','number')}${field('summary','짧은 요약')}${field('url','논문 링크','url')}${field('figure','대표 Figure 이미지 URL','url')}${readOnly?'':`<div class="form-field field-full"><label for="${prefix}-upload">대표 Figure 파일</label><input id="${prefix}-upload" type="file" accept="image/png,image/jpeg,image/webp" data-paper-upload><span class="field-help" data-paper-image-status>PNG, JPG, WebP 이미지를 선택하세요.</span><button type="button" class="text-button" data-paper-clear-figure>Figure 제거</button></div><button type="button" class="danger-button" data-paper-remove>논문 제거</button>`}</div></details></article>`;
-      }).join('')||'<p class="paper-empty">아직 연결된 논문이 없습니다.</p>'}</div><p class="field-help">${readOnly?'연결된 논문은 연구별로 보관됩니다.':'논문 정보를 작성한 뒤 아래 ‘연구 구간 저장’을 눌러 반영하세요.'}</p>`;
+      }).join('')||'<p class="paper-empty">아직 연결된 논문이 없습니다.</p>'}</div><p class="field-help">${readOnly?'연결된 논문은 연구별로 보관됩니다.':(autosave?'논문 정보는 입력하는 즉시 자동 저장됩니다.':'논문 정보를 작성한 뒤 아래 ‘연구 구간 저장’을 눌러 반영하세요.')}</p>`;
       host.querySelectorAll('.paper-figure').forEach(image => image.onerror = () => { image.hidden = true; image.parentElement.textContent = 'Figure를 불러오지 못했습니다. 이미지 주소를 확인해 주세요.'; });
     };
     const paperFor = element => task.papers.find(paper => paper.id === element.closest('[data-paper-id]')?.dataset.paperId);
     host.addEventListener('input', event => {
       if (readOnly || !event.target.matches('[data-paper-field]')) return;
       const paper = paperFor(event.target); if (!paper) return;
-      paper[event.target.dataset.paperField] = event.target.value; onChange();
+      paper[event.target.dataset.paperField] = event.target.value;
+      const card=event.target.closest('[data-paper-id]');
+      card.querySelector('h4').textContent=paper.title||'새로운 논문';
+      card.querySelector('.paper-meta').textContent=[paper.venue,paper.year].filter(Boolean).join(' / ')||'학회와 연도 미입력';
+      onChange();
     });
     host.addEventListener('change', async event => {
       if (readOnly || !event.target.matches('[data-paper-upload]')) return;

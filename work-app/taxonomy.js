@@ -21,11 +21,33 @@
       return false;
     }) && Object.keys(original).every(key => item[key]===undefined || JSON.stringify(item[key])===JSON.stringify(original[key]));
   }
+  // These two axes were explicitly rejected by the workspace owner. Keep research
+  // records, but remove the grouping and its stale source associations.
+  const rejectedTitles = new Set(['멀티에이전트 토론으로 텍스트를 세그멘테이션하는 기술','단일 에이전트 세그멘테이션 (#4의 출발점)']);
+  function applyDeletions(out) {
+    const goals = new Set(out.deletedGoalIds || []), tasks = new Set(out.deletedTaskIds || []);
+    catalog.forEach(g=>{if(rejectedTitles.has(g.name))goals.add(g.id);});
+    out.goals.forEach(g=>{if(rejectedTitles.has(g.title)||rejectedTitles.has(g.officialTitle))goals.add(g.id);});
+    out.goals=out.goals.filter(g=>!goals.has(g.id));
+    out.tasks=out.tasks.filter(t=>!tasks.has(t.id));
+    const remaining=new Set(out.tasks.map(t=>t.id));
+    [...out.tasks,...out.notes,...out.phases].forEach(item=>{
+      if(goals.has(item.goalId)||goals.has(item.l3Id)) {
+        item.goalId='';
+        for(const key of ['l3Id','l2Id','assetId','linkedAssetId','officialTitle','sourceCell'])delete item[key];
+      }
+    });
+    out.tasks.forEach(t=>{if(t.parentId&&!remaining.has(t.parentId))t.parentId='';if(t.dependencies)t.dependencies=t.dependencies.filter(id=>!tasks.has(id));});
+    out.deletedGoalIds=[...goals];out.deletedTaskIds=[...tasks];
+    return out;
+  }
   function migrate(data) {
     if (!data || ![1,2,3,4].includes(data.version)) throw new Error('지원하는 Research Atlas 데이터 버전이 아닙니다.');
     const out = clone(data);
     ['goals','phases','tasks','notes','references'].forEach(key=>{if(!Array.isArray(out[key]))out[key]=[];});
-    if (out.version===4 && out.taxonomyVersion===taxonomyVersion) return out;
+    applyDeletions(out);
+    const activeCatalog=catalog.filter(g=>!out.deletedGoalIds.includes(g.id));
+    if (out.version===4 && out.taxonomyVersion===taxonomyVersion) return applyDeletions(out);
     out.annualPlans = out.annualPlans || [];
     const legacyGroups = new Map((out.legacyGroups||[]).map(g=>[g.id,g]));
     const seedGoals = new Map(legacySeed.goals.map(g=>[g.id,g]));
@@ -37,7 +59,7 @@
     });
     out.legacyGroups = [...legacyGroups.values()];
     const goals = new Map(authoredGoals.map(g=>[g.id,g]));
-    catalog.forEach(g=> {
+    activeCatalog.forEach(g=> {
       const previous=goals.get(g.id);
       goals.set(g.id,{title:g.name,description:'',metric:'',color:'#d5793d',...previous,id:g.id,assetId:g.id,l3Id:g.id,l2Id:'l2-'+g.l2.sourceCell.slice(1),officialTitle:g.name,sourceCell:g.sourceCell});
     });
@@ -59,12 +81,12 @@
     const displayTitle=a=>a.name.split(/\s*->\s*/)[0].trim();
     const roots=new Map();
     const official=new Map();
-    catalog.forEach(g=>g.l4.forEach(a=>official.set(a.id,{a,g})));
+    activeCatalog.forEach(g=>g.l4.forEach(a=>official.set(a.id,{a,g})));
     // Authored independent candidates win over untouched seed placeholders.
     const candidates=new Map();
     out.tasks.forEach(t=> {
       const asset=official.has(t.assetId)?t.assetId:rootMap[t.id]||(t.id==='workflow-action'?'l4-24':null);
-      if(asset&&!t.parentId) {
+      if(official.has(asset)&&!t.parentId) {
         const score=(t.assetId===asset?10:0)+(!unchanged(t,originalTasks.get(t.id))?4:0)+(referencesId(t.id)?2:0)+(rootMap[t.id]?1:0);
         if(!candidates.has(asset)||score>candidates.get(asset).score)candidates.set(asset,{task:t,score});
       }
@@ -72,7 +94,7 @@
     candidates.forEach(({task},asset)=>roots.set(asset,task));
     out.tasks=out.tasks.filter(t=> {
       const asset=rootMap[t.id];
-      return !asset||roots.get(asset)===t||!unchanged(t,originalTasks.get(t.id))||referencesId(t.id);
+      return !official.has(asset)||roots.get(asset)===t||!unchanged(t,originalTasks.get(t.id))||referencesId(t.id);
     });
     const allocate=(preferred)=>{let id=preferred,n=2;while(taskIds.has(id))id=preferred+'-'+n++;taskIds.add(id);return id;};
     official.forEach(({a,g},asset)=> {
@@ -90,7 +112,7 @@
     out.tasks.forEach(t=> {
       if(canonicalIds.has(t.id))return;
       const asset=childMap[t.id]||rootMap[t.id];
-      if(!asset)return;
+      if(!official.has(asset))return;
       const parent=roots.get(asset), {g}=official.get(asset);
       if(!t.parentId)t.parentId=parent.id;
       if(!t.legacyGoalId&&t.goalId&&t.goalId!==g.id)t.legacyGoalId=t.goalId;
@@ -108,7 +130,7 @@
       t.goalId=root.goalId;t.l3Id=root.l3Id;t.l2Id=root.l2Id;
     });
     out.version=4;out.taxonomyVersion=taxonomyVersion;
-    return out;
+    return applyDeletions(out);
   }
   global.ResearchTaxonomy={catalog,l2,source:source.source,taxonomyVersion,migrate};
 })(typeof window!=='undefined'?window:globalThis);

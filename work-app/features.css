@@ -77,3 +77,9 @@
 .overlap-count{padding:3px 8px;border-radius:5px;background:color-mix(in srgb,var(--blue) 8%,transparent)}.overlap-count.is-busy{background:#c2793920;color:#d39255;font-weight:700}
 .annual-quarter-summary>summary{padding:15px 0;font-size:13px;color:var(--muted);cursor:pointer}.annual-quarter-summary[open]>summary{margin-bottom:10px}
 @media(max-width:760px){.month-planning-toolbar{align-items:flex-start;flex-wrap:wrap;padding:18px}.month-calendar-filters{padding-inline:18px}.calendar-count-note{padding-inline:18px}.overlap-summary>div{padding:14px}.overlap-summary strong{font-size:22px}.owner-overlap-section,.calendar-day-detail{padding:18px}.calendar-day-task{flex-direction:column;gap:6px}}
+
+/* Compact card actions keep their accessible names and large hit areas. */
+.card-actions{flex-shrink:0;gap:4px}.card-action{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;color:var(--text-muted,#98a6bb)}
+.card-action:hover{background:rgba(126,157,208,.12);color:var(--text,#d7e1f1)}.card-action.is-danger:hover{color:#ed7c86;background:rgba(220,74,90,.12)}
+.goal-delete-options{display:grid;gap:16px;padding:20px 0}.goal-delete-options label{display:flex;align-items:flex-start;gap:10px;line-height:1.6}.goal-delete-options input{margin-top:5px}
+.note-papers{min-width:0;border-top:1px solid var(--border,#303a4b);padding-top:24px;margin-top:12px}.note-papers .papers-heading{flex-wrap:wrap;gap:12px}.note-papers .paper-card{min-width:0}.note-papers input,.note-papers textarea{min-width:0;max-width:100%}

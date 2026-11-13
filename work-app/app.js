@@ -27,6 +27,10 @@
   function validateState(data) {
     if(!data || ![1,2,3,4].includes(data.version) || !['goals','phases','tasks','notes','references'].every(k=>Array.isArray(data[k]))) throw Error('지원하는 Research Atlas 백업이 아닙니다.');
     const out={version:data.version===4?4:3,annualPlans:[]};
+    for(const key of ['deletedGoalIds','deletedTaskIds']) {
+      if(data[key]!==undefined && (!Array.isArray(data[key])||data[key].some(id=>typeof id!=='string')))throw Error('삭제 기록 형식을 확인해 주세요.');
+      out[key]=[...new Set(data[key]||[])];
+    }
     if(data.taxonomyVersion)out.taxonomyVersion=data.taxonomyVersion;
     if(Array.isArray(data.legacyGroups))out.legacyGroups=clone(data.legacyGroups);
     if(data.settings!==undefined){
@@ -47,6 +51,7 @@
         ids.add(item.id); const obj={...item};
         for(const name of fields[key]) obj[name]=typeof obj[name]==='string'?obj[name]:'';
         for(const [name,value] of Object.entries(obj)) if(!['dependencies','papers'].includes(name) && value!==null && !['string','number','boolean'].includes(typeof value)) delete obj[name];
+        if(key==='notes')obj.papers=window.ResearchPapers?.normalize(item.papers)||[];
         if(key==='tasks') {
           if(item.parentId!==undefined && typeof item.parentId!=='string')throw Error('상위 연구 ID는 문자열이어야 합니다.');
           obj.parentId=item.parentId||'';
@@ -117,7 +122,7 @@
     else if(view==='overview')renderOverview(host);
     else if(view==='settings')renderSettings(host);
     else if(view==='backlog'){host.innerHTML=backlogHTML();bindFilters();bindTasks(host);}
-    else window.ResearchNotebook.render(view,host,{state,escape:esc,uid,save,refresh:render,toast,openTask,navigate,rememberRecovery,updateStats,hierarchy:H,categoryLabels:categories,statusLabels:statuses});
+    else window.ResearchNotebook.render(view,host,{state,readOnly,escape:esc,uid,save,refresh:render,toast,openTask,navigate,rememberRecovery,updateStats,hierarchy:H,categoryLabels:categories,statusLabels:statuses});
   }
   function filtersHTML() {
     return `<div class="planning-filters"><select id="goal-filter" aria-label="L3 연구축 필터">${goalOptions(goalFilter)}</select><select id="category-filter" aria-label="연구 유형 필터">${options(categories,categoryFilter,'모든 연구 유형')}</select><select id="status-filter" aria-label="상태 필터">${options(statuses,statusFilter,'모든 상태')}</select>${search||goalFilter||categoryFilter||statusFilter?'<button class="text-button" id="clear-filters">필터 초기화</button>':''}</div>`;
