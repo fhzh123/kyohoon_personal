@@ -131,7 +131,8 @@ test('DOM simulation: reader can navigate/search/read details but cannot edit, d
     assert.equal(f.document.querySelector('#annual-save-status').textContent,'읽기 전용 · 저장 권한 없음');
     await f.navigate('goals');
     assert.equal(f.document.querySelector('[data-add-goal]').disabled,true);
-    assert.equal(f.document.querySelector('[data-edit-goal]').textContent,'상세 보기');
+    assert.equal(f.document.querySelector('[data-edit-goal]'),null);
+    assert.equal(f.document.querySelector('[data-delete-goal]'),null);
     await f.navigate('notes');
     assert.equal(f.document.querySelector('[data-new-note]').disabled,true);
     assert.equal(f.document.querySelector('#note-body').readOnly,true);

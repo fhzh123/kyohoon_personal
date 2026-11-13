@@ -12,20 +12,20 @@ const seed={version:4,goals:[{id:'g1',title:'검증용 연구축'}],phases:[],no
   {id:'done',title:'표 형식의 데이터를 분석하는 기술',goalId:'g1',status:'done'},
   {id:'future',title:'원천 데이터의 구조화 모달리티 확장 기술',goalId:'g1'}
 ]};
-async function fixture(role='editor') {
+async function fixture(role='editor', initial=seed, catalog=[]) {
   const html=(await readFile(new URL('work-app/index.html',root),'utf8')).replace(/<script[^>]*src=[^>]*><\/script>/g,'');
   const dom=new JSDOM(html,{url:'https://fixture.invalid/work/app/index.html',runScripts:'outside-only',pretendToBeVisual:true});
-  const w=dom.window,puts=[],gets=[];let remote={revision:'4',state:clone(seed)};
+  const w=dom.window,puts=[],gets=[];let remote={revision:'4',state:clone(initial)};
   w.scrollTo=()=>{};w.confirm=()=>true;w.HTMLElement.prototype.scrollIntoView=()=>{};
   w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
-  w.WORK_CONTEXT={mode:'supabase',storageKey:'synthetic-'+role,role};w.RESEARCH_SEED=clone(seed);w.WORK_INITIAL_ENVELOPE=clone(remote);
+  w.WORK_CONTEXT={mode:'supabase',storageKey:'synthetic-'+role,role};w.RESEARCH_SEED=clone(initial);w.RESEARCH_TAXONOMY_SOURCE={catalog};w.RESEARCH_LEGACY_SEED=clone(seed);w.WORK_INITIAL_ENVELOPE=clone(remote);
   w.fetch=async(url,options={})=>{
     assert.equal(url,'/api/research-state');
     if(options.method==='PUT'){const payload=JSON.parse(options.body);puts.push(payload);assert.equal(payload.revision,remote.revision);remote={revision:String(+remote.revision+1),state:clone(payload.state)};}
     else gets.push(url);
     return {ok:true,status:200,json:async()=>clone(remote)};
   };
-  for(const name of ['papers','periods','hierarchy','timeline','calendar','workspace-sync','app'])w.eval(await readFile(new URL(`work-app/${name}.js`,root),'utf8'));
+  for(const name of ['papers','taxonomy','notebook','periods','hierarchy','timeline','calendar','workspace-sync','app'])w.eval(await readFile(new URL(`work-app/${name}.js`,root),'utf8'));
   await tick();
   return {w,document:w.document,puts,gets,close:()=>w.close()};
 }
@@ -206,5 +206,59 @@ test('appearance is only in Settings and library bookmarks return to roadmap',as
   d.querySelector('[data-view="settings"]').click();await tick();
   assert.deepEqual([...d.querySelectorAll('[data-theme-value]')].map(x=>x.dataset.themeValue),['dark','light','system']);
   f.w.location.hash='references';await tick();assert.equal(d.querySelector('#breadcrumb-view').textContent,'연구 로드맵');
+ }finally{f.close();}
+});
+
+const axisCatalog=[{id:'g1',name:'검증용 연구축',sourceCell:'A1',l2:{sourceCell:'A2'},l4:[{id:'asset1',name:'기존 기술',sourceCell:'A3'}]}];
+test('built-in L3 deletion removes descendants and survives migration, sync and backups',async()=>{
+ const f=await fixture('editor',seed,axisCatalog);try{
+  const {w,document:d}=f,api=w.ResearchAtlas;
+  d.querySelector('[data-view="goals"]').click();
+  const button=d.querySelector('[data-delete-goal="g1"]');assert.ok(button);assert.equal(button.textContent,'');assert.match(button.getAttribute('aria-label'),/삭제/);
+  button.click();d.querySelector('[data-confirm-delete-goal]').click();await tick();
+  let state=api.getState();assert.equal(state.goals.length,0);assert.equal(state.tasks.length,0);assert.ok(state.deletedGoalIds.includes('g1'));
+  assert.equal(f.puts.at(-1).state.goals.length,0);
+  state.taxonomyVersion='older';state=api.validateState(state);assert.equal(state.goals.length,0);assert.equal(state.tasks.length,0);
+ }finally{f.close();}
+});
+test('L3-only deletion keeps research and notes, failure restores the original state',async()=>{
+ const initial=clone(seed);initial.notes=[{id:'n1',title:'보존할 노트',goalId:'g1'}];
+ const f=await fixture('editor',initial,axisCatalog);try{
+  const {w,document:d}=f,api=w.ResearchAtlas;
+  d.querySelector('[data-view="goals"]').click();d.querySelector('[data-delete-goal]').click();
+  d.querySelector('[name="delete-scope"][value="axis"]').checked=true;d.querySelector('[data-confirm-delete-goal]').click();await tick();
+  let state=api.getState();const count=state.tasks.length;state.taxonomyVersion='older';state=api.validateState(state);assert.equal(state.tasks.length,count);assert.equal(state.goals.length,0);assert.ok(state.tasks.length>=4);assert.equal(state.tasks.find(t=>t.id==='child').parentId,'root');assert.equal(state.notes[0].goalId,'');assert.ok(state.tasks.every(t=>!t.goalId));
+ }finally{f.close();}
+ const g=await fixture();try{
+  const d=g.document,before=g.w.ResearchAtlas.getState();d.querySelector('[data-view="goals"]').click();d.querySelector('[data-delete-goal]').click();
+  g.w.Storage.prototype.setItem=()=>{throw Error('full');};d.querySelector('[data-confirm-delete-goal]').click();
+  assert.deepEqual(g.w.ResearchAtlas.getState(),before);
+ }finally{g.close();}
+});
+test('explicitly rejected axes are removed without destroying recorded research',async()=>{
+ const initial=clone(seed);initial.goals[0].title='멀티에이전트 토론으로 텍스트를 세그멘테이션하는 기술';
+ const f=await fixture('editor',initial);try{
+  const state=f.w.ResearchAtlas.getState();assert.equal(state.goals.length,0);assert.equal(state.tasks.length,4);assert.ok(state.tasks.every(t=>!t.goalId));
+ }finally{f.close();}
+});
+test('notes keep multiple paper records separate from reference URL through save and validation',async()=>{
+ const f=await fixture();try{
+  const {w,document:d}=f,api=w.ResearchAtlas;
+  d.querySelector('[data-view="notes"]').click();d.querySelector('[data-new-note]').click();
+  const ref=d.querySelector('#note-url');ref.value='https://example.invalid/reference';ref.dispatchEvent(new w.Event('input',{bubbles:true}));
+  for(const title of ['Paper one','Paper two']){
+   d.querySelector('#note-papers [data-paper-add]').click();const inputs=d.querySelectorAll('#note-papers [data-paper-field="title"]');const input=inputs[inputs.length-1];input.value=title;input.dispatchEvent(new w.Event('input',{bubbles:true}));
+  }
+  assert.equal(d.querySelector('#note-papers .paper-card:last-child h4').textContent,'Paper two');
+  await tick();let state=api.validateState(api.getState());assert.deepEqual(Array.from(state.notes[0].papers,p=>p.title),['Paper one','Paper two']);assert.equal(state.notes[0].url,ref.value);assert.equal(f.puts.at(-1).state.notes[0].papers.length,2);
+  d.querySelector('[data-view="goals"]').click();d.querySelector('[data-view="notes"]').click();assert.equal(d.querySelectorAll('#note-papers .paper-card').length,2);
+  d.querySelector('#note-papers [data-paper-remove]').click();await tick();assert.equal(api.getState().notes[0].papers[0].title,'Paper two');
+ }finally{f.close();}
+});
+test('readers cannot change L3 or note papers',async()=>{
+ const initial=clone(seed);initial.notes=[{id:'n1',title:'읽기 노트',papers:[{id:'p1',title:'Read paper'}]}];
+ const f=await fixture('reader',initial,axisCatalog);try{
+  const d=f.document;d.querySelector('[data-view="goals"]').click();assert.equal(d.querySelector('[data-delete-goal]'),null);
+  d.querySelector('[data-view="notes"]').click();assert.equal(d.querySelector('[data-paper-add]'),null);assert.equal(d.querySelector('[data-paper-field="title"]').readOnly,true);assert.equal(d.querySelector('#note-title').disabled,true);
  }finally{f.close();}
 });
