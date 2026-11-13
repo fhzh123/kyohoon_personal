@@ -331,3 +331,41 @@ test('failed L3 drag saves roll back and reader headings cannot move',async()=>{
   assert.equal(g.document.querySelector('[data-reorder-goal]'),null);assert.equal(g.w.ResearchAtlas.operations.moveGoal('g3',-1),false);assert.equal(g.w.ResearchAtlas.operations.reorderGoal('g3','g1'),false);chooseGoals(g,['g2','g3']);assert.equal(g.document.querySelectorAll('[data-l3-group]').length,2);assert.equal(g.puts.length,0);
  }finally{g.close();}
 });
+
+const checkboxSeed=()=>({...filterSeed(),tasks:[
+ {id:'joint',title:'공동 연구',goalId:'g1',category:'research',status:'active',owner:'연구자 A, 연구자 B',start:'2026-11-02',end:'2026-11-15',planUnit:'week'},
+ {id:'a-only',title:'A 실험',goalId:'g1',category:'experiment',status:'planned',owner:'연구자 A',start:'2026-11-02',end:'2026-11-15',planUnit:'week'},
+ {id:'b-only',title:'B 논문',goalId:'g2',category:'writing',status:'done',owner:'연구자 B',start:'2026-11-02',end:'2026-11-15',planUnit:'week'},
+ {id:'c-only',title:'C 회의',goalId:'g3',category:'meeting',status:'paused',owner:'연구자 C',start:'2026-11-02',end:'2026-11-15',planUnit:'week'},
+ {id:'unassigned',title:'담당자 미정 연구',goalId:'g3',category:'research',status:'backlog',owner:''}
+]});
+function chooseFilter(f,name,ids){const d=f.document;d.querySelectorAll(`[data-${name}-filter-choice]`).forEach(i=>i.checked=ids.includes(i.value));d.querySelector(`[data-${name}-filter-apply]`).click();}
+const shownTasks=f=>[...f.document.querySelectorAll('[data-task-row]')].map(row=>row.dataset.taskRow);
+test('type, status and owner checkbox selections combine across dimensions without changing shared data',async()=>{
+ const f=await fixture('editor',checkboxSeed());try{
+  const before=clone(f.w.ResearchAtlas.getState());chooseFilter(f,'category',['research','writing']);chooseFilter(f,'status',['active','done']);chooseFilter(f,'owner',['연구자 B']);
+  assert.deepEqual(shownTasks(f),['joint','b-only']);assert.equal(f.document.querySelectorAll('[data-owner-filter-choice][value="연구자 B"]').length,1);
+  chooseFilter(f,'owner',['연구자 A']);assert.deepEqual(shownTasks(f),['joint']);chooseFilter(f,'owner',['연구자 A','연구자 B']);assert.deepEqual(shownTasks(f),['joint','b-only']);
+  assert.deepEqual(clone(f.w.ResearchAtlas.getState()),before);assert.equal(f.puts.length,0);
+ }finally{f.close();}
+});
+test('empty selections show no results, unassigned owners can be selected and reset restores all filters',async()=>{
+ const f=await fixture('editor',checkboxSeed());try{
+  chooseFilter(f,'owner',['']);assert.deepEqual(shownTasks(f),['unassigned']);chooseFilter(f,'category',[]);assert.deepEqual(shownTasks(f),[]);assert.match(f.document.querySelector('.timeline-filter-empty').textContent,/조건에 맞는 연구가 없습니다/);
+  f.document.querySelector('#clear-filters').click();assert.equal(shownTasks(f).length,5);assert.equal(f.document.querySelector('#owner-filter summary').textContent,'모든 담당자⌄');
+  chooseFilter(f,'status',[]);assert.equal(shownTasks(f).length,0);f.document.querySelector('#clear-filters').click();assert.equal(shownTasks(f).length,5);
+ }finally{f.close();}
+});
+test('cancelled checkbox edits do not apply and selections follow navigation into overview and backlog',async()=>{
+ const f=await fixture('editor',checkboxSeed());try{
+  const d=f.document;chooseFilter(f,'owner',['연구자 B']);d.querySelector('[data-owner-filter-choice][value="연구자 C"]').checked=true;d.querySelector('[data-owner-filter-cancel]').click();
+  d.querySelector('[data-view="overview"]').click();assert.equal(d.querySelector('[data-owner-filter-choice][value="연구자 C"]').checked,false);assert.ok(d.querySelector('[data-calendar-task="joint"]'));assert.equal(d.querySelector('[data-calendar-task="c-only"]'),null);
+  d.querySelector('[data-view="backlog"]').click();const titles=[...d.querySelectorAll('.task-copy strong')].map(t=>t.textContent);assert.deepEqual(titles,['공동 연구','B 논문']);
+  d.querySelector('[data-view="roadmap"]').click();assert.deepEqual(shownTasks(f),['joint','b-only']);assert.equal(f.puts.length,0);
+ }finally{f.close();}
+});
+test('owner filters include joint assignments but exclude nonmatching parents without changing parent links',async()=>{
+ const f=await fixture();try{
+  chooseFilter(f,'owner',['연구자 B']);assert.deepEqual(shownTasks(f),['child']);assert.equal(f.w.ResearchAtlas.getState().tasks.find(t=>t.id==='child').parentId,'root');assert.equal(f.puts.length,0);
+ }finally{f.close();}
+});

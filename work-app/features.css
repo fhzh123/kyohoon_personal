@@ -104,3 +104,9 @@
 .timeline-l3-drag-hint{position:static!important;flex:none;color:var(--muted);font-size:10px;font-weight:400;opacity:0;transition:opacity .15s}.timeline-goal-heading:hover .timeline-l3-drag-hint,.timeline-l3-drag:focus-visible .timeline-l3-drag-hint{opacity:1}
 .timeline-l3-drag:focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:4px}.timeline-l3-drag:active{cursor:grabbing}.timeline-goal-heading.is-order-source{opacity:.35}
 @media(max-width:640px){.timeline-l3-drag{gap:6px}.timeline-l3-drag-hint{display:none}.timeline-l3-drag .timeline-l3-grip{font-size:18px}}
+
+/* Shared checkbox menus for L3, research type, status and assignee. */
+.task-filter{flex:1 1 150px;min-width:138px}.task-filter[data-filter-kind="goal"]{flex:1.7 1 270px;min-width:200px}
+.task-filter:not([data-filter-kind="goal"]) .goal-filter-menu{left:auto;right:0;width:min(340px,calc(100vw - 60px))}
+.task-filter[data-filter-kind="owner"] .goal-filter-header small{line-height:1.6}
+@media(max-width:640px){.task-filter,.task-filter[data-filter-kind="goal"]{flex:1 1 100%;min-width:0}.task-filter:not([data-filter-kind="goal"]) .goal-filter-menu{width:100%}}
