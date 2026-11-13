@@ -5,6 +5,7 @@ import { once } from 'node:events';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createHandler } from '../server/app.mjs';
+import { JSDOM } from 'jsdom';
 
 const rootDir = fileURLToPath(new URL('../artifacts/hub-fixture/', import.meta.url));
 const demos = [
@@ -75,7 +76,8 @@ test('authorized local Work groups demos and provides three illustrated tools', 
   for (const title of titles) assert.ok(text.includes(`<h2>${title}</h2>`));
   for (const button of pending) assert.match(button, /\sdisabled(?:\s|>)/);
   assert.equal((text.match(/공사 중/g) || []).length, 0);
-  assert.match(text, /href="\/">홈으로/);
+  const document = new JSDOM(text).window.document;
+  assert.ok([...document.querySelectorAll('a[href="/"]')].some(link => link.textContent.trim() === '홈으로'));
   assert.match(text, /<form action="\/api\/auth\/logout" method="post">/);
   assert.match(text, /localhost 전용/);
   assert.match(text, /이 프로젝트 사본에 저장/);

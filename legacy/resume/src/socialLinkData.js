@@ -18,12 +18,12 @@ const socialLinks_ = [
     },
     {
       name: 'KakaoTalk',
-      icon: <IconPlaceholder src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/KakaoTalk_logo.svg/1200px-KakaoTalk_logo.svg.png" alt="KakaoTalk Icon" />,
+      icon: <IconPlaceholder src="/icons/kakaotalk.svg" alt="KakaoTalk Icon" />,
       kakaoQrImageUrl: 'https://i.ibb.co/VYhm8hmW/image.png', // Placeholder QR image
     },
     {
       name: 'Telegram',
-      icon: <IconPlaceholder src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/1200px-Telegram_logo.svg.png" alt="Telegram Icon" />,
+      icon: <IconPlaceholder src="/icons/telegram.svg" alt="Telegram Icon" />,
       url: 'https://t.me/iipl_kyohoon' // Replace with actual Telegram link
     },
     {
@@ -38,7 +38,7 @@ const socialLinks_ = [
     },
     {
       name: 'Google Scholar',
-      icon: <IconPlaceholder src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Google_Scholar_logo.svg/1200px-Google_Scholar_logo.svg.png" alt="Google Scholar Icon" />,
+      icon: <IconPlaceholder src="/icons/googlescholar.svg" alt="Google Scholar Icon" />,
       url: 'https://scholar.google.com/citations?user=l-y1_AkAAAAJ&hl=ko&oi=ao' // Replace with actual Google Scholar ID
     },
     {

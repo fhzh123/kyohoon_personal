@@ -6,6 +6,16 @@ import { lectures_, honors_ } from './lectureHonorData';
 import socialLinks_ from './socialLinkData';
 import patentDetails_ from './patentData';
 
+const UiIcon = ({name}) => <img className="ui-icon" src={`/icons/ui-${name}.svg`} width="18" height="18" alt="" aria-hidden="true" />;
+const nameMap = {'진교훈':'Kyohoon Jin','김영빈':'Youngbin Kim','김재원':'Jaewon Kim','장수진':'Soojin Jang','이준호':'Junho Lee','윤정민':'Jungmin Yun','최주환':'Juhwan Choi'};
+function englishNames(value, key = '') {
+  if (key === 'domesticPublications' || React.isValidElement(value)) return value;
+  if (typeof value === 'string') return value.replace(/진교훈|김영빈|김재원|장수진|이준호|윤정민|최주환/g, name => nameMap[name]);
+  if (Array.isArray(value)) return value.map(item => englishNames(item));
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([k,v]) => [k,englishNames(v,k)]));
+  return value;
+}
+
 const App = () => {
   // State to manage the active tab in the menu bar
   const [activeTab, setActiveTab] = useState('Experience'); // Default to Experience based on new order
@@ -17,8 +27,6 @@ const App = () => {
   const [activeLectureHonorsType, setActiveLectureHonorsType] = useState('Lecture'); // Default to Lecture
   // State to manage the visibility of the KakaoTalk QR modal
   const [showKakaoQr, setShowKakaoQr] = useState(false);
-  // State to manage the background image URL dynamically
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState('');
   // State to manage the flip state of the profile picture
   const [isFlipped, setIsFlipped] = useState(false);
   // State to manage image loading in the project modal
@@ -26,35 +34,6 @@ const App = () => {
   // State for language toggle
   const [language, setLanguage] = useState('ko'); // Default to Korean
   
-  // Effect to set background image based on screen width
-  useEffect(() => {
-    const updateBackground = () => {
-      // Check if window object is defined (for SSR compatibility)
-      if (typeof window !== 'undefined') {
-        if (window.innerWidth >= 1024) { // Corresponds to Tailwind's 'lg' breakpoint
-          setBackgroundImageUrl('https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/background_test.png?raw=true'); // Desktop background
-        } else {
-          setBackgroundImageUrl('https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/background_test_mobile.png?raw=true'); // Mobile background
-        }
-      }
-    };
-
-    // Set initial background image
-    updateBackground();
-
-    // Add event listener for window resize
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', updateBackground);
-    }
-
-    // Cleanup event listener on component unmount
-    return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('resize', updateBackground);
-      }
-    };
-  }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
-
   // Effect for initial flip animation on component mount
   useEffect(() => {
     // Set a timeout to flip the image after a short delay (e.g., 500ms)
@@ -84,8 +63,10 @@ const App = () => {
     if (language === 'ko') {
       setCurrentData(koData);
     } else {
-      setCurrentData(enData);
+      setCurrentData(englishNames(enData));
     }
+    document.documentElement.lang = language;
+    window.AtlasTheme?.refresh();
   }, [language]);
 
   // Placeholder for icons (user will insert images here)
@@ -163,7 +144,7 @@ const App = () => {
 
   const enData = {
     header: {
-      name: 'Kyohoon Jin | 진교훈',
+      name: 'Kyohoon Jin',
       title: 'AI Research Engineer',
       at: 'Selectstar',
       about: `I am Kyohoon Jin, an AI Research Engineer at Selectstar. I received my Ph.D. from Chung-Ang University, where my primary research focused on the analysis of Korean ancient documents and counterfactual text data augmentation. I maintain an active research profile, having published approximately 40 domestic and international papers and accumulating over 200 citations.`,
@@ -473,26 +454,23 @@ const App = () => {
 
   return (
     <div
-      className="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center justify-start p-12 md:p-16 bg-fixed bg-cover animate-backgroundPulse pt-16"
-      style={{
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        minWidth: '100%',
-        minHeight: '100vh',
-      }}
+      className="resume-shell min-h-screen text-gray-200 flex flex-col items-center justify-start"
     >
       {/* Top Bar - About Me */}
-      <div className="w-full max-w-7xl bg-gray-800 p-4 md:p-5 rounded-lg shadow-lg mb-4 md:mb-5 flex items-center justify-between animate-fadeIn">
+      <div className="resume-topbar w-full max-w-7xl bg-gray-800 p-4 md:p-5 rounded-lg shadow-lg mb-4 md:mb-5 flex items-center justify-between animate-fadeIn">
         {/* Name and Icon */}
         <span className="text-2xl md:text-3xl font-bold text-sky-400 mr-2 md:mr-3 flex items-center">
-          <img src="https://images.icon-icons.com/683/PNG/512/happy-4_icon-icons.com_61130.png" alt="Star Icon" className="w-6 h-6 mr-2" />
+          <img src="/mascot/face.png" alt="마스코트 얼굴" className="resume-face" width="40" height="40" />
           {currentData.header.name}
         </span>
 
+        <div className="resume-header-actions">
+          <a className="btn btn--secondary" href="/" aria-label="홈으로"><UiIcon name="house" /><span>Home</span></a>
+          <button type="button" className="ambient-toggle btn btn--secondary" data-ambient-toggle aria-label="배경 움직임 일시정지" aria-pressed="false" title="배경 움직임 일시정지"><UiIcon name="pause" /></button>
+          <button type="button" className="theme-toggle btn btn--secondary" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span className="theme-sun"><UiIcon name="sun" /></span><span className="theme-moon"><UiIcon name="moon" /></span><span data-theme-label>라이트 모드</span></button>
         {/* Language Toggle Button for Desktop - FIXED AND IMPROVED */}
         {/* The toggle is now more robust by using flexbox for equal spacing and simpler positioning for the sliding background. */}
-        <div className="hidden lg:flex items-center relative h-10 w-28 bg-gray-700 rounded-full p-1 transition-all duration-300">
+        <div className="resume-language flex items-center relative h-10 w-28 bg-gray-700 rounded-full p-1 transition-all duration-300">
           {/* Sliding background element. The position and size are now more accurately
               calculated relative to the container's padding. */}
           <div
@@ -517,6 +495,7 @@ const App = () => {
             EN
           </label>
           <input type="radio" id="en-lang-desktop" name="lang-desktop" checked={language === 'en'} onChange={() => setLanguage('en')} className="hidden" />
+        </div>
         </div>
       </div>
 
@@ -604,44 +583,16 @@ const App = () => {
         {/* Right Content Section */}
         <div className="flex-[2] bg-gray-800 rounded-lg shadow-lg flex flex-col">
           {/* Menu Bar: Updated order and colors */}
-          <div className="bg-blue-900 p-3 md:p-4 text-center rounded-t-lg mb-4 md:mb-5 flex flex-wrap justify-around items-center">
-            <span
-              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Experience' ? 'text-blue-300 scale-105' : 'text-white'}`}
-              onClick={() => setActiveTab('Experience')}
-            >
-              {currentData.menu.experience}
-            </span>
-            <span
-              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Education' ? 'text-blue-300 scale-105' : 'text-white'}`}
-              onClick={() => setActiveTab('Education')}
-            >
-              {currentData.menu.education}
-            </span>
-            <span
-              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Projects' ? 'text-blue-300 scale-105' : 'text-white'}`}
-              onClick={() => setActiveTab('Projects')}
-            >
-              {currentData.menu.projects}
-            </span>
-            <span
-              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Publications' ? 'text-blue-300 scale-105' : 'text-white'}`}
-              onClick={() => setActiveTab('Publications')}
-            >
-              {currentData.menu.publications}
-            </span>
-            <span
-              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Lecture & Honors' ? 'text-blue-300 scale-105' : 'text-white'}`}
-              onClick={() => setActiveTab('Lecture & Honors')}
-            >
-              {currentData.menu.lectureHonors}
-            </span>
-            <span
-              className={`text-base md:text-xl font-bold cursor-pointer transition-colors duration-300 hover:text-blue-300 hover:scale-105 active:scale-95 px-2 py-1 md:px-0 md:py-0 ${activeTab === 'Patent' ? 'text-blue-300 scale-105' : 'text-white'}`}
-              onClick={() => setActiveTab('Patent')}
-            >
-              {currentData.menu.patent}
-            </span>
-          </div>
+          <nav className="resume-tabs" aria-label="Resume 항목">
+            {[
+              ['Experience', 'experience', 'briefcase-business'], ['Education', 'education', 'graduation-cap'],
+              ['Projects', 'projects', 'folder-open'], ['Publications', 'publications', 'book-open'],
+              ['Lecture & Honors', 'lectureHonors', 'award'], ['Patent', 'patent', 'scroll-text'],
+            ].map(([tab, label, icon]) => <button type="button" key={tab} aria-pressed={activeTab === tab}
+              className={activeTab === tab ? 'resume-tab is-active' : 'resume-tab'} onClick={() => setActiveTab(tab)}>
+              <UiIcon name={icon} /><span>{currentData.menu[label]}</span>
+            </button>)}
+          </nav>
 
           {/* Dynamically rendered content based on activeTab */}
           {renderContent()}
@@ -651,7 +602,7 @@ const App = () => {
       {/* Floating Language Toggle for Mobile */}
       <button
         onClick={() => setLanguage(language === 'ko' ? 'en' : 'ko')}
-        className="lg:hidden fixed bottom-6 right-6 bg-blue-600 text-white text-3xl p-3 rounded-full shadow-lg transition-transform duration-300 hover:scale-110 active:scale-95 animate-pulse"
+        className="lg:hidden fixed bottom-6 right-6 bg-blue-600 text-white text-xl p-3 rounded-full shadow-lg transition-transform duration-300 hover:scale-110 active:scale-95"
         title="Toggle Language"
       >
         🌐
@@ -659,7 +610,7 @@ const App = () => {
 
       {/* Footer / Copyright */}
       <footer className="w-full max-w-7xl text-center text-gray-500 text-xs md:text-sm mt-8 md:mt-10 p-3 md:p-4">
-        © 2025 Kyohoon Jin. All rights reserved.
+        © 2026 Kyohoon Jin. All rights reserved.
       </footer>
 
       {/* Project Detail Modal */}

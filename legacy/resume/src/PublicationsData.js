@@ -7,6 +7,14 @@ const IconPlaceholder = ({ src, alt }) => (
 
 const internationalPublications_ = [
 {
+    title: 'KG-Neighbor: Knowledge-Guided Neighborhood Construction for Embedding Visualization',
+    author: 'Chang Won Kim, Jaewook Lee, Haeun Min, JunNyeong Jeong, Minwoo Sim, Barom Kang and <strong>Kyohoon Jin</strong>',
+    journal: 'ACM International Conference on Web Search and Data Mining (WSDM 2027), Findings',
+    year: '2027',
+    link: 'https://arxiv.org/abs/2611.07246v2',
+    icon: <IconPlaceholder src="/icons/ui-file-text.svg" alt="Publication" />,
+},
+{
     title: 'MHTS: Multi-Hop Tree Structure Framework for Generating Difficulty-Controllable QA Datasets for RAG Evaluation',
     author: 'Jeongsoo Lee, Daeyong Kwon, <strong>Kyohoon Jin</strong>, Junnyeong Jeong, Minwoo Sim and Minwoo Kim',
     journal: 'The Fifteenth biennial Language Resources and Evaluation Conference (LREC 2026)',
@@ -32,7 +40,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Plug-in and Fine-tuning: Bridging the Gap between Small Language Models and Large Language Models',
-    author: 'Kyeonghyun Kim, Jinhee Jang, Juhwan Choi, Yoonji Lee, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Kyeonghyun Kim, Jinhee Jang, Juhwan Choi, Yoonji Lee, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'The 63rd Annual Meeting of the Association for Computational Linguistics (ACL 2025)',
     year: '2025',
     link: 'https://aclanthology.org/2025.acl-long.271/',
@@ -40,7 +48,7 @@ const internationalPublications_ = [
 },
 {
     title: 'SummPilot: Bridging Efficiency and Customization for Interactive Summarization System',
-    author: 'Jungmin Yun, Juhwan Choi, <strong>Kyohoon Jin</strong>, Soojin Jang, Jinhee Jang and YoungBin Kim',
+    author: 'Jungmin Yun, Juhwan Choi, <strong>Kyohoon Jin</strong>, Soojin Jang, Jinhee Jang and Youngbin Kim',
     journal: 'The 39th AAAI Conference on Artificial Intelligence (AAAI 2025) Demonstration',
     year: '2025',
     link: 'https://ojs.aaai.org/index.php/AAAI/article/view/35380',
@@ -48,7 +56,7 @@ const internationalPublications_ = [
 },
 {
     title: 'KICK: Korean Football In-game Conversation State Tracking Dataset for Dialogue and Turn Level Evaluation',
-    author: 'Sangmin Song, Juhyoung Park, Juhwan Choi, Junho Lee, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Sangmin Song, Juhyoung Park, Juhwan Choi, Junho Lee, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'Engineering Applications of Artificial Intelligence (EAAI) Vol. 139, 2025',
     year: '2025',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0952197624017305',
@@ -56,7 +64,7 @@ const internationalPublications_ = [
 },
 {
     title: 'PRISM: Personalizing Reporting with Intelligent Summarization through Multiple Frames',
-    author: '<strong>Kyohoon Jin</strong>, Sejin Paik, Jungmin Yun, Soojin Jang and YoungBin Kim',
+    author: '<strong>Kyohoon Jin</strong>, Sejin Paik, Jungmin Yun, Soojin Jang and Youngbin Kim',
     journal: 'IEEE Access, Vol. 12, 2024',
     year: '2024',
     link: 'https://ieeexplore.ieee.org/document/10766499',
@@ -64,7 +72,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Multi-News+: Cost-efficient Dataset Cleansing via LLM-based Data Annotation',
-    author: 'Juhwan Choi, Jungmin Yun, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Juhwan Choi, Jungmin Yun, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'The 2024 Conference on Empirical Methods in Natural Language Processing (EMNLP 2024)',
     year: '2024',
     link: 'https://aclanthology.org/2024.emnlp-main.2/5',
@@ -72,7 +80,7 @@ const internationalPublications_ = [
 },
 {
     title: 'ETA: Enriching Typos Automatically from Real-World Corpora for Few-Shot Learning',
-    author: 'Seunguk Yu, Yeonghwa Kim, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Seunguk Yu, Yeonghwa Kim, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: '2024 International Conference On Consumer Electronics Asia (ICCE-Asia 2024)',
     year: '2024',
     link: 'https://ieeexplore.ieee.org/document/10773956/',
@@ -80,7 +88,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Enhancing Effectiveness and Robustness in a Low-Resource Regime via Decision-Boundary-aware Data Augmentation',
-    author: '<strong>Kyohoon Jin</strong>, Junho Lee, Juhwan Choi, Sangmin Song and YoungBin Kim',
+    author: '<strong>Kyohoon Jin</strong>, Junho Lee, Juhwan Choi, Sangmin Song and Youngbin Kim',
     journal: 'Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)',
     year: '2024',
     link: 'https://aclanthology.org/2024.lrec-main.525/',
@@ -88,7 +96,7 @@ const internationalPublications_ = [
 },
 {
     title: 'AutoAugment Is What You Need: Enhancing Rule-based Augmentation Methods in Low-resource Regimes',
-    author: 'Juhwan Choi, <strong>Kyohoon Jin</strong>, Junho Lee, Sangmin Song and YoungBin Kim',
+    author: 'Juhwan Choi, <strong>Kyohoon Jin</strong>, Junho Lee, Sangmin Song and Youngbin Kim',
     journal: 'Proceedings of the 18th Conference of the European Chapter of the Association for Computational Linguistics: Student Research Workshop (EACL Workshop 2024)',
     year: '2024',
     link: 'https://aclanthology.org/2024.eacl-srw.1/',
@@ -96,7 +104,7 @@ const internationalPublications_ = [
 },
 {
     title: 'GPTs Are Multilingual Annotators for Sequence Generation Tasks',
-    author: 'Juhwan Choi, Eunju Lee, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Juhwan Choi, Eunju Lee, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'Proceedings of the 18th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2024)',
     year: '2024',
     link: 'https://aclanthology.org/2024.findings-eacl.2/',
@@ -104,7 +112,7 @@ const internationalPublications_ = [
 },
 {
     title: 'See, Caption, Cluster: Large-Scale Image Analysis using Captioning and Topic Modeling',
-    author: 'Kyeongpil Kang, <strong>Kyohoon Jin</strong>, Soojin Jang, Jaegul Choo and YoungBin Kim',
+    author: 'Kyeongpil Kang, <strong>Kyohoon Jin</strong>, Soojin Jang, Jaegul Choo and Youngbin Kim',
     journal: 'Expert Systems with Applications (ESWA) Vol. 237, 2024',
     year: '2024',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0957417423018936',
@@ -112,7 +120,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Development of Robust Detector Using The Weather Deep Generative Model For Outdoor Monitoring System',
-    author: '<strong>Kyohoon Jin</strong>, Kyungsu Kang, Baekkyun Shin, Junehyoung Kwon, Soojin Jang, YoungBin Kim and Hanguk Ryu',
+    author: '<strong>Kyohoon Jin</strong>, Kyungsu Kang, Baekkyun Shin, Junehyoung Kwon, Soojin Jang, Youngbin Kim and Hanguk Ryu',
     journal: 'Expert Systems with Applications (ESWA) Vol. 234, 2023',
     year: '2023',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0957417423014860',
@@ -120,7 +128,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Time-Enhanced Recommendations: Capturing Dynamic User Preferences through Time-aware Reviews',
-    author: 'Yeonghwa Kim, Jooweon Choi, Jungmin Yun, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Yeonghwa Kim, Jooweon Choi, Jungmin Yun, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: '2023 International Conference On Consumer Electronics Asia (ICCE-Asia 2023)',
     year: '2023',
     link: 'https://ieeexplore.ieee.org/xpl/conhome/10326218/proceeding',
@@ -128,7 +136,7 @@ const internationalPublications_ = [
 },
 {
     title: 'SoftEDA: Rethinking Rule-Based Data Augmentation with Soft Labels',
-    author: 'Juhwan Choi, <strong>Kyohoon Jin</strong>, Junho Lee, Sangmin Song and YoungBin Kim',
+    author: 'Juhwan Choi, <strong>Kyohoon Jin</strong>, Junho Lee, Sangmin Song and Youngbin Kim',
     journal: 'The 11th International Conference on Learning Representations (ICLR 2023): Tinypapers',
     year: '2023',
     link: 'https://arxiv.org/abs/2402.05591',
@@ -136,7 +144,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Weakly Supervised Semantic Segmentation via Graph Recalibration with Scaling Weight Unit',
-    author: 'Soojin Jang, Junehyoung Kwon, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Soojin Jang, Junehyoung Kwon, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'Engineering Applications of Artificial Intelligence (EAAI) Vol. 119, 2023',
     year: '2023',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0952197622006960',
@@ -144,7 +152,7 @@ const internationalPublications_ = [
 },
 {
     title: 'TopAttn: Focusing on Core Tokens With Token Pruned Self-Attention',
-    author: 'Jungmin Yun, Sangmin Song, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Jungmin Yun, Sangmin Song, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: '2023 International Conference on Electronics, Information, and Communication (ICEIC)',
     year: '2023',
     link: 'https://ieeexplore.ieee.org/xpl/conhome/10049840/proceeding',
@@ -152,7 +160,7 @@ const internationalPublications_ = [
 },
 {
     title: 'A Fair Comparison of PLM Based Mathematical Approach for Solving Math Word Problems',
-    author: 'Sangmin Song, Jungmin Yun, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Sangmin Song, Jungmin Yun, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: '2023 International Conference on Electronics, Information, and Communication (ICEIC)',
     year: '2023',
     link: 'https://ieeexplore.ieee.org/xpl/conhome/10049840/proceeding',
@@ -160,7 +168,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Game Effect Sprite Generation with Minimal Data via Conditional GAN',
-    author: 'Jaewon Kim, <strong>Kyohoon Jin</strong>, Soojin Jang, Shinjin Kang and YoungBin Kim',
+    author: 'Jaewon Kim, <strong>Kyohoon Jin</strong>, Soojin Jang, Shinjin Kang and Youngbin Kim',
     journal: 'Expert Systems with Applications (ESWA) Vol. 211, 2023',
     year: '2023',
     link: 'https://www.sciencedirect.com/science/article/abs/pii/S0957417422015767',
@@ -168,7 +176,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Saliency Guided Data Augmentation Strategy for Maximally Utilizing an Object’s Visual Information',
-    author: 'Junhyeok An, Soojin Jang, Junehyoung Kwon, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Junhyeok An, Soojin Jang, Junehyoung Kwon, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'PLoS ONE, Vol. 17, No. 10, 2022',
     year: '2022',
     link: 'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0274767',
@@ -176,7 +184,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Generative Data Augmentation via Wasserstein Autoencoder for Text Classification',
-    author: '<strong>Kyohoon Jin</strong>, Junho Lee, Juhwan Choi, Soojin Jang and YoungBin Kim',
+    author: '<strong>Kyohoon Jin</strong>, Junho Lee, Juhwan Choi, Soojin Jang and Youngbin Kim',
     journal: '2022 International Conference on ICT Convergence (ICTC 2022)',
     year: '2022',
     link: 'https://ieeexplore.ieee.org/document/9952762',
@@ -200,7 +208,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Restoring and Mining the Records of the Joseon Dynasty via Neural Language Modeling and Machine Translation',
-    author: 'Kyeongpil Kang, <strong>Kyohoon Jin</strong>, Soyoung Yang, Soojin Jang, Jaegul Choo and YoungBin Kim',
+    author: 'Kyeongpil Kang, <strong>Kyohoon Jin</strong>, Soyoung Yang, Soojin Jang, Jaegul Choo and Youngbin Kim',
     journal: 'Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL 2021)',
     year: '2021',
     link: 'https://aclanthology.org/2021.naacl-main.317/',
@@ -208,7 +216,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Automated Structural Damage Identification Using Data Normalization and 1-Dimensional Convolutional Neural Network',
-    author: 'Jongbin Won, Jongwoong Park, Soojin Jang, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Jongbin Won, Jongwoong Park, Soojin Jang, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'Applied Sciences, Vol. 11, No. 6, 2021',
     year: '2021',
     link: 'https://www.mdpi.com/2076-3417/11/6/2610',
@@ -216,7 +224,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Korean Historical Documents Analysis with Improved Dynamic Word Embedding',
-    author: '<strong>Kyohoon Jin</strong>, Jeonga Wi, Kyeongpil Kang and YoungBin Kim',
+    author: '<strong>Kyohoon Jin</strong>, Jeonga Wi, Kyeongpil Kang and Youngbin Kim',
     journal: 'Applied Sciences, Vol. 10, No. 21, 2020',
     year: '2020',
     link: 'https://www.mdpi.com/2076-3417/10/21/7939',
@@ -224,7 +232,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Playtesting in Match 3 Game Using Strategic Plays via Reinforcement Learning',
-    author: 'Yuchul Shi, Jaewon Kim, <strong>Kyohoon Jin</strong> and YoungBin Kim',
+    author: 'Yuchul Shi, Jaewon Kim, <strong>Kyohoon Jin</strong> and Youngbin Kim',
     journal: 'IEEE Access, Vol. 8, 2020',
     year: '2020',
     link: 'https://ieeexplore.ieee.org/document/9034187',
@@ -232,7 +240,7 @@ const internationalPublications_ = [
 },
 {
     title: 'Regional Patch-Based Feature Interpolation Method for Effective Regularization',
-    author: 'Soojin Jang, <strong>Kyohoon Jin</strong>, Junhyeok An and YoungBin Kim',
+    author: 'Soojin Jang, <strong>Kyohoon Jin</strong>, Junhyeok An and Youngbin Kim',
     journal: 'IEEE Access, Vol. 8, 2020',
     year: '2020',
     link: 'https://ieeexplore.ieee.org/document/9000503',

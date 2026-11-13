@@ -7,108 +7,90 @@ const IconPlaceholder = ({ src, alt }) => (
 
 const projects_ = [
     {
-      title: 'DATUMO 플랫폼 내 모니터링 대시보드 개발',
+      title: '(수정예정) DATUMO 플랫폼 내 모니터링 대시보드 개발',
       period: 'Feb 2026 - Aug 2026',
-      description: '- 실제 유저 로그를 실시간으로 분석하고, 실패한 케이스를 즉시 개선 데이터로 연결하는 `운영 선순환 구조` 구축 <br />- 유저의 실제 발화 패턴 분석 및 자동 분석 파이프라인 개발 <br />- 모델의 답변이 기획한 시나리오를 벗어나거나 품질이 급격히 떨어지는지에 대한 실시간 체크 파이프라인 개발',
+      description: '수정 예정입니다.',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
-      imageUrl: 'https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/Project_ATA.png?raw=true', // Image for project detail
-      subtitle: '정형데이터 연결 및 내제지식화 기술 개발',
-      fullDescription: '삼성생명은 독자적으로 방대한 양의 고객 정형 데이터를 보유하고 있지만, 이를 LLM에 효과적으로 연결하고 활용하는 기술이 부족했습니다. 이 프로젝트에서는 LLM과 정형 데이터를 연결하여 내제지식을 생성하는 기술을 개발했습니다. 이를 통해 고객 맞춤형 서비스 제공 및 데이터 기반 의사결정 지원을 목표로 하고 있습니다.',
-      companyOrInstitution: '삼성생명',
-      role: '정형 데이터 분석 파이프라인 개발 및 LLM 내제지식화 기술 구현',
-      externalLinks: [
-        // { name: 'GitHub Repository', url: 'https://github.com/your_github/project-a' },
-        { name: '관련 기사 (News)', url: 'https://wowtale.net/2025/10/30/249506/' },
-      ],
+      imageUrl: '', // Image for project detail
+      subtitle: '',
+      fullDescription: '수정 예정입니다.',
+      companyOrInstitution: '',
+      role: '',
+      externalLinks: [],
     },
     {
-      title: 'Agentic Flow를 활용한 Dialouge Topic Segmentation',
+      title: '(수정예정) Agentic Flow를 활용한 Dialouge Topic Segmentation',
       period: 'Feb 2026 - ',
-      description: '- 모델의 답변이 기획한 시나리오를 벗어나거나 품질이 급격히 떨어지는지에 대한 실시간 체크 파이프라인 개발 <br /> - 유저의 실제 발화 패턴 분석 및 자동 분석 파이프라인 개발',
+      description: '수정 예정입니다.',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
-      imageUrl: 'https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/Project_ATA.png?raw=true', // Image for project detail
-      subtitle: '정형데이터 연결 및 내제지식화 기술 개발',
-      fullDescription: '삼성생명은 독자적으로 방대한 양의 고객 정형 데이터를 보유하고 있지만, 이를 LLM에 효과적으로 연결하고 활용하는 기술이 부족했습니다. 이 프로젝트에서는 LLM과 정형 데이터를 연결하여 내제지식을 생성하는 기술을 개발했습니다. 이를 통해 고객 맞춤형 서비스 제공 및 데이터 기반 의사결정 지원을 목표로 하고 있습니다.',
-      companyOrInstitution: '삼성생명',
-      role: '정형 데이터 분석 파이프라인 개발 및 LLM 내제지식화 기술 구현',
-      externalLinks: [
-        // { name: 'GitHub Repository', url: 'https://github.com/your_github/project-a' },
-        { name: '관련 기사 (News)', url: 'https://wowtale.net/2025/10/30/249506/' },
-      ],
+      imageUrl: '', // Image for project detail
+      subtitle: '',
+      fullDescription: '수정 예정입니다.',
+      companyOrInstitution: '',
+      role: '',
+      externalLinks: [],
     },
     {
-      title: '자동 프롬프트 튜닝을 통한 Generalized Category Discovery',
+      title: '(수정예정) 자동 프롬프트 튜닝을 통한 Generalized Category Discovery',
       period: 'Jan 2026 - ',
-      description: '- 방대한 양의 정형데이터를 LLM에 효과적으로 내제지식화 하는 기술 개발 <br /> - 이를 통한 사내 정형 데이터 기반 의사결정 목표',
+      description: '수정 예정입니다.',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
-      imageUrl: 'https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/Project_ATA.png?raw=true', // Image for project detail
-      subtitle: '정형데이터 연결 및 내제지식화 기술 개발',
-      fullDescription: '삼성생명은 독자적으로 방대한 양의 고객 정형 데이터를 보유하고 있지만, 이를 LLM에 효과적으로 연결하고 활용하는 기술이 부족했습니다. 이 프로젝트에서는 LLM과 정형 데이터를 연결하여 내제지식을 생성하는 기술을 개발했습니다. 이를 통해 고객 맞춤형 서비스 제공 및 데이터 기반 의사결정 지원을 목표로 하고 있습니다.',
-      companyOrInstitution: '삼성생명',
-      role: '정형 데이터 분석 파이프라인 개발 및 LLM 내제지식화 기술 구현',
-      externalLinks: [
-        // { name: 'GitHub Repository', url: 'https://github.com/your_github/project-a' },
-        { name: '관련 기사 (News)', url: 'https://wowtale.net/2025/10/30/249506/' },
-      ],
+      imageUrl: '', // Image for project detail
+      subtitle: '',
+      fullDescription: '수정 예정입니다.',
+      companyOrInstitution: '',
+      role: '',
+      externalLinks: [],
     },
     {
-      title: '기업 문서 내 텍스트, 이미지, 표 추출을 위한 OCR & DLA 원천기술 개발',
+      title: '(수정예정) 기업 문서 내 텍스트, 이미지, 표 추출을 위한 OCR & DLA 원천기술 개발',
       period: 'Jan 2026 - ',
-      description: '- 방대한 양의 정형데이터를 LLM에 효과적으로 내제지식화 하는 기술 개발 <br /> - 이를 통한 사내 정형 데이터 기반 의사결정 목표',
+      description: '수정 예정입니다.',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
-      imageUrl: 'https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/Project_ATA.png?raw=true', // Image for project detail
-      subtitle: '정형데이터 연결 및 내제지식화 기술 개발',
-      fullDescription: '삼성생명은 독자적으로 방대한 양의 고객 정형 데이터를 보유하고 있지만, 이를 LLM에 효과적으로 연결하고 활용하는 기술이 부족했습니다. 이 프로젝트에서는 LLM과 정형 데이터를 연결하여 내제지식을 생성하는 기술을 개발했습니다. 이를 통해 고객 맞춤형 서비스 제공 및 데이터 기반 의사결정 지원을 목표로 하고 있습니다.',
-      companyOrInstitution: '삼성생명',
-      role: '정형 데이터 분석 파이프라인 개발 및 LLM 내제지식화 기술 구현',
-      externalLinks: [
-        // { name: 'GitHub Repository', url: 'https://github.com/your_github/project-a' },
-        { name: '관련 기사 (News)', url: 'https://wowtale.net/2025/10/30/249506/' },
-      ],
+      imageUrl: '', // Image for project detail
+      subtitle: '',
+      fullDescription: '수정 예정입니다.',
+      companyOrInstitution: '',
+      role: '',
+      externalLinks: [],
     },
     {
-      title: '독자 AI 파운데이션 모델 프로젝트 (SKT 컨소시엄)',
+      title: '(수정예정) 독자 AI 파운데이션 모델 프로젝트 (SKT 컨소시엄)',
       period: 'Oct 2025 - ',
-      description: '- 방대한 양의 정형데이터를 LLM에 효과적으로 내제지식화 하는 기술 개발 <br /> - 이를 통한 사내 정형 데이터 기반 의사결정 목표',
+      description: '수정 예정입니다.',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       icon2: <IconPlaceholder src="https://static.wikia.nocookie.net/logo-timeline/images/5/50/Network_T.jpeg/revision/latest?cb=20230515203924" alt="Second Project Icon" />, // Added second icon
       // Detailed fields for modal
-      imageUrl: 'https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/Project_ATA.png?raw=true', // Image for project detail
-      subtitle: '정형데이터 연결 및 내제지식화 기술 개발',
-      fullDescription: '삼성생명은 독자적으로 방대한 양의 고객 정형 데이터를 보유하고 있지만, 이를 LLM에 효과적으로 연결하고 활용하는 기술이 부족했습니다. 이 프로젝트에서는 LLM과 정형 데이터를 연결하여 내제지식을 생성하는 기술을 개발했습니다. 이를 통해 고객 맞춤형 서비스 제공 및 데이터 기반 의사결정 지원을 목표로 하고 있습니다.',
-      companyOrInstitution: '삼성생명',
-      role: '정형 데이터 분석 파이프라인 개발 및 LLM 내제지식화 기술 구현',
-      externalLinks: [
-        // { name: 'GitHub Repository', url: 'https://github.com/your_github/project-a' },
-        { name: '관련 기사 (News)', url: 'https://wowtale.net/2025/10/30/249506/' },
-      ],
+      imageUrl: '', // Image for project detail
+      subtitle: '',
+      fullDescription: '수정 예정입니다.',
+      companyOrInstitution: '',
+      role: '',
+      externalLinks: [],
     },
     {
-      title: '(경기도 교육청) AI-데이터 중심의 경기교육 디지털 플랫폼 사업',
+      title: '(수정예정) (경기도 교육청) AI-데이터 중심의 경기교육 디지털 플랫폼 사업',
       period: 'Oct 2025 - Dec 2025',
-      description: '- Seed 데이터를 활용한 문서 초안 생성 및 데이터 증강 <br /> - 생성 및 증강된 초안 데이터와 실제 작성된 데이터에 대한 자동 Judge 알고리즘 개발',
+      description: '수정 예정입니다.',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       icon2: <IconPlaceholder src="https://www.goe.go.kr/resource/old/BBSMSTR_000000000163/BBS_202203230959030481.png" alt="Second Project Icon" />, // Added second icon
       // Detailed fields for modal
       imageUrl: '', // Image for project detail
-      subtitle: '정형데이터 연결 및 내제지식화 기술 개발',
-      fullDescription: '삼성생명은 독자적으로 방대한 양의 고객 정형 데이터를 보유하고 있지만, 이를 LLM에 효과적으로 연결하고 활용하는 기술이 부족했습니다. 이 프로젝트에서는 LLM과 정형 데이터를 연결하여 내제지식을 생성하는 기술을 개발했습니다. 이를 통해 고객 맞춤형 서비스 제공 및 데이터 기반 의사결정 지원을 목표로 하고 있습니다.',
-      companyOrInstitution: '삼성생명',
-      role: '정형 데이터 분석 파이프라인 개발 및 LLM 내제지식화 기술 구현',
-      externalLinks: [
-        // { name: 'GitHub Repository', url: 'https://github.com/your_github/project-a' },
-        { name: '관련 기사 (News)', url: 'https://wowtale.net/2025/10/30/249506/' },
-      ],
+      subtitle: '',
+      fullDescription: '수정 예정입니다.',
+      companyOrInstitution: '',
+      role: '',
+      externalLinks: [],
     },
     {
       title: '[삼성생명 C-Lab] LLM내 정형데이터 연결 및 내제지식화 기술 개발',
