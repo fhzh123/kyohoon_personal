@@ -125,6 +125,9 @@ test('DOM simulation: reader can navigate/search/read details but cannot edit, d
     assert.equal(f.document.querySelector('#add-task').disabled,true);
     assert.equal(f.document.querySelector('#work-logout button').disabled,false);
     assert.equal(f.document.querySelector('#global-search').readOnly,false);
+    assert.equal(f.document.querySelector('[data-goal-filter-choice]').disabled,false);
+    assert.equal(f.document.querySelector('[data-goal-filter-all]').disabled,false);
+    assert.equal(f.document.querySelector('[data-order-goals]'),null);
     assert.equal(f.document.querySelector('[data-reorder-task]').disabled,true);
     await f.navigate('overview');
     assert.equal(f.document.querySelector('#annual-focus').readOnly,true);

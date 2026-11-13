@@ -262,3 +262,72 @@ test('readers cannot change L3 or note papers',async()=>{
   d.querySelector('[data-view="notes"]').click();assert.equal(d.querySelector('[data-paper-add]'),null);assert.equal(d.querySelector('[data-paper-field="title"]').readOnly,true);assert.equal(d.querySelector('#note-title').disabled,true);
  }finally{f.close();}
 });
+
+const filterSeed=()=>({...clone(seed),taxonomyVersion:'orange-l3-2026-11-10-v1',goals:[{id:'g1',title:'첫 연구축'},{id:'g2',title:'둘째 연구축'},{id:'g3',title:'셋째 연구축'}],tasks:[...clone(seed.tasks),{id:'second',title:'두번째 기술',goalId:'g2'},{id:'third',title:'세번째 기술',goalId:'g3'},{id:'unlinked',title:'미연결 기술'}]});
+function chooseGoals(f,ids){
+ const d=f.document;for(const input of d.querySelectorAll('[data-goal-filter-choice]'))input.checked=ids.includes(input.value);
+ d.querySelector('[data-goal-filter-apply]').click();
+}
+test('multiple L3 checkbox filters include only chosen groups and preserve task data',async()=>{
+ const f=await fixture('editor',filterSeed());try{
+  const d=f.document,before=clone(f.w.ResearchAtlas.getState());
+  chooseGoals(f,['g1','g3']);
+  assert.deepEqual([...d.querySelectorAll('[data-l3-group]')].map(e=>e.dataset.l3Group),['g1','g3']);
+  assert.ok(d.querySelector('[data-task-row="root"]'));assert.ok(d.querySelector('[data-task-row="third"]'));assert.equal(d.querySelector('[data-task-row="second"]'),null);
+  assert.match(d.querySelector('#goal-filter summary').textContent,/2개 선택/);
+  chooseGoals(f,[]);assert.equal(d.querySelectorAll('[data-l3-group]').length,0);assert.match(d.querySelector('.timeline-filter-empty').textContent,/선택한 L3가 없습니다/);
+  chooseGoals(f,['']);assert.deepEqual([...d.querySelectorAll('[data-l3-group]')].map(e=>e.dataset.l3Group),['']);assert.ok(d.querySelector('[data-task-row="unlinked"]'));
+  d.querySelector('#clear-filters').click();assert.equal(d.querySelectorAll('[data-l3-group]').length,4);
+  assert.deepEqual(clone(f.w.ResearchAtlas.getState()),before);assert.equal(f.puts.length,0,'view filters do not write shared state');
+ }finally{f.close();}
+});
+test('filter cancellation preserves applied selection across roadmap, overview and backlog',async()=>{
+ const f=await fixture('editor',filterSeed());try{
+  const d=f.document;chooseGoals(f,['g1','g2']);d.querySelector('[data-goal-filter-choice][value="g3"]').checked=true;d.querySelector('[data-goal-filter-cancel]').click();
+  d.querySelector('[data-view="overview"]').click();assert.equal(d.querySelector('[data-goal-filter-choice][value="g3"]').checked,false);assert.equal(d.querySelector('[data-goal-filter-choice][value="g2"]').checked,true);
+  d.querySelector('[data-view="backlog"]').click();const candidates=[...d.querySelectorAll('.candidate-title')].map(e=>e.textContent);assert.ok(candidates.includes('두번째 기술'));assert.ok(!candidates.includes('세번째 기술'));
+  d.querySelector('[data-view="roadmap"]').click();assert.equal(d.querySelectorAll('[data-l3-group]').length,2);
+ }finally{f.close();}
+});
+function pointer(f,target,type,x,y){
+ const event=new f.w.MouseEvent(type,{bubbles:true,cancelable:true,button:0,clientX:x,clientY:y});Object.defineProperties(event,{pointerId:{value:7},isPrimary:{value:true}});target.dispatchEvent(event);
+}
+function positionGoalRows(f){
+ const rect=(top,height=60)=>({top,bottom:top+height,left:0,right:900,width:900,height,x:0,y:top,toJSON(){return this;}});
+ const host=f.document.querySelector('#timeline-host');host.getBoundingClientRect=()=>rect(100,1600);
+ let top=200;for(const row of host.querySelector('.timeline-chart').children){row.getBoundingClientRect=()=>rect(0);if(row.matches('[data-l3-group],.timeline-row')){const y=top;row.getBoundingClientRect=()=>rect(y);top+=60;}}
+}
+test('dragging an L3 heading moves its complete block and saves the same order in cards and filters',async()=>{
+ const f=await fixture('editor',filterSeed());try{
+  const {w,document:d}=f,api=w.ResearchAtlas,originalTasks=clone(api.getState().tasks);positionGoalRows(f);
+  const source=d.querySelector('[data-reorder-goal="g3"]'),target=d.querySelector('[data-l3-group="g1"]').getBoundingClientRect();
+  pointer(f,source,'pointerdown',120,550);pointer(f,d,'pointermove',120,target.top+2);
+  assert.ok(d.querySelector('.timeline-order-ghost'));assert.ok(d.querySelector('[data-l3-group="g3"]').classList.contains('is-order-source'));
+  assert.match(d.querySelector('.timeline-order-ghost').textContent,/L4\/L5 함께 이동/);
+  pointer(f,d,'pointerup',120,target.top+2);await tick();assert.deepEqual(Array.from(api.getState().goals,g=>g.id),['g3','g1','g2']);
+  assert.equal(d.querySelector('.timeline-order-ghost'),null);assert.deepEqual(clone(api.getState().tasks),originalTasks);
+  assert.deepEqual([...d.querySelectorAll('[data-l3-group]')].map(e=>e.dataset.l3Group),['g3','g1','g2','']);
+  assert.deepEqual([...d.querySelectorAll('[data-goal-filter-choice]')].map(e=>e.value),['g3','g1','g2','']);assert.deepEqual(f.puts.at(-1).state.goals.map(g=>g.id),['g3','g1','g2']);
+  const old=api.getState();old.taxonomyVersion='older';assert.deepEqual(Array.from(api.validateState(old).goals,g=>g.id),['g3','g1','g2']);
+  d.querySelector('[data-view="goals"]').click();assert.match(d.querySelector('.goal-card h3').textContent,/셋째 연구축/);
+ }finally{f.close();}
+});
+test('L3 dragging can be cancelled and filtered keyboard movement preserves hidden axes and task relationships',async()=>{
+ const f=await fixture('editor',filterSeed());try{
+  const {w,document:d}=f,api=w.ResearchAtlas,before=clone(api.getState());positionGoalRows(f);
+  pointer(f,d.querySelector('[data-reorder-goal="g3"]'),'pointerdown',120,550);pointer(f,d,'pointermove',120,201);d.querySelector('[data-reorder-goal="g3"]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));pointer(f,d,'pointerup',120,201);assert.deepEqual(clone(api.getState()),before);assert.equal(d.querySelector('.timeline-order-ghost'),null);
+  pointer(f,d.querySelector('[data-reorder-goal="g3"]'),'pointerdown',120,550);pointer(f,d,'pointermove',120,201);pointer(f,d,'pointercancel',120,201);assert.deepEqual(clone(api.getState()),before);assert.equal(w.ResearchTimeline.isInteracting(),false);
+  chooseGoals(f,['g1','g3']);d.querySelector('[data-reorder-goal="g3"]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true}));await tick();
+  assert.deepEqual(Array.from(api.getState().goals,g=>g.id),['g3','g1','g2']);assert.equal(d.querySelectorAll('[data-l3-group]').length,2);assert.deepEqual(clone(api.getState().tasks),before.tasks);
+ }finally{f.close();}
+});
+test('failed L3 drag saves roll back and reader headings cannot move',async()=>{
+ const f=await fixture('editor',filterSeed());try{
+  const {w,document:d}=f,api=w.ResearchAtlas;positionGoalRows(f);w.Storage.prototype.setItem=()=>{throw Error('full');};
+  pointer(f,d.querySelector('[data-reorder-goal="g3"]'),'pointerdown',120,550);pointer(f,d,'pointermove',120,201);pointer(f,d,'pointerup',120,201);
+  assert.equal(api.getState().goals[0].id,'g1');assert.match(d.querySelector('#toast').textContent,/이동을 취소/);assert.equal(d.querySelector('.timeline-order-ghost'),null);
+ }finally{f.close();}
+ const g=await fixture('reader',filterSeed());try{
+  assert.equal(g.document.querySelector('[data-reorder-goal]'),null);assert.equal(g.w.ResearchAtlas.operations.moveGoal('g3',-1),false);assert.equal(g.w.ResearchAtlas.operations.reorderGoal('g3','g1'),false);chooseGoals(g,['g2','g3']);assert.equal(g.document.querySelectorAll('[data-l3-group]').length,2);assert.equal(g.puts.length,0);
+ }finally{g.close();}
+});
