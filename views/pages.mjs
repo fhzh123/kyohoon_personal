@@ -16,7 +16,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <link rel="stylesheet" href="/taste.css?v=20261113-1"><link rel="stylesheet" href="/assets/taste/motion/motion.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
-<link rel="stylesheet" href="/atmosphere.css?v=20261114-motion-1">
+<link rel="stylesheet" href="/atmosphere.css?v=20261114-paper-hover-3">
 <link rel="stylesheet" href="/auth.css?v=20261113-2">
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
@@ -44,12 +44,12 @@ export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
         <div class="portal-copy"><div class="portal-title"><h2 id="work-label">Selectstar</h2><span class="arrow" aria-hidden="true">→</span></div><p>연구일지, 데모, 품의 사용내역</p><span class="portal-detail">로그인 필요</span></div>
       </a>
       <a class="portal card paper-portal" href="/paper" aria-labelledby="paper-label">
-        ${artwork('paper.png', 'paper.png', '논문과 펜을 든 마스코트')}
+        ${artwork('paper.png', 'paper-hover.png', '논문과 펜을 든 마스코트')}
         <div class="portal-copy"><div class="portal-title"><h2 id="paper-label">Paper</h2><span class="arrow" aria-hidden="true">→</span></div><p>리뷰탈 준비, 논문 리뷰</p><span class="portal-detail">로그인 필요</span></div>
       </a>
       <a class="portal card personal-portal" href="/personal" aria-labelledby="personal-label">
         ${artwork('personal-idle.webp', 'personal-build.webp', '머그잔을 든 마스코트')}
-        <div class="portal-copy"><div class="portal-title"><h2 id="personal-label">Personal</h2><span class="arrow" aria-hidden="true">→</span></div><p>개인 공간</p><span class="portal-detail">로그인 필요</span></div>
+        <div class="portal-copy"><div class="portal-title"><h2 id="personal-label">Personal</h2><span class="arrow" aria-hidden="true">→</span></div><p>개인 공간</p><span class="portal-detail">공개</span></div>
       </a>
     </nav>
   </main>${footer()}
@@ -63,7 +63,7 @@ export function loginPage({configured, preview, message = '', next = '/work'}) {
   return shell('로그인', `
 <div class="login-shell"><header class="site-header">${brand()}<div class="header-actions"><a class="text-link link" href="/">${uiIcon('house')}<span>홈으로</span></a>${themeButton()}</div></header>
 <main id="main" class="login-main hero" data-enter aria-labelledby="login-title">
-  <div class="login-art hero-text"><p class="login-eyebrow">Kyohoon Jin</p><h1 id="login-title">나의 공간에<br>로그인하세요.</h1><p>연구일지와 개인 공간을<br>등록된 계정으로 이용하세요.</p><div class="auth-mascot auth-mascot--login"><img src="/mascot/login-mascots.png" alt="키 카드를 들고 안내하는 마스코트" width="1920" height="819"></div></div>
+  <div class="login-art hero-text"><p class="login-eyebrow">Kyohoon Jin</p><h1 id="login-title">나의 공간에<br>로그인하세요.</h1><p>연구일지와 Paper를<br>등록된 계정으로 이용하세요.</p><div class="auth-mascot auth-mascot--login"><img src="/mascot/login-mascots.png" alt="키 카드를 들고 안내하는 마스코트" width="1920" height="819"></div></div>
   <section class="login-card" aria-labelledby="form-title"><div class="login-card-heading"><span class="login-symbol" aria-hidden="true">${uiIcon('log-in')}</span><h2 id="form-title">로그인</h2><p class="muted">이메일과 비밀번호를 입력해 주세요.</p></div>
   ${message ? `<p class="notice error" role="alert">${escapeHtml(message)}</p>` : ''}
   ${!configured ? '<p class="notice" role="status">지금은 로그인을 이용할 수 없습니다. 관리자에게 문의해 주세요.</p>' : ''}
@@ -119,9 +119,13 @@ export function demosPage() {
 </main>${footer()}</div>`, 'demos');
 }
 
+function publicHeader() {
+  return '<header class="site-header">'+brand()+'<div class="hub-header-actions"><a class="text-link link" href="/">'+uiIcon('house')+'<span>홈으로</span></a>'+themeButton()+'</div></header>';
+}
+
 export function personalPage() {
   return shell('Personal', `
-<div class="hub-shell personal-shell">${privateHeader()}<main id="main" class="construction-main hero" data-enter><div class="hero-text"><h1>Personal</h1><p>아직 등록된 콘텐츠가 없습니다.</p><a class="primary-button btn btn--primary home-return" href="/">홈으로 돌아가기 <span aria-hidden="true">→</span></a></div><div class="construction-art"><img src="/mascot/personal-build.webp" alt="안전모를 쓴 마스코트" width="480" height="480"></div></main>${footer()}</div>`, 'personal');
+<div class="hub-shell personal-shell">${publicHeader()}<main id="main" class="construction-main hero" data-enter><div class="hero-text"><h1>Personal</h1><p>아직 등록된 콘텐츠가 없습니다.</p><a class="primary-button btn btn--primary home-return" href="/">홈으로 돌아가기 <span aria-hidden="true">→</span></a></div><div class="construction-art"><img src="/mascot/personal-build.webp" alt="안전모를 쓴 마스코트" width="480" height="480"></div></main>${footer()}</div>`, 'personal');
 }
 
 export {shell,privateHeader,footer};

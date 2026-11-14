@@ -7,7 +7,7 @@ const source=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
 test('four home destinations preserve existing poses; tools use unique illustrations',()=>{
  const d=new JSDOM(homePage()).window.document;
  assert.deepEqual([...d.querySelectorAll('a.portal')].map(a=>a.getAttribute('href')),['/resume','/work','/paper','/personal']);
- for(const a of d.querySelectorAll('a.portal:not(.paper-portal)'))assert.notEqual(a.querySelector('.pose-idle').src,a.querySelector('.pose-active').src);
+ for(const a of d.querySelectorAll('a.portal'))assert.notEqual(a.querySelector('.pose-idle').src,a.querySelector('.pose-active').src);
  const hub=new JSDOM(workPage({mode:'supabase',role:'editor'})).window.document;
  assert.deepEqual([...hub.querySelectorAll('a.tool-card')].map(a=>a.getAttribute('href')),['/work/app/index.html','/work/demos','/work/expenses/']);
  assert.equal(new Set([...hub.querySelectorAll('.tool-illustration img')].map(x=>x.src)).size,3);

@@ -27,3 +27,5 @@ console.log('Research UI bundled: one script and one stylesheet; private data ex
 for(const f of ['server/paper-core.mjs','server/paper-providers.mjs','server/paper-routes.mjs','views/paper.mjs','public/paper.js'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
 await access(path.join(root,'public/paper.css'));
 await access(path.join(root,'public/mascot/paper.png'));
+
+await access(path.join(root,'public/mascot/paper-hover.png'));

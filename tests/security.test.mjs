@@ -334,7 +334,7 @@ test('preview policy requires every independent environment and network conditio
   for (const disabled of [{ enabled: false }, { development: false }, { vercel: true }, { host: 'evil.example' }, { address: '192.0.2.10' }]) assert.equal(previewAllowed({ ...allowed, ...disabled }), false);
 });
 
-test('Personal and demo picker enforce existing allowed membership, with allowlisted login destinations',async()=>{
+test('Personal is public while demo picker still enforces allowed membership',async()=>{
  let allowed=true;
  const fetcher=async url=>{
   if(url.includes('/auth/v1/token?grant_type=password'))return jsonResponse({access_token:'synthetic-private',refresh_token:'synthetic-refresh',user:{id:'space-user'}});
@@ -343,7 +343,7 @@ test('Personal and demo picker enforce existing allowed membership, with allowli
   throw Error('New spaces must not fetch research data');
  };
  const handler=createHandler({rootDir:await fixture(),environment:remoteEnvironment,fetcher});
- const anonymous=await request(handler,'/personal');assert.equal(anonymous.headers.location,'/login?next=%2Fpersonal');assert.ok(!anonymous.text.includes('personal-build.webp'));
+ const anonymous=await request(handler,'/personal');assert.equal(anonymous.status,200);assert.ok(anonymous.text.includes('personal-build.webp'));assert.ok(!anonymous.text.includes('/api/auth/logout'));
  assert.equal((await request(handler,'/work/demos')).status,303);
  const headers={cookie:'kh_access=synthetic-private'};
  const personal=await request(handler,'/personal',{headers});assert.match(personal.text,/personal-build.webp/);assert.match(personal.headers['cache-control'],/no-store/);
@@ -351,5 +351,5 @@ test('Personal and demo picker enforce existing allowed membership, with allowli
  for(const [space,destination]of [['personal','/personal'],['selectstar','/work'],['https://outside.invalid','/work']]){
   const r=await request(handler,'/api/auth/login',{method:'POST',headers:{'content-type':'application/json'},body:{space,email:'fixture@example.invalid',password:'synthetic'}});assert.equal(r.headers.location,destination);
  }
- allowed=false;assert.equal((await request(handler,'/personal',{headers})).headers.location,'/login?next=%2Fpersonal');
+ allowed=false;assert.equal((await request(handler,'/personal',{headers})).status,200);assert.equal((await request(handler,'/work/demos',{headers})).status,303);
 });

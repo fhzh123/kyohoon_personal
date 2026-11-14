@@ -14,7 +14,7 @@ async function request(handler,url,{method='GET',body,headers={}}={}){
 }
 test('all private document entry points redirect to one login while APIs remain unauthorized',async()=>{
  const handler=createHandler({environment:{NODE_ENV:'production'}});
- for(const route of ['/work','/work/','/personal','/personal/','/work/demos','/work/app/index.html','/work/expenses/','/work/expenses/index.html?year=2026']){
+ for(const route of ['/work','/work/','/work/demos','/work/app/index.html','/work/expenses/','/work/expenses/index.html?year=2026']){
   const r=await request(handler,route);assert.equal(r.status,303,route);assert.equal(r.headers.location,'/login?next='+encodeURIComponent(route));assert.match(r.headers['cache-control'],/no-store/);
  }
  for(const route of ['/api/research-state','/api/work-bootstrap','/api/card-ledger','/work/app/app.js','/work/expenses/app.js'])assert.equal((await request(handler,route)).status,401,route);

@@ -8,7 +8,9 @@
   const btn=(label,action,cls='',extra='')=>'<button type="button" class="paper-btn '+cls+'" data-action="'+action+'" '+extra+'>'+label+'</button>';
   const field=(label,key,value,placeholder='',cls='')=>'<label class="paper-field"><span>'+label+'</span><textarea class="'+cls+'" data-field="'+key+'" placeholder="'+esc(placeholder)+'">'+esc(value)+'</textarea></label>';
   const input=(label,key,value,type='text')=>'<label class="paper-field"><span>'+label+'</span><input type="'+type+'" name="'+key+'" value="'+esc(value)+'" '+(key==='title'?'required maxlength="300"':'')+'></label>';
-  function notice(message,error=false){const node=$('#paper-status');node.textContent=message;node.classList.toggle('error',error);node.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>node.hidden=true,error?14000:5000);}
+  function notice(message,error=false){const node=$('#paper-status');node.textContent=message;node.classList.toggle('error',error);node.hidden=false;
+    if(dialog.open){let status=dialog.querySelector('[data-dialog-status]');if(!status){status=document.createElement('p');status.dataset.dialogStatus='';status.setAttribute('role','alert');status.className='paper-subtle';dialog.querySelector('form')?.append(status);}status.textContent=message;}
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>node.hidden=true,error?14000:5000);}
   async function api(route,method='GET',body){
     if(preview){
       if(route==='/api/paper'&&method==='GET')return clone(window.PAPER_PREVIEW);
@@ -53,17 +55,25 @@
   function showProjectDialog(p,isNew=false){
     dialog.innerHTML='<form id="paper-project-form"><h2 id="paper-dialog-title">'+(isNew?types[p.type]+' 시작':'논문 정보 수정')+'</h2>'+input('논문 제목','title',p.title)+input('학회 / 저널','venue',p.venue)+
       '<div class="paper-pair">'+input('마감일','deadline',p.deadline,'date')+input(p.type==='rebuttal'?'리뷰어별 글자 제한 (0: 없음)':'전체 리뷰 글자 제한 (0: 없음)','charLimit',p.charLimit,'number')+'</div>'+
-      '<label class="paper-field"><span>상태</span><select name="status">'+[['active','진행 중'],['done','완료'],['archived','보관']].map(([v,n])=>'<option value="'+v+'" '+(v===p.status?'selected':'')+'>'+n+'</option>').join('')+'</select></label><div class="paper-actions">'+btn('취소','close-dialog')+'<button class="paper-btn primary" type="submit">'+(isNew?'작업 만들기':'적용')+'</button></div></form>';
+      '<label class="paper-field"><span>상태</span><select name="status">'+[['active','진행 중'],['done','완료'],['archived','보관']].map(([v,n])=>'<option value="'+v+'" '+(v===p.status?'selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
+      (isNew&&p.type==='review'?'<label class="paper-field"><span>논문 PDF <small>선택 사항</small></span><input type="file" id="paper-create-pdf" name="pdf" accept="application/pdf,.pdf"><small class="paper-subtle">2.5 MB까지 첨부할 수 있으며, 나중에 추가해도 됩니다.</small></label>':'')+
+      '<div class="paper-actions">'+btn('취소','close-dialog')+'<button class="paper-btn primary" type="submit">'+(isNew?'작업 만들기':'적용')+'</button></div></form>';
     showDialog();
     $('#paper-project-form').onsubmit=async e=>{e.preventDefault();const form=new FormData(e.target);const next={...clone(p),title:String(form.get('title')).trim(),venue:String(form.get('venue')),deadline:String(form.get('deadline')),status:form.get('status'),charLimit:Number(form.get('charLimit'))};
       if(!next.title||next.title.length>300||!Number.isInteger(next.charLimit)||next.charLimit<0||next.charLimit>100000){notice('제목과 글자 수 제한을 확인해 주세요.',true);return;}
-      if(isNew){if(!safeLeave())return;current={id:next.id,data:next,revision:null};reviewerId=null;issueId=null;dirty=true;try{await save();dialog.close();renderEditor();}catch(e){notice(e.message,true);}}else{current.data=next;mark();dialog.close();renderEditor();}};
+      const file=isNew&&p.type==='review'?$('#paper-create-pdf')?.files[0]:null;
+      if(file){try{validatePdf(file);}catch(error){notice(error.message,true);return;}}
+      if(isNew){if(!safeLeave())return;await run(async()=>{current={id:next.id,data:next,revision:null};reviewerId=null;issueId=null;dirty=true;
+        try{await save();}catch(error){notice(error.message,true);return;}
+        dialog.close();renderEditor();
+        if(file){try{await uploadFile(file);}catch(error){notice('논문은 생성됐지만 PDF 첨부에 실패했습니다. '+error.message+' 편집 화면에서 다시 첨부해 주세요.',true);}}
+      },e.submitter);}else{current.data=next;mark();dialog.close();renderEditor();}};
   }
   function showDialog(){if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');}
   function openProject(projectId){if(!safeLeave())return;current=clone(data.projects.find(x=>x.id===projectId));workspace=current.data.type;reviewerId=current.data.reviewers[0]?.id;issueId=current.data.reviewers[0]?.issues[0]?.id;dirty=false;view='editor';renderEditor();window.scrollTo?.(0,0);}
   function renderEditor(){
     view='editor';const p=current.data;app.innerHTML='<div class="paper-topline"><button class="paper-back" data-action="back">← '+workspaceName(p.type)+'</button><div class="paper-actions"><span class="paper-save-state '+(dirty?'dirty':'')+'" data-save-state>'+(dirty?'저장하지 않은 변경':'저장됨')+'</span>'+btn('설정','settings','quiet')+btn('저장','save','primary')+'</div></div>'+
-      '<div class="paper-project-heading"><div><p class="paper-eyebrow">'+types[p.type]+' / '+(p.status==='done'?'완료':p.status==='archived'?'보관':'진행 중')+'</p><h1>'+esc(p.title)+'</h1><div class="paper-meta"><span>'+esc(p.venue||'학회 미입력')+'</span><span>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</span>'+(p.charLimit?'<span>'+p.charLimit+'자 제한</span>':'')+'</div></div><div class="paper-actions">'+btn('정보 수정','edit-meta')+(p.type==='review'?'<label class="paper-btn" for="paper-md">MD 메모 가져오기</label><input type="file" id="paper-md" accept=".md,.markdown,.txt" hidden>':'')+btn('MD 내보내기','export')+'</div></div>'+
+      '<div class="paper-project-heading"><div><p class="paper-eyebrow">'+types[p.type]+' / '+(p.status==='done'?'완료':p.status==='archived'?'보관':'진행 중')+'</p><h1>'+esc(p.title)+'</h1><div class="paper-meta"><span>'+esc(p.venue||'학회 미입력')+'</span><span>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</span>'+(p.charLimit?'<span>'+p.charLimit+'자 제한</span>':'')+'</div></div><div class="paper-actions">'+btn('정보 수정','edit-meta')+btn('MD 내보내기','export')+'</div></div>'+
       '<div class="paper-attachment"><div class="paper-actions">'+(p.pdf?'<a class="paper-btn quiet" '+(preview?'data-action="preview-file" href="#paper-app"':'href="/api/paper/file?projectId='+p.id+'"')+'>'+esc(p.pdf.name)+' ↗</a>'+btn('첨부 해제','detach','quiet'):'<span>논문 PDF를 첨부하면 초안에 함께 참고합니다.</span>')+'</div><div class="paper-actions">'+(p.pdf?'<label><input type="checkbox" id="paper-include-pdf" '+(includePdf?'checked':'')+'> 생성 시 PDF 포함</label>':'')+'<label class="paper-btn" for="paper-file">'+(p.pdf?'PDF 교체':'PDF 첨부')+'</label><input type="file" id="paper-file" accept="application/pdf,.pdf" hidden></div></div>'+
       '<details class="paper-context"><summary>논문 배경 및 공통 작성 지침 ＋</summary>'+field('모든 쟁점에 함께 전달할 내용','context',p.context,'논문 핵심 기여, 대응 방향, 지켜야 할 표현 등을 적어 주세요.')+'</details>'+
       (p.type==='rebuttal'?'<div class="paper-editor"><aside class="paper-outline" aria-label="리뷰어와 쟁점" id="paper-outline"></aside><div class="paper-editor-body" id="paper-editor-body"></div></div>':'<div id="paper-editor-body"></div>')+
@@ -128,22 +138,12 @@
   }
   function collectSettings(){return {provider:$('input[name="paper-provider"]:checked').value,models:Object.fromEntries(Object.keys(names).map(p=>[p,$('#model-'+p).value.trim()])),prompts:Object.fromEntries(['translate','rebuttal','review'].map(a=>[a,$('#prompt-'+a).value])),keys:Object.fromEntries(Object.keys(names).flatMap(p=>removedKeys[p]?[[p,null]]:$('#key-'+p).value?[[p,$('#key-'+p).value.trim()]]:[])),expectedRevision:data.settings.revision};}
   async function uploadFile(file){
+    validatePdf(file);
     if(preview)throw Error('미리보기에서는 PDF를 저장하지 않습니다.');
-    if(file.size>2500000)throw Error('PDF는 2.5 MB까지 첨부할 수 있습니다.');
     await save();const base64=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('파일을 읽지 못했습니다.'));reader.readAsDataURL(file);});
     const r=await api('/api/paper/file','POST',{projectId:current.id,name:file.name,base64});current.data.pdf=r.pdf;mark();await save();renderEditor();notice('PDF를 첨부했습니다.');
   }
-  async function importNotes(file){
-    if(file.size>400000)throw Error('메모 파일은 400 KB까지 가져올 수 있습니다.');
-    const content=await file.text(),found={};let key=null;
-    const aliases={summary:'summary',strength:'strength',strengths:'strength',weakness:'weakness',weaknesses:'weakness',etc:'etc','기타':'etc','요약':'summary','장점':'strength','단점':'weakness'};
-    for(const line of content.split(/\r?\n/)){const heading=line.match(/^#{1,6}\s+(?:\d+[.)]\s*)?(.+?)\s*#*\s*$/);if(heading){const name=heading[1].replace(/\s+메모$/,'').toLowerCase();if(aliases[name]){key=aliases[name];found[key]=[];continue;}if(/^영문 리뷰/.test(name)){key=null;continue;}}if(key)found[key].push(line);}
-    if(!Object.keys(found).length)throw Error('Summary, Strength, Weakness, ETC 제목이 있는 Markdown 파일을 선택해 주세요.');
-    const parsed=Object.fromEntries(Object.entries(found).map(([k,v])=>[k,v.join('\n').trim()]));
-    if(Object.values(parsed).some(v=>v.length>60000))throw Error('각 항목은 60,000자까지 가져올 수 있습니다.');
-    if(Object.keys(parsed).some(k=>current.data.sections[k].trim())&&!confirm('파일에 있는 항목의 기존 메모를 교체할까요?'))return;
-    Object.assign(current.data.sections,parsed);mark();renderReview();notice('메모를 가져왔습니다. 저장 버튼으로 보관해 주세요.');
-  }
+  function validatePdf(file){if(!file.size)throw Error('비어 있는 파일은 첨부할 수 없습니다.');if(file.size>2500000)throw Error('PDF는 2.5 MB까지 첨부할 수 있습니다.');if(file.type!=='application/pdf'&&!/\.pdf$/i.test(file.name))throw Error('PDF 파일을 선택해 주세요.');}
   app.addEventListener('input',e=>{
     const n=e.target;if(busy)return;if(view==='settings'){settingsDirty=true;if(n.id.startsWith('key-')&&n.value)delete removedKeys[n.id.slice(4)];return;}
     if(n.id==='paper-search'){query=n.value;renderRows();return;}
@@ -151,7 +151,7 @@
     if(n.dataset.field){const [parent,key]=n.dataset.field.split('.');if(parent==='issue')activeIssue()[key]=n.value;else if(parent==='sections')current.data.sections[key]=n.value;else current.data[parent]=n.value;mark();}
     if(n.dataset.issueField){activeIssue()[n.dataset.issueField]=n.type==='checkbox'?n.checked:n.value;mark();if(n.dataset.issueField==='title'||n.dataset.issueField==='done')renderOutline();}
   });
-  app.addEventListener('change',e=>{if(busy)return;if(e.target.id==='paper-include-pdf')includePdf=e.target.checked;if(e.target.id==='paper-file'&&e.target.files[0])run(()=>uploadFile(e.target.files[0]));if(e.target.id==='paper-md'&&e.target.files[0])run(()=>importNotes(e.target.files[0]));});
+  app.addEventListener('change',e=>{if(busy)return;if(e.target.id==='paper-include-pdf')includePdf=e.target.checked;if(e.target.id==='paper-file'&&e.target.files[0])run(()=>uploadFile(e.target.files[0]));});
   app.addEventListener('keydown',e=>{const row=e.target.closest('[data-open]');if(row&&['Enter',' '].includes(e.key)){e.preventDefault();openProject(row.dataset.open);}});
   document.addEventListener('click',async e=>{
     const n=e.target.closest('[data-action],[data-open],[data-filter],[data-issue],[data-section]');if(!n||!app.contains(n)&&!dialog.contains(n))return;

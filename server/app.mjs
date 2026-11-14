@@ -152,9 +152,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
       }
       if (pathname === '/personal' || pathname === '/personal/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
-        const access=await authorize(req,res);
-        if(!access)return redirect(res,'/login?next='+encodeURIComponent(pathname+requestUrl.search));
-        return send(res,200,personalPage(),'text/html; charset=utf-8');
+        return send(res,200,req.method==='HEAD'?'':personalPage(),'text/html; charset=utf-8');
       }
       if (pathname === '/work/demos' || pathname === '/work/demos/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
