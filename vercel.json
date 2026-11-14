@@ -3,6 +3,7 @@
   "buildCommand": "npm run build",
   "functions": {
     "api/index.mjs": {
+      "maxDuration": 180,
       "includeFiles": "{server,views,work-app,work-expenses,public}/**",
       "excludeFiles": "{private,Assets,assets-extracted,assets-generated,artifacts}/**"
     }
@@ -24,3 +25,4 @@
     }
   ]
 }
+

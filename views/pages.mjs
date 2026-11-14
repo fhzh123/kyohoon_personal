@@ -43,6 +43,10 @@ export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
         ${artwork('selectstar-idle.webp', 'selectstar-hover.webp', 'Selectstar 마스코트')}
         <div class="portal-copy"><div class="portal-title"><h2 id="work-label">Selectstar</h2><span class="arrow" aria-hidden="true">→</span></div><p>연구일지, 데모, 품의 사용내역</p><span class="portal-detail">로그인 필요</span></div>
       </a>
+      <a class="portal card paper-portal" href="/paper" aria-labelledby="paper-label">
+        ${artwork('paper.png', 'paper.png', '논문과 펜을 든 마스코트')}
+        <div class="portal-copy"><div class="portal-title"><h2 id="paper-label">Paper</h2><span class="arrow" aria-hidden="true">→</span></div><p>리뷰탈 준비, 논문 리뷰</p><span class="portal-detail">로그인 필요</span></div>
+      </a>
       <a class="portal card personal-portal" href="/personal" aria-labelledby="personal-label">
         ${artwork('personal-idle.webp', 'personal-build.webp', '머그잔을 든 마스코트')}
         <div class="portal-copy"><div class="portal-title"><h2 id="personal-label">Personal</h2><span class="arrow" aria-hidden="true">→</span></div><p>개인 공간</p><span class="portal-detail">로그인 필요</span></div>
@@ -119,4 +123,6 @@ export function personalPage() {
   return shell('Personal', `
 <div class="hub-shell personal-shell">${privateHeader()}<main id="main" class="construction-main hero" data-enter><div class="hero-text"><h1>Personal</h1><p>아직 등록된 콘텐츠가 없습니다.</p><a class="primary-button btn btn--primary home-return" href="/">홈으로 돌아가기 <span aria-hidden="true">→</span></a></div><div class="construction-art"><img src="/mascot/personal-build.webp" alt="안전모를 쓴 마스코트" width="480" height="480"></div></main>${footer()}</div>`, 'personal');
 }
+
+export {shell,privateHeader,footer};
 

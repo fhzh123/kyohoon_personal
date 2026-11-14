@@ -26,7 +26,7 @@ export function safeLoginDestination(value) {
     const url = new URL(value, 'https://local.invalid');
     if (url.origin !== 'https://local.invalid') return '/work';
     const allowed = ['/work', '/work/', '/work/demos', '/work/demos/', '/work/app/index.html', '/work/expenses', '/work/expenses/', '/work/expenses/index.html', '/personal', '/personal/'];
-    return allowed.includes(url.pathname) ? url.pathname + url.search + url.hash : '/work';
+    return [...allowed,'/paper','/paper/'].includes(url.pathname) ? url.pathname + url.search + url.hash : '/work';
   } catch { return '/work'; }
 }
 /** @param {unknown} state */

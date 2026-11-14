@@ -1,0 +1,4 @@
+import {shell,privateHeader,footer} from './pages.mjs';
+export function paperPage(){
+  return shell('Paper',`<link rel="stylesheet" href="/paper.css?v=20261114-1"><div class="paper-shell">${privateHeader()}<main id="main" class="paper-main"><div id="paper-app" aria-busy="true"><div class="paper-loading" role="status">논문 작업을 불러오는 중입니다.</div></div></main>${footer()}</div><div id="paper-status" class="paper-toast" role="status" aria-live="polite" hidden></div><dialog id="paper-dialog" class="paper-dialog" aria-labelledby="paper-dialog-title"></dialog><script src="/paper.js?v=20261114-1" defer></script>`,'paper').replace('data-type="service"','data-type="software"').replace('name="page-type" content="service"','name="page-type" content="software"').replace('name="site-kind" content="other"','name="site-kind" content="software"');
+}

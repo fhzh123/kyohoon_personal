@@ -49,6 +49,16 @@ html[data-theme="light"] .theme-moon { display: inline-flex; }
 .tool-copy p { overflow-wrap: anywhere; }
 .home-main { grid-template-columns: minmax(0,5fr) minmax(0,7fr); }
 .three-worlds .portal { column-gap: 16px; }
+.three-worlds:has(.paper-portal) .portal { min-height: 140px; padding-block: 12px; }
+.three-worlds:has(.paper-portal) .portal-art { height: 112px; }
+.paper-portal .portal-art img { transition: transform 180ms ease; }
+@media (hover:hover) and (prefers-reduced-motion:no-preference) {
+  .paper-portal:hover .portal-art img { transform: translateY(-2px) scale(1.02); }
+}
+@media (max-width:639px) {
+  .three-worlds:has(.paper-portal) .portal { min-height: 122px; padding-block: 12px; }
+  .three-worlds:has(.paper-portal) .portal-art { height: 96px; }
+}
 .portal-title { flex-wrap: wrap; }
 /* Resume remains an independent document and shares the same theme preference. */
 body[data-typography="resume"] #root > .resume-shell { background: transparent !important; padding: clamp(16px,3.3vw,48px); }

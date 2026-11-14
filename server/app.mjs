@@ -5,6 +5,7 @@ import { randomBytes, timingSafeEqual, randomUUID } from 'node:crypto';
 import { homePage, loginPage, workPage, demosPage, personalPage } from '../views/pages.mjs';
 import { previewAllowed, safeRelativePath, safeLoginDestination, validState } from './policy.mjs';
 import { expenseRoutes } from './expense-routes.mjs';
+import { paperRoutes } from './paper-routes.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.ttf':'font/ttf','.json':'application/json; charset=utf-8','.pdf':'application/pdf'};
@@ -102,6 +103,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
     catch { return send(res,404,{error:'찾을 수 없습니다.'}); }
   }
   const handleExpenses=expenseRoutes({authorize,authFetch,bearer,send,body,serveFile,rootDir});
+  const handlePaper=paperRoutes({authorize,authFetch,bearer,send,body,rootDir,environment,fetcher});
   return async function handler(req,res) {
     try {
       const requestUrl = new URL(req.url,'http://local.invalid');
@@ -109,6 +111,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
       if (!['GET','HEAD','POST','PUT'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (['POST','PUT'].includes(req.method) && !sameOrigin(req,environment)) return send(res,403,{error:'다른 출처의 요청은 허용되지 않습니다.'});
       if(await handleExpenses(req,res,requestUrl))return;
+      if(await handlePaper(req,res,requestUrl))return;
 
       if (pathname === '/api/auth/login' && req.method === 'POST') {
         if (!configured) return send(res,503,{error:'인증 설정 전입니다.'});

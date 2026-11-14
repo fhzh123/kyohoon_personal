@@ -23,3 +23,7 @@ await writeFile(path.join(root,'work-app/workspace.bundle.js'),'window.startRese
 await writeFile(path.join(root,'work-app/workspace.bundle.css'),css.join('\n'));
 execFileSync(process.execPath,['--check','work-app/workspace.bundle.js'],{cwd:root,stdio:'inherit'});
 console.log('Research UI bundled: one script and one stylesheet; private data excluded.');
+
+for(const f of ['server/paper-core.mjs','server/paper-providers.mjs','server/paper-routes.mjs','views/paper.mjs','public/paper.js'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
+await access(path.join(root,'public/paper.css'));
+await access(path.join(root,'public/mascot/paper.png'));
