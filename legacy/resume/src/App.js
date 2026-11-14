@@ -13,11 +13,11 @@ const universityPublications = internationalPublications_.filter(pub => Number(p
 const universityJournals = universityPublications.filter(pub => /Vol\./.test(pub.journal)).length;
 const universityConferences = universityPublications.length - universityJournals;
 const PaperReference = ({href,title,children}) => <a href={href} target="_blank" rel="noopener noreferrer" title={title} aria-label={title}>{children}<span aria-hidden="true">↗</span></a>;
-const AcademicResearchSummary = ({language}) => <div className="resume-research-summary experience-description">
+const AcademicResearchSummary = ({language,onPublications}) => <div className="resume-research-summary experience-description">
   <div className="resume-research-row"><span>{language === 'ko' ? '- [박사]' : '- [Ph.D.]'}</span><span>{language === 'ko' ? '허위 상관관계와 편향 완화를 위한 반사실적 텍스트 증강' : 'Counterfactual text augmentation to mitigate spurious correlations and bias'}</span><PaperReference href="https://aclanthology.org/2025.emnlp-main.520/" title="CoBA: Counterbias Text Augmentation for Mitigating Various Spurious Correlations via Semantic Triples">CoBA (EMNLP 2025)</PaperReference></div>
   <div className="resume-research-row"><span>{language === 'ko' ? '- [석사]' : '- [M.S.]'}</span><span>{language === 'ko' ? '한국 고문서 복원, 번역 및 분석 모델 개발' : 'Restoration, translation and analysis of Korean historical documents'}</span><PaperReference href="https://aclanthology.org/2021.naacl-main.317/" title="Restoring and Mining the Records of the Joseon Dynasty via Neural Language Modeling and Machine Translation">NAACL 2021</PaperReference><PaperReference href="https://www.mdpi.com/2076-3417/10/21/7939" title="Korean Historical Documents Analysis with Improved Dynamic Word Embedding">Applied Sciences 2020</PaperReference></div>
   <div className="resume-research-row"><span>{language === 'ko' ? '학위논문' : 'Theses'}</span><PaperReference href={phdThesis.href} title={phdThesis.title}>{language === 'ko' ? '박사 학위논문' : 'Ph.D. thesis'}</PaperReference><PaperReference href={msThesis.href} title={msThesis.title}>{language === 'ko' ? '석사 학위논문' : 'M.S. thesis'}</PaperReference></div>
-  <div className="resume-research-meta">- {language === 'ko' ? `국제 저널 ${universityJournals}편, 국제학회 ${universityConferences}편 (2019–2024, Publications 수록 기준)` : `${universityJournals} international journal papers and ${universityConferences} conference papers (2019–2024, listed in Publications)`}</div>
+  <div className="resume-research-meta">- {language === 'ko' ? `SCIE급 국제저널 ${universityJournals}편, 국제학회 ${universityConferences}편` : `${universityJournals} SCIE-indexed journal papers and ${universityConferences} international conference papers`} <a className="resume-publications-link" href="#publications" onClick={event=>{event.preventDefault();onPublications();}}>Publications <span aria-hidden="true">→</span></a></div>
 </div>;
 const projectTitle = project => `${!project.description?.trim() && !project.fullDescription?.trim() ? '(수정예정) ' : ''}${project.title}`;
 const nameMap = {'진교훈':'Kyohoon Jin','김영빈':'Youngbin Kim','김재원':'Jaewon Kim','장수진':'Soojin Jang','이준호':'Junho Lee','윤정민':'Jungmin Yun','최주환':'Juhwan Choi'};
@@ -283,7 +283,7 @@ const App = () => {
                 </div>
                 <div className="text-sm md:text-base text-gray-400 mb-1">{exp.company}</div>
                 <div className="text-sm md:text-base text-gray-400 mb-2">{exp.period}</div>
-                {exp.title.startsWith('Student Researcher') ? <AcademicResearchSummary language={language} /> : <p className="text-sm md:text-base text-gray-300" dangerouslySetInnerHTML={{ __html: exp.description }}></p>}
+                {exp.title.startsWith('Student Researcher') ? <AcademicResearchSummary language={language} onPublications={()=>{setActiveTab('Publications');setActivePaperType('International');}} /> : <p className="text-sm md:text-base text-gray-300" dangerouslySetInnerHTML={{ __html: exp.description }}></p>}
               </div>
             ))}
           </div>

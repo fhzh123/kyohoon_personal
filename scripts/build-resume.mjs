@@ -73,7 +73,7 @@ html = html.replace('</head>', '    <link rel="stylesheet" href="/resume/resume.
 html = html.replace('</head>', '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/typography.css?v=20261112-1"></head>');
 html = html.replace('</head>', '<script src="/theme.js?v=20261113-1"></script><link rel="stylesheet" href="/taste.css?v=20261113-1"></head>');
 html = html.replace('</head>', '<link rel="stylesheet" href="/atmosphere.css?v=20261113-review-2"></head>');
-html = html.replace('</head>', '<link rel="stylesheet" href="/resume-details.css?v=20261114-1"></head>');
+html = html.replace('</head>', '<link rel="stylesheet" href="/resume-details.css?v=20261114-2"></head>');
 html = html.replace('<html lang="en">', '<html lang="ko" data-theme="dark">');
 html = html.replace('<body>', '<body data-typography="resume">');
 html = html.replace('</body>', '    <script defer src="/resume/resume.js"></script>\n  </body>');
