@@ -271,7 +271,7 @@ Object.assign(projects_[1], {
  description: '- 텍스트, 이미지, 표 추출을 위한 문서 레이아웃 분석<br />- 작업 목적에 따라 분할 단위를 제어하는 Policy-Adaptive DLA 연구',
  subtitle: '작업 목적에 맞춘 문서 분할과 구조 분석',
  fullDescription: '기업 문서의 텍스트, 이미지, 표를 다루기 위한 OCR 및 문서 레이아웃 분석 연구입니다. 작업 목적에 따라 문서 분할 단위를 제어하는 Policy-Adaptive DLA를 연구하고, 연구 방법과 실험 결과를 Document Parsing Research 데모에서 소개합니다.',
- imageUrl: '/resume/projects/document-parsing.svg', companyOrInstitution: 'Selectstar', role: '문서 레이아웃 분석 및 Policy-Adaptive DLA 연구',
+ imageUrl: '/resume/projects/document-parsing.png', companyOrInstitution: 'Selectstar', role: '문서 레이아웃 분석 및 Policy-Adaptive DLA 연구',
  externalLinks: [{name:'Document Parsing 데모 ↗', url:'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/'}]
 });
 const projectEnglishCopy = [
