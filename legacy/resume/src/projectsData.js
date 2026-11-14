@@ -20,34 +20,8 @@ const projects_ = [
       role: '',
       externalLinks: [],
     },
-    {
-      title: 'Agentic Flow를 활용한 Dialouge Topic Segmentation',
-      period: 'Feb 2026 - ',
-      description: '',
-      link: '#', // This link is now used to trigger the modal
-      icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
-      // Detailed fields for modal
-      imageUrl: '', // Image for project detail
-      subtitle: '',
-      fullDescription: '',
-      companyOrInstitution: '',
-      role: '',
-      externalLinks: [],
-    },
-    {
-      title: '자동 프롬프트 튜닝을 통한 Generalized Category Discovery',
-      period: 'Jan 2026 - ',
-      description: '',
-      link: '#', // This link is now used to trigger the modal
-      icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
-      // Detailed fields for modal
-      imageUrl: '', // Image for project detail
-      subtitle: '',
-      fullDescription: '',
-      companyOrInstitution: '',
-      role: '',
-      externalLinks: [],
-    },
+
+
     {
       title: '기업 문서 내 텍스트, 이미지, 표 추출을 위한 OCR & DLA 원천기술 개발',
       period: 'Jan 2026 - ',
@@ -291,4 +265,158 @@ const projects_ = [
     },
   ];
 
-export { projects_ };
+// English copy follows the same order and preserves original images, URLs and empty fields.
+// Description grounded in the linked Site metadata; illustration shows the method, not a captured UI.
+Object.assign(projects_[1], {
+ description: '- 텍스트, 이미지, 표 추출을 위한 문서 레이아웃 분석<br />- 작업 목적에 따라 분할 단위를 제어하는 Policy-Adaptive DLA 연구',
+ subtitle: '작업 목적에 맞춘 문서 분할과 구조 분석',
+ fullDescription: '기업 문서의 텍스트, 이미지, 표를 다루기 위한 OCR 및 문서 레이아웃 분석 연구입니다. 작업 목적에 따라 문서 분할 단위를 제어하는 Policy-Adaptive DLA를 연구하고, 연구 방법과 실험 결과를 Document Parsing Research 데모에서 소개합니다.',
+ imageUrl: '/resume/projects/document-parsing.svg', companyOrInstitution: 'Selectstar', role: '문서 레이아웃 분석 및 Policy-Adaptive DLA 연구',
+ externalLinks: [{name:'Document Parsing 데모 ↗', url:'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/'}]
+});
+const projectEnglishCopy = [
+  {
+    "title": "Monitoring Dashboard Development for the DATUMO Platform"
+  },
+  {
+    "title": "Core OCR and Document Layout Analysis Technology for Extracting Text, Images and Tables from Enterprise Documents"
+  },
+  {
+    "title": "Sovereign AI Foundation Model Project (SKT Consortium)",
+    "description": "- Generated challenging LLM training data in science, law, APIs and databases <br /> - Developed LLM-based difficulty enhancement and automated verification pipelines",
+    "subtitle": "Generating and Verifying Advanced Training Data for Specialized Domains",
+    "fullDescription": "Selectstar was responsible for building and verifying large-scale training data for the SKT consortium’s sovereign AI foundation model project. Our team generated and verified data in science, law, APIs and databases. We developed a pipeline that generates questions and solutions from source materials with LLMs, increases difficulty by adding complex constraints and reasoning steps, and applies LLM verification followed by human review. The target difficulty was graduate level or above for science, legal professional level for law, and undergraduate-level programming or above for APIs and databases.",
+    "companyOrInstitution": "SKT Consortium",
+    "role": "Development of training data generation and verification pipelines for science, law, APIs and databases",
+    "externalLinkNames": [
+      "Related article (SK Telecom)"
+    ]
+  },
+  {
+    "title": "AI and Data-Driven Digital Education Platform for Gyeonggi Province",
+    "description": "- Built an LLM data augmentation pipeline for drafting primary and secondary school assessment plans <br /> - Developed automated evaluation with an LLM judge",
+    "subtitle": "Training and Evaluation Data for the Gyeonggi Education AI Platform",
+    "fullDescription": "In collaboration with LG CNS, we built data for model training and evaluation on the Gyeonggi Provincial Office of Education’s AI platform. We organized documents and examples of primary and secondary school assessment plans and developed an LLM-based data augmentation pipeline that generates draft assessment plans for individual schools from a small set of examples. We also implemented prompt-based automated evaluation using an LLM judge.",
+    "companyOrInstitution": "LG CNS",
+    "role": "Development of assessment-plan drafting and data augmentation pipelines, and automated LLM-judge evaluation",
+    "externalLinkNames": [
+      "Related article (Gyeonggi Provincial Office of Education)"
+    ]
+  },
+  {
+    "title": "[Samsung Life C-Lab] Integrating Structured Data into LLMs",
+    "description": "- Developed technology to incorporate large-scale structured data into LLM knowledge <br /> - Supported decision-making based on internal structured data",
+    "subtitle": "Structured Data Integration and Knowledge Incorporation for LLMs",
+    "fullDescription": "Samsung Life holds a large volume of structured customer data but lacked technology to connect it effectively to LLMs. We developed technology that connects LLMs with structured data and incorporates it into model knowledge, with the aim of supporting personalized customer services and data-driven decision-making.",
+    "companyOrInstitution": "Samsung Life Insurance",
+    "role": "Development of structured data analysis pipelines and technology for incorporating data into LLM knowledge",
+    "externalLinkNames": [
+      "Related article (News)"
+    ]
+  },
+  {
+    "title": "Document Linking and Metadata Construction for the Financial Domain",
+    "description": "- Developed document linking and metadata construction technology for financial documents <br /> - Supported efficient management and use of financial data",
+    "subtitle": "Document Linking and Metadata Construction for Finance",
+    "fullDescription": "We developed technology to link information across financial documents and construct document metadata to improve the use of financial text data. The project aims to support efficient financial data management and use, and improve data-driven decision-making processes.",
+    "role": "Development of metadata construction technology and data linking pipelines"
+  },
+  {
+    "title": "Synthetic Dataset Generation for RAG Evaluation",
+    "description": "- Researched source-document-based question-answer dataset synthesis for evaluating RAG systems <br /> - Submitted two papers to EMNLP 2025",
+    "subtitle": "Synthetic Dataset Generation for RAG Evaluation",
+    "fullDescription": "We researched source-document-based question-answer dataset synthesis for evaluating RAG systems and submitted two papers to EMNLP 2025.",
+    "companyOrInstitution": "Hanwha Life Insurance",
+    "role": "Research on synthetic datasets for RAG evaluation and paper writing"
+  },
+  {
+    "title": "RAG-Based Conversational Question Answering",
+    "description": "- Developed a RAG-based AI pipeline for real estate legal question answering <br /> - Implemented a question-answering system specialized in real estate",
+    "subtitle": "RAG-Based Conversational Question Answering for Real Estate Law",
+    "fullDescription": "We developed a real estate legal question-answering system for public inquiries. A RAG-based AI pipeline retrieves legal information relevant to each question and supports real estate legal consultation.",
+    "companyOrInstitution": "Confidential",
+    "role": "Development of retriever models and construction and augmentation of training datasets"
+  },
+  {
+    "title": "Neural Journalism: Next-Generation Journalism with Big Data and Deep Learning",
+    "description": "- Developed a personalized news summarization system <br /> - Improved user experience with an HCI-informed design",
+    "subtitle": "Personalized News Summarization",
+    "fullDescription": "The project addressed the need to deliver relevant information efficiently in an era of information overload. We developed a personalized news summarization system that helps users access the information they need, with an emphasis on improving the user experience through HCI principles.",
+    "companyOrInstitution": "National Research Foundation of Korea and Boston University (Prof. Derry Tanti Wijaya’s Lab)",
+    "role": "Development of controllable text summarization models using a pretrained language model (T5-base) and an LLM (GPT API)"
+  },
+  {
+    "title": "Music-Based Functional Content Platform for Communication and Social Skills",
+    "description": "- Developed a music-based functional content platform for people with communication difficulties <br /> - Applied pose estimation and hand gesture recognition",
+    "subtitle": "Music-Based Content for People with Communication Difficulties",
+    "fullDescription": "This project develops a music-based functional content platform to improve communication and social skills in people with communication difficulties. The platform uses music to support communication and social interaction.",
+    "companyOrInstitution": "Hudit and the Department of Psychiatry, Chung-Ang University Hospital",
+    "role": "Support for pose estimation model development and data augmentation",
+    "externalLinkNames": [
+      "Related article (TechCrunch)"
+    ]
+  },
+  {
+    "title": "Labeled Dataset Construction for Optical Satellite Imagery",
+    "description": "- Used editing tools to create optical satellite imagery datasets <br /> - Supported semantic segmentation technology development",
+    "subtitle": "Labeled Dataset Construction for Optical Satellite Imagery",
+    "fullDescription": "We constructed a labeled optical satellite imagery dataset for semantic segmentation and developed a semantic segmentation model specialized in satellite imagery. The project aimed to create accurate labels and associated models to support the use of satellite information in a range of applications.",
+    "companyOrInstitution": "Korea Aerospace Research Institute",
+    "role": "Support for semantic segmentation model development"
+  },
+  {
+    "title": "[AI Training Data Construction] Workplace Safety Data",
+    "description": "- Developed a personalized news summarization system <br /> - Improved user experience with an HCI-informed design",
+    "subtitle": "Hazard Recognition Algorithms for Construction Sites",
+    "fullDescription": "Identifying hazards at construction sites requires both accurate object recognition and contextual information about the surrounding work environment and installations. This project aims to develop technology that uses objects identified in images and video to describe construction-safety knowledge about hazards and possible responses.",
+    "companyOrInstitution": "Ministry of Science and ICT, National Information Society Agency (NIA), and Prof. Chansik Park’s Lab at Chung-Ang University",
+    "role": "Data cleaning and augmentation for construction-site object detection, and development of image captioning models based on detected objects"
+  },
+  {
+    "title": "[Seoul Industry-Academia Collaboration] Exhibition Visitor Prediction Platform",
+    "description": "- Analyzed visitors using SNS data <br /> - Developed visitor count prediction models using image captioning and topic modeling",
+    "subtitle": "Exhibition Visitor Prediction Platform",
+    "fullDescription": "The project scientifically collected and analyzed visitor data from the Seoul Museum of Art to support exhibition planning, strategy and museum operations. It analyzed visitor behavior to provide tailored exhibitions, broaden access to cultural services, and attract new visitors.",
+    "companyOrInstitution": "Peoplely, Seoul Museum of Art, and Prof. Bo-Ah Lee’s Lab at Chung-Ang University",
+    "role": "SNS data collection, cleaning and analysis; image metadata construction through captioning; visitor behavior analysis through topic modeling; and visitor count prediction model development"
+  },
+  {
+    "title": "[AI Training Data Construction] Static Object Perception Data for Driving Environments",
+    "description": "- Established a driving-environment data collection, processing, analysis and application pipeline for autonomous driving <br /> - Improved object recognition accuracy through data augmentation",
+    "subtitle": "Driving Data Augmentation for Autonomous Driving Models",
+    "fullDescription": "Autonomous driving development and deployment require large-scale data collection, processing, analysis and application. This project aimed to secure and publish high-quality AI training data, including source data, to improve model performance and support demand from the public and private sectors. It also aimed to promote a cycle of data creation, sharing and use.",
+    "companyOrInstitution": "SOCAR, RideFlux, NAVER CLOVA, RD Project, INFINIQ and Mobiltech",
+    "role": "SNS data collection, cleaning and analysis; image metadata construction through captioning; visitor behavior analysis through topic modeling; and visitor count prediction model development"
+  },
+  {
+    "title": "Intelligent CCTV Monitoring for Safety Hazards at Construction Sites",
+    "description": "- Constructed and augmented a dataset for detecting safety hazards at construction sites <br /> - Developed object detection and instance segmentation models using the dataset",
+    "subtitle": "Safety Hazard Detection for Construction Sites",
+    "fullDescription": "Although instance segmentation and object detection are useful in construction, datasets specific to construction sites are limited. This project aimed to secure high-quality AI training data, including source data, for construction sites, support public and private sector demand, and improve the application of instance segmentation and object detection in construction.",
+    "companyOrInstitution": "SeeCon and Prof. Hanguk Ryu’s Lab at Sahmyook University",
+    "role": "Data preprocessing and augmentation incorporating weather information"
+  },
+  {
+    "title": "Intelligent Construction Quality Management for Road Structures",
+    "description": "- Built datasets and machine learning models for automated road-structure management and crack prediction <br /> - Applied time-series data analysis to construction quality management",
+    "subtitle": "Crack Prediction from Bridge Sensor Data",
+    "fullDescription": "Periodic visual inspection alone is insufficient to assess bridge damage. We developed machine learning models that monitor bridge damage using periodically collected sensor data and applied them to construction quality management for road structures. The technology is expected to help reduce maintenance costs and improve safety.",
+    "companyOrInstitution": "Korea Agency for Infrastructure Technology Advancement and Prof. Jong-Woong Park’s Lab at Chung-Ang University",
+    "role": "Development of bridge crack prediction models using 1D CNNs and Transformers"
+  },
+  {
+    "title": "AI-Assisted Language Education for Multicultural Families",
+    "description": "- Developed personalized language-learning content for children from multicultural families <br /> - Built NLP-based learning assessment and feedback systems",
+    "subtitle": "Language-Learning Content for Children from Multicultural Families",
+    "fullDescription": "We developed personalized language-learning content for children from multicultural families and built NLP-based learning assessment and feedback systems. The project aimed to support more effective language learning through content that includes traditional Korean culture and personalized feedback informed by each learner’s progress.",
+    "companyOrInstitution": "Prof. Jae-Woong Kim’s Lab at Chung-Ang University",
+    "role": "Development of grammar correction models and automated visualization for personalized feedback"
+  }
+];
+Object.assign(projectEnglishCopy[1], {description:'- Document layout analysis for extracting text, figures and tables<br />- Policy-Adaptive DLA with task-dependent segmentation', subtitle:'Task-dependent document segmentation and layout analysis', fullDescription:'Research on OCR and document layout analysis for enterprise documents containing text, figures and tables. Policy-Adaptive DLA controls segmentation granularity according to the target task. The Document Parsing Research demo presents the research approach and experimental results.', companyOrInstitution:'Selectstar', role:'Document layout analysis and Policy-Adaptive DLA research', externalLinkNames:['Document Parsing demo ↗']});
+const projectsEN_ = projects_.map((project, index) => {
+  const { externalLinkNames, ...copy } = projectEnglishCopy[index] || {};
+  return { ...project, ...copy, externalLinks: project.externalLinks.map((link, linkIndex) => ({ ...link, name: externalLinkNames?.[linkIndex] || link.name })) };
+});
+
+export { projects_, projectsEN_ };

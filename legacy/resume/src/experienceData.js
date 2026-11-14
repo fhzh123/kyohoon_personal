@@ -15,7 +15,7 @@ const experience_ = [
     },
     {
       title: 'Student Researcher (Ph.D. & MS)',
-      company: '[Intelligent Information Processing Lab] AI Graduate School, 중앙대학교',
+      company: '[지능형 정보처리 연구실] 중앙대학교',
       period: 'Mar 2019 - Feb 2025',
       description: '[박사] 모델의 편향 및 과적합 방지를 위한 반-사실적 (Counterfactual) 데이터 생성 연구.  <br /> [석사] 한국 고문서 복원, 번역 및 분석 모델 개발',
       icon: <IconPlaceholder src="https://i.ibb.co/JjHDCSYG/1.png" alt="Chungang University Logo" />, // Placeholder for Chungang University Logo
@@ -39,7 +39,7 @@ const experienceEN_ = [
     },
     {
       title: 'Student Researcher (Ph.D. & MS)',
-      company: '[Intelligent Information Processing Lab] AI Graduate School, Chungang University',
+      company: '[Intelligent Information Processing Lab] Chung-Ang University',
       period: 'Mar 2019 - Feb 2025',
       description: '[Ph.D.] Counterfactual Text Generation Research for Mitigating Bias and Overfitting <br /> [MS] Restoration, Translation, and Analysis Models for Korean Historical Documents',
       icon: <IconPlaceholder src="https://i.ibb.co/JjHDCSYG/1.png" alt="Chungang University Logo" />, // Placeholder for Chungang University Logo

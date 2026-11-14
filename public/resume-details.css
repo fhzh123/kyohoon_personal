@@ -15,6 +15,11 @@
 .resume-research-row a { display:inline-flex; align-items:center; gap:3px; min-height:28px; color:var(--action); text-decoration:none; font-size:13px; }
 .resume-research-row a:hover { text-decoration:underline; text-underline-offset:3px; }
 .resume-research-meta { color:var(--muted); font-size:12px; }
+.resume-research-summary.experience-description { font-size:16px; gap:0; line-height:1.65; color:var(--ink); }
+.experience-description .resume-research-row { gap:0 7px; }
+.experience-description .resume-research-row a { font-size:inherit; min-height:0; }
+.experience-description .resume-research-meta { font-size:inherit; color:inherit; }
+@media(max-width:767px){.resume-research-summary.experience-description{font-size:14px}}
 .resume-thesis-link { color:var(--action); text-decoration:underline; text-decoration-color:color-mix(in srgb,var(--action) 35%,transparent); text-underline-offset:4px; }
 .resume-thesis-link:hover { text-decoration-color:var(--action); }
 @media(max-width:480px) { .resume-research-summary { font-size:13px; gap:9px; } .resume-research-row a { min-height:36px; } }

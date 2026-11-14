@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { internationalPublications_, domesticPublications_ } from './PublicationsData';
-import { projects_ } from './projectsData';
+import { projects_, projectsEN_ } from './projectsData';
 import { experience_, experienceEN_ } from './experienceData';
 import { lectures_, honors_ } from './lectureHonorData';
 import socialLinks_ from './socialLinkData';
@@ -13,11 +13,11 @@ const universityPublications = internationalPublications_.filter(pub => Number(p
 const universityJournals = universityPublications.filter(pub => /Vol\./.test(pub.journal)).length;
 const universityConferences = universityPublications.length - universityJournals;
 const PaperReference = ({href,title,children}) => <a href={href} target="_blank" rel="noopener noreferrer" title={title} aria-label={title}>{children}<span aria-hidden="true">↗</span></a>;
-const AcademicResearchSummary = ({language}) => <div className="resume-research-summary">
-  <div className="resume-research-row"><strong>{language === 'ko' ? '박사' : 'Ph.D.'}</strong><span>{language === 'ko' ? '허위 상관관계와 편향 완화를 위한 반사실적 텍스트 증강' : 'Counterfactual text augmentation to mitigate spurious correlations and bias'}</span><PaperReference href="https://aclanthology.org/2025.emnlp-main.520/" title="CoBA: Counterbias Text Augmentation for Mitigating Various Spurious Correlations via Semantic Triples">CoBA (EMNLP 2025)</PaperReference></div>
-  <div className="resume-research-row"><strong>{language === 'ko' ? '석사' : 'M.S.'}</strong><span>{language === 'ko' ? '한국 고문서 복원, 번역 및 분석 모델 개발' : 'Restoration, translation and analysis of Korean historical documents'}</span><PaperReference href="https://aclanthology.org/2021.naacl-main.317/" title="Restoring and Mining the Records of the Joseon Dynasty via Neural Language Modeling and Machine Translation">NAACL 2021</PaperReference><PaperReference href="https://www.mdpi.com/2076-3417/10/21/7939" title="Korean Historical Documents Analysis with Improved Dynamic Word Embedding">Applied Sciences 2020</PaperReference></div>
-  <div className="resume-research-row"><span className="resume-research-meta">{language === 'ko' ? '학위논문' : 'Theses'}</span><PaperReference href={phdThesis.href} title={phdThesis.title}>{language === 'ko' ? '박사 학위논문' : 'Ph.D. thesis'}</PaperReference><PaperReference href={msThesis.href} title={msThesis.title}>{language === 'ko' ? '석사 학위논문' : 'M.S. thesis'}</PaperReference></div>
-  <div className="resume-research-meta">{language === 'ko' ? `국제 저널 ${universityJournals}편, 국제학회 ${universityConferences}편 (2019–2024, Publications 수록 기준)` : `${universityJournals} international journal papers and ${universityConferences} conference papers (2019–2024, listed in Publications)`}</div>
+const AcademicResearchSummary = ({language}) => <div className="resume-research-summary experience-description">
+  <div className="resume-research-row"><span>{language === 'ko' ? '- [박사]' : '- [Ph.D.]'}</span><span>{language === 'ko' ? '허위 상관관계와 편향 완화를 위한 반사실적 텍스트 증강' : 'Counterfactual text augmentation to mitigate spurious correlations and bias'}</span><PaperReference href="https://aclanthology.org/2025.emnlp-main.520/" title="CoBA: Counterbias Text Augmentation for Mitigating Various Spurious Correlations via Semantic Triples">CoBA (EMNLP 2025)</PaperReference></div>
+  <div className="resume-research-row"><span>{language === 'ko' ? '- [석사]' : '- [M.S.]'}</span><span>{language === 'ko' ? '한국 고문서 복원, 번역 및 분석 모델 개발' : 'Restoration, translation and analysis of Korean historical documents'}</span><PaperReference href="https://aclanthology.org/2021.naacl-main.317/" title="Restoring and Mining the Records of the Joseon Dynasty via Neural Language Modeling and Machine Translation">NAACL 2021</PaperReference><PaperReference href="https://www.mdpi.com/2076-3417/10/21/7939" title="Korean Historical Documents Analysis with Improved Dynamic Word Embedding">Applied Sciences 2020</PaperReference></div>
+  <div className="resume-research-row"><span>{language === 'ko' ? '학위논문' : 'Theses'}</span><PaperReference href={phdThesis.href} title={phdThesis.title}>{language === 'ko' ? '박사 학위논문' : 'Ph.D. thesis'}</PaperReference><PaperReference href={msThesis.href} title={msThesis.title}>{language === 'ko' ? '석사 학위논문' : 'M.S. thesis'}</PaperReference></div>
+  <div className="resume-research-meta">- {language === 'ko' ? `국제 저널 ${universityJournals}편, 국제학회 ${universityConferences}편 (2019–2024, Publications 수록 기준)` : `${universityJournals} international journal papers and ${universityConferences} conference papers (2019–2024, listed in Publications)`}</div>
 </div>;
 const projectTitle = project => `${!project.description?.trim() && !project.fullDescription?.trim() ? '(수정예정) ' : ''}${project.title}`;
 const nameMap = {'진교훈':'Kyohoon Jin','김영빈':'Youngbin Kim','김재원':'Jaewon Kim','장수진':'Soojin Jang','이준호':'Junho Lee','윤정민':'Jungmin Yun','최주환':'Juhwan Choi'};
@@ -120,7 +120,7 @@ const App = () => {
     educationDetails: [
     {
       degree: 'Ph.D',
-      university: '중앙대학교, 영상학과 & AI학과',
+      university: '중앙대학교',
       period: 'Mar 2021 - Feb 2025',
       grade: '4.20/4.5',
       subjects: 'Deep Learning, Natural Language Processing',
@@ -131,7 +131,7 @@ const App = () => {
     },
     {
       degree: 'MS',
-      university: '중앙대학교, 영상학과 & AI학과',
+      university: '중앙대학교',
       period: 'Mar 2019 - Feb 2021',
       grade: '4.38/4.5',
       subjects: 'Machine Learning, Deep Learning, Natural Language Processing',
@@ -187,7 +187,7 @@ const App = () => {
     educationDetails: [
     {
       degree: 'Ph.D',
-      university: 'Chungang University, Department of Image Science and Arts',
+      university: 'Chung-Ang University',
       period: 'Mar 2021 - Feb 2025',
       grade: '4.20/4.5',
       subjects: 'Deep Learning, Natural Language Processing',
@@ -198,7 +198,7 @@ const App = () => {
     },
     {
       degree: 'MS',
-      university: 'Chungang University, Department of Image Science and Arts',
+      university: 'Chung-Ang University',
       period: 'Mar 2019 - Feb 2021',
       grade: '4.38/4.5',
       subjects: 'Machine Learning, Deep Learning, Natural Language Processing',
@@ -216,7 +216,7 @@ const App = () => {
       transcriptLink: 'https://github.com/fhzh123/fhzh123/blob/main/Transcript/BS_Transcript_KyohoonJin.pdf', // Placeholder link for transcript
     },
   ],
-    projects: projects_,
+    projects: projectsEN_,
     internationalPublications: internationalPublications_,
     domesticPublications: domesticPublications_,
     lectures: lectures_,
@@ -231,7 +231,7 @@ const App = () => {
   const educationDetails = [
     {
       degree: 'Ph.D',
-      university: 'Chungang University, Department of Image Science and Arts',
+      university: 'Chung-Ang University',
       period: 'Mar 2021 - Feb 2025',
       grade: '4.20/4.5',
       subjects: 'Deep Learning, Natural Language Processing',
@@ -241,7 +241,7 @@ const App = () => {
     },
     {
       degree: 'MS',
-      university: 'Chungang University, Department of Image Science and Arts',
+      university: 'Chung-Ang University',
       period: 'Mar 2019 - Feb 2021',
       grade: '4.38/4.5',
       subjects: 'Machine Learning, Deep Learning, Natural Language Processing',
@@ -301,7 +301,7 @@ const App = () => {
                 {['Ph.D','MS'].includes(edu.degree) && (
                   <div className="education-lab">
                     <a href="https://iiplcau.github.io/" target="_blank" rel="noopener noreferrer">
-                      {language === 'ko' ? '지능형정보처리연구실' : 'Intelligent Information Processing Lab.'}
+                      {language === 'ko' ? '지능형 정보처리 연구실' : 'Intelligent Information Processing Lab.'}
                       <span aria-hidden="true"> ↗</span>
                     </a>
                     <span className="education-advisor">{language === 'ko' ? '지도교수: 김영빈' : 'Advisor: Youngbin Kim'}</span>
@@ -384,7 +384,7 @@ const App = () => {
                     {pub.title}
                   </div>
                   <div className="text-sm md:text-base text-gray-400 mb-1" dangerouslySetInnerHTML={{ __html: `${language === 'ko' ? '저자: ' : 'Author: '}${pub.author}` }}></div>
-                  <div className="text-sm md:text-base text-gray-400 mb-2">{pub.journal}</div>
+                  <div className="text-sm md:text-base text-gray-400 mb-2">{language === 'en' ? (pub.journalEN || pub.journal) : pub.journal}</div>
                   <a
                     href={pub.link}
                     target="_blank"
