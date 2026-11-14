@@ -12,6 +12,7 @@ test('review tabs retain rough notes and Markdown import populates all four sect
  w.PAPER_PREVIEW={projects:[{id:p.id,data:p,revision:randomUUID(),updated_at:new Date().toISOString()}],settings:publicSettings(null,{}),defaults:DEFAULT_PROMPTS};
  w.eval(await readFile(new URL('../public/paper.js',import.meta.url),'utf8'));await new Promise(r=>setTimeout(r,10));
  const click=s=>w.document.querySelector(s).click();
+ click('[data-action=choose-review]');await new Promise(r=>setTimeout(r,10));
  click('[data-open]');await new Promise(r=>setTimeout(r,10));click('[data-section=weakness]');
  let n=w.document.querySelector('[data-field="sections.weakness"]');n.value='specific concern';n.dispatchEvent(new w.Event('input',{bubbles:true}));
  click('[data-section=summary]');click('[data-section=weakness]');assert.equal(w.document.querySelector('[data-field="sections.weakness"]').value,'specific concern');

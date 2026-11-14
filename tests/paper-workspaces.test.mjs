@@ -1,0 +1,27 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {randomUUID} from 'node:crypto';
+import {JSDOM} from 'jsdom';
+import {paperPage} from '../views/paper.mjs';
+import {DEFAULT_PROMPTS,publicSettings} from '../server/paper-core.mjs';
+test('Paper starts with two choices and isolates list, status, search and create actions by workspace',async()=>{
+ const projects=['rebuttal','review'].flatMap(type=>['active','done','archived'].map(status=>{const id=randomUUID();return {id,revision:randomUUID(),updated_at:'2026-11-14T00:00:00.000Z',data:{id,type,title:type+' '+status,venue:'ACL',status,deadline:'',charLimit:0,context:'',pdf:null,reviewers:[],sections:{summary:'',strength:'',weakness:'',etc:''},reviewDraft:'',history:[]}};}));
+ const w=new JSDOM(paperPage(),{url:'https://fixture.invalid/paper',runScripts:'outside-only'}).window;
+ Object.defineProperty(w,'crypto',{value:{randomUUID}});w.confirm=()=>true;w.scrollTo=()=>{};
+ w.PAPER_PREVIEW={projects,settings:publicSettings(null,{}),defaults:DEFAULT_PROMPTS};
+ w.eval(await readFile(new URL('../public/paper.js',import.meta.url),'utf8'));
+ const settle=()=>new Promise(r=>setTimeout(r,10)),click=async s=>{w.document.querySelector(s).click();await settle();},titles=()=>[...w.document.querySelectorAll('.paper-row h2')].map(x=>x.textContent);
+ await settle();assert.equal(w.document.querySelectorAll('.paper-choice').length,2);assert.equal(w.document.querySelectorAll('[data-open]').length,0);
+ await click('[data-action=choose-rebuttal]');assert.deepEqual(titles(),['rebuttal active','rebuttal done']);
+ assert.ok(w.document.querySelector('[data-action=new-rebuttal]'));assert.equal(w.document.querySelector('[data-action=new-review]'),null);
+ await click('[data-filter=archived]');assert.deepEqual(titles(),['rebuttal archived']);
+ await click('[data-filter=active]');assert.deepEqual(titles(),['rebuttal active']);
+ const search=w.document.querySelector('#paper-search');search.value='review';search.dispatchEvent(new w.Event('input',{bubbles:true}));assert.deepEqual(titles(),[]);
+ await click('[data-action=back-paper]');await click('[data-action=choose-review]');assert.deepEqual(titles(),['review active','review done']);
+ assert.equal(w.document.querySelector('#paper-search').value,'');assert.ok(w.document.querySelector('[data-action=new-review]'));assert.equal(w.document.querySelector('[data-action=new-rebuttal]'),null);
+ await click('[data-open]');assert.ok(w.document.querySelector('[data-field=reviewDraft]'));await click('[data-action=back]');assert.match(w.document.querySelector('h1').textContent,/논문 리뷰 준비/);
+ await click('[data-action=settings]');await click('[data-action=back-settings]');assert.match(w.document.querySelector('h1').textContent,/논문 리뷰 준비/);
+ await click('[data-action=back-paper]');await click('[data-action=settings]');await click('[data-action=back-settings]');assert.equal(w.document.querySelectorAll('.paper-choice').length,2);
+ w.close();
+});
