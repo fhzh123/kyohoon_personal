@@ -16,7 +16,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <link rel="stylesheet" href="/taste.css?v=20261113-1"><link rel="stylesheet" href="/assets/taste/motion/motion.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
-<link rel="stylesheet" href="/atmosphere.css?v=20261113-review-2">
+<link rel="stylesheet" href="/atmosphere.css?v=20261114-motion-1">
 <link rel="stylesheet" href="/auth.css?v=20261113-2">
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 

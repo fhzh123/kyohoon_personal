@@ -12,7 +12,9 @@ body:has(.ambient-sky) { isolation: isolate; }
 .ambient-sky::after { background: repeating-radial-gradient(ellipse at 105% -30%,transparent 0 92px,#6d8eb520 93px,transparent 94px 168px); opacity: .72; }
 html[data-theme="dark"] .ambient-sky::before {
   background: url('/mascot/galaxy.webp') center / cover no-repeat;
-  filter: grayscale(.7); opacity: .46; animation: sky-drift 300s ease-in-out infinite alternate;
+  filter: grayscale(.7); opacity: .46;
+  animation: sky-drift 90s linear -45s infinite alternate;
+  will-change: transform;
 }
 html[data-theme="dark"] .ambient-sky::after {
   background: radial-gradient(ellipse at 55% 25%,transparent 0%,#080a0d1a 48%,#080a0da8 100%); opacity: 1;
@@ -26,7 +28,7 @@ html[data-theme="light"] body[data-typography="resume"] .ambient-sky::before {
 html[data-theme="light"] body[data-typography="resume"] .ambient-sky::after {
   background: repeating-radial-gradient(ellipse at 110% -20%,transparent 0 68px,#6f829d20 69px,transparent 70px 132px); opacity: .7;
 }
-@keyframes sky-drift { from { transform: translate3d(-1.5%,1%,0) scale(1.03); } to { transform: translate3d(1.5%,-1%,0) scale(1.07); } }
+@keyframes sky-drift { from { transform: translate3d(-8px,5px,0) scale(1.035); } to { transform: translate3d(8px,-5px,0) scale(1.035); } }
 .ui-icon { display: inline-block; width: 18px; height: 18px; flex: 0 0 18px; vertical-align: middle; }
 html[data-theme="dark"] .ui-icon { filter: invert(1); }
 .theme-moon, html[data-theme="light"] .theme-sun { display: none; }
@@ -95,7 +97,7 @@ html[data-theme="dark"] body[data-typography="resume"] a[title="GitHub"] img { f
   .resume-header-actions .btn { padding-inline: 8px; }
 }
 @media (prefers-reduced-motion:reduce) {
-  .ambient-sky::before { animation: none !important; }
+  .ambient-sky::before { animation: none !important; transform: none; will-change: auto; }
   body[data-typography="resume"] :is(.animate-pulse,.animate-glowPulse) { animation: none; }
 }
 @media print { .ambient-sky, .resume-header-actions { display: none; } }
