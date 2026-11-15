@@ -35,7 +35,17 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
         send(res,200,{projects:rows,settings:publicSettings(settings,environment),defaults:DEFAULT_PROMPTS,role:access.role,mode:access.mode});return true;
       }
       if(p==='/api/paper/file'&&req.method==='GET'){
-        const row=await getProject(url.searchParams.get('projectId'));const file=await getPdf(row.data);if(!file)throw fail('첨부된 PDF가 없습니다.',404);
+        const row=await getProject(url.searchParams.get('projectId'));
+        if(!row.data.pdf)throw fail('첨부된 PDF가 없습니다.',404);
+        if(!validPdfPath(row.data.pdf.path,row.id))throw fail('첨부파일 경로가 올바르지 않습니다.');
+        // Downloads also bypass the function payload ceiling. The private link expires in one minute.
+        if(access.mode!=='local'){
+          const signed=await(await upstream('/storage/v1/object/sign/paper-files/'+row.data.pdf.path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expiresIn:60})})).json();
+          const relative=signed.signedURL||signed.signedUrl;
+          if(typeof relative!=='string'||!relative.startsWith('/object/sign/paper-files/'+row.data.pdf.path+'?'))throw fail('다운로드 주소를 준비하지 못했습니다.',503);
+          send(res,303,'','text/plain; charset=utf-8',{Location:environment.SUPABASE_URL.replace(/\/$/,'')+'/storage/v1'+relative+'&download='+encodeURIComponent(row.data.pdf.name)});return true;
+        }
+        const file=await getPdf(row.data);
         send(res,200,file.bytes,'application/pdf',{'Content-Disposition':"attachment; filename=paper.pdf; filename*=UTF-8''"+encodeURIComponent(file.name),'Content-Security-Policy':"sandbox; default-src 'none'"});return true;
       }
       if(access.role!=='editor')throw fail('읽기 전용 계정입니다.',403);

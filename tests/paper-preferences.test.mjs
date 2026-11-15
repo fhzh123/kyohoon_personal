@@ -62,3 +62,11 @@ test('5MB PDFs use owner-scoped signed uploads and completion validates the priv
  assert.equal((await call('/api/paper/file/complete',{projectId:row.id,name:'large.pdf',path:randomUUID()+'/'+row.id+'/'+randomUUID()+'.pdf'})).status,400);
  assert.equal((await call('/api/paper/file/upload',{projectId:row.id,name:'large.pdf',size:MAX_PDF_BYTES+1})).status,413);
 });
+test('large private downloads redirect to a short-lived signed URL instead of crossing the function response limit',async()=>{
+ const uid=randomUUID(),row=makeProject();row.data.pdf={name:'large paper.pdf',path:uid+'/'+row.id+'/'+randomUUID()+'.pdf',size:4900000};let options;
+ const handler=paperRoutes({authorize:async()=>({userId:uid,role:'editor',mode:'supabase',token:'session'}),environment:{SUPABASE_URL:'https://storage.invalid'},rootDir:'.',bearer:()=>({Authorization:'Bearer session'}),send:(res,status,value,type,headers)=>Object.assign(res,{status,value,headers}),authFetch:async(url,opt)=>{
+  if(url.startsWith('/rest/v1/paper_projects'))return Response.json([row]);
+  assert.equal(url,'/storage/v1/object/sign/paper-files/'+row.data.pdf.path);options=JSON.parse(opt.body);return Response.json({signedURL:'/object/sign/paper-files/'+row.data.pdf.path+'?token=short-lived'});
+ }});
+ const res={};await handler({method:'GET'},res,new URL('/api/paper/file?projectId='+row.id,'https://test.invalid'));assert.equal(res.status,303);assert.deepEqual(options,{expiresIn:60});assert.equal(res.value,'');assert.match(res.headers.Location,/&download=large%20paper.pdf$/);
+});
