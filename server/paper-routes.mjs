@@ -2,6 +2,7 @@ import {readFile,writeFile,mkdir,rename} from 'node:fs/promises';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {paperPage} from '../views/paper.mjs';
+import {settingsPage} from '../views/settings.mjs';
 import {PROVIDERS,DEFAULT_PROMPTS,validateProject,validateSettings,publicSettings,uuid,text,fail,decryptKey,buildTask,MAX_PDF_BYTES} from './paper-core.mjs';
 import {generate,listModels} from './paper-providers.mjs';
 
@@ -12,8 +13,9 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
   const readLocal=async()=>{try{return JSON.parse(await readFile(localPath,'utf8'));}catch(e){if(e.code==='ENOENT')return {projects:[],settings:null};throw e;}};
   const writeLocal=async data=>{await mkdir(path.dirname(localPath),{recursive:true});await writeFile(localPath+'.tmp',JSON.stringify(data),{mode:0o600});await rename(localPath+'.tmp',localPath);};
   return async(req,res,url)=>{
-    if(!['/paper','/paper/'].includes(url.pathname)&&!url.pathname.startsWith('/api/paper'))return false;
+    if(!['/paper','/paper/','/settings','/settings/'].includes(url.pathname)&&!url.pathname.startsWith('/api/paper')&&!url.pathname.startsWith('/api/settings/'))return false;
     const access=await authorize(req,res);
+    if(['/settings','/settings/'].includes(url.pathname)&&['GET','HEAD'].includes(req.method)){send(res,200,req.method==='HEAD'?'':settingsPage({authenticated:!!access}),'text/html; charset=utf-8');return true;}
     if(!access){send(res,['GET','HEAD'].includes(req.method)&&url.pathname.startsWith('/paper')?303:401,{error:'로그인 후 이용해 주세요.'},'application/json; charset=utf-8',url.pathname.startsWith('/paper')?{Location:'/login?next=%2Fpaper'}:{});return true;}
     try{
       if(url.pathname==='/paper'||url.pathname==='/paper/'){if(!['GET','HEAD'].includes(req.method))throw fail('허용되지 않은 요청입니다.',405);send(res,200,req.method==='HEAD'?'':paperPage(),'text/html; charset=utf-8');return true;}
@@ -25,7 +27,9 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
       const getPdf=async project=>{if(!project.pdf)return null;if(!validPdfPath(project.pdf.path,project.id))throw fail('첨부파일 경로가 올바르지 않습니다.');
         const bytes=access.mode==='local'?await readFile(path.join(rootDir,'private/paper/files',...project.pdf.path.split('/'))):Buffer.from(await(await upstream('/storage/v1/object/authenticated/paper-files/'+project.pdf.path)).arrayBuffer());
         if(bytes.length>MAX_PDF_BYTES)throw fail('첨부파일이 너무 큽니다.',413);return {name:project.pdf.name,base64:bytes.toString('base64'),bytes};};
-      const p=url.pathname;
+      // The global endpoint reuses existing encrypted records, so saved keys migrate without decryption or duplication.
+      const p=url.pathname.replace(/^\/api\/settings\/llm(?=\/|$)/,'/api/paper/settings').replace('/api/paper/settings/models','/api/paper/models');
+      if(p==='/api/paper/settings'&&req.method==='GET'){send(res,200,{settings:publicSettings(await getSettings(),environment),defaults:DEFAULT_PROMPTS,role:access.role,mode:access.mode});return true;}
       if(p==='/api/paper'&&req.method==='GET'){
         const [rows,settings]=await Promise.all([access.mode==='local'?readLocal().then(x=>x.projects):upstream('/rest/v1/paper_projects?user_id=eq.'+encodeURIComponent(uid)+'&select=id,data,revision,updated_at&order=updated_at.desc&limit=200').then(r=>r.json()),getSettings()]);
         send(res,200,{projects:rows,settings:publicSettings(settings,environment),defaults:DEFAULT_PROMPTS,role:access.role,mode:access.mode});return true;
@@ -58,13 +62,30 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
         send(res,200,{settings:publicSettings(row,environment)});return true;
       }
       if(p==='/api/paper/file'&&req.method==='POST'){
-        const input=JSON.parse(await body(req,3450000));const row=await getProject(input.projectId);text(input.name,250);
+        const input=JSON.parse(await body(req,access.mode==='local'?6800000:3450000));const row=await getProject(input.projectId);text(input.name,250);
         if(typeof input.base64!=='string'||!/^[A-Za-z0-9+/]+={0,2}$/.test(input.base64))throw fail('PDF 형식을 확인해 주세요.');
-        const bytes=Buffer.from(input.base64,'base64');if(bytes.length>MAX_PDF_BYTES)throw fail('PDF는 2.5 MB까지 첨부할 수 있습니다.',413);if(!bytes.subarray(0,5).equals(Buffer.from('%PDF-')))throw fail('PDF 파일만 첨부할 수 있습니다.');
+        const bytes=Buffer.from(input.base64,'base64');if(bytes.length>MAX_PDF_BYTES)throw fail('PDF는 5 MB까지 첨부할 수 있습니다.',413);if(!bytes.subarray(0,5).equals(Buffer.from('%PDF-')))throw fail('PDF 파일만 첨부할 수 있습니다.');
         const filePath=uid+'/'+row.id+'/'+randomUUID()+'.pdf';
         if(access.mode==='local'){const dest=path.join(rootDir,'private/paper/files',...filePath.split('/'));await mkdir(path.dirname(dest),{recursive:true});await writeFile(dest,bytes,{mode:0o600});}
         else await upstream('/storage/v1/object/paper-files/'+filePath,{method:'POST',headers:{'Content-Type':'application/pdf','x-upsert':'false'},body:bytes});
         send(res,200,{pdf:{name:input.name,path:filePath,size:bytes.length}});return true;
+      }
+      if(p==='/api/paper/file/upload'&&req.method==='POST'){
+        const input=JSON.parse(await body(req,2000)),row=await getProject(input.projectId);text(input.name,250);
+        if(!Number.isInteger(input.size)||input.size<5||input.size>MAX_PDF_BYTES)throw fail('PDF는 5 MB까지 첨부할 수 있습니다.',413);
+        if(access.mode==='local'){send(res,200,{local:true});return true;}
+        const filePath=uid+'/'+row.id+'/'+randomUUID()+'.pdf';
+        const signed=await(await upstream('/storage/v1/object/upload/sign/paper-files/'+filePath,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).json();
+        const base=environment.SUPABASE_URL.replace(/\/$/,'')+'/storage/v1',uploadUrl=base+signed.url;
+        if(typeof signed.url!=='string'||!signed.url.startsWith('/object/upload/sign/paper-files/'+filePath+'?'))throw fail('업로드 주소를 준비하지 못했습니다.',503);
+        send(res,200,{path:filePath,uploadUrl});return true;
+      }
+      if(p==='/api/paper/file/complete'&&req.method==='POST'){
+        const input=JSON.parse(await body(req,2000)),row=await getProject(input.projectId);text(input.name,250);
+        if(!validPdfPath(input.path,row.id))throw fail('첨부파일 경로가 올바르지 않습니다.');
+        const file=await getPdf({...row.data,pdf:{path:input.path,name:input.name}});
+        if(!file.bytes.subarray(0,5).equals(Buffer.from('%PDF-')))throw fail('PDF 파일만 첨부할 수 있습니다.');
+        send(res,200,{pdf:{name:input.name,path:input.path,size:file.bytes.length}});return true;
       }
       if(p==='/api/paper/models'&&req.method==='GET'){
         const provider=url.searchParams.get('provider');if(!PROVIDERS.includes(provider))throw fail('제공사를 확인해 주세요.');const settings=await getSettings(),record=settings?.encrypted_keys?.[provider];if(!record)throw fail('API 키를 먼저 저장해 주세요.');const models=await listModels(provider,decryptKey(record,uid,provider,environment),fetcher);send(res,200,{models});return true;
@@ -73,7 +94,7 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
         if(active.has(uid))throw fail('진행 중인 생성이 끝난 후 다시 실행해 주세요.',429);active.add(uid);
         try{const input=JSON.parse(await body(req,4000)),row=await getProject(input.projectId),settings=await getSettings(),config=publicSettings(settings,environment),provider=config.provider,record=settings?.encrypted_keys?.[provider];if(!record)throw fail('설정에서 선택한 제공사의 API 키를 먼저 저장해 주세요.');
           const task=buildTask(row.data,input,config.prompts),pdf=input.includePdf&&input.action!=='translate'?await getPdf(row.data):null;
-          const result=await generate({provider,key:decryptKey(record,uid,provider,environment),model:config.models[provider],...task,pdf},fetcher);
+          const result=await generate({provider,key:decryptKey(record,uid,provider,environment),model:config.models[provider],effort:config.efforts[provider],...task,pdf},fetcher);
           send(res,200,{...result,sourceRevision:row.revision});return true;
         }finally{active.delete(uid);}
       }

@@ -1,5 +1,5 @@
 const uiIcon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="18" height="18" alt="" aria-hidden="true">`;
-const themeButton = () => `<button type="button" class="theme-toggle theme-toggle--icon btn btn--secondary" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span class="theme-sun">${uiIcon('sun')}</span><span class="theme-moon">${uiIcon('moon')}</span><span data-theme-label hidden>라이트 모드</span></button>`;
+const themeButton = () => `<a class="theme-toggle theme-toggle--icon btn btn--secondary" href="/settings" data-global-settings aria-label="설정" title="설정">${uiIcon('settings')}</a>`;
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 const shell = (title, body, surface = '') => `<!doctype html>
@@ -10,7 +10,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <meta property="og:title" content="${title} | Kyohoon Jin"><meta property="og:description" content="AI Research Engineer 진교훈의 경력과 연구 기록."><meta property="og:type" content="website"><meta property="og:image" content="/mascot/resume.png"><meta name="twitter:card" content="summary">
 <title>${title} | Kyohoon Jin</title><link rel="icon" href="/mascot/face.png">
 
-<script src="/theme.js?v=20261113-1"></script><script src="/loading.js?v=20261113-1" defer></script>
+<script src="/theme.js?v=20261115-1"></script><script src="/loading.js?v=20261113-1" defer></script>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/typography.css?v=20261112-1">
 <link rel="stylesheet" href="/taste.css?v=20261113-1"><link rel="stylesheet" href="/assets/taste/motion/motion.css">
@@ -48,7 +48,7 @@ export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
         <div class="portal-copy"><div class="portal-title"><h2 id="paper-label">Paper</h2><span class="arrow" aria-hidden="true">→</span></div><p>리뷰탈 준비, 논문 리뷰</p><span class="portal-detail">로그인 필요</span></div>
       </a>
       <a class="portal card personal-portal" href="/personal" aria-labelledby="personal-label">
-        ${artwork('personal-idle.webp', 'personal-build.webp', '머그잔을 든 마스코트')}
+        ${artwork('personal-idle.webp', 'personal-t1.png', '머그잔을 든 마스코트')}
         <div class="portal-copy"><div class="portal-title"><h2 id="personal-label">Personal</h2><span class="arrow" aria-hidden="true">→</span></div><p>개인 공간</p><span class="portal-detail">공개</span></div>
       </a>
     </nav>
@@ -128,5 +128,5 @@ export function personalPage() {
 <div class="hub-shell personal-shell">${publicHeader()}<main id="main" class="construction-main hero" data-enter><div class="hero-text"><h1>Personal</h1><p>아직 등록된 콘텐츠가 없습니다.</p><a class="primary-button btn btn--primary home-return" href="/">홈으로 돌아가기 <span aria-hidden="true">→</span></a></div><div class="construction-art"><img src="/mascot/personal-build.webp" alt="안전모를 쓴 마스코트" width="480" height="480"></div></main>${footer()}</div>`, 'personal');
 }
 
-export {shell,privateHeader,footer};
+export {shell,privateHeader,publicHeader,footer};
 

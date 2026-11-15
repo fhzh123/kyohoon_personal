@@ -21,7 +21,6 @@ test('Paper starts with two choices and isolates list, status, search and create
  await click('[data-action=back-paper]');await click('[data-action=choose-review]');assert.deepEqual(titles(),['review active','review done']);
  assert.equal(w.document.querySelector('#paper-search').value,'');assert.ok(w.document.querySelector('[data-action=new-review]'));assert.equal(w.document.querySelector('[data-action=new-rebuttal]'),null);
  await click('[data-open]');assert.ok(w.document.querySelector('[data-field=reviewDraft]'));await click('[data-action=back]');assert.match(w.document.querySelector('h1').textContent,/논문 리뷰 준비/);
- await click('[data-action=settings]');await click('[data-action=back-settings]');assert.match(w.document.querySelector('h1').textContent,/논문 리뷰 준비/);
- await click('[data-action=back-paper]');await click('[data-action=settings]');await click('[data-action=back-settings]');assert.equal(w.document.querySelectorAll('.paper-choice').length,2);
+ await click('[data-action=back-paper]');assert.equal(w.document.querySelectorAll('.paper-choice').length,2);
  w.close();
 });

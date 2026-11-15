@@ -21,7 +21,7 @@ create policy paper_settings_owner on public.paper_settings for all to authentic
  using ((select auth.uid())=user_id and exists(select 1 from public.workspace_members m where m.user_id=(select auth.uid()) and m.active and m.role='editor'))
  with check ((select auth.uid())=user_id and exists(select 1 from public.workspace_members m where m.user_id=(select auth.uid()) and m.active and m.role='editor'));
 insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
- values('paper-files','paper-files',false,2500000,array['application/pdf']) on conflict(id) do nothing;
+ values('paper-files','paper-files',false,5000000,array['application/pdf']) on conflict(id) do nothing;
 create policy paper_files_owner_read on storage.objects for select to authenticated
  using(bucket_id='paper-files' and (storage.foldername(name))[1]=(select auth.uid())::text
  and exists(select 1 from public.workspace_members m where m.user_id=(select auth.uid()) and m.active));

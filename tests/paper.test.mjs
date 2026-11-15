@@ -104,8 +104,7 @@ test('Paper DOM supports project editing, issue fields, review tabs, settings an
  assert.equal(w.document.querySelectorAll('[data-open]').length,1);assert.equal(w.document.querySelectorAll('img[src=x]').length,0);
  w.document.querySelector('[data-open]').click();await new Promise(r=>setTimeout(r,10));
  const notes=w.document.querySelector('[data-field="issue.notes"]');assert.ok(notes);notes.value='new notes';notes.dispatchEvent(new w.Event('input',{bubbles:true}));
- assert.match(w.document.querySelector('[data-save-state]').textContent,/변경/);
+ assert.match(w.document.querySelector('[data-save-state]').textContent,/저장 대기/);
  w.document.querySelector('[data-action=save]').click();await new Promise(r=>setTimeout(r,10));assert.match(w.document.querySelector('[data-save-state]').textContent,/저장/);
- w.document.querySelector('[data-action=settings]').click();await new Promise(r=>setTimeout(r,10));assert.equal(w.document.querySelectorAll('input[type=password]').length,3);assert.equal(w.document.querySelectorAll('textarea[id^=prompt-]').length,3);
- assert.equal(w.document.querySelector('#key-openai').disabled,true);w.close();
+ assert.ok(w.document.querySelector('a[data-global-settings]'));w.close();
 });

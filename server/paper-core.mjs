@@ -1,6 +1,7 @@
 import {createCipheriv,createDecipheriv,randomBytes} from 'node:crypto';
 
 export const PROVIDERS=['openai','anthropic','gemini'];
+export const EFFORTS={openai:['none','minimal','low','medium','high','xhigh','max'],anthropic:['none','low','medium','high','xhigh','max'],gemini:['none','minimal','low','medium','high']};
 export const DEFAULT_MODELS={openai:'gpt-6.1-sol',anthropic:'claude-sonnet-5-5',gemini:'gemini-4-hydrogen'};
 export const DEFAULT_PROMPTS={
   translate:'Translate the supplied reviewer comment into precise, natural Korean. Preserve its questions, criticism, uncertainty, technical terms, numbers and structure. Do not answer the reviewer or add interpretation. Output only the translation.',
@@ -32,18 +33,19 @@ export function validateProject(p){
   // Rebuild the allowed shape rather than persisting arbitrary incoming properties.
   return {id:p.id,type:p.type,title:p.title.trim(),venue:p.venue||'',deadline:p.deadline||'',status:p.status,charLimit:p.charLimit,context:p.context||'',pdf:p.pdf?{name:p.pdf.name,path:p.pdf.path,size:p.pdf.size}:null,reviewers:p.reviewers.map(r=>({id:r.id,name:r.name,issues:r.issues.map(i=>Object.fromEntries(['id','kind','title','original','translation','notes','evidence','draft','done'].map(k=>[k,i[k]??''])))})),sections:Object.fromEntries(['summary','strength','weakness','etc'].map(k=>[k,p.sections[k]||''])),reviewDraft:p.reviewDraft||'',history:p.history.map(h=>Object.fromEntries(['id','at','action','provider','model','text'].map(k=>[k,h[k]||''])))};
 }
-export const MAX_PDF_BYTES=2500000;
+export const MAX_PDF_BYTES=5000000;
 function encryptionKey(environment){const key=Buffer.from(environment.PAPER_ENCRYPTION_KEY||'','base64');if(key.length!==32)throw fail('서버에 API 키 암호화 설정이 필요합니다.',503);return key;}
 export function encryptKey(secret,owner,provider,environment){const iv=randomBytes(12),cipher=createCipheriv('aes-256-gcm',encryptionKey(environment),iv);cipher.setAAD(Buffer.from(owner+':'+provider));const data=Buffer.concat([cipher.update(secret,'utf8'),cipher.final()]);return {v:1,iv:iv.toString('base64'),tag:cipher.getAuthTag().toString('base64'),data:data.toString('base64'),last4:secret.slice(-4)};}
 export function decryptKey(record,owner,provider,environment){try{const cipher=createDecipheriv('aes-256-gcm',encryptionKey(environment),Buffer.from(record.iv,'base64'));cipher.setAAD(Buffer.from(owner+':'+provider));cipher.setAuthTag(Buffer.from(record.tag,'base64'));return Buffer.concat([cipher.update(Buffer.from(record.data,'base64')),cipher.final()]).toString('utf8');}catch(e){if(e.paperMessage)throw e;throw fail('저장된 API 키를 해독하지 못했습니다. 키를 다시 등록해 주세요.',503);}}
-export function publicSettings(row,environment){const c=row?.config||{};return {revision:row?.revision||null,provider:PROVIDERS.includes(c.provider)?c.provider:'openai',models:{...DEFAULT_MODELS,...c.models},prompts:{...DEFAULT_PROMPTS,...c.prompts},keys:Object.fromEntries(PROVIDERS.map(p=>[p,row?.encrypted_keys?.[p]?{configured:true,last4:row.encrypted_keys[p].last4}:{configured:false,last4:''}])),encryptionReady:Buffer.from(environment.PAPER_ENCRYPTION_KEY||'','base64').length===32};}
+export function publicSettings(row,environment){const c=row?.config||{};return {revision:row?.revision||null,provider:PROVIDERS.includes(c.provider)?c.provider:'openai',models:{...DEFAULT_MODELS,...c.models},efforts:Object.fromEntries(PROVIDERS.map(p=>[p,EFFORTS[p].includes(c.efforts?.[p])?c.efforts[p]:'none'])),prompts:{...DEFAULT_PROMPTS,...c.prompts},keys:Object.fromEntries(PROVIDERS.map(p=>[p,row?.encrypted_keys?.[p]?{configured:true,last4:row.encrypted_keys[p].last4}:{configured:false,last4:''}])),encryptionReady:Buffer.from(environment.PAPER_ENCRYPTION_KEY||'','base64').length===32};}
 export function validateSettings(input,current,owner,environment){
   if(!PROVIDERS.includes(input.provider))throw fail('사용할 제공사를 선택해 주세요.');
-  const models={},prompts={},keys={...(current?.encrypted_keys||{})};
+  const models={},efforts={},prompts={},keys={...(current?.encrypted_keys||{})};
   for(const p of PROVIDERS){const model=text(input.models?.[p]||DEFAULT_MODELS[p],160);if(!/^[a-zA-Z0-9._:/-]+$/.test(model))throw fail('모델 ID를 확인해 주세요.');models[p]=model;
     const change=input.keys?.[p];if(change===null)delete keys[p];else if(change!==undefined&&change!==''){text(change,600);if(change.trim().length<12||/[\s\x00-\x1f]/.test(change))throw fail('API 키 형식을 확인해 주세요.');keys[p]=encryptKey(change,owner,p,environment);}}
-  for(const a of Object.keys(DEFAULT_PROMPTS)){prompts[a]=text(input.prompts?.[a]??DEFAULT_PROMPTS[a],12000);if(!prompts[a].trim())throw fail('프롬프트는 비워 둘 수 없습니다.');}
-  return {config:{provider:input.provider,models,prompts},encrypted_keys:keys};
+  for(const p of PROVIDERS){const effort=input.efforts?.[p]??current?.config?.efforts?.[p]??'none';if(!EFFORTS[p].includes(effort))throw fail('Reasoning Effort를 확인해 주세요.');efforts[p]=effort;}
+  for(const a of Object.keys(DEFAULT_PROMPTS)){prompts[a]=text(input.prompts?.[a]??current?.config?.prompts?.[a]??DEFAULT_PROMPTS[a],12000);if(!prompts[a].trim())throw fail('프롬프트는 비워 둘 수 없습니다.');}
+  return {config:{provider:input.provider,models,efforts,prompts},encrypted_keys:keys};
 }
 export function buildTask(project,input,prompts){
   if(!Object.keys(DEFAULT_PROMPTS).includes(input.action))throw fail('작업을 선택해 주세요.');

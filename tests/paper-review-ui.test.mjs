@@ -17,5 +17,5 @@ test('review tabs retain rough notes and offer direct editing without Markdown i
  let n=w.document.querySelector('[data-field="sections.weakness"]');n.value='specific concern';n.dispatchEvent(new w.Event('input',{bubbles:true}));
  click('[data-section=summary]');click('[data-section=weakness]');assert.equal(w.document.querySelector('[data-field="sections.weakness"]').value,'specific concern');
  assert.equal(w.document.querySelector('#paper-md'),null);assert.equal(w.document.body.textContent.includes('MD 메모 가져오기'),false);
- click('[data-action=settings]');await new Promise(r=>setTimeout(r,20));const prompt=w.document.querySelector('#prompt-review');prompt.value='Custom review instruction';prompt.dispatchEvent(new w.Event('input',{bubbles:true}));click('[data-action=save-settings]');await new Promise(r=>setTimeout(r,20));assert.equal(w.document.querySelector('#prompt-review').value,'Custom review instruction');w.close();
+ assert.match(w.document.body.textContent,/네 가지 항목\(Summary, Strength, Weakness, ETC\)/);assert.equal(w.document.body.textContent.includes('음슴체'),false);w.close();
 });

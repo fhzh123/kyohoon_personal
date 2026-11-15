@@ -37,7 +37,7 @@ test('authenticated home shows logout and authenticated login redirects immediat
  const handler=createHandler({environment,fetcher:async url=>url.endsWith('/auth/v1/user')?json({id:'member'}):json([{user_id:'member',role:'reader'}])});
  const r=await request(handler,'/login?next=%2Fpersonal',{headers:{cookie:'kh_access=test-only'}});assert.equal(r.headers.location,'/personal');
  const home=new JSDOM(homePage({authenticated:true})).window.document;assert.ok(home.querySelector('.header-actions form[action="/api/auth/logout"]'));assert.equal(home.querySelector('a[href="/login"]'),null);
- const anonymous=new JSDOM(homePage()).window.document;assert.equal(anonymous.querySelector('[data-theme-toggle]').nextElementSibling.getAttribute('href'),'/login');
+ const anonymous=new JSDOM(homePage()).window.document;assert.equal(anonymous.querySelector('[data-global-settings]').nextElementSibling.getAttribute('href'),'/login');
 });
 test('password help uses native dialog, copies contact details and never sends recovery email',async()=>{
  const w=new JSDOM(loginPage({configured:true,preview:false}),{url:'https://fixture.invalid/login',runScripts:'outside-only'}).window;

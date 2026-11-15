@@ -7,13 +7,10 @@
  try{const saved=localStorage.getItem(key);if(valid(saved))preference=saved;}catch{}
  function refresh(){
   for(const button of document.querySelectorAll('[data-theme-toggle]')){
-   const label=button.querySelector('[data-theme-label]');
-   (label||button).textContent=theme==='dark'?'라이트 모드':'다크 모드';
-   button.setAttribute('aria-label',theme==='dark'?'라이트 모드로 전환':'다크 모드로 전환');
-   button.setAttribute('aria-pressed',String(theme==='dark'));
-   button.title=preference==='system'?'시스템 설정을 따르는 중':theme==='dark'?'현재 다크 모드':'현재 라이트 모드';
+   const link=document.createElement('a');link.className=button.className;link.href='/settings';link.dataset.globalSettings='';link.setAttribute('aria-label','설정');link.title='설정';link.innerHTML='<img class="ui-icon" src="/icons/ui-settings.svg" width="18" height="18" alt="">';button.replaceWith(link);
   }
   for(const b of document.querySelectorAll('[data-theme-value]'))b.setAttribute('aria-pressed',String(b.dataset.themeValue===preference));
+  for(const link of document.querySelectorAll('[data-global-settings]'))link.href='/settings?returnTo='+encodeURIComponent(location.pathname+location.search+location.hash);
   const status=document.querySelector('#appearance-status');
   if(status)status.textContent=preference==='system'?`시스템 설정에 따라 ${theme==='dark'?'다크':'라이트'} 모드가 적용 중입니다.`:'선택한 테마를 이 브라우저에 저장했습니다.';
  }
@@ -32,3 +29,4 @@
  window.addEventListener('storage',event=>{if(event.key===key)apply(valid(event.newValue)?event.newValue:'dark');});
  window.AtlasTheme={refresh,set:value=>apply(value,true),get:()=>theme,preference:()=>preference};
 })();
+

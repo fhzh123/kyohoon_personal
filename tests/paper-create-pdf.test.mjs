@@ -27,6 +27,7 @@ async function creation(withFile,failUpload=false){
   calls.push({url,body:opt.body?JSON.parse(opt.body):null});
   if(url==='/api/paper')return Response.json(fixture);
   if(url==='/api/paper/project'){const p=JSON.parse(opt.body).project;return Response.json({project:{id:p.id,data:p,revision:randomUUID(),updated_at:new Date().toISOString()}});}
+  if(url==='/api/paper/file/upload')return Response.json({local:true});
   if(url==='/api/paper/file')return failUpload?Response.json({error:'Upload fixture failure'},{status:503}):Response.json({pdf:{path:'owner/project/file.pdf',name:'review.pdf',size:15}});
   throw Error('unexpected route');
  };

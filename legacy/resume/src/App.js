@@ -482,7 +482,7 @@ const App = () => {
 
         <div className="resume-header-actions">
           {canReturnHome && <a className="resume-icon-action" href="/" aria-label={language === 'ko' ? '홈으로' : 'Home'} title={language === 'ko' ? '홈으로' : 'Home'}><UiIcon name="house" /></a>}
-          <button type="button" className="theme-toggle resume-icon-action" data-theme-toggle aria-label="라이트 모드로 전환" aria-pressed="true"><span className="theme-sun"><UiIcon name="sun" /></span><span className="theme-moon"><UiIcon name="moon" /></span><span data-theme-label hidden>라이트 모드</span></button>
+          <a className="theme-toggle resume-icon-action" href="/settings?returnTo=%2Fresume" data-global-settings aria-label="설정" title="설정"><UiIcon name="settings" /></a>
         {/* Language Toggle Button for Desktop - FIXED AND IMPROVED */}
         {/* The toggle is now more robust by using flexbox for equal spacing and simpler positioning for the sliding background. */}
         <div className="resume-language flex items-center relative h-10 w-28 bg-gray-700 rounded-full p-1 transition-all duration-300">
