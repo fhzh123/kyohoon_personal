@@ -31,3 +31,6 @@ await access(path.join(root,'public/mascot/paper.png'));
 await access(path.join(root,'public/mascot/paper-hover.png'));
 for(const f of ['views/settings.mjs','public/settings.js','public/theme.js'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
 for(const f of ['public/settings.css','public/icons/ui-settings.svg','public/mascot/personal-t1.png'])await access(path.join(root,f));
+
+for(const f of ['server/appearance-routes.mjs','public/background.js','public/appearance-settings.js'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
+for(const f of ['public/background.css','public/icons/venues/acl.svg'])await access(path.join(root,f));

@@ -10,13 +10,13 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <meta property="og:title" content="${title} | Kyohoon Jin"><meta property="og:description" content="AI Research Engineer 진교훈의 경력과 연구 기록."><meta property="og:type" content="website"><meta property="og:image" content="/mascot/resume.png"><meta name="twitter:card" content="summary">
 <title>${title} | Kyohoon Jin</title><link rel="icon" href="/mascot/face.png">
 
-<script src="/theme.js?v=20261115-1"></script><script src="/loading.js?v=20261113-1" defer></script>
+<script src="/theme.js?v=20261115-2"></script><script src="/loading.js?v=20261113-1" defer></script>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/typography.css?v=20261112-1">
 <link rel="stylesheet" href="/taste.css?v=20261113-1"><link rel="stylesheet" href="/assets/taste/motion/motion.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
-<link rel="stylesheet" href="/atmosphere.css?v=20261114-paper-hover-3">
+<link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
 <link rel="stylesheet" href="/auth.css?v=20261113-2">
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 

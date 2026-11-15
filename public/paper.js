@@ -29,7 +29,8 @@
   async function backgroundSave(){clearTimeout(saveTimer);clearTimeout(maxSaveTimer);maxSaveTimer=null;if(!dirty||saveConflict)return;try{await save();}catch(error){saveState(saveConflict?'다른 기기에서 변경됨 — MD 내보내기 후 새로고침':'저장 실패 — 다시 연결되면 재시도',true);notice(error.message,true);if(!saveConflict)saveTimer=setTimeout(backgroundSave,5000);}}
   function activeReviewer(){return current?.data.reviewers.find(r=>r.id===reviewerId);}
   function activeIssue(){return activeReviewer()?.issues.find(i=>i.id===issueId);}
-  function rowStats(p){if(p.type==='review')return {done:Object.values(p.sections).filter(x=>x.trim()).length,total:4,label:'메모 작성'};const issues=p.reviewers.flatMap(r=>r.issues);return {done:issues.filter(i=>i.done).length,total:issues.length,label:'쟁점 완료'};}
+  const statuses={planned:'진행 예정',active:'진행 중',done:'진행 완료'};
+  const normalizeStatus=p=>{if(p.status==='archived')p.status='done';return p;};
   const workspaceName=type=>type==='rebuttal'?'논문 리뷰탈 준비':'논문 리뷰 준비';
   function headerBack(type=null){const link=document.querySelector('.site-header .text-link');if(!link)return;link.href=type?'/paper#'+type:'/';link.toggleAttribute('data-paper-back',!!type);const label=link.querySelector('span');if(label)label.textContent=type?'목록으로':'홈으로';}
   function renderLanding(){
@@ -40,7 +41,7 @@
       '<nav class="paper-choices" aria-label="논문 작업 선택">'+['rebuttal','review'].map(type=>{
         const count=data.projects.filter(x=>x.data.type===type&&x.data.status==='active').length;
         return '<button type="button" class="paper-choice" data-action="choose-'+type+'"><img src="/mascot/'+(type==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"><span class="paper-choice-role">'+(type==='rebuttal'?'저자로서':'리뷰어로서')+'</span><span class="paper-choice-title">'+workspaceName(type)+'<span aria-hidden="true">→</span></span><span class="paper-choice-description">'+(type==='rebuttal'?'리뷰어별 쟁점을 정리하고<br>근거를 담은 답변을 준비합니다.':'네 항목에 평가 메모를 적고<br>영문 리뷰를 작성합니다.')+'</span><span class="paper-choice-count">진행 중인 논문 '+count+'편</span></button>';
-      }).join('')+'</nav><div class="paper-help"><p>작업을 선택하면 해당 논문 목록으로 이동합니다.</p>'+btn('모델 및 프롬프트 설정','settings','quiet')+'</div>';
+      }).join('')+'</nav><div class="paper-help"><p>작업을 선택하면 해당 논문 목록으로 이동합니다.</p>'+'</div>';
     app.setAttribute('aria-busy','false');
   }
   function renderList(){
@@ -48,20 +49,21 @@
     if(!workspace){renderLanding();return;}
     view='list';app.innerHTML='<button class="paper-back" data-action="back-paper">← Paper</button><section class="paper-welcome paper-workspace-welcome"><div><p class="paper-eyebrow">Paper / '+(workspace==='rebuttal'?'저자 작업':'리뷰어 작업')+'</p><h1>'+workspaceName(workspace)+'</h1><p>'+(workspace==='rebuttal'?'리뷰어별 쟁점과 답변을 정리합니다.':'평가 메모를 영문 리뷰로 다듬습니다.')+'</p></div><img src="/mascot/'+(workspace==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"></section>'+
       (preview?'<p class="paper-preview-note">가상 논문으로 구성한 미리보기입니다. 편집 내용은 이 화면에서만 유지됩니다.</p>':'')+
-      '<div class="paper-topline"><div class="paper-actions">'+btn(workspace==='rebuttal'?'＋ 리뷰탈 논문 추가':'＋ 리뷰할 논문 추가','new-'+workspace,'primary')+'</div>'+btn('모델 및 프롬프트 설정','settings','quiet')+'</div>'+
-      '<div class="paper-toolbar"><div class="paper-tabs" role="tablist" aria-label="작업 상태">'+[['all','전체'],['active','진행 중'],['done','완료'],['archived','보관함']].map(([k,label])=>'<button type="button" role="tab" class="paper-tab" aria-selected="'+(filter===k)+'" data-filter="'+k+'">'+label+'<span>'+data.projects.filter(x=>x.data.type===workspace&&(k==='all'?x.data.status!=='archived':x.data.status===k)).length+'</span></button>').join('')+'</div><input class="paper-search" id="paper-search" type="search" aria-label="논문 제목 또는 학회 검색" placeholder="제목 또는 학회 검색" value="'+esc(query)+'"></div><div class="paper-list" id="paper-list"></div>'+
+      '<div class="paper-topline"><div class="paper-actions">'+btn(workspace==='rebuttal'?'＋ 리뷰탈 논문 추가':'＋ 리뷰할 논문 추가','new-'+workspace,'primary')+'</div>'+'</div>'+
+      '<div class="paper-toolbar"><div class="paper-tabs" role="tablist" aria-label="작업 상태">'+[['all','전체'],...Object.entries(statuses)].map(([k,label])=>'<button type="button" role="tab" class="paper-tab" aria-selected="'+(filter===k)+'" data-filter="'+k+'">'+label+'<span>'+data.projects.filter(x=>x.data.type===workspace&&(k==='all'||x.data.status===k)).length+'</span></button>').join('')+'</div><input class="paper-search" id="paper-search" type="search" aria-label="논문 제목 또는 학회 검색" placeholder="제목 또는 학회 검색" value="'+esc(query)+'"></div><div class="paper-list" id="paper-list"></div>'+
       '<div class="paper-help"><p>'+esc(names[data.settings.provider])+' / '+esc(data.settings.models[data.settings.provider])+'<br>'+(!data.settings.keys[data.settings.provider].configured?'설정에서 API 키를 연결해 주세요.':'선택한 모델 하나로 모든 작업을 실행합니다.')+'</p></div>';
     renderRows();app.setAttribute('aria-busy','false');
   }
   function renderRows(){
-    const rows=data.projects.filter(x=>x.data.type===workspace&&(filter==='all'?x.data.status!=='archived':x.data.status===filter)&&[x.data.title,x.data.venue].join(' ').toLowerCase().includes(query.toLowerCase())).sort((a,b)=>b.updated_at.localeCompare(a.updated_at));
-    $('#paper-list').innerHTML=rows.length?rows.map(row=>{const p=row.data,s=rowStats(p);return '<article class="paper-row" tabindex="0" role="button" data-open="'+esc(p.id)+'" aria-label="'+esc(p.title)+' 열기"><div class="paper-row-symbol" aria-hidden="true">'+(p.type==='rebuttal'?'R':'P')+'</div><div><span class="paper-type">'+types[p.type]+(p.status==='done'?' / 완료':'')+'</span><h2>'+esc(p.title)+'</h2><div class="paper-meta"><span>'+esc(p.venue||'학회 미입력')+'</span><span>'+(p.type==='rebuttal'?p.reviewers.length+'명 리뷰어':'Summary / Strength / Weakness / ETC')+'</span></div></div><div class="paper-row-end"><strong>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</strong><span>'+s.done+' / '+s.total+' '+s.label+'</span><div class="paper-progress"><i style="width:'+(s.total?Math.round(s.done/s.total*100):0)+'%"></i></div></div><span class="paper-arrow" aria-hidden="true">→</span></article>';}).join(''):'<div class="paper-empty"><h2>'+(query?'검색 결과가 없습니다.':'첫 번째 논문을 등록해 주세요.')+'</h2><p>제목과 학회를 적고 바로 메모를 시작할 수 있습니다.</p></div>';
+    const rows=data.projects.filter(x=>x.data.type===workspace&&(filter==='all'||x.data.status===filter)&&[x.data.title,x.data.venue].join(' ').toLowerCase().includes(query.toLowerCase())).sort((a,b)=>b.updated_at.localeCompare(a.updated_at));
+    $('#paper-list').innerHTML=rows.length?rows.map(row=>{const p=row.data;const isAcl=/\b(?:ACL|ARR|EMNLP|NAACL|EACL|AACL)\b/i.test(p.venue);const venueLabel=esc(p.venue.trim().replace(/\b20\d{2}\b/g,'').trim()||'미지정');return '<article class="paper-row" tabindex="0" role="button" data-open="'+esc(p.id)+'" aria-label="'+esc(p.title)+' 열기"><div class="paper-venue '+(isAcl?'paper-venue-acl':'')+'">'+(isAcl?'<img src="/icons/venues/acl.svg" width="54" height="54" alt="ACL">':'<span>'+venueLabel+'</span>')+'</div><div><span class="paper-type">'+types[p.type]+' / '+statuses[p.status]+'</span><h2>'+esc(p.title)+'</h2><div class="paper-meta"><span>'+esc(p.venue||'학회 미입력')+'</span>'+(p.type==='rebuttal'?'<span>'+p.reviewers.length+'명 리뷰어</span>':'')+'</div></div><div class="paper-row-end"><strong>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</strong></div><span class="paper-arrow" aria-hidden="true">→</span></article>';}).join(''):'<div class="paper-empty"><h2>'+(query?'검색 결과가 없습니다.':'첫 번째 논문을 등록해 주세요.')+'</h2><p>제목과 학회를 적고 바로 메모를 시작할 수 있습니다.</p></div>';
+
   }
-  function newProject(type){showProjectDialog({id:id(),type,title:'',venue:'',deadline:'',status:'active',charLimit:0,context:'',pdf:null,reviewers:[],sections:{summary:'',strength:'',weakness:'',etc:''},reviewDraft:'',history:[]},true);}
+  function newProject(type){showProjectDialog({id:id(),type,title:'',venue:'',deadline:'',status:'planned',charLimit:0,context:'',pdf:null,reviewers:[],sections:{summary:'',strength:'',weakness:'',etc:''},reviewDraft:'',history:[]},true);}
   function showProjectDialog(p,isNew=false){
     dialog.innerHTML='<form id="paper-project-form"><h2 id="paper-dialog-title">'+(isNew?types[p.type]+' 시작':'논문 정보 수정')+'</h2>'+input('논문 제목','title',p.title)+input('학회 / 저널','venue',p.venue)+
       '<div class="paper-pair">'+input('마감일','deadline',p.deadline,'date')+input(p.type==='rebuttal'?'리뷰어별 글자 제한 (0: 없음)':'전체 리뷰 글자 제한 (0: 없음)','charLimit',p.charLimit,'number')+'</div>'+
-      '<label class="paper-field"><span>상태</span><select name="status">'+[['active','진행 중'],['done','완료'],['archived','보관']].map(([v,n])=>'<option value="'+v+'" '+(v===p.status?'selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
+      '<label class="paper-field"><span>상태</span><select name="status">'+Object.entries(statuses).map(([v,n])=>'<option value="'+v+'" '+(v===p.status?'selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
       (isNew&&p.type==='review'?'<label class="paper-field"><span>논문 PDF <small>선택 사항</small></span><input type="file" id="paper-create-pdf" name="pdf" accept="application/pdf,.pdf"><small class="paper-subtle">5 MB까지 첨부할 수 있으며, 나중에 추가해도 됩니다.</small></label>':'')+
       '<div class="paper-actions">'+btn('취소','close-dialog')+'<button class="paper-btn primary" type="submit">'+(isNew?'작업 만들기':'적용')+'</button></div></form>';
     showDialog();
@@ -79,13 +81,13 @@
   async function openProject(projectId,restore=false){if(!safeLeave())return;await save();current=clone(data.projects.find(x=>x.id===projectId));workspace=current.data.type;reviewerId=current.data.reviewers[0]?.id;issueId=current.data.reviewers[0]?.issues[0]?.id;dirty=false;saveConflict=false;view='editor';if(!restore)route('editor',current.id);renderEditor();window.scrollTo?.(0,0);}
   function renderEditor(){
     headerBack(current.data.type);
-    view='editor';const p=current.data;app.innerHTML='<div class="paper-topline"><button class="paper-back" data-action="back">← '+workspaceName(p.type)+'</button><div class="paper-actions"><span class="paper-save-state '+(dirty?'dirty':'')+'" data-save-state>'+(dirty?'자동 저장 대기 중':'자동 저장됨')+'</span>'+btn('설정','settings','quiet')+btn('저장','save','primary')+'</div></div>'+
-      '<div class="paper-project-heading"><div><p class="paper-eyebrow">'+types[p.type]+' / '+(p.status==='done'?'완료':p.status==='archived'?'보관':'진행 중')+'</p><h1>'+esc(p.title)+'</h1><div class="paper-meta"><span>'+esc(p.venue||'학회 미입력')+'</span><span>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</span>'+(p.charLimit?'<span>'+p.charLimit+'자 제한</span>':'')+'</div></div><div class="paper-actions">'+btn('정보 수정','edit-meta')+btn('MD 내보내기','export')+'</div></div>'+
+    view='editor';const p=current.data;app.innerHTML='<div class="paper-topline"><button class="paper-back" data-action="back">← '+workspaceName(p.type)+'</button></div>'+
+      '<div class="paper-project-heading"><div><p class="paper-eyebrow">'+types[p.type]+' / '+statuses[p.status]+'</p><h1>'+esc(p.title)+'</h1><div class="paper-meta"><label class="paper-project-status"><span class="sr-only">진행 상태</span><select data-project-status aria-label="진행 상태">'+Object.entries(statuses).map(([v,n])=>'<option value="'+v+'" '+(v===p.status?'selected':'')+'>'+n+'</option>').join('')+'</select></label><span>'+esc(p.venue||'학회 미입력')+'</span><span>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</span>'+(p.charLimit?'<span>'+p.charLimit+'자 제한</span>':'')+'</div></div><div class="paper-actions">'+btn('정보 수정','edit-meta')+btn('MD 내보내기','export')+'</div></div>'+
       '<div class="paper-attachment"><div class="paper-actions">'+(p.pdf?'<a class="paper-btn quiet" '+(preview?'data-action="preview-file" href="#paper-app"':'href="/api/paper/file?projectId='+p.id+'"')+'>'+esc(p.pdf.name)+' ↗</a>'+btn('첨부 해제','detach','quiet'):'<span>논문 PDF를 첨부하면 초안에 함께 참고합니다.</span>')+'</div><div class="paper-actions">'+(p.pdf?'<label><input type="checkbox" id="paper-include-pdf" '+(includePdf?'checked':'')+'> 생성 시 PDF 포함</label>':'')+'<label class="paper-btn" for="paper-file">'+(p.pdf?'PDF 교체':'PDF 첨부')+'</label><input type="file" id="paper-file" accept="application/pdf,.pdf" hidden></div></div>'+
       '<details class="paper-context"><summary>논문 배경 및 공통 작성 지침 ＋</summary>'+field('모든 쟁점에 함께 전달할 내용','context',p.context,'논문 핵심 기여, 대응 방향, 지켜야 할 표현 등을 적어 주세요.')+'</details>'+
       (p.type==='rebuttal'?'<div class="paper-editor"><aside class="paper-outline" aria-label="리뷰어와 쟁점" id="paper-outline"></aside><div class="paper-editor-body" id="paper-editor-body"></div></div>':'<div id="paper-editor-body"></div>')+
       '<details class="paper-history"><summary>생성 이력 ('+p.history.length+')</summary>'+p.history.slice().reverse().map(h=>'<article><p class="paper-subtle">'+esc(h.at.replace('T',' ').slice(0,16))+' / '+esc(h.action)+' / '+esc(h.model)+'</p><pre>'+esc(h.text)+'</pre>'+btn('텍스트 복사','copy-history','','data-history="'+h.id+'"')+'</article>').join('')+'</details>'+
-      '<div class="paper-help"><p>'+esc(names[data.settings.provider])+' / '+esc(data.settings.models[data.settings.provider])+'</p>'+btn('작업 삭제','delete-project','quiet danger')+'</div>';
+      '<div class="paper-save-bar"><span class="paper-save-state '+(dirty?'dirty':'')+'" data-save-state>'+(dirty?'자동 저장 대기 중':'자동 저장됨')+'</span>'+btn('저장','save','primary')+'</div><div class="paper-help"><p>'+esc(names[data.settings.provider])+' / '+esc(data.settings.models[data.settings.provider])+'</p>'+btn('작업 삭제','delete-project','quiet danger')+'</div>';
     if(p.type==='rebuttal'){renderOutline();renderIssue();}else renderReview();updateCounts();app.setAttribute('aria-busy','false');
   }
   function renderOutline(){
@@ -161,7 +163,7 @@
     if(n.dataset.field){const [parent,key]=n.dataset.field.split('.');if(parent==='issue')activeIssue()[key]=n.value;else if(parent==='sections')current.data.sections[key]=n.value;else current.data[parent]=n.value;mark();}
     if(n.dataset.issueField){activeIssue()[n.dataset.issueField]=n.type==='checkbox'?n.checked:n.value;mark();if(n.dataset.issueField==='title'||n.dataset.issueField==='done')renderOutline();}
   });
-  app.addEventListener('change',e=>{if(busy)return;if(e.target.id==='paper-include-pdf')includePdf=e.target.checked;if(e.target.id==='paper-file'&&e.target.files[0])run(()=>uploadFile(e.target.files[0]));});
+  app.addEventListener('change',e=>{if(busy)return;if(e.target.matches('[data-project-status]')&&current){current.data.status=e.target.value;const label=$('.paper-project-heading .paper-eyebrow');if(label)label.textContent=types[current.data.type]+' / '+statuses[current.data.status];mark();return;}if(e.target.id==='paper-include-pdf')includePdf=e.target.checked;if(e.target.id==='paper-file'&&e.target.files[0])run(()=>uploadFile(e.target.files[0]));});
   app.addEventListener('keydown',e=>{const row=e.target.closest('[data-open]');if(row&&['Enter',' '].includes(e.key)){e.preventDefault();run(()=>openProject(row.dataset.open),row);}});
   document.addEventListener('click',async e=>{
     const n=e.target.closest('[data-action],[data-open],[data-filter],[data-issue],[data-section]');if(!n||!app.contains(n)&&!dialog.contains(n))return;
@@ -177,7 +179,6 @@
       if(a==='choose-rebuttal'||a==='choose-review'){workspace=a==='choose-rebuttal'?'rebuttal':'review';query='';filter='all';route('list');renderList();return;}
       if(a==='back-paper'){await save();route('landing');renderLanding();return;}
       if(a==='back'){await save();route('list');current=null;renderList();return;}
-      if(a==='settings'){await openSettings();return;}
       if(a==='edit-meta'){showProjectDialog(current.data);return;}
       if(a==='save'){await save();notice(preview?'편집 내용을 이 화면에 저장했습니다.':'저장했습니다.');return;}
       if(a==='export'){exportMarkdown();return;}
@@ -212,8 +213,8 @@
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')backgroundSave();});
   window.addEventListener('pagehide',backgroundSave);
   window.addEventListener('online',backgroundSave);
-  window.addEventListener('focus',()=>{if(dirty)backgroundSave();else if(!busy&&current&&!pendingSave&&!saveConflict){const target=current;api('/api/paper').then(fresh=>{if(current!==target||dirty||pendingSave)return;const latest=fresh.projects.find(p=>p.id===target.id);data=fresh;if(latest&&latest.revision!==target.revision){current=clone(latest);renderEditor();notice('다른 기기에서 저장한 내용을 불러왔습니다.');}}).catch(()=>{});}});
+  window.addEventListener('focus',()=>{if(dirty)backgroundSave();else if(!busy&&current&&!pendingSave&&!saveConflict){const target=current;api('/api/paper').then(fresh=>{if(current!==target||dirty||pendingSave)return;fresh.projects.forEach(r=>normalizeStatus(r.data));const latest=fresh.projects.find(p=>p.id===target.id);data=fresh;if(latest&&latest.revision!==target.revision){current=clone(latest);renderEditor();notice('다른 기기에서 저장한 내용을 불러왔습니다.');}}).catch(()=>{});}});
   window.addEventListener('beforeunload',e=>{if(dirty||busy){e.preventDefault();e.returnValue='';}});
-  async function init(){try{data=await api('/api/paper');await restoreRoute();}catch(e){app.innerHTML='<div class="paper-empty"><h1>Paper</h1><p>'+esc(e.message)+'</p>'+btn('다시 불러오기','retry')+'</div>';app.setAttribute('aria-busy','false');}}
+  async function init(){try{data=await api('/api/paper');data.projects.forEach(r=>normalizeStatus(r.data));await restoreRoute();}catch(e){app.innerHTML='<div class="paper-empty"><h1>Paper</h1><p>'+esc(e.message)+'</p>'+btn('다시 불러오기','retry')+'</div>';app.setAttribute('aria-busy','false');}}
   init();
 })();

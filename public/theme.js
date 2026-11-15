@@ -27,6 +27,7 @@
  const systemChanged=()=>{if(preference==='system')apply('system');};
  if(media?.addEventListener)media.addEventListener('change',systemChanged);else media?.addListener?.(systemChanged);
  window.addEventListener('storage',event=>{if(event.key===key)apply(valid(event.newValue)?event.newValue:'dark');});
+ const background=document.createElement('script');background.src='/background.js?v=20261115-2';background.defer=true;document.head.append(background);
  window.AtlasTheme={refresh,set:value=>apply(value,true),get:()=>theme,preference:()=>preference};
 })();
 

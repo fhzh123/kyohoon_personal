@@ -17,7 +17,8 @@ export function validateProject(p){
   uuid(p.id);text(p.title,300);if(!p.title.trim())throw fail('논문 제목을 입력해 주세요.');
   for(const k of ['venue','deadline','status'])text(p[k]??'',150);
   if(p.deadline&&(!/^\d{4}-\d{2}-\d{2}$/.test(p.deadline)||Number.isNaN(Date.parse(p.deadline))||new Date(p.deadline).toISOString().slice(0,10)!==p.deadline))throw fail('마감일을 확인해 주세요.');
-  if(!['active','done','archived'].includes(p.status))throw fail('작업 상태를 확인해 주세요.');
+  const status=p.status==='archived'?'done':p.status;
+  if(!['planned','active','done'].includes(status))throw fail('작업 상태를 확인해 주세요.');
   if(!Number.isInteger(p.charLimit)||p.charLimit<0||p.charLimit>100000)throw fail('글자 수 제한을 확인해 주세요.');
   text(p.context||'');text(p.reviewDraft||'');
   if(!Array.isArray(p.reviewers)||p.reviewers.length>30)throw fail('리뷰어 수를 확인해 주세요.');
@@ -31,7 +32,7 @@ export function validateProject(p){
   if(p.pdf){text(p.pdf.name,250);text(p.pdf.path,300);if(!Number.isInteger(p.pdf.size)||p.pdf.size<1||p.pdf.size>MAX_PDF_BYTES)throw fail('PDF 크기를 확인해 주세요.');}
   if(Buffer.byteLength(JSON.stringify(p))>1500000)throw fail('이 작업의 기록이 너무 큽니다. 오래된 생성 이력을 정리해 주세요.',413);
   // Rebuild the allowed shape rather than persisting arbitrary incoming properties.
-  return {id:p.id,type:p.type,title:p.title.trim(),venue:p.venue||'',deadline:p.deadline||'',status:p.status,charLimit:p.charLimit,context:p.context||'',pdf:p.pdf?{name:p.pdf.name,path:p.pdf.path,size:p.pdf.size}:null,reviewers:p.reviewers.map(r=>({id:r.id,name:r.name,issues:r.issues.map(i=>Object.fromEntries(['id','kind','title','original','translation','notes','evidence','draft','done'].map(k=>[k,i[k]??''])))})),sections:Object.fromEntries(['summary','strength','weakness','etc'].map(k=>[k,p.sections[k]||''])),reviewDraft:p.reviewDraft||'',history:p.history.map(h=>Object.fromEntries(['id','at','action','provider','model','text'].map(k=>[k,h[k]||''])))};
+  return {id:p.id,type:p.type,title:p.title.trim(),venue:p.venue||'',deadline:p.deadline||'',status,charLimit:p.charLimit,context:p.context||'',pdf:p.pdf?{name:p.pdf.name,path:p.pdf.path,size:p.pdf.size}:null,reviewers:p.reviewers.map(r=>({id:r.id,name:r.name,issues:r.issues.map(i=>Object.fromEntries(['id','kind','title','original','translation','notes','evidence','draft','done'].map(k=>[k,i[k]??''])))})),sections:Object.fromEntries(['summary','strength','weakness','etc'].map(k=>[k,p.sections[k]||''])),reviewDraft:p.reviewDraft||'',history:p.history.map(h=>Object.fromEntries(['id','at','action','provider','model','text'].map(k=>[k,h[k]||''])))};
 }
 export const MAX_PDF_BYTES=5000000;
 function encryptionKey(environment){const key=Buffer.from(environment.PAPER_ENCRYPTION_KEY||'','base64');if(key.length!==32)throw fail('서버에 API 키 암호화 설정이 필요합니다.',503);return key;}

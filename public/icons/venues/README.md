@@ -1,0 +1,1 @@
+ACL logo: official ACL Anthology repository, https://github.com/acl-org/acl-anthology/blob/master/hugo/static/images/acl-logo-square.svg . Used to identify ACL-family venues, including ACL Rolling Review. Other venues display their supplied name rather than a fabricated logo.

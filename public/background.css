@@ -1,0 +1,11 @@
+html[data-theme] .ambient-sky::before{animation:atlas-sky-drift var(--sky-duration,120s) ease-in-out -30s infinite alternate;will-change:transform;transform-origin:center}
+html[data-theme] body:has(.ambient-sky){isolation:isolate}
+html[data-theme] body>.ambient-sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
+html[data-theme] .ambient-sky::before{content:'';position:absolute;inset:-6%;pointer-events:none}
+html[data-theme][data-bg-image=true] body .ambient-sky::before{background:var(--sky-image) center/cover no-repeat;filter:none;opacity:.48}
+html[data-theme=dark][data-bg-image=true] body .ambient-sky::before{opacity:.58;filter:brightness(.7)}
+html[data-theme=light][data-bg-image=true] body .ambient-sky::after{background:linear-gradient(120deg,#f7f8fa88,#f7f8fa33);opacity:1}
+html[data-bg-paused=true] .ambient-sky::before{animation-play-state:paused!important;will-change:auto}
+@keyframes atlas-sky-drift{from{transform:translate3d(-2%,1%,0) scale(1.025)}to{transform:translate3d(2%,-1%,0) scale(1.025)}}
+@media(prefers-reduced-motion:reduce){html[data-theme] .ambient-sky::before{animation:none!important;transform:none;will-change:auto}}
+@media print{.ambient-sky{display:none!important}}
