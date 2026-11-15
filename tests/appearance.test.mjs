@@ -23,14 +23,14 @@ test('public display needs no session, but only authenticated editors can change
  else assert.equal((await h.call('/api/settings/appearance/upload','POST',{type:'image/png',size:100})).status,role?403:401);
  }finally{await h.close();}}
 });
-test('independent mode images persist with one revision, reject forged ownership and enforce file signatures and 5MB limits',async()=>{
+test('independent mode images persist with one revision, reject forged ownership and enforce file signatures and 15MB limits',async()=>{
  const h=await harness();try{
  const uploaded=await h.call('/api/settings/appearance/file','POST',{type:'image/png',base64:png.toString('base64')});assert.equal(uploaded.status,200);assert.match(uploaded.value.image.path,/^localhost\//);
  const config={images:{light:uploaded.value.image.path,dark:null},speed:0};const r=await h.call('/api/settings/appearance','PUT',{config,expectedRevision:null});assert.equal(r.status,200);assert.equal(r.value.config.images.dark,null);assert.equal((await h.call('/api/appearance')).value.config.speed,0);
  const downloaded=await h.call(r.value.urls.light);assert.equal(downloaded.status,200);assert.deepEqual(downloaded.value,png);
  const foreign=randomUUID()+'/'+randomUUID()+'.png';assert.equal((await h.call('/api/settings/appearance','PUT',{config:{...config,images:{light:foreign,dark:null}},expectedRevision:r.value.revision})).status,400);
  assert.throws(()=>validateAppearance({images:{light:'https://evil.invalid/a.svg'},speed:40}),/경로/);assert.throws(()=>validateAppearance({...DEFAULT_APPEARANCE,speed:-1}),/속도/);
- assert.throws(()=>validateBackgroundImage(Buffer.from('<svg><script/>'), 'image/png'),/일치/);assert.throws(()=>validateBackgroundImage(png,'image/svg+xml'),/PNG/);assert.throws(()=>validateBackgroundImage(Buffer.alloc(5000001),'image/png'),/5 MB/);
+ assert.throws(()=>validateBackgroundImage(Buffer.from('<svg><script/>'), 'image/png'),/일치/);assert.throws(()=>validateBackgroundImage(png,'image/svg+xml'),/PNG/);assert.throws(()=>validateBackgroundImage(Buffer.alloc(15000001),'image/png'),/15 MB/);
  }finally{await h.close();}
 });
 test('signed uploads are owner scoped and save uses a revision filter with the authenticated token',async()=>{
@@ -41,7 +41,7 @@ test('signed uploads are owner scoped and save uses a revision filter with the a
   return Response.json([{config:DEFAULT_APPEARANCE,revision}]);
  }});
  const call=async(url,method,input)=>{const res={};await handler({method,input},res,new URL(url,'https://test.invalid'));return res;};
- const ticket=await call('/api/settings/appearance/upload','POST',{type:'image/jpeg',size:3100000});assert.equal(ticket.status,200);assert.ok(uploadPath.startsWith(uid+'/'));assert.ok(uploadPath.endsWith('.jpg'));assert.equal(ticket.value.uploadUrl.includes('session'),false);
+ const ticket=await call('/api/settings/appearance/upload','POST',{type:'image/jpeg',size:15000000});assert.equal(ticket.status,200);assert.ok(uploadPath.startsWith(uid+'/'));assert.ok(uploadPath.endsWith('.jpg'));assert.equal(ticket.value.uploadUrl.includes('session'),false);
  const saved=await call('/api/settings/appearance','PUT',{config:{...DEFAULT_APPEARANCE,speed:100},expectedRevision:revision});assert.equal(saved.status,200);assert.match(seen.url,new RegExp('revision=eq.'+revision));assert.equal(seen.opt.headers.Authorization,'Bearer session');
 });
 test('cross-origin background changes are rejected before authentication and storage',async()=>{
@@ -49,9 +49,9 @@ test('cross-origin background changes are rejected before authentication and sto
  const req=Readable.from([]);Object.assign(req,{url:'/api/settings/appearance',method:'PUT',headers:{host:'site.invalid',origin:'https://evil.invalid','content-type':'application/json'},body:{config:DEFAULT_APPEARANCE},socket:{}});const res={setHeader(){},writeHead(s){this.status=s;},end(){}};await handler(req,res);assert.equal(res.status,403);assert.equal(calls,0);
 });
 test('background editor disables anonymous changes and an editor can save speed independently of LLM keys',async()=>{
- for(const role of [null,'reader','editor']){const w=new JSDOM(settingsPage(),{url:'https://test.invalid/settings',runScripts:'outside-only'}).window;let written;
+ for(const role of [null,'reader','editor']){const w=new JSDOM(settingsPage({authenticated:!!role}),{url:'https://test.invalid/settings',runScripts:'outside-only'}).window;let written;
  w.AtlasBackground={set:(value)=>{written=value;}};w.fetch=async(url,opt={})=>{if(role===null&&url==='/api/settings/appearance')return Response.json({error:'로그인 필요'},{status:401});if(opt.method==='PUT'){written=JSON.parse(opt.body);return Response.json({config:written.config,urls:{light:null,dark:null},revision:randomUUID(),role});}return Response.json({config:DEFAULT_APPEARANCE,urls:{light:null,dark:null},revision:null,role});};
- try{w.eval(await source('public/appearance-settings.js'));await sleep(20);assert.equal(w.document.querySelectorAll('[data-bg-file]').length,2);const speed=w.document.querySelector('#background-speed');assert.equal(speed.disabled,role!=='editor');
+ try{w.eval(await source('public/appearance-settings.js'));await sleep(20);if(!role){assert.equal(w.document.querySelectorAll('[data-bg-file]').length,0);assert.ok(w.document.querySelector('#background-controls .settings-access img'));continue;}assert.equal(w.document.querySelectorAll('[data-bg-file]').length,2);const speed=w.document.querySelector('#background-speed');assert.equal(speed.disabled,role!=='editor');
  if(role==='editor'){speed.value='0';speed.dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal(written.config.speed,0);w.document.querySelector('[data-bg-save]').click();await sleep(20);assert.match(w.document.querySelector('[data-bg-status]').textContent,/저장했습니다/);}else assert.match(w.document.querySelector('#background-controls').textContent,role?/읽기 전용/:/로그인/);
  }finally{w.close();}}
 });

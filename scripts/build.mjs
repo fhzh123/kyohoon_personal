@@ -34,3 +34,5 @@ for(const f of ['public/settings.css','public/icons/ui-settings.svg','public/mas
 
 for(const f of ['server/appearance-routes.mjs','public/background.js','public/appearance-settings.js'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
 for(const f of ['public/background.css','public/icons/venues/acl.svg'])await access(path.join(root,f));
+
+await access(path.join(root,'public/mascot/login-required.png'));

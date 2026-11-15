@@ -4,7 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {fail,uuid} from './paper-core.mjs';
 
 export const DEFAULT_APPEARANCE={images:{light:null,dark:null},speed:40};
-const types={'image/png':'png','image/jpeg':'jpg','image/webp':'webp'},maxBytes=5000000;
+const types={'image/png':'png','image/jpeg':'jpg','image/webp':'webp'},maxBytes=15000000;
 const validPath=value=>typeof value==='string'&&/^(?:localhost|[a-f0-9-]{36})\/[a-f0-9-]{36}\.(png|jpg|webp)$/.test(value);
 export function validateAppearance(value){
   if(!value||!Number.isInteger(value.speed)||value.speed<0||value.speed>100)throw fail('배경 속도는 0~100으로 설정해 주세요.');
@@ -12,7 +12,7 @@ export function validateAppearance(value){
   return {images,speed:value.speed};
 }
 export function validateBackgroundImage(bytes,type){
-  if(!types[type]||bytes.length<12||bytes.length>maxBytes)throw fail('PNG, JPG, WebP 이미지를 5 MB까지 올릴 수 있습니다.');
+  if(!types[type]||bytes.length<12||bytes.length>maxBytes)throw fail('PNG, JPG, WebP 이미지를 15 MB까지 올릴 수 있습니다.');
   const valid=type==='image/png'?bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])):type==='image/jpeg'?bytes[0]===255&&bytes[1]===216&&bytes[2]===255:bytes.toString('ascii',0,4)==='RIFF'&&bytes.toString('ascii',8,12)==='WEBP';
   if(!valid)throw fail('파일 내용과 이미지 형식이 일치하지 않습니다.');return true;
 }
@@ -39,14 +39,14 @@ export function appearanceRoutes({authorize,authFetch,bearer,send,body,rootDir,e
       const ownPath=p=>validPath(p)&&p.split('/')[0]===uid;
       const readImage=async filePath=>{if(!ownPath(filePath))throw fail('이미지 경로가 올바르지 않습니다.');const type=Object.keys(types).find(t=>filePath.endsWith('.'+types[t]));const bytes=access.mode==='local'?await readFile(path.join(rootDir,'private/appearance/files',filePath)):Buffer.from(await(await upstream('/storage/v1/object/authenticated/site-backgrounds/'+filePath)).arrayBuffer());validateBackgroundImage(bytes,type);return{path:filePath,type,size:bytes.length,url:access.mode==='local'?'/api/appearance/file?path='+encodeURIComponent(filePath):imageUrl(filePath)};};
       if(p==='/api/settings/appearance/upload'&&req.method==='POST'){
-        const input=JSON.parse(await body(req,1000));if(!types[input.type]||!Number.isInteger(input.size)||input.size<12||input.size>maxBytes)throw fail('PNG, JPG, WebP 이미지를 5 MB까지 올릴 수 있습니다.');
+        const input=JSON.parse(await body(req,1000));if(!types[input.type]||!Number.isInteger(input.size)||input.size<12||input.size>maxBytes)throw fail('PNG, JPG, WebP 이미지를 15 MB까지 올릴 수 있습니다.');
         if(access.mode==='local'){send(res,200,{local:true});return true;}
         const filePath=uid+'/'+randomUUID()+'.'+types[input.type],signed=await(await upstream('/storage/v1/object/upload/sign/site-backgrounds/'+filePath,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).json();
         if(typeof signed.url!=='string'||!signed.url.startsWith('/object/upload/sign/site-backgrounds/'+filePath+'?'))throw fail('업로드 주소를 준비하지 못했습니다.',503);
         send(res,200,{path:filePath,uploadUrl:environment.SUPABASE_URL.replace(/\/$/,'')+'/storage/v1'+signed.url});return true;
       }
       if(p==='/api/settings/appearance/file'&&req.method==='POST'&&access.mode==='local'){
-        const input=JSON.parse(await body(req,6800000));if(typeof input.base64!=='string'||!/^[A-Za-z0-9+/]+={0,2}$/.test(input.base64))throw fail('이미지 형식을 확인해 주세요.');const bytes=Buffer.from(input.base64,'base64');validateBackgroundImage(bytes,input.type);
+        const input=JSON.parse(await body(req,20100000));if(typeof input.base64!=='string'||!/^[A-Za-z0-9+/]+={0,2}$/.test(input.base64))throw fail('이미지 형식을 확인해 주세요.');const bytes=Buffer.from(input.base64,'base64');validateBackgroundImage(bytes,input.type);
         const filePath=uid+'/'+randomUUID()+'.'+types[input.type],dest=path.join(rootDir,'private/appearance/files',filePath);await mkdir(path.dirname(dest),{recursive:true});await writeFile(dest,bytes,{mode:0o600});send(res,200,{image:await readImage(filePath)});return true;
       }
       if(p==='/api/settings/appearance/complete'&&req.method==='POST'){const input=JSON.parse(await body(req,1000));send(res,200,{image:await readImage(input.path)});return true;}
