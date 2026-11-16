@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
     "import:work": "node scripts/import-work.mjs",
-    "upload:work": "node --env-file-if-exists=.env.local scripts/upload-work.mjs"
+    "upload:work": "node --env-file-if-exists=.env.local scripts/upload-work.mjs",
+    "prebuild": "node --test tests/travel.test.mjs tests/login-flow.test.mjs tests/home-motion.test.mjs"
   },
   "devDependencies": {
     "@babel/core": "7.28.0",

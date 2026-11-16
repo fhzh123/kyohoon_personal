@@ -89,7 +89,8 @@ export function loginPage({configured, preview, message = '', next = '/'}) {
 }
 
 function privateHeader(back = '/') {
-  return `<header class="site-header">${brand()}<div class="hub-header-actions"><a class="text-link link" href="${back}">${uiIcon(back === '/' ? 'house' : 'briefcase-business')}<span>${back === '/' ? '홈으로' : 'Selectstar 홈'}</span></a>${themeButton()}<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form></div></header>`;
+  const personal=back==='/personal';
+  return `<header class="site-header">${brand()}<div class="hub-header-actions"><a class="text-link link" href="${back}">${uiIcon(back === '/' || personal ? 'house' : 'briefcase-business')}<span>${back === '/' ? '홈으로' : personal ? 'Personal 홈' : 'Selectstar 홈'}</span></a>${themeButton()}<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form></div></header>`;
 }
 
 export function workPage({mode, role}) {
@@ -125,7 +126,7 @@ function publicHeader() {
 
 export function personalPage(access) {
  const header=access?privateHeader():publicHeader().replace('</div></header>','<a class="btn" href="/login?next=%2Fpersonal">로그인</a></div></header>');
- const tools=[{title:'여행의 흔적',image:'travel-globe.webp',description:'다녀온 곳의 사진과 이야기를 지구본에 남깁니다.',href:'/personal/travel'},{title:'두 번째 공간',image:'personal-coming-one.webp',description:'새로운 기능을 준비하고 있습니다.'},{title:'세 번째 공간',image:'personal-coming-two.webp',description:'새로운 기능을 준비하고 있습니다.'}];
+ const tools=[{title:'여행의 흔적',image:'travel-globe.webp',description:'다녀온 곳의 사진과 이야기를 지구본에 남깁니다.',href:'/personal/travel'},{title:'공사중',image:'personal-coming-one.webp',description:'새로운 기능을 준비하고 있습니다.'},{title:'공사중',image:'personal-coming-two.webp',description:'새로운 기능을 준비하고 있습니다.'}];
  return shell('Personal',`<link rel="stylesheet" href="/personal.css?v=20261116-3"><div class="hub-shell personal-shell">${header}<main id="main" class="personal-main hero" data-enter><div class="personal-heading hero-text"><div><h1>Personal</h1><p>여행과 일상의 기록을 모아두는 공간입니다.</p></div></div><div class="illustrated-tools personal-tools">${tools.map(t=>`<${t.href?'a href="'+t.href+'"':'article'} class="tool-card card ${t.href?'':'is-pending'}"><div class="tool-illustration"><img src="/mascot/${t.image}" width="512" height="512" alt="${t.title} 마스코트"></div><div class="tool-copy"><h2>${t.title}</h2><p>${t.description}</p><div class="tool-action">${t.href?'<span>여행 기록 보기</span><span aria-hidden="true">↗</span>':'<span class="pending-label">공사 중</span>'}</div></div></${t.href?'a':'article'}>`).join('')}</div></main>${footer()}</div>`,'personal');
 }
 

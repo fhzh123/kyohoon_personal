@@ -7,7 +7,6 @@ artifacts/
 .env*
 scripts/pdf-review/
 server/dev.mjs
-tests/
 docs/
 
 # Research demo resources must be included in deployments.

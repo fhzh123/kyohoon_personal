@@ -54,3 +54,87 @@ test('Editor form uploads a photo, saves its path and renders the persisted entr
  try{w.eval(await readFile(new URL('../public/travel/d3.min.js',import.meta.url),'utf8'));w.eval(await readFile(new URL('../public/travel/topojson-client.min.js',import.meta.url),'utf8'));w.eval(await readFile(new URL('../public/travel/travel.js',import.meta.url),'utf8'));const settle=()=>new Promise(r=>setTimeout(r,25));await settle();const d=w.document,select=d.querySelector('[data-region-select]');select.value='JPN-1860';select.dispatchEvent(new w.Event('change',{bubbles:true}));assert.equal(d.querySelector('[data-overlay]').hidden,false);d.querySelector('[data-edit]').click();const form=d.querySelector('[data-editor]');form.elements.title.value='도쿄에서';form.elements.description.value='사진 기록';const input=form.elements.photos;Object.defineProperty(input,'files',{value:[new w.File([png],'travel.png',{type:'image/png'})]});input.dispatchEvent(new w.Event('change',{bubbles:true}));await settle();await settle();assert.equal(d.querySelector('[data-photo]').hidden,false);form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await settle();assert.equal(entry.title,'도쿄에서');assert.deepEqual(entry.photos.map(p=>p.path),[file]);assert.equal(d.querySelector('[data-editor]').hidden,true);assert.match(d.querySelector('[data-records]').textContent,/도쿄도/);assert.match(d.querySelector('[data-status]').textContent,/저장했습니다/);assert.equal(requests.filter(r=>r.url==='/api/travel/file').length,1);
  }finally{w.close();}
 });
+
+async function travelUiFixture(onRequest,entries=[]){
+ const w=new JSDOM(travelPage({role:'editor'}),{url:'https://fixture.invalid/personal/travel',runScripts:'outside-only'}).window;
+ const context=new Proxy({createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>o[k]||(()=>{})});
+ w.HTMLCanvasElement.prototype.getContext=()=>context;w.ResizeObserver=class{observe(){}};w.MutationObserver=class{observe(){}};
+ w.structuredClone=structuredClone;w.Response=Response;w.DecompressionStream=DecompressionStream;w.requestAnimationFrame=()=>1;w.cancelAnimationFrame=()=>{};w.confirm=()=>true;
+ const requests=[];
+ w.fetch=async(url,opt={})=>{
+  requests.push({url,method:opt.method||'GET',body:opt.body&&typeof opt.body==='string'?JSON.parse(opt.body):null});
+  if(url==='/travel/world-regions.topo.bin')return new Response(gzipSync(JSON.stringify({type:'Topology',objects:{regions:{type:'GeometryCollection',geometries:[{type:'Polygon',arcs:[[0]],properties:{i:'JPN-1860',n:'도쿄도',c:'JP'}}]}},arcs:[[[139,35],[139,36],[140,36],[140,35],[139,35]]]})));
+  if(url==='/api/travel/bootstrap')return Response.json({entries,settings:{config:TRAVEL_COLORS},role:'editor'});
+  return onRequest(url,opt);
+ };
+ const until=async predicate=>{for(let i=0;i<100;i++){if(predicate())return;await new Promise(r=>setTimeout(r,10));}assert.fail('Travel UI did not settle');};
+ w.eval(await readFile(new URL('../public/travel/d3.min.js',import.meta.url),'utf8'));
+ w.eval(await readFile(new URL('../public/travel/topojson-client.min.js',import.meta.url),'utf8'));
+ w.eval(await readFile(new URL('../public/travel/travel.js',import.meta.url),'utf8'));
+ await until(()=>w.document.querySelector('[data-loading]').hidden);
+ const d=w.document,select=d.querySelector('[data-region-select]');
+ select.value='JPN-1860';select.dispatchEvent(new w.Event('change',{bubbles:true}));d.querySelector('[data-edit]').click();
+ return {w,d,select,form:d.querySelector('[data-editor]'),requests,until};
+}
+test('pending saves keep the active editor in place and restore controls after completion',async()=>{
+ let finish;const pending=new Promise(resolve=>{finish=resolve;});
+ const ui=await travelUiFixture(()=>pending);
+ const {w,d,form,select,until}=ui;
+ try{
+  form.elements.title.value='저장 중인 기록';form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(d.querySelector('#travel-app').getAttribute('aria-busy'),'true');
+  for(const selector of ['[data-close]','[data-cancel]','[data-photo-delete]','[data-region-select]'])assert.equal(d.querySelector(selector).disabled,true,selector);
+  d.querySelector('[data-close]').click();d.querySelector('[data-cancel]').click();
+  d.querySelector('#travel-app').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  select.dispatchEvent(new w.Event('change',{bubbles:true}));
+  assert.equal(d.querySelector('[data-overlay]').hidden,false);assert.equal(form.hidden,false);
+  finish(Response.json({entry:{regionId:'JPN-1860',title:'저장 중인 기록',description:'',purpose:'tour',photos:[],revision:randomUUID()}}));
+  await until(()=>d.querySelector('#travel-app').getAttribute('aria-busy')==='false');
+  assert.equal(form.hidden,true);assert.equal(d.querySelector('[data-title]').textContent,'저장 중인 기록');
+  assert.equal(d.querySelector('[data-close]').disabled,false);d.querySelector('[data-close]').click();assert.equal(d.querySelector('[data-overlay]').hidden,true);
+ }finally{w.close();}
+});
+test('a later upload failure keeps earlier successful photos available for saving',async()=>{
+ const owner=randomUUID();let uploads=0,saved;
+ const {w,d,form,until}=await travelUiFixture(async(url,opt)=>{
+  if(url==='/api/travel/upload'){uploads++;return Response.json({path:owner+'/'+uploads+'.png',uploadUrl:'https://uploads.invalid/'+uploads});}
+  if(url==='https://uploads.invalid/1')return new Response('');
+  if(url==='https://uploads.invalid/2')return new Response('',{status:503});
+  if(url==='/api/travel/complete'){const file=JSON.parse(opt.body).path;return Response.json({photo:{path:file,url:'https://photos.invalid/first.png'}});}
+  if(url==='/api/travel/entries/JPN-1860'){saved=JSON.parse(opt.body);return Response.json({entry:{...saved,regionId:'JPN-1860',revision:randomUUID(),photos:saved.photos.map(path=>({path,url:'https://photos.invalid/first.png'}))}});}
+  throw Error('unexpected '+url);
+ });
+ try{
+  form.elements.title.value='사진 기록';
+  Object.defineProperty(form.elements.photos,'files',{value:[new w.File([png],'first.png',{type:'image/png'}),new w.File([png],'second.png',{type:'image/png'})]});
+  form.elements.photos.dispatchEvent(new w.Event('change',{bubbles:true}));
+  assert.equal(d.querySelector('[data-cancel]').disabled,true);
+  d.querySelector('[data-cancel]').click();assert.equal(form.hidden,false);
+  await until(()=>!d.querySelector('[data-error]').hidden);
+  assert.equal(d.querySelector('[data-photo]').hidden,false);
+  assert.equal(d.querySelector('[data-photo]').src,'https://photos.invalid/first.png');
+  assert.equal(form.querySelector('[type=submit]').disabled,false);
+  form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await until(()=>form.hidden);assert.deepEqual(saved.photos,[owner+'/1.png']);
+ }finally{w.close();}
+});
+test('stale editor saves never adopt an unseen newer revision for a retry',async()=>{
+ const revision=randomUUID(),writes=[];
+ const ui=await travelUiFixture(async(url,opt)=>{
+  writes.push(JSON.parse(opt.body));return Response.json({error:'다른 변경이 먼저 저장되었습니다.'},{status:409});
+ },[{regionId:'JPN-1860',title:'원래 기록',description:'',purpose:'tour',photos:[],revision}]);
+ const {w,d,form,until}=ui;
+ try{
+  form.elements.title.value='수정 중인 기록';
+  for(let i=0;i<2;i++){form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await until(()=>d.querySelector('#travel-app').getAttribute('aria-busy')==='false');}
+  assert.equal(writes.length,2);assert.ok(writes.every(input=>input.expectedRevision===revision));
+  assert.equal(ui.requests.filter(r=>r.url==='/api/travel/bootstrap').length,1);
+  assert.equal(form.elements.title.value,'수정 중인 기록');assert.match(d.querySelector('[data-error]').textContent,/최신 기록/);
+ }finally{w.close();}
+});
+test('Personal retains three requested spaces and travel navigation returns to Personal',()=>{
+ const d=new JSDOM(personalPage()).window.document;
+ assert.deepEqual([...d.querySelectorAll('.personal-tools h2')].map(n=>n.textContent),['여행의 흔적','공사중','공사중']);
+ const t=new JSDOM(travelPage({role:'editor'})).window.document;
+ assert.equal(t.querySelector('.hub-header-actions a[href="/personal"]').textContent,'Personal 홈');
+});
