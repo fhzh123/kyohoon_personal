@@ -1,0 +1,16 @@
+{
+  "document-parsing": {
+    "source_sha256": {
+      "index.html": "1a2447b2e41f788936c4b0b7cbcf9025ac38f33fad6e406b2abcb58c0f01c104"
+    },
+    "files": 31
+  },
+  "ontology": {
+    "source_sha256": {
+      "index.html": "d36af04f264e9383e5f672bdebd192c35691e832c45fedede52c8b4f7aa702d0",
+      "outputs/evaluation_results.html": "3c19ffcef006caca517a6552564a64f6e115f7bab1ee6abdc48e947d5b4b4683",
+      "outputs/hits5_case_analysis.html": "5362e651b17859a8ee67a032acd500cd7e6590d04ae8c34b4b045e53e514ada9"
+    },
+    "files": 51
+  }
+}

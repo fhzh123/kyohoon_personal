@@ -72,7 +72,7 @@ test('authorized local Work groups demos and provides three illustrated tools', 
   assert.match(links[1],/href="\/work\/demos"/);
   const picker=await request(development,'/work/demos',{cookie});
   for(const demo of demos)assert.ok(picker.text.includes(demo));
-  assert.equal((picker.text.match(/rel="noopener noreferrer"/g)||[]).length,2);
+  assert.equal((picker.text.match(/rel="noopener noreferrer"/g)||[]).length,4);
   for (const title of titles) assert.ok(text.includes(`<h2>${title}</h2>`));
   for (const button of pending) assert.match(button, /\sdisabled(?:\s|>)/);
   assert.equal((text.match(/공사 중/g) || []).length, 0);

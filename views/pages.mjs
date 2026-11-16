@@ -17,7 +17,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2">
+<link rel="stylesheet" href="/auth.css?v=20261113-2">${surface === 'demos' ? '<link rel="stylesheet" href="/demo-links.css?v=20261116-1">' : ''}
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {
@@ -109,13 +109,13 @@ export function workPage({mode, role}) {
 
 export function demosPage() {
   const demos = [
-    {title:'Ontology', image:'ontology.webp', alt:'지식 그래프를 살펴보는 마스코트', text:'문서에서 개념과 관계를 추출하고 지식 구조를 확인합니다.', href:'https://selectstar-ai-vertical-research-feasibility.kyohoon-jin.chatgpt.site/'},
-    {title:'Document Parsing', image:'parsing.webp', alt:'돋보기로 문서를 살펴보는 마스코트', text:'문서의 레이아웃을 분석하고 텍스트와 표를 추출합니다.', href:'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/'},
+    {title:'Ontology', image:'ontology.webp', alt:'지식 그래프를 살펴보는 마스코트', text:'문서에서 개념과 관계를 추출하고 지식 구조를 확인합니다.', href:'/work/demos/ontology/', original:'https://selectstar-ai-vertical-research-feasibility.kyohoon-jin.chatgpt.site/'},
+    {title:'Document Parsing', image:'parsing.webp', alt:'돋보기로 문서를 살펴보는 마스코트', text:'문서의 레이아웃을 분석하고 텍스트와 표를 추출합니다.', href:'/work/demos/document-parsing/', original:'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/'},
   ];
   return shell('연구 데모', `
 <div class="hub-shell demo-shell">${privateHeader('/work')}<main id="main" class="hub-main">
   <section class="demo-heading hero" data-enter><div class="hero-text"><h1>연구 데모</h1><p>각 데모는 새 창에서 열립니다.</p></div></section>
-  <div class="portal-grid demo-portals">${demos.map(d => `<a class="portal card demo-portal" href="${d.href}" target="_blank" rel="noopener noreferrer">${artwork(d.image, d.image, d.alt)}<div class="portal-copy"><div class="portal-title"><h2>${d.title}</h2></div><p>${d.text}</p><span class="demo-launch">데모 열기 <span aria-hidden="true">↗</span></span><span class="sr-only">새 창에서 열림</span></div></a>`).join('')}</div>
+  <div class="portal-grid demo-portals">${demos.map(d => `<article class="demo-entry"><a class="portal card demo-portal" href="${d.href}" target="_blank" rel="noopener noreferrer">${artwork(d.image, d.image, d.alt)}<div class="portal-copy"><div class="portal-title"><h2>${d.title}</h2></div><p>${d.text}</p><span class="demo-launch">데모 열기 <span aria-hidden="true">↗</span></span><span class="sr-only">새 창에서 열림</span></div></a><a class="demo-original link" href="${d.original}" target="_blank" rel="noopener noreferrer">기존 GPT Sites에서 열기 <span aria-hidden="true">↗</span><span class="sr-only">새 창에서 열림</span></a></article>`).join('')}</div>
 </main>${footer()}</div>`, 'demos');
 }
 

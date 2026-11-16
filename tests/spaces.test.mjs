@@ -11,7 +11,7 @@ test('four home destinations preserve existing poses; tools use unique illustrat
  const hub=new JSDOM(workPage({mode:'supabase',role:'editor'})).window.document;
  assert.deepEqual([...hub.querySelectorAll('a.tool-card')].map(a=>a.getAttribute('href')),['/work/app/index.html','/work/demos','/work/expenses/']);
  assert.equal(new Set([...hub.querySelectorAll('.tool-illustration img')].map(x=>x.src)).size,3);
- assert.equal(new JSDOM(demosPage()).window.document.querySelectorAll('a[target="_blank"][rel="noopener noreferrer"]').length,2);
+ assert.equal(new JSDOM(demosPage()).window.document.querySelectorAll('a[target="_blank"][rel="noopener noreferrer"]').length,4);
  assert.match(personalPage(),/personal-build.webp/);
 });
 test('same-page brand navigation never activates loader, actual document navigation does',async()=>{

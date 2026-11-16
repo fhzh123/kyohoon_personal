@@ -36,3 +36,6 @@ for(const f of ['server/appearance-routes.mjs','public/background.js','public/ap
 for(const f of ['public/background.css','public/icons/venues/acl.svg'])await access(path.join(root,f));
 
 await access(path.join(root,'public/mascot/login-required.png'));
+
+for(const f of ['server/demo-routes.mjs'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
+for(const f of ['work-demos/ontology/index.html','work-demos/document-parsing/index.html','work-demos/ontology/outputs/evaluation_results.html','work-demos/ontology/outputs/hits5_case_analysis.html','public/demo-links.css'])await access(path.join(root,f));

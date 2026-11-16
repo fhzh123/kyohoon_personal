@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { randomBytes, timingSafeEqual, randomUUID } from 'node:crypto';
 import { homePage, loginPage, workPage, demosPage, personalPage } from '../views/pages.mjs';
 import { previewAllowed, safeRelativePath, safeLoginDestination, validState } from './policy.mjs';
+import {demoRoutes} from './demo-routes.mjs';
 import { expenseRoutes } from './expense-routes.mjs';
 import { paperRoutes } from './paper-routes.mjs';
 import { appearanceRoutes } from './appearance-routes.mjs';
@@ -103,6 +104,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
     try { const data = await readFile(resolved); return send(res,200,req.method === 'HEAD' ? '' : data,mime[path.extname(resolved)] || 'application/octet-stream'); }
     catch { return send(res,404,{error:'찾을 수 없습니다.'}); }
   }
+  const handleDemos=demoRoutes({authorize,send,rootDir});
   const handleExpenses=expenseRoutes({authorize,authFetch,bearer,send,body,serveFile,rootDir});
   const handlePaper=paperRoutes({authorize,authFetch,bearer,send,body,rootDir,environment,fetcher});
   const handleAppearance=appearanceRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
@@ -112,6 +114,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
       const pathname = requestUrl.pathname;
       if (!['GET','HEAD','POST','PUT'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (['POST','PUT'].includes(req.method) && !sameOrigin(req,environment)) return send(res,403,{error:'다른 출처의 요청은 허용되지 않습니다.'});
+      if(await handleDemos(req,res,requestUrl))return;
       if(await handleExpenses(req,res,requestUrl))return;
       if(await handleAppearance(req,res,requestUrl))return;
       if(await handlePaper(req,res,requestUrl))return;

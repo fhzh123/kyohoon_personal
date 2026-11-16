@@ -1,0 +1,1 @@
+.demo-entry{min-width:0;display:flex;flex-direction:column;gap:14px}.demo-entry>.portal{width:100%;flex:1}.demo-original{align-self:flex-end;display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:4px 2px;text-underline-offset:4px}.demo-original:hover{text-decoration:underline}.demo-original:focus-visible{outline:2px solid currentColor;outline-offset:4px}
