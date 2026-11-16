@@ -32,7 +32,7 @@ const topology=JSON.parse(gunzipSync(compressed));
 assert.equal(topology.type,'Topology');
 const geometries=Object.values(topology.objects)[0].geometries;
 const registeredIds=regions.map(region=>region.id).sort();
-const validMapIds=[...new Set(geometries.map(geometry=>geometry.properties.i).filter(id=>/^[A-Z]{3}-[0-9]+$/.test(id)))].sort();
+const validMapIds=[...new Set(geometries.filter(geometry=>geometry.type!==null).map(geometry=>geometry.properties.i).filter(id=>/^[A-Z]{3}-[0-9]+$/.test(id)))].sort();
 assert.deepEqual(validMapIds,registeredIds,'Every selectable region must match the server registry');
 console.log('Map geometries:',geometries.length,'; selectable IDs:',validMapIds.length);
 
