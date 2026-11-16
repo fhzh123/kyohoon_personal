@@ -1,0 +1,33 @@
+/* CSS starts at first render, independently of the deferred motion module or its safety timer. */
+@keyframes home-arrive {
+  from { opacity: 0; translate: 0 12px; }
+  to { opacity: 1; translate: 0 0; }
+}
+html body[data-surface="home"] .home-main {
+  --home-entrance: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-home-motion="off"]) body[data-surface="home"] .home-main {
+    --home-entrance: home-arrive;
+  }
+}
+html[data-home-motion="on"] body[data-surface="home"] .home-main {
+  --home-entrance: home-arrive;
+}
+body[data-surface="home"] .intro > *,
+body[data-surface="home"] .portal-grid > .portal {
+  animation-name: var(--home-entrance);
+  animation-duration: 720ms;
+  animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+  animation-fill-mode: both;
+}
+body[data-surface="home"] .intro > :nth-child(2) { animation-delay: 50ms; }
+body[data-surface="home"] .intro > :nth-child(3) { animation-delay: 100ms; }
+body[data-surface="home"] .intro > :nth-child(4) { animation-delay: 150ms; }
+body[data-surface="home"] .portal-grid > :nth-child(1) { animation-delay: 80ms; }
+body[data-surface="home"] .portal-grid > :nth-child(2) { animation-delay: 140ms; }
+body[data-surface="home"] .portal-grid > :nth-child(3) { animation-delay: 200ms; }
+body[data-surface="home"] .portal-grid > :nth-child(4) { animation-delay: 260ms; }
+@media print {
+  body[data-surface="home"] .home-main { --home-entrance: none !important; }
+}

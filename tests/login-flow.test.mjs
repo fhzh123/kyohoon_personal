@@ -20,13 +20,22 @@ test('all private document entry points redirect to one login while APIs remain 
  for(const route of ['/api/research-state','/api/work-bootstrap','/api/card-ledger','/work/app/app.js','/work/expenses/app.js'])assert.equal((await request(handler,route)).status,401,route);
 });
 test('return destinations cannot become an external or API redirect',()=>{
- for(const value of ['https://evil.invalid','//evil.invalid','/\\evil.invalid','/%2f%2fevil.invalid','/api/auth/logout','/login','/work/../../api/research-state','/work\n','/work/%5c%5cevil.invalid'])assert.equal(safeLoginDestination(value),'/work',value);
+ for(const value of [undefined,null,'','https://evil.invalid','//evil.invalid','/\\evil.invalid','/%2f%2fevil.invalid','/api/auth/logout','/login','/work/../../api/research-state','/work\n','/work/%5c%5cevil.invalid'])assert.equal(safeLoginDestination(value),'/',value);
+ assert.equal(safeLoginDestination('/'),'/');
  assert.equal(safeLoginDestination('/work/expenses/?year=2026&approval=2'),'/work/expenses/?year=2026&approval=2');
 });
 test('successful login keeps the requested destination and validates active membership',async()=>{
  const calls=[];const handler=createHandler({environment,fetcher:async(url,options)=>{calls.push({url,options});if(url.includes('grant_type=password'))return json({access_token:'private-token',refresh_token:'private-refresh',user:{id:'member'}});if(url.includes('workspace_members'))return json([{user_id:'member',role:'reader'}]);throw Error('Unexpected call');}});
  const r=await request(handler,'/api/auth/login',{method:'POST',body:{email:'member@example.invalid',password:'test-only',next:'/work/expenses/?year=2026'}});
  assert.equal(r.status,303);assert.equal(r.headers.location,'/work/expenses/?year=2026');assert.equal(r.headers['set-cookie'].length,2);assert.ok(r.headers['set-cookie'].every(c=>c.includes('HttpOnly')&&c.includes('Secure')));assert.ok(!r.text.includes('private-token'));assert.equal(calls.length,2);
+});
+test('home login returns home with or without next, while named tools keep their destination',async()=>{
+ const handler=createHandler({environment,fetcher:async url=>url.includes('grant_type=password')?json({access_token:'private-token',refresh_token:'private-refresh',user:{id:'member'}}):url.endsWith('/auth/v1/user')?json({id:'member'}):json([{user_id:'member',role:'reader'}])});
+ for(const [destination,expected]of [[{},'/'],[{next:'/'},'/'],[{next:'//evil.invalid'},'/'],[{next:'/paper'},'/paper'],[{next:'/personal'},'/personal'],[{space:'work'},'/work']]){
+  const r=await request(handler,'/api/auth/login',{method:'POST',body:{email:'member@example.invalid',password:'test-only',...destination}});assert.equal(r.status,303);assert.equal(r.headers.location,expected);
+ }
+ assert.equal((await request(handler,'/login',{headers:{cookie:'kh_access=test-only'}})).headers.location,'/');
+ const page=await request(handler,'/login');assert.equal(new JSDOM(page.text).window.document.querySelector('[name=next]').value,'/');
 });
 test('failed login retains a safe destination and shows the same contact dialog',async()=>{
  const handler=createHandler({environment,fetcher:async()=>new Response('{}',{status:400})});
@@ -48,3 +57,4 @@ test('password help uses native dialog, copies contact details and never sends r
  dialog.querySelector('[data-contact-close]').click();assert.equal(dialog.open,false);assert.equal(w.document.activeElement,opener);assert.equal(w.document.body.style.overflow,'');
  w.document.querySelector('.password-toggle').click();assert.equal(w.document.querySelector('#password').type,'text');w.document.querySelector('.password-toggle').click();assert.equal(w.document.querySelector('#password').type,'password');w.close();
 });
+

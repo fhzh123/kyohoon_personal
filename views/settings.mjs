@@ -15,7 +15,10 @@ export function settingsPage({authenticated=false}={}){
   </nav><div class="settings-content">
     <section id="appearance" class="settings-panel"><div class="settings-section-title"><h2>화면 모드</h2><p>이 브라우저에서 사용할 화면을 선택하세요.</p></div>
     <div class="appearance-options">${[['light','라이트','밝고 선명하게'],['dark','다크','차분한 어둠 속에서'],['system','시스템','기기 설정에 맞춰서']].map(([v,n,d])=>`<button type="button" class="appearance-option" data-theme-value="${v}" aria-pressed="false"><span class="appearance-sample sample-${v}" aria-hidden="true"><i></i><b></b><b></b></span><strong>${n}</strong><small>${d}</small></button>`).join('')}</div>
-    <p class="paper-subtle" id="appearance-status" role="status"></p></section>
+    <p class="paper-subtle" id="appearance-status" role="status"></p>
+    <div class="settings-section-title"><h2>시작 애니메이션</h2><p>홈 화면이 처음 나타날 때의 움직임을 설정합니다.</p></div>
+    <label class="paper-field" for="home-motion">재생 방식</label><select id="home-motion" data-home-motion-select><option value="system">기기 설정 따르기</option><option value="on">켜기</option><option value="off">끄기</option></select>
+    <p class="paper-subtle" id="home-motion-status" role="status"></p></section>
     <section id="background" class="settings-panel" hidden><div id="background-controls" class="background-settings" data-authenticated="${authenticated}">${content('background','배경')}</div></section>
     <section id="llm" class="settings-panel" hidden><div id="llm-app" data-authenticated="${authenticated}" aria-busy="${authenticated}">${content('llm','모델')}</div></section>
   </div></div></main>${footer()}</div>
@@ -23,3 +26,4 @@ export function settingsPage({authenticated=false}={}){
   <div id="settings-status" class="paper-toast" role="status" aria-live="polite" hidden></div>
   <script src="/settings.js?v=20261115-3" defer></script><script src="/appearance-settings.js?v=20261115-3" defer></script>`,'settings');
 }
+

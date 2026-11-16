@@ -38,8 +38,8 @@ test('all local demo pages, data and images require membership and preserve logi
   const login=new URL(response.headers.get('location'),'https://fixture.invalid');assert.equal(login.pathname,'/login');assert.equal(login.searchParams.get('next'),url);
  }
  for(const url of [prefix+'ontology/',prefix+'document-parsing/',prefix+'ontology/outputs/hits5_case_analysis.html#case-1'])assert.equal(safeLoginDestination(url),url);
- assert.equal(safeLoginDestination('//outside.invalid'),'/work');
- assert.equal(safeLoginDestination(prefix+'ontology/resources/widget-data-00.js'),'/work');
+ assert.equal(safeLoginDestination('//outside.invalid'),'/');
+ assert.equal(safeLoginDestination(prefix+'ontology/resources/widget-data-00.js'),'/');
 }));
 test('authorized demos load nested reports and every local asset, with no oversized response',()=>withServer(async request=>{
  for(const slug of ['ontology','document-parsing']){
@@ -70,3 +70,4 @@ test('split ontology data reconstructs the original JSON byte for byte',async()=
  async function checkSize(directory){for(const name of await readdir(directory)){const file=path.join(directory,name);const s=await stat(file);if(s.isDirectory())await checkSize(file);else assert.ok(s.size<4_000_000,file);}}
  await checkSize(path.join(rootDir,'work-demos'));
 });
+

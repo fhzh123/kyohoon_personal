@@ -10,14 +10,14 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <meta property="og:title" content="${title} | Kyohoon Jin"><meta property="og:description" content="AI Research Engineer 진교훈의 경력과 연구 기록."><meta property="og:type" content="website"><meta property="og:image" content="/mascot/resume.png"><meta name="twitter:card" content="summary">
 <title>${title} | Kyohoon Jin</title><link rel="icon" href="/mascot/face.png">
 
-<script src="/theme.js?v=20261115-2"></script><script src="/loading.js?v=20261113-1" defer></script>
+<script src="/theme.js?v=20261116-1"></script><script src="/loading.js?v=20261113-1" defer></script>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/typography.css?v=20261112-1">
 <link rel="stylesheet" href="/taste.css?v=20261113-1"><link rel="stylesheet" href="/assets/taste/motion/motion.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2">${surface === 'demos' ? '<link rel="stylesheet" href="/demo-links.css?v=20261116-1">' : ''}
+<link rel="stylesheet" href="/auth.css?v=20261113-2">${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261116-1">' : ''}${surface === 'demos' ? '<link rel="stylesheet" href="/demo-links.css?v=20261116-1">' : ''}
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {
@@ -27,7 +27,7 @@ function artwork(idle, hover, alt) {
 export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
 <div class="home-shell">
   <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동"><a class="text-link home-shortcut" href="/resume">${uiIcon('file-text')}<span>Resume</span></a><a class="text-link home-shortcut" href="/work">${uiIcon('briefcase-business')}<span>Work</span></a>${themeButton()}${authenticated ? '<form action="/api/auth/logout" method="post"><button class="btn header-login" type="submit">로그아웃</button></form>' : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
-  <main id="main" class="home-main hero hero--split" data-enter aria-labelledby="intro-title">
+  <main id="main" class="home-main hero hero--split" data-enter="off" aria-labelledby="intro-title">
     <section class="intro hero-text">
       <p class="home-role">AI Research Engineer</p>
       <h1 id="intro-title">진교훈 <span class="name-en" lang="en">Kyohoon Jin</span></h1>
@@ -59,7 +59,7 @@ export function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 }
 
-export function loginPage({configured, preview, message = '', next = '/work'}) {
+export function loginPage({configured, preview, message = '', next = '/'}) {
   return shell('로그인', `
 <div class="login-shell"><header class="site-header">${brand()}<div class="header-actions"><a class="text-link link" href="/">${uiIcon('house')}<span>홈으로</span></a>${themeButton()}</div></header>
 <main id="main" class="login-main hero" data-enter aria-labelledby="login-title">
@@ -129,4 +129,5 @@ export function personalPage() {
 }
 
 export {shell,privateHeader,publicHeader,footer};
+
 

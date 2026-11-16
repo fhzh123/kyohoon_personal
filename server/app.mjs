@@ -129,7 +129,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
         if (attempts.size > 500) attempts.delete(attempts.keys().next().value);
         const raw = await body(req,16384);
         const values = String(req.headers['content-type']||'').includes('application/json') ? JSON.parse(raw) : Object.fromEntries(new URLSearchParams(raw));
-        const next=safeLoginDestination(values.next || (values.space==='personal'?'/personal':'/work')); 
+        const next=safeLoginDestination(values.next || (values.space==='personal'?'/personal':values.space==='work'?'/work':'/'));
         const result = await authFetch('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:values.email,password:values.password})});
         if (!result.ok) return send(res,401,loginPage({configured,preview:preview(req),next,message:'이메일 또는 비밀번호를 확인해 주세요.'}),'text/html; charset=utf-8');
         const session = await result.json();
@@ -272,4 +272,5 @@ async function body(req,max) {
   for await (const chunk of req) {length+=Buffer.byteLength(chunk);if(length>max){const e=new Error('too large');e.status=413;throw e;}chunks.push(Buffer.from(chunk));}
   return Buffer.concat(chunks).toString('utf8');
 }
+
 
