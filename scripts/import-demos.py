@@ -22,7 +22,7 @@ def import_demo(slug, source):
         def image(match):
             data = base64.b64decode(match[2], validate=True)
             ext = {'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/svg+xml':'svg'}[match[1]]
-            name = 'assets/' + hashlib.sha256(data).hexdigest()[:24] + '.' + ext
+            name = 'resources/' + hashlib.sha256(data).hexdigest()[:24] + '.' + ext
             path = destination / name
             path.parent.mkdir(exist_ok=True)
             path.write_bytes(data)
@@ -38,7 +38,7 @@ def import_demo(slug, source):
             scripts = []
             for i, start in enumerate(range(0, len(data), 300_000)):
                 chunk = data[start:start + 300_000]
-                name = f'assets/{identifier}-{i:02}.js'
+                name = f'resources/{identifier}-{i:02}.js'
                 code = 'document.getElementById(' + json.dumps(identifier) + ').textContent+=' + json.dumps(chunk, ensure_ascii=False) + ';\n'
                 (destination / name).write_text(code)
                 scripts.append('<script src="/work/demos/' + slug + '/' + name + '"></script>')

@@ -4,11 +4,15 @@ node_modules/
 !.env.example
 private/
 artifacts/
-Assets/
-assets-extracted/
-assets-generated/
+/Assets/
+/assets-extracted/
+/assets-generated/
 dist/
 .vercel/
 
 work-app/workspace.bundle.js
 work-app/workspace.bundle.css
+
+# Research demo resources must be included in deployments.
+!work-demos/
+!work-demos/**

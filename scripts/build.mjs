@@ -39,3 +39,6 @@ await access(path.join(root,'public/mascot/login-required.png'));
 
 for(const f of ['server/demo-routes.mjs'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
 for(const f of ['work-demos/ontology/index.html','work-demos/document-parsing/index.html','work-demos/ontology/outputs/evaluation_results.html','work-demos/ontology/outputs/hits5_case_analysis.html','public/demo-links.css'])await access(path.join(root,f));
+
+// Validate every demo image/data artifact and the delivery handler before deployment.
+await import('./check-demo-resources.mjs');

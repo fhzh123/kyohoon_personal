@@ -16,7 +16,9 @@ export function demoRoutes({authorize,send,rootDir}) {
     const relative=safeRelativePath(match[2]==='/'?'index.html':match[2]);
     const format=relative&&formats[path.extname(relative)];
     if(!relative||!format){send(res,404,{error:'찾을 수 없습니다.'});return true;}
-    const file=path.join(rootDir,'work-demos',match[1],relative);
+    // Keep the original page URLs working while using an explicitly included resource directory.
+    const resource=relative.replace(/^assets\//,'resources/');
+    const file=path.join(rootDir,'work-demos',match[1],resource);
     try {
       const acceptsGzip=String(req.headers['accept-encoding']||'').split(',').some(value=>/^gzip(?:\s*;\s*q=(?!0(?:\.0*)?$)[\d.]+)?\s*$/i.test(value.trim()));
       let data,compressed=false;

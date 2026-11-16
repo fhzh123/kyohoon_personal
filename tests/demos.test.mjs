@@ -32,14 +32,14 @@ test('demo cards open both local copies and retain both original GPT Sites links
  assert.equal((html.match(/<article class="demo-entry">/g)||[]).length,2);
 });
 test('all local demo pages, data and images require membership and preserve login destinations',()=>withServer(async request=>{
- const image=(await readdir(path.join(rootDir,'work-demos/ontology/assets'))).find(x=>x.endsWith('.png'));
- for(const route of ['ontology/','document-parsing/','ontology/outputs/evaluation_results.html','ontology/outputs/hits5_case_analysis.html','ontology/assets/widget-data-00.js','ontology/assets/'+image]){
+ const image=(await readdir(path.join(rootDir,'work-demos/ontology/resources'))).find(x=>x.endsWith('.png'));
+ for(const route of ['ontology/','document-parsing/','ontology/outputs/evaluation_results.html','ontology/outputs/hits5_case_analysis.html','ontology/resources/widget-data-00.js','ontology/resources/'+image]){
   const url=prefix+route;const response=await request(url);assert.equal(response.status,303,url);
   const login=new URL(response.headers.get('location'),'https://fixture.invalid');assert.equal(login.pathname,'/login');assert.equal(login.searchParams.get('next'),url);
  }
  for(const url of [prefix+'ontology/',prefix+'document-parsing/',prefix+'ontology/outputs/hits5_case_analysis.html#case-1'])assert.equal(safeLoginDestination(url),url);
  assert.equal(safeLoginDestination('//outside.invalid'),'/work');
- assert.equal(safeLoginDestination(prefix+'ontology/assets/widget-data-00.js'),'/work');
+ assert.equal(safeLoginDestination(prefix+'ontology/resources/widget-data-00.js'),'/work');
 }));
 test('authorized demos load nested reports and every local asset, with no oversized response',()=>withServer(async request=>{
  for(const slug of ['ontology','document-parsing']){
@@ -51,6 +51,7 @@ test('authorized demos load nested reports and every local asset, with no oversi
    assert.match(asset.headers.get('cache-control'),/no-store/);assert.equal(asset.headers.get('x-content-type-options'),'nosniff');assert.ok((await asset.arrayBuffer()).byteLength<4_000_000,assetUrl);
   }
  }
+ const legacy=await request(prefix+'ontology/assets/widget-data-00.js',{headers});assert.equal(legacy.status,200);assert.match(legacy.headers.get('content-type'),/^text\/javascript/);
  const canonical=await request(prefix+'ontology?view=1',{headers});assert.equal(canonical.status,308);assert.equal(canonical.headers.get('location'),prefix+'ontology/?view=1');
  const head=await request(prefix+'ontology/',{method:'HEAD',headers});assert.equal(head.status,200);assert.equal(await head.text(),'');
  const plain=await request(prefix+'ontology/',{headers:{...headers,'accept-encoding':'identity'}});assert.equal(plain.status,200);assert.equal(plain.headers.get('content-encoding'),null);

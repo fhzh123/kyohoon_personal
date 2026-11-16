@@ -1,7 +1,7 @@
 private/
-Assets/
-assets-extracted/
-assets-generated/
+/Assets/
+/assets-extracted/
+/assets-generated/
 artifacts/
 .cache/
 .env*
@@ -9,3 +9,7 @@ scripts/pdf-review/
 server/dev.mjs
 tests/
 docs/
+
+# Research demo resources must be included in deployments.
+!work-demos/
+!work-demos/**

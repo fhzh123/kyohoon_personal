@@ -4,7 +4,7 @@
   "functions": {
     "api/index.mjs": {
       "maxDuration": 180,
-      "includeFiles": "{server,views,work-app,work-expenses,work-demos,public}/**",
+      "includeFiles": "{server,views,work-app,work-expenses,public,work-demos}/**/*",
       "excludeFiles": "{private,Assets,assets-extracted,assets-generated,artifacts}/**"
     }
   },
@@ -25,4 +25,3 @@
     }
   ]
 }
-
