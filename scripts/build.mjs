@@ -42,3 +42,10 @@ for(const f of ['work-demos/ontology/index.html','work-demos/document-parsing/in
 
 // Validate every demo image/data artifact and the delivery handler before deployment.
 await import('./check-demo-resources.mjs');
+
+// Travel is served from the same production handler; all map code and assets are local.
+for(const f of ['server/travel-routes.mjs','views/travel.mjs','public/travel/travel.js','public/travel-settings.js'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
+for(const f of ['public/personal.css','public/home-refinement.css','public/travel/travel.css','public/travel/world-regions.topo.bin','public/travel/d3.min.js','public/travel/topojson-client.min.js',...['travel-globe','personal-coming-one','personal-coming-two'].map(n=>'public/mascot/'+n+'.webp')])await access(path.join(root,f));
+const travelRegions=JSON.parse(await readFile(path.join(root,'public/travel/regions.json'),'utf8'));
+if(travelRegions.length<4500||travelRegions.some(r=>!/^([A-Z]{3}-[0-9]+)$/.test(r.id))||new Set(travelRegions.map(r=>r.id)).size!==travelRegions.length)throw new Error('Travel region registry is incomplete');
+console.log('Travel assets, syntax and worldwide region registry verified.');

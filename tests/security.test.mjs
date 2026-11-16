@@ -343,10 +343,10 @@ test('Personal is public while demo picker still enforces allowed membership',as
   throw Error('New spaces must not fetch research data');
  };
  const handler=createHandler({rootDir:await fixture(),environment:remoteEnvironment,fetcher});
- const anonymous=await request(handler,'/personal');assert.equal(anonymous.status,200);assert.ok(anonymous.text.includes('personal-build.webp'));assert.ok(!anonymous.text.includes('/api/auth/logout'));
+ const anonymous=await request(handler,'/personal');assert.equal(anonymous.status,200);assert.ok(anonymous.text.includes('travel-globe.webp'));assert.ok(!anonymous.text.includes('/api/auth/logout'));
  assert.equal((await request(handler,'/work/demos')).status,303);
  const headers={cookie:'kh_access=synthetic-private'};
- const personal=await request(handler,'/personal',{headers});assert.match(personal.text,/personal-build.webp/);assert.match(personal.headers['cache-control'],/no-store/);
+ const personal=await request(handler,'/personal',{headers});assert.match(personal.text,/travel-globe.webp/);assert.match(personal.headers['cache-control'],/no-store/);
  assert.match((await request(handler,'/work/demos',{headers})).text,/Document Parsing/);
  for(const [space,destination]of [['personal','/personal'],['selectstar','/work'],['https://outside.invalid','/work']]){
   const r=await request(handler,'/api/auth/login',{method:'POST',headers:{'content-type':'application/json'},body:{space,email:'fixture@example.invalid',password:'synthetic'}});assert.equal(r.headers.location,destination);

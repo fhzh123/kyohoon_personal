@@ -1,0 +1,17 @@
+/* Preserve the site's identity; tune rhythm, hierarchy and pointer response. */
+body[data-surface="home"] .home-main{column-gap:7%;padding-block:48px}
+body[data-surface="home"] .home-role{font-size:14px;letter-spacing:.015em;margin-bottom:22px}
+body[data-surface="home"] .intro h1{font-weight:500;letter-spacing:-.045em;margin-bottom:30px}
+body[data-surface="home"] .name-en{font-weight:400;margin-top:16px}
+body[data-surface="home"] .intro .home-about{color:var(--muted);font-size:17px;line-height:1.85}
+body[data-surface="home"] .portal-title h2{font-weight:500;letter-spacing:-.04em}
+body[data-surface="home"] .portal{padding-left:24px;transition:translate .18s var(--ease),background .18s var(--ease)}
+body[data-surface="home"] .portal:hover{translate:0 -2px;background:color-mix(in srgb,var(--surface) 36%,transparent)}
+body[data-surface="home"] .portal-copy p{font-size:15px;color:var(--muted)}
+body[data-surface="home"] .portal-title{margin-bottom:10px}
+body[data-surface="home"] .portal-detail{font-size:12px}
+body[data-surface="home"] .portal-title .arrow{transition:translate .18s var(--ease);font-size:20px}
+body[data-surface="home"] .portal:hover .arrow{translate:3px 0}
+body[data-surface="home"] .portal-art{height:136px}
+@media(max-width:640px){body[data-surface="home"] .home-main{padding-block:36px}body[data-surface="home"] .portal{padding-left:12px}body[data-surface="home"] .intro h1{font-size:50px}}
+@media(prefers-reduced-motion:reduce){body[data-surface="home"] .portal,body[data-surface="home"] .portal-title .arrow{transition:none}body[data-surface="home"] .portal:hover,body[data-surface="home"] .portal:hover .arrow{translate:none}}

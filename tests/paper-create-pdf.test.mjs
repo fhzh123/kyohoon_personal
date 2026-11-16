@@ -8,13 +8,13 @@ import {paperPage} from '../views/paper.mjs';
 import {homePage} from '../views/pages.mjs';
 import {DEFAULT_PROMPTS,publicSettings} from '../server/paper-core.mjs';
 import {createHandler} from '../server/app.mjs';
-test('Personal is public with no auth dependency, but Paper and Work stay protected',async()=>{
+test('Personal stays public even when header authentication is unavailable',async()=>{
  let authCalls=0;const handler=createHandler({environment:{NODE_ENV:'production',SUPABASE_URL:'https://test.invalid',SUPABASE_ANON_KEY:'synthetic'},fetcher:async()=>{authCalls++;throw Error('auth unavailable');}});
  for(const method of ['GET','HEAD'])for(const url of ['/personal','/personal/']){
   const req=Readable.from([]);Object.assign(req,{url,method,headers:{host:'test.invalid',cookie:'kh_access=invalid'},socket:{}});
   const res={setHeader(){},writeHead(status){this.status=status;},end(body){this.body=body;}};
   await handler(req,res);assert.equal(res.status,200);if(method==='HEAD')assert.equal(res.body,'');else{assert.match(res.body,/Personal/);assert.doesNotMatch(res.body,/api\/auth\/logout/);}
- }assert.equal(authCalls,0);
+ }assert.ok(authCalls>0);
  const d=new JSDOM(homePage()).window.document;
  assert.equal(d.querySelector('.personal-portal .portal-detail').textContent,'공개');
  assert.ok(d.querySelector('.paper-portal .has-swap'));assert.notEqual(d.querySelector('.paper-portal .pose-idle').src,d.querySelector('.paper-portal .pose-active').src);

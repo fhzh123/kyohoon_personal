@@ -8,6 +8,8 @@ import {demoRoutes} from './demo-routes.mjs';
 import { expenseRoutes } from './expense-routes.mjs';
 import { paperRoutes } from './paper-routes.mjs';
 import { appearanceRoutes } from './appearance-routes.mjs';
+import {travelRoutes} from './travel-routes.mjs';
+import {travelPage} from '../views/travel.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.ttf':'font/ttf','.json':'application/json; charset=utf-8','.pdf':'application/pdf'};
@@ -108,12 +110,14 @@ export function createHandler({localPreview = false, rootDir = root, environment
   const handleExpenses=expenseRoutes({authorize,authFetch,bearer,send,body,serveFile,rootDir});
   const handlePaper=paperRoutes({authorize,authFetch,bearer,send,body,rootDir,environment,fetcher});
   const handleAppearance=appearanceRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
+  const handleTravel=travelRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
   return async function handler(req,res) {
     try {
       const requestUrl = new URL(req.url,'http://local.invalid');
       const pathname = requestUrl.pathname;
       if (!['GET','HEAD','POST','PUT'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (['POST','PUT'].includes(req.method) && !sameOrigin(req,environment)) return send(res,403,{error:'다른 출처의 요청은 허용되지 않습니다.'});
+      if(await handleTravel(req,res,requestUrl))return;
       if(await handleDemos(req,res,requestUrl))return;
       if(await handleExpenses(req,res,requestUrl))return;
       if(await handleAppearance(req,res,requestUrl))return;
@@ -158,7 +162,13 @@ export function createHandler({localPreview = false, rootDir = root, environment
       }
       if (pathname === '/personal' || pathname === '/personal/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
-        return send(res,200,req.method==='HEAD'?'':personalPage(),'text/html; charset=utf-8');
+        const access=await authorize(req,res).catch(()=>null);
+        return send(res,200,req.method==='HEAD'?'':personalPage(access),'text/html; charset=utf-8');
+      }
+      if(pathname==='/personal/travel'||pathname==='/personal/travel/'){
+        if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'허용되지 않은 요청입니다.'});
+        const access=await authorize(req,res).catch(()=>null);
+        return send(res,200,req.method==='HEAD'?'':travelPage(access),'text/html; charset=utf-8');
       }
       if (pathname === '/work/demos' || pathname === '/work/demos/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
