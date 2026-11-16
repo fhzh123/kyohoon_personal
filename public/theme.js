@@ -3,7 +3,7 @@
  'use strict';
  const key='kyohoon-appearance',root=document.documentElement,media=window.matchMedia?.('(prefers-color-scheme: dark)');
  const valid=value=>['dark','light','system'].includes(value);
- let preference='dark',theme='dark';
+ let preference='system',theme=media?.matches?'dark':'light';
  const motionKey='kyohoon-home-motion',motionMedia=window.matchMedia?.('(prefers-reduced-motion: reduce)');
  let homeMotion='system';
  try{const saved=localStorage.getItem(motionKey);if(['system','on','off'].includes(saved))homeMotion=saved;}catch{}
@@ -39,7 +39,7 @@
  document.addEventListener('click',event=>{const b=event.target.closest('[data-theme-toggle],[data-theme-value]');if(b&&!b.disabled)apply(b.dataset.themeValue||(theme==='dark'?'light':'dark'),true);});
  const systemChanged=()=>{if(preference==='system')apply('system');};
  if(media?.addEventListener)media.addEventListener('change',systemChanged);else media?.addListener?.(systemChanged);
- window.addEventListener('storage',event=>{if(event.key===key)apply(valid(event.newValue)?event.newValue:'dark');});
+ window.addEventListener('storage',event=>{if(event.key===key)apply(valid(event.newValue)?event.newValue:'system');});
  const background=document.createElement('script');background.src='/background.js?v=20261115-2';background.defer=true;document.head.append(background);
  window.AtlasTheme={refresh,set:value=>apply(value,true),get:()=>theme,preference:()=>preference};
 })();

@@ -10,7 +10,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <meta property="og:title" content="${title} | Kyohoon Jin"><meta property="og:description" content="AI Research Engineer 진교훈의 경력과 연구 기록."><meta property="og:type" content="website"><meta property="og:image" content="/mascot/resume.png"><meta name="twitter:card" content="summary">
 <title>${title} | Kyohoon Jin</title><link rel="icon" href="/mascot/face.png">
 
-<script src="/theme.js?v=20261116-1"></script><script src="/loading.js?v=20261113-1" defer></script>
+<script src="/theme.js?v=20261116-2"></script><script src="/loading.js?v=20261113-1" defer></script>
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/typography.css?v=20261112-1">
 <link rel="stylesheet" href="/taste.css?v=20261113-1"><link rel="stylesheet" href="/assets/taste/motion/motion.css">

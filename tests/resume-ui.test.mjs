@@ -78,7 +78,7 @@ test('Resume document uses its isolated styles plus the shared typography', asyn
   const dom = new JSDOM(html, { url: 'http://localhost:3000/resume' });
   const document = dom.window.document;
   assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261113-review-2']);
-  assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261115-2', '/resume/resume.js']);
+  assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261116-2', '/resume/resume.js']);
   assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/mascot/face.png');
   assert.equal(document.querySelectorAll('iframe').length, 0);
   assert.ok(!html.includes('/main.css') && !html.includes('/work.css') && !html.includes('_next'));
@@ -225,4 +225,5 @@ test('Resume profile flip and KakaoTalk QR modal retain original interactions', 
   exact(document, 'button', '×').click();
   await waitFor(() => !document.querySelector('h2'), 'Kakao QR modal closes');
 });
+
 
