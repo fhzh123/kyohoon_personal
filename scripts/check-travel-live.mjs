@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+import {gunzipSync} from 'node:zlib';
+const origin='https://www.kyohoon.app';
+const expected=process.env.EXPECT_TRAVEL_VERSION;
+const checks=[];
+async function get(path){
+ const response=await fetch(new URL(path,origin),{redirect:'manual',signal:AbortSignal.timeout(20000)});
+ assert.equal(response.status,200,path+' must return 200');
+ checks.push(path);
+ return response;
+}
+const personal=await(await get('/personal')).text();
+assert.match(personal,/여행의 흔적/);
+assert.equal((personal.match(/class="tool-card card is-pending"/g)||[]).length,2);
+let travel;
+for(let attempt=0;attempt<18;attempt++){
+ travel=await(await get('/personal/travel')).text();
+ if(!expected||travel.includes('/travel/travel.js?v='+expected))break;
+ if(attempt===17)throw Error('New travel version did not reach the production domain');
+ await new Promise(resolve=>setTimeout(resolve,10000));
+}
+assert.match(travel,/data-globe/);
+const bootstrap=await(await get('/api/travel/bootstrap')).json();
+assert.equal(bootstrap.role,'reader');
+assert.equal(bootstrap.authenticated,false);
+assert.ok(Array.isArray(bootstrap.entries));
+for(const key of ['conference','tour','unvisited'])assert.match(bootstrap.settings.config[key],/^#[a-f0-9]{6}$/i);
+const regions=await(await get('/travel/regions.json')).json();
+assert.ok(regions.length>=4500);
+const compressed=Buffer.from(await(await get('/travel/world-regions.topo.bin')).arrayBuffer());
+const topology=JSON.parse(gunzipSync(compressed));
+assert.equal(topology.type,'Topology');
+const geometries=Object.values(topology.objects)[0].geometries;
+assert.equal(geometries.length,regions.length);
+for(const path of ['/travel/travel.js','/travel/travel.css','/travel/d3.min.js','/travel/topojson-client.min.js','/mascot/travel-globe.webp','/mascot/personal-coming-one.webp','/mascot/personal-coming-two.webp']){
+ const response=await get(path);assert.ok((await response.arrayBuffer()).byteLength>100);
+}
+const login=await(await get('/login')).text();
+assert.match(login,/name="next" value="\/"/);
+const privatePage=await fetch(origin+'/work',{redirect:'manual',signal:AbortSignal.timeout(20000)});
+assert.equal(privatePage.status,303);
+assert.equal(privatePage.headers.get('location'),'/login?next=%2Fwork');
+console.log(JSON.stringify({checked:checks.length,regions:regions.length,entries:bootstrap.entries.length,publicRole:bootstrap.role,loginReturn:'/',privateSpace:'requires login',version:expected||'existing production'},null,2));

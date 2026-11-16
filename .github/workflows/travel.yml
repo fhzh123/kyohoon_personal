@@ -26,3 +26,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+
+      - name: Verify public travel endpoints
+        run: node scripts/check-travel-live.mjs
+        env:
+          EXPECT_TRAVEL_VERSION: ${{ github.ref == 'refs/heads/main' && '20261117-1' || '' }}
