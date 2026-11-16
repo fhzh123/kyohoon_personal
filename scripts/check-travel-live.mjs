@@ -31,7 +31,11 @@ const compressed=Buffer.from(await(await get('/travel/world-regions.topo.bin')).
 const topology=JSON.parse(gunzipSync(compressed));
 assert.equal(topology.type,'Topology');
 const geometries=Object.values(topology.objects)[0].geometries;
-assert.equal(geometries.length,regions.length);
+const registeredIds=regions.map(region=>region.id).sort();
+const validMapIds=[...new Set(geometries.map(geometry=>geometry.properties.i).filter(id=>/^[A-Z]{3}-[0-9]+$/.test(id)))].sort();
+assert.deepEqual(validMapIds,registeredIds,'Every selectable region must match the server registry');
+console.log('Map geometries:',geometries.length,'; selectable IDs:',validMapIds.length);
+
 for(const path of ['/travel/travel.js','/travel/travel.css','/travel/d3.min.js','/travel/topojson-client.min.js','/mascot/travel-globe.webp','/mascot/personal-coming-one.webp','/mascot/personal-coming-two.webp']){
  const response=await get(path);assert.ok((await response.arrayBuffer()).byteLength>100);
 }
