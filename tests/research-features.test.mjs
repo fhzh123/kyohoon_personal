@@ -407,41 +407,124 @@ const allocationSeed=()=>({...clone(seed),tasks:[
  {id:'child',title:'하위 연구',goalId:'g1',parentId:'root',owner:'A',ownerAllocations:[{owner:'A',percent:50}],start:'2026-11-09',end:'2026-11-15',planUnit:'week'},
  {id:'sibling',title:'병행 연구',goalId:'g1',parentId:'root',owner:'A',ownerAllocations:[{owner:'A',percent:60}],start:'2026-11-09',end:'2026-11-15',planUnit:'week'},
  {id:'deep',title:'더 깊은 연구',goalId:'g1',parentId:'child',owner:'A',ownerAllocations:[{owner:'A',percent:20}],start:'2026-11-11',end:'2026-11-13',planUnit:'week'},
- {id:'unknown',title:'미입력 연구',goalId:'g1',owner:'C',start:'2026-11-02',end:'2026-11-30',planUnit:'week'}
+ {id:'b-work',title:'B 연구',goalId:'g1',parentId:'root',owner:'B',ownerAllocations:[{owner:'B',percent:30}],start:'2026-11-02',end:'2026-11-30',planUnit:'week'},
+ {id:'unknown',title:'미입력 연구',goalId:'g1',parentId:'root',owner:'C',start:'2026-11-02',end:'2026-11-30',planUnit:'week'}
 ]});
 test('MM and overload use real overlapping dates, per-person descendants and weekday month fractions',async()=>{
  const f=await fixture('editor',allocationSeed());try{
   const C=f.w.ResearchCalendar,rows=C.resourceSummary(f.w.ResearchAtlas.getState().tasks,'2026-11-01','2026-11-30'),a=rows.find(r=>r.owner==='A'),b=rows.find(r=>r.owner==='B');
-  assert.equal(a.peak,110);assert.equal(a.overDays,2);assert.equal(a.firstOver,'2026-11-09');assert.equal(a.mm,0.83);assert.equal(b.mm,0.30);assert.equal(b.peak,30);
-  const card=f.document.querySelector('[data-resource-owner="A"]');assert.ok(card.classList.contains('is-over'));assert.match(card.textContent,/10% 초과/);assert.equal(rows.find(r=>r.owner==='C').missing,1);assert.match(f.document.querySelector('[data-resource-owner="C"]').textContent,/MM 미산정/);
-  const task=(id,start,end,percent,extra={})=>({id,title:id,owner:'A',ownerAllocations:[{owner:'A',percent}],start,end,...extra});
+  assert.equal(a.peak,130);assert.equal(a.overDays,5);assert.equal(a.firstOver,'2026-11-09');assert.equal(a.mm,0.29);assert.equal(b.mm,0.30);assert.equal(b.peak,30);
+  const card=f.document.querySelector('[data-resource-owner="A"]');assert.ok(card.classList.contains('is-over'));assert.match(card.textContent,/30% 초과/);assert.equal(rows.find(r=>r.owner==='C').missing,1);assert.match(f.document.querySelector('[data-resource-owner="C"]').textContent,/MM 미산정/);
+  const task=(id,start,end,percent,extra={})=>({id,title:id,parentId:'root',owner:'A',ownerAllocations:[{owner:'A',percent}],start,end,...extra});
   assert.equal(C.resourceSummary([task('m','2026-12-01','2026-12-31',100)],'2026-12-01','2026-12-31')[0].mm,1);
   assert.equal(C.resourceSummary([task('a','2026-12-01','2026-12-10',60),task('b','2026-12-11','2026-12-31',60)],'2026-12-01','2026-12-31')[0].peak,60);
   assert.equal(C.resourceSummary([task('a','2026-12-01','2026-12-10',100),task('b','2026-12-10','2026-12-31',20)],'2026-12-01','2026-12-31')[0].peak,120);
-  assert.equal(C.resourceSummary([task('parent','2026-12-01','2026-12-31',80),task('child','2026-12-01','2026-12-31',0,{parentId:'parent'})],'2026-12-01','2026-12-31')[0].peak,0);
+  assert.equal(C.resourceSummary([task('parent','2026-12-01','2026-12-31',80,{parentId:''}),task('child','2026-12-01','2026-12-31',0,{parentId:'parent'})],'2026-12-01','2026-12-31')[0].peak,0);
   assert.equal(C.resourceSummary([task('paused','2026-12-01','2026-12-31',100,{status:'paused'})],'2026-12-01','2026-12-31').length,0);
  }finally{f.close();}
 });
 test('allocation edits preview overload, retain individual values through sync, duplicate and backup, and reject invalid input',async()=>{
  const f=await fixture('editor',allocationSeed());try{
   const {w,document:d}=f,api=w.ResearchAtlas;api.operations.openTask('child');
-  const input=d.querySelector('[data-allocation-input]');input.value='70';input.dispatchEvent(new w.Event('input',{bubbles:true}));assert.match(d.querySelector('#allocation-warning').textContent,/130%.*30% 초과/);
+  const input=d.querySelector('[data-allocation-input]');input.value='70';input.dispatchEvent(new w.Event('input',{bubbles:true}));assert.match(d.querySelector('#allocation-warning').textContent,/150%.*50% 초과/);
   d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();
   assert.equal(f.puts.at(-1).state.tasks.find(t=>t.id==='child').ownerAllocations[0].percent,70);assert.equal(d.querySelector('[data-task-row="child"] .task-allocation-percent').textContent,'70%');
   const copyId=api.operations.duplicateTask('child');assert.equal(api.validateState(api.getState()).tasks.find(t=>t.id===copyId).ownerAllocations[0].percent,70);
-  api.operations.openTask('root');d.querySelector('#task-owner').value='B, A, D';d.querySelector('#task-owner').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal(d.querySelector('[data-allocation-owner="A"]').value,'80');assert.equal(d.querySelector('[data-allocation-owner="B"]').value,'30');assert.equal(d.querySelector('[data-allocation-owner="D"]').value,'');
-  const percent=d.querySelector('[data-allocation-owner="A"]');percent.value='101';d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(d.querySelector('#task-dialog').open,true);assert.equal(api.getState().tasks.find(t=>t.id==='root').ownerAllocations[0].percent,80);
-  percent.value='0';d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(api.getState().tasks.find(t=>t.id==='root').ownerAllocations.find(r=>r.owner==='A').percent,0);
-  const invalid=api.getState();invalid.tasks[0].ownerAllocations=[{owner:'A',percent:-1}];assert.throws(()=>api.validateState(invalid),/0~100/);
-  invalid.tasks[0].ownerAllocations=[{owner:'A',percent:NaN}];assert.throws(()=>api.validateState(invalid),/0~100/);await tick();
+  api.operations.openTask('child');const percent=d.querySelector('[data-allocation-input]');percent.value='101';d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(d.querySelector('#task-dialog').open,true);assert.equal(api.getState().tasks.find(t=>t.id==='child').ownerAllocations[0].percent,70);
+  percent.value='0';d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(api.getState().tasks.find(t=>t.id==='child').ownerAllocations[0].percent,0);
+  const invalid=api.getState();invalid.tasks.find(t=>t.id==='child').ownerAllocations=[{owner:'A',percent:-1}];assert.throws(()=>api.validateState(invalid),/0~100/);
+  invalid.tasks.find(t=>t.id==='child').ownerAllocations=[{owner:'A',percent:NaN}];assert.throws(()=>api.validateState(invalid),/0~100/);await tick();
  }finally{f.close();}
 });
 test('resource warnings include hidden and filtered work and readers cannot save allocation changes',async()=>{
  const initial=allocationSeed();initial.tasks.find(t=>t.id==='sibling').roadmapHidden=true;
  const f=await fixture('editor',initial);try{
-  chooseFilter(f,'category',[]);assert.equal(f.document.querySelectorAll('[data-task-row]').length,0);assert.match(f.document.querySelector('[data-resource-owner="A"]').textContent,/110%/);
+  chooseFilter(f,'category',[]);assert.equal(f.document.querySelectorAll('[data-task-row]').length,0);assert.match(f.document.querySelector('[data-resource-owner="A"]').textContent,/130%/);
  }finally{f.close();}
  const r=await fixture('reader',initial);try{
   r.w.ResearchAtlas.operations.openTask('root');const input=r.document.querySelector('[data-allocation-input]');assert.equal(input.readOnly,true);input.value='90';r.document.querySelector('#task-form').dispatchEvent(new r.w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(r.puts.length,0);assert.equal(r.w.ResearchAtlas.getState().tasks[0].ownerAllocations[0].percent,80);
  }finally{r.close();}
+});
+
+test('roadmap shows ISO week codes alongside monthly ordinal weeks and preserves the ISO year at New Year',async()=>{
+ const f=await fixture('editor',seed,[],'2026-11-17');try{
+  const d=f.document,headers=[...d.querySelectorAll('.timeline-column')],fourth=headers.find(column=>column.querySelector('strong').textContent==='11월 넷째주');
+  assert.equal(fourth.querySelector('.timeline-week-code').textContent,'2026-W48');
+  assert.equal(d.querySelector('.timeline-column.is-current .timeline-week-code').textContent,'2026-W47');
+ }finally{f.close();}
+ const n=await fixture('editor',seed,[],'2027-01-01');try{
+  assert.equal(n.document.querySelector('.timeline-column.is-current .timeline-week-code').textContent,'2026-W53');
+ }finally{n.close();}
+});
+test('all MM uses L5 even when L4 has dates, a different owner, or a manual override',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  const C=f.w.ResearchCalendar,tasks=f.w.ResearchAtlas.getState().tasks;
+  const before=clone(C.resourceSummary(tasks,'2026-11-01','2026-11-30'));
+  tasks.find(t=>t.id==='root').owner='Root only';tasks.find(t=>t.id==='root').ownerAllocations=[{owner:'Root only',percent:700}];tasks.find(t=>t.id==='root').allocationMode='manual';
+  assert.deepEqual(clone(C.resourceSummary(tasks,'2026-11-01','2026-11-30')),before);
+  assert.equal(C.resourceSummary([tasks.find(t=>t.id==='root')],'2026-11-01','2026-11-30').length,0);
+  assert.equal(C.resourceSummary(tasks,'2026-11-16','2026-11-30').some(row=>row.owner==='A'),false);
+ }finally{f.close();}
+});
+test('L4 derives peak concurrent L5 demand, refreshes on changes, and supports a persisted display-only override',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  const {w,document:d}=f,api=w.ResearchAtlas,C=w.ResearchCalendar;
+  const tasks=api.getState().tasks;assert.equal(C.taskAllocations(tasks[0],tasks).find(row=>row.owner==='A').percent,130);
+  api.operations.openTask('root');assert.equal(d.querySelector('[data-allocation-owner="A"]').value,'130');assert.equal(d.querySelector('[data-allocation-owner="A"]').readOnly,true);
+  const mode=d.querySelector('#l4-allocation-manual');mode.checked=true;mode.dispatchEvent(new w.Event('change',{bubbles:true}));
+  const input=d.querySelector('[data-allocation-owner="A"]');assert.equal(input.readOnly,false);input.value='145';input.dispatchEvent(new w.Event('input',{bubbles:true}));d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();
+  const saved=api.validateState(api.getState());assert.equal(saved.tasks[0].allocationMode,'manual');assert.equal(saved.tasks[0].ownerAllocations.find(row=>row.owner==='A').percent,145);
+  assert.equal(C.taskAllocations(saved.tasks[0],saved.tasks).find(row=>row.owner==='A').percent,145);assert.match(d.querySelector('[data-resource-owner="A"]').textContent,/130%/);
+  api.operations.openTask('root');d.querySelector('#l4-allocation-manual').checked=false;d.querySelector('#l4-allocation-manual').dispatchEvent(new w.Event('change',{bubbles:true}));d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();
+  assert.equal(api.getState().tasks[0].allocationMode,'derived');assert.equal(C.taskAllocations(api.getState().tasks[0],api.getState().tasks).find(row=>row.owner==='A').percent,130);
+  api.operations.openTask('deep');d.querySelector('[data-allocation-input]').value='40';d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();
+  assert.equal(C.taskAllocations(api.getState().tasks[0],api.getState().tasks).find(row=>row.owner==='A').percent,150);
+ }finally{f.close();}
+});
+test('L4 peak sums only simultaneously scheduled L5 and does not add sequential peaks',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  const C=f.w.ResearchCalendar,tasks=[{id:'parent',owner:'A'},...[
+   {id:'first',start:'2026-11-02',end:'2026-11-08',percent:70},
+   {id:'second',start:'2026-11-09',end:'2026-11-15',percent:80}
+  ].map(t=>({...t,parentId:'parent',owner:'A',ownerAllocations:[{owner:'A',percent:t.percent}]}))];
+  assert.equal(C.taskAllocations(tasks[0],tasks)[0].percent,80);
+  tasks[2].start='2026-11-08';assert.equal(C.taskAllocations(tasks[0],tasks)[0].percent,150);
+ }finally{f.close();}
+});
+test('roadmap resources use this week, this month and this year independently of chart navigation',async()=>{
+ const initial=allocationSeed();initial.tasks.push({id:'future-allocation',title:'Future',parentId:'root',goalId:'g1',owner:'A',ownerAllocations:[{owner:'A',percent:90}],start:'2027-02-01',end:'2027-02-28',planUnit:'week'});
+ const f=await fixture('editor',initial,[],'2026-11-17');try{
+  const d=f.document,heading=()=>d.querySelector('#roadmap-resources').textContent;
+  assert.match(heading(),/이번 주.*2026-W47/);assert.match(heading(),/2026-11-16 ~ 2026-11-22/);assert.equal(d.querySelector('[data-resource-owner="A"]'),null);
+  d.querySelector('[data-step-period="1"]').click();assert.match(heading(),/2026-11-16 ~ 2026-11-22/);
+  d.querySelector('[data-unit="month"]').click();assert.match(heading(),/이번 달/);assert.match(heading(),/2026-11-01 ~ 2026-11-30/);assert.match(d.querySelector('[data-resource-owner="A"]').textContent,/130%/);
+  d.querySelector('[data-unit="year"]').click();assert.match(heading(),/올해/);assert.match(heading(),/2026-01-01 ~ 2026-12-31/);assert.match(d.querySelector('[data-resource-owner="A"]').textContent,/0.29 MM/);
+ }finally{f.close();}
+});
+const resourceOrder=f=>[...f.document.querySelectorAll('#roadmap-resources [data-resource-owner]')].map(card=>card.dataset.resourceOwner);
+test('resource order changes by buttons and keyboard, persists across views, validation and sync, and preserves absent people',async()=>{
+ const initial=allocationSeed();initial.settings={colors:{research:'#3479e9'},resourceOwnerOrder:['Not this week','C','B','A']};
+ const f=await fixture('editor',initial);try{
+  const {w,document:d}=f;assert.deepEqual(resourceOrder(f),['C','B','A']);
+  d.querySelector('[data-resource-move="up"][data-owner="A"]').click();await tick();assert.deepEqual(resourceOrder(f),['C','A','B']);
+  assert.deepEqual(Array.from(w.ResearchAtlas.validateState(w.ResearchAtlas.getState()).settings.resourceOwnerOrder),['Not this week','C','A','B']);
+  d.querySelector('[data-resource-drag="A"]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));await tick();assert.deepEqual(resourceOrder(f),['A','C','B']);
+  assert.equal(f.puts.at(-1).state.settings.colors.research,'#3479e9');
+  d.querySelector('[data-unit="month"]').click();assert.deepEqual(resourceOrder(f),['A','C','B']);d.querySelector('[data-view="overview"]').click();assert.deepEqual([...d.querySelectorAll('[data-resource-owner]')].map(card=>card.dataset.resourceOwner),['A','C','B']);
+ }finally{f.close();}
+});
+test('resource drag reorder saves and cancelled drags and readers never mutate order',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  const {w,document:d}=f,host=d.querySelector('#roadmap-resources'),before=clone(w.ResearchAtlas.getState()),drag=d.querySelector('[data-resource-drag="C"]');
+  drag.dispatchEvent(new w.Event('dragstart',{bubbles:true}));host.dispatchEvent(new w.Event('dragend',{bubbles:true}));assert.deepEqual(clone(w.ResearchAtlas.getState()),before);
+  d.querySelector('[data-resource-drag="C"]').dispatchEvent(new w.Event('dragstart',{bubbles:true}));d.querySelector('[data-resource-owner="A"]').dispatchEvent(new w.MouseEvent('drop',{clientY:0,bubbles:true,cancelable:true}));await tick();
+  assert.equal(resourceOrder(f)[0],'C');assert.equal(f.puts.at(-1).state.settings.resourceOwnerOrder[0],'C');
+ }finally{f.close();}
+ const r=await fixture('reader',allocationSeed());try{assert.equal(r.document.querySelector('[data-resource-drag]'),null);assert.equal(r.w.ResearchAtlas.operations.reorderResourceOwner('C','A'),false);assert.equal(r.puts.length,0);}finally{r.close();}
+});
+test('failed order persistence restores both prior order and unrelated settings',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  const before=clone(f.w.ResearchAtlas.getState());f.w.Storage.prototype.setItem=()=>{throw Error('full');};
+  assert.equal(f.w.ResearchAtlas.operations.reorderResourceOwner('C','A'),false);assert.deepEqual(clone(f.w.ResearchAtlas.getState()),before);assert.match(f.document.querySelector('#toast').textContent,/순서 변경을 취소/);
+ }finally{f.close();}
 });

@@ -59,7 +59,7 @@
       const original = step(first, i, unit), start = original < MIN_DATE ? MIN_DATE : original, end = bounds[unit][1](original), d = date(original);
       if (unit === 'week') {
         const a = date(start), b = date(end);
-        return { key: toWeek(original), start, end, label: original < MIN_DATE ? '11월 시작 주' : weekLabel(start), group: `${a.getFullYear()}년 ${a.getMonth() + 1}월`, detail: `${a.getMonth() + 1}.${a.getDate()}–${b.getMonth() + 1}.${b.getDate()}` };
+        return { key: toWeek(original), weekCode:toWeek(original), start, end, label: original < MIN_DATE ? '11월 시작 주' : weekLabel(start), group: `${a.getFullYear()}년 ${a.getMonth() + 1}월`, detail: `${a.getMonth() + 1}.${a.getDate()}–${b.getMonth() + 1}.${b.getDate()}` };
       }
       return { key: unit === 'month' ? original.slice(0, 7) : original.slice(0, 4), start, end, label: unit === 'month' ? `${d.getMonth() + 1}월` : `${d.getFullYear()}년`, group: unit === 'month' ? `${d.getFullYear()}년` : '장기 연구 방향', detail: '' };
     });
