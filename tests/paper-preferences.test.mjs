@@ -22,7 +22,7 @@ test('automatic saves reach the server while typing and another device reads the
   other=await boot('#review/'+row.id);assert.equal(other.document.querySelector('[data-field="sections.summary"]').value,'Written on laptop');
   notes.value='Saved before browser back';notes.dispatchEvent(new w.Event('input',{bubbles:true}));w.history.back();await sleep(70);
   assert.equal(w.location.hash,'#review');assert.match(w.document.querySelector('h1').textContent,/논문 리뷰 준비/);assert.equal(row.data.sections.summary,'Saved before browser back');
-  w.document.querySelector('[data-open]').click();await sleep(20);w.document.querySelector('.site-header .text-link').click();await sleep(20);assert.equal(w.location.pathname,'/paper');assert.equal(w.location.hash,'#review');
+  w.document.querySelector('[data-open]').click();await sleep(20);w.document.querySelector('[data-action=back]').click();await sleep(20);assert.equal(w.location.pathname,'/paper');assert.equal(w.location.hash,'#review');
  }finally{w.close();other?.close();}
 });
 test('stale automatic saves stop with a visible conflict and never overwrite the other device',async()=>{
