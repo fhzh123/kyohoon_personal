@@ -36,6 +36,7 @@ async function fixture(role = 'editor') {
     url:'http://127.0.0.1:3000/work/app/index.html',runScripts:'dangerously',resources:new LocalScripts(),
     pretendToBeVisual:true,virtualConsole,
     beforeParse(window) {
+      const RealDate=window.Date;window.Date=class extends RealDate {constructor(...args){super(...(args.length?args:['2026-11-09T12:00:00']));}static now(){return new RealDate('2026-11-09T12:00:00').getTime();}};
       window.scrollTo = () => {};
       window.AbortSignal.timeout=()=>new window.AbortController().signal;
       window.confirm = () => true;
@@ -163,3 +164,4 @@ test('DOM simulation: reader can navigate/search/read details but cannot edit, d
     assert.deepEqual(f.errors,[]);
   } finally { await f.close(); }
 });
+
