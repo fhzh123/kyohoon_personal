@@ -49,3 +49,6 @@ for(const f of ['public/personal.css','public/home-refinement.css','public/trave
 const travelRegions=JSON.parse(await readFile(path.join(root,'public/travel/regions.json'),'utf8'));
 if(travelRegions.length<4500||travelRegions.some(r=>!/^([A-Z]{3}-[0-9]+)$/.test(r.id))||new Set(travelRegions.map(r=>r.id)).size!==travelRegions.length)throw new Error('Travel region registry is incomplete');
 console.log('Travel assets, syntax and worldwide region registry verified.');
+
+for(const f of ['views/gallery.mjs','public/gallery/gallery.js'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
+for(const f of ['views/gallery.html','public/gallery/gallery.css'])await access(path.join(root,f));

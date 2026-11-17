@@ -10,6 +10,7 @@ import { paperRoutes } from './paper-routes.mjs';
 import { appearanceRoutes } from './appearance-routes.mjs';
 import {travelRoutes} from './travel-routes.mjs';
 import {travelPage} from '../views/travel.mjs';
+import {galleryPage} from '../views/gallery.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.ttf':'font/ttf','.json':'application/json; charset=utf-8','.pdf':'application/pdf'};
@@ -164,6 +165,11 @@ export function createHandler({localPreview = false, rootDir = root, environment
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
         const access=await authorize(req,res).catch(()=>null);
         return send(res,200,req.method==='HEAD'?'':personalPage(access),'text/html; charset=utf-8');
+      }
+      if(pathname==='/personal/gallery'||pathname==='/personal/gallery/'){
+        if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'지원하지 않는 요청입니다.'});
+        const access=await authorize(req,res).catch(()=>null);
+        return send(res,200,req.method==='HEAD'?'':galleryPage(access),'text/html; charset=utf-8');
       }
       if(pathname==='/personal/travel'||pathname==='/personal/travel/'){
         if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'허용되지 않은 요청입니다.'});
