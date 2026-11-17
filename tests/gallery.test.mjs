@@ -38,8 +38,8 @@ test('gallery is public, has both home destinations and uses the common settings
  assert.match(personal.querySelectorAll('.tool-card')[1].textContent,/갤러리 보기/);
 });
 
-test('all 74 items and 75 original assets are present with exact bytes and hashes',async()=>{
- assert.equal(catalog.items.length,74);assert.equal(Object.keys(catalog.assets).length,75);
+test('all 75 items and 76 original assets are present with exact bytes and hashes',async()=>{
+ assert.equal(catalog.items.length,75);assert.equal(Object.keys(catalog.assets).length,76);
  assert.ok(Buffer.byteLength(html)<50000);assert.ok(!html.includes('data:image/'));
  for(const asset of Object.values(catalog.assets)){
   assert.match(asset.src,/^\/(mascot|gallery\/assets)\/[\w.-]+$/);
@@ -51,7 +51,7 @@ test('all 74 items and 75 original assets are present with exact bytes and hashe
 
 test('search, favorites and saved browser state produce the expected visible collection',()=>{
  const w=fixture();try{
-  const d=w.document;assert.equal(d.querySelector('#total-count').textContent,'74');
+  const d=w.document;assert.equal(d.querySelector('#total-count').textContent,'75');
   d.querySelector('#favorite-current').click();assert.equal(d.querySelector('#favorite-count').textContent,'1');
   const saved=JSON.parse(w.localStorage.getItem('kyohoon-gallery-favorites-v1'));assert.equal(saved.length,1);
   d.querySelector('[data-view="favorites"]').click();assert.equal(d.querySelectorAll('.art-card').length,1);
