@@ -136,5 +136,5 @@ test('Personal retains three requested spaces and travel navigation returns to P
  const d=new JSDOM(personalPage()).window.document;
  assert.deepEqual([...d.querySelectorAll('.personal-tools h2')].map(n=>n.textContent),['여행의 흔적','공사중','공사중']);
  const t=new JSDOM(travelPage({role:'editor'})).window.document;
- assert.equal(t.querySelector('.hub-header-actions a[href="/personal"]').textContent,'Personal 홈');
+ assert.equal(t.querySelector('.hub-header-actions a[href="/personal"]').getAttribute('aria-label'),'Personal 홈');
 });

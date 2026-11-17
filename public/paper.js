@@ -32,9 +32,8 @@
   const statuses={planned:'진행 예정',active:'진행 중',done:'진행 완료'};
   const normalizeStatus=p=>{if(p.status==='archived')p.status='done';return p;};
   const workspaceName=type=>type==='rebuttal'?'논문 리뷰탈 준비':'논문 리뷰 준비';
-  function headerBack(type=null){const link=document.querySelector('.site-header .text-link');if(!link)return;link.href=type?'/paper#'+type:'/';link.toggleAttribute('data-paper-back',!!type);const label=link.querySelector('span');if(label)label.textContent=type?'목록으로':'홈으로';}
+
   function renderLanding(){
-    headerBack();
     view='landing';workspace=null;current=null;query='';filter='all';
     app.innerHTML='<section class="paper-welcome"><div><p class="paper-eyebrow">논문을 위한 작업 공간</p><h1>Paper</h1><p>리뷰탈과 논문 리뷰를<br>나누어 관리합니다.</p></div><img src="/mascot/paper.png" alt="논문과 펜을 든 마스코트" width="210" height="210"></section>'+
       (preview?'<p class="paper-preview-note">가상 논문으로 구성한 미리보기입니다. 편집 내용은 이 화면에서만 유지됩니다.</p>':'')+
@@ -45,7 +44,6 @@
     app.setAttribute('aria-busy','false');
   }
   function renderList(){
-    headerBack();
     if(!workspace){renderLanding();return;}
     view='list';app.innerHTML='<button class="paper-back" data-action="back-paper">← Paper</button><section class="paper-welcome paper-workspace-welcome"><div><p class="paper-eyebrow">Paper / '+(workspace==='rebuttal'?'저자 작업':'리뷰어 작업')+'</p><h1>'+workspaceName(workspace)+'</h1><p>'+(workspace==='rebuttal'?'리뷰어별 쟁점과 답변을 정리합니다.':'평가 메모를 영문 리뷰로 다듬습니다.')+'</p></div><img src="/mascot/'+(workspace==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"></section>'+
       (preview?'<p class="paper-preview-note">가상 논문으로 구성한 미리보기입니다. 편집 내용은 이 화면에서만 유지됩니다.</p>':'')+
@@ -80,7 +78,6 @@
   function showDialog(){if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');}
   async function openProject(projectId,restore=false){if(!safeLeave())return;await save();current=clone(data.projects.find(x=>x.id===projectId));workspace=current.data.type;reviewerId=current.data.reviewers[0]?.id;issueId=current.data.reviewers[0]?.issues[0]?.id;dirty=false;saveConflict=false;view='editor';if(!restore)route('editor',current.id);renderEditor();window.scrollTo?.(0,0);}
   function renderEditor(){
-    headerBack(current.data.type);
     view='editor';const p=current.data;app.innerHTML='<div class="paper-topline"><button class="paper-back" data-action="back">← '+workspaceName(p.type)+'</button></div>'+
       '<div class="paper-project-heading"><div><p class="paper-eyebrow">'+types[p.type]+' / '+statuses[p.status]+'</p><h1>'+esc(p.title)+'</h1><div class="paper-meta"><label class="paper-project-status"><span class="sr-only">진행 상태</span><select data-project-status aria-label="진행 상태">'+Object.entries(statuses).map(([v,n])=>'<option value="'+v+'" '+(v===p.status?'selected':'')+'>'+n+'</option>').join('')+'</select></label><span>'+esc(p.venue||'학회 미입력')+'</span><span>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</span>'+(p.charLimit?'<span>'+p.charLimit+'자 제한</span>':'')+'</div></div><div class="paper-actions">'+btn('정보 수정','edit-meta')+btn('MD 내보내기','export')+'</div></div>'+
       '<div class="paper-attachment"><div class="paper-actions">'+(p.pdf?'<a class="paper-btn quiet" '+(preview?'data-action="preview-file" href="#paper-app"':'href="/api/paper/file?projectId='+p.id+'"')+'>'+esc(p.pdf.name)+' ↗</a>'+btn('첨부 해제','detach','quiet'):'<span>논문 PDF를 첨부하면 초안에 함께 참고합니다.</span>')+'</div><div class="paper-actions">'+(p.pdf?'<label><input type="checkbox" id="paper-include-pdf" '+(includePdf?'checked':'')+'> 생성 시 PDF 포함</label>':'')+'<label class="paper-btn" for="paper-file">'+(p.pdf?'PDF 교체':'PDF 첨부')+'</label><input type="file" id="paper-file" accept="application/pdf,.pdf" hidden></div></div>'+
@@ -218,3 +215,4 @@
   async function init(){try{data=await api('/api/paper');data.projects.forEach(r=>normalizeStatus(r.data));await restoreRoute();}catch(e){app.innerHTML='<div class="paper-empty"><h1>Paper</h1><p>'+esc(e.message)+'</p>'+btn('다시 불러오기','retry')+'</div>';app.setAttribute('aria-busy','false');}}
   init();
 })();
+

@@ -1,5 +1,6 @@
+import {spaceNavigation} from './navigation.mjs';
 const uiIcon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="18" height="18" alt="" aria-hidden="true">`;
-const themeButton = () => `<a class="theme-toggle theme-toggle--icon btn btn--secondary" href="/settings" data-global-settings aria-label="설정" title="설정">${uiIcon('settings')}</a>`;
+const themeButton = () => `<a class="theme-toggle theme-toggle--icon space-nav-button" href="/settings" data-global-settings aria-label="설정" title="설정">${uiIcon('settings')}</a>`;
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 const shell = (title, body, surface = '') => `<!doctype html>
@@ -17,7 +18,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2">${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261116-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${surface === 'demos' ? '<link rel="stylesheet" href="/demo-links.css?v=20261116-1">' : ''}
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261116-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${surface === 'demos' ? '<link rel="stylesheet" href="/demo-links.css?v=20261116-1">' : ''}
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {
@@ -26,7 +27,7 @@ function artwork(idle, hover, alt) {
 
 export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
 <div class="home-shell">
-  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동"><a class="text-link home-shortcut" href="/resume">${uiIcon('file-text')}<span>Resume</span></a><a class="text-link home-shortcut" href="/work">${uiIcon('briefcase-business')}<span>Work</span></a>${themeButton()}${authenticated ? '<form action="/api/auth/logout" method="post"><button class="btn header-login" type="submit">로그아웃</button></form>' : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
+  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동"><a class="text-link home-shortcut" href="/resume">${uiIcon('file-text')}<span>Resume</span></a><a class="space-nav-button" href="/work" aria-label="Work 홈" title="Work 홈">${uiIcon('briefcase-business')}</a>${themeButton()}${authenticated ? '<form action="/api/auth/logout" method="post"><button class="btn header-login" type="submit">로그아웃</button></form>' : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
   <main id="main" class="home-main hero hero--split" data-enter="off" aria-labelledby="intro-title">
     <section class="intro hero-text">
       <p class="home-role">AI Research Engineer</p>
@@ -61,7 +62,7 @@ export function escapeHtml(value) {
 
 export function loginPage({configured, preview, message = '', next = '/'}) {
   return shell('로그인', `
-<div class="login-shell"><header class="site-header">${brand()}<div class="header-actions"><a class="text-link link" href="/">${uiIcon('house')}<span>홈으로</span></a>${themeButton()}</div></header>
+<div class="login-shell"><header class="site-header">${brand()}<div class="header-actions">${spaceNavigation()}${themeButton()}</div></header>
 <main id="main" class="login-main hero" data-enter aria-labelledby="login-title">
   <div class="login-art hero-text"><p class="login-eyebrow">Kyohoon Jin</p><h1 id="login-title">나의 공간에<br>로그인하세요.</h1><p>연구일지와 Paper를<br>등록된 계정으로 이용하세요.</p><div class="auth-mascot auth-mascot--login"><img src="/mascot/login-mascots.png" alt="키 카드를 들고 안내하는 마스코트" width="1920" height="819"></div></div>
   <section class="login-card" aria-labelledby="form-title"><div class="login-card-heading"><span class="login-symbol" aria-hidden="true">${uiIcon('log-in')}</span><h2 id="form-title">로그인</h2><p class="muted">이메일과 비밀번호를 입력해 주세요.</p></div>
@@ -88,9 +89,9 @@ export function loginPage({configured, preview, message = '', next = '/'}) {
 </dialog><script src="/auth.js?v=20261113-1" defer></script>`, 'login');
 }
 
-function privateHeader(back = '/') {
-  const personal=back==='/personal';
-  return `<header class="site-header">${brand()}<div class="hub-header-actions"><a class="text-link link" href="${back}">${uiIcon(back === '/' || personal ? 'house' : 'briefcase-business')}<span>${back === '/' ? '홈으로' : personal ? 'Personal 홈' : 'Selectstar 홈'}</span></a>${themeButton()}<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form></div></header>`;
+function privateHeader(back = '/', section = '') {
+  const space=section||(back==='/personal'?'personal':back==='/paper'?'paper':back==='/work'?'work':'');
+  return `<header class="site-header">${brand()}<div class="hub-header-actions">${spaceNavigation(space)}${themeButton()}<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form></div></header>`;
 }
 
 export function workPage({mode, role}) {
@@ -101,7 +102,7 @@ export function workPage({mode, role}) {
     {title:'품의 사용내역', image:'expenses.webp', alt:'계산기와 영수증을 든 마스코트', description:'월별 카드 내역과 품의별 예산을 확인합니다.', href:'/work/expenses/', action:'품의 분석 열기'},
   ];
   return shell('Selectstar', `
-<div class="hub-shell spaces-hub">${privateHeader()}<main id="main" class="hub-main">
+<div class="hub-shell spaces-hub">${privateHeader('/work')}<main id="main" class="hub-main">
   <section class="hub-intro hero" data-enter><div class="hero-text"><h1>Selectstar</h1><p>연구일지와 업무 도구</p><span class="connection-tag">${local ? '로컬 개발 미리보기 / localhost 전용' : role === 'reader' ? '연결됨 / 읽기 전용' : '연결됨 / 편집 가능'}</span></div></section>
   ${local ? '<p class="hub-local-note">개발 미리보기입니다. 연구일지 변경은 이 프로젝트 사본에 저장되며 Supabase와 동기화되지 않습니다.</p>' : ''}
   <div class="tool-grid illustrated-tools">${tools.map(t => `<a class="tool-card card" href="${t.href}"><div class="tool-illustration"><img src="/mascot/${t.image}" alt="${t.alt}" width="380" height="380"></div><div class="tool-copy"><h2>${t.title}</h2><p>${t.description}</p><span class="tool-action">${t.action}<span aria-hidden="true">→</span></span></div></a>`).join('')}</div>
@@ -120,16 +121,17 @@ export function demosPage() {
 </main>${footer()}</div>`, 'demos');
 }
 
-function publicHeader() {
-  return '<header class="site-header">'+brand()+'<div class="hub-header-actions"><a class="text-link link" href="/">'+uiIcon('house')+'<span>홈으로</span></a>'+themeButton()+'</div></header>';
+function publicHeader(section='') {
+  return '<header class="site-header">'+brand()+'<div class="hub-header-actions">'+spaceNavigation(section)+themeButton()+'</div></header>';
 }
 
 export function personalPage(access) {
- const header=access?privateHeader():publicHeader().replace('</div></header>','<a class="btn" href="/login?next=%2Fpersonal">로그인</a></div></header>');
+ const header=access?privateHeader('/personal'):publicHeader('personal').replace('</div></header>','<a class="btn" href="/login?next=%2Fpersonal">로그인</a></div></header>');
  const tools=[{title:'여행의 흔적',image:'travel-globe.webp',description:'다녀온 곳의 사진과 이야기를 지구본에 남깁니다.',href:'/personal/travel'},{title:'공사중',image:'personal-coming-one.webp',description:'새로운 기능을 준비하고 있습니다.'},{title:'공사중',image:'personal-coming-two.webp',description:'새로운 기능을 준비하고 있습니다.'}];
  return shell('Personal',`<link rel="stylesheet" href="/personal.css?v=20261116-3"><div class="hub-shell personal-shell">${header}<main id="main" class="personal-main hero" data-enter><div class="personal-heading hero-text"><div><h1>Personal</h1><p>여행과 일상의 기록을 모아두는 공간입니다.</p></div></div><div class="illustrated-tools personal-tools">${tools.map(t=>`<${t.href?'a href="'+t.href+'"':'article'} class="tool-card card ${t.href?'':'is-pending'}"><div class="tool-illustration"><img src="/mascot/${t.image}" width="512" height="512" alt="${t.title} 마스코트"></div><div class="tool-copy"><h2>${t.title}</h2><p>${t.description}</p><div class="tool-action">${t.href?'<span>여행 기록 보기</span><span aria-hidden="true">↗</span>':'<span class="pending-label">공사 중</span>'}</div></div></${t.href?'a':'article'}>`).join('')}</div></main>${footer()}</div>`,'personal');
 }
 
 export {shell,privateHeader,publicHeader,footer};
+
 
 

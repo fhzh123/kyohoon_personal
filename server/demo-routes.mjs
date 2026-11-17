@@ -1,3 +1,5 @@
+import {gzipSync} from 'node:zlib';
+import {addDemoNavigation} from '../views/navigation.mjs';
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {safeRelativePath} from './policy.mjs';
@@ -22,12 +24,14 @@ export function demoRoutes({authorize,send,rootDir}) {
     try {
       const acceptsGzip=String(req.headers['accept-encoding']||'').split(',').some(value=>/^gzip(?:\s*;\s*q=(?!0(?:\.0*)?$)[\d.]+)?\s*$/i.test(value.trim()));
       let data,compressed=false;
-      if(acceptsGzip&&['.html','.js'].includes(path.extname(file))){
+      if(acceptsGzip&&path.extname(file)==='.js'){
         try{data=await readFile(file+'.gz');compressed=true;}catch{}
       }
       data??=await readFile(file);
+      if(path.extname(file)==='.html'){data=Buffer.from(addDemoNavigation(data.toString('utf8')));if(acceptsGzip){data=gzipSync(data);compressed=true;}}
       send(res,200,req.method==='HEAD'?'':data,format,{Vary:'Accept-Encoding',...(compressed?{'Content-Encoding':'gzip'}:{})});
     }catch{send(res,404,{error:'찾을 수 없습니다.'});}
     return true;
   };
 }
+
