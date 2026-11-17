@@ -12,10 +12,11 @@ const seed={version:4,goals:[{id:'g1',title:'검증용 연구축'}],phases:[],no
   {id:'done',title:'표 형식의 데이터를 분석하는 기술',goalId:'g1',status:'done'},
   {id:'future',title:'원천 데이터의 구조화 모달리티 확장 기술',goalId:'g1'}
 ]};
-async function fixture(role='editor', initial=seed, catalog=[]) {
+async function fixture(role='editor', initial=seed, catalog=[], currentDate='2026-11-09') {
   const html=(await readFile(new URL('work-app/index.html',root),'utf8')).replace(/<script[^>]*src=[^>]*><\/script>/g,'');
   const dom=new JSDOM(html,{url:'https://fixture.invalid/work/app/index.html',runScripts:'outside-only',pretendToBeVisual:true});
-  const w=dom.window,puts=[],gets=[];let remote={revision:'4',state:clone(initial)};
+  const w=dom.window,puts=[],gets=[];
+  const RealDate=w.Date;w.Date=class extends RealDate {constructor(...args){super(...(args.length?args:[currentDate+'T12:00:00']));}static now(){return new RealDate(currentDate+'T12:00:00').getTime();}};let remote={revision:'4',state:clone(initial)};
   w.scrollTo=()=>{};w.confirm=()=>true;w.HTMLElement.prototype.scrollIntoView=()=>{};
   w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
   w.WORK_CONTEXT={mode:'supabase',storageKey:'synthetic-'+role,role};w.RESEARCH_SEED=clone(initial);w.RESEARCH_TAXONOMY_SOURCE={catalog};w.RESEARCH_LEGACY_SEED=clone(seed);w.WORK_INITIAL_ENVELOPE=clone(remote);
@@ -368,4 +369,79 @@ test('owner filters include joint assignments but exclude nonmatching parents wi
  const f=await fixture();try{
   chooseFilter(f,'owner',['연구자 B']);assert.deepEqual(shownTasks(f),['child']);assert.equal(f.w.ResearchAtlas.getState().tasks.find(t=>t.id==='child').parentId,'root');assert.equal(f.puts.length,0);
  }finally{f.close();}
+});
+
+
+test('journal opens at the local current week and month, including a week across New Year',async()=>{
+ const f=await fixture('editor',seed,[],'2026-12-31');try{
+  const d=f.document;assert.equal(d.querySelector('#anchor-month').value,'2026-12');
+  const current=d.querySelector('.timeline-column.is-current');assert.match(current.textContent,/이번 주/);assert.match(current.textContent,/12.28–1.3/);assert.equal(d.querySelectorAll('.timeline-column.is-current').length,1);
+  assert.equal(d.querySelectorAll('.timeline-cell.is-current').length,d.querySelectorAll('.timeline-row').length);
+  d.querySelector('[data-step-period="1"]').click();assert.equal(d.querySelector('.timeline-column.is-current'),null);
+  d.querySelector('#roadmap-today').click();assert.match(d.querySelector('.timeline-column.is-current').textContent,/12.28–1.3/);
+  d.querySelector('[data-view="overview"]').click();assert.equal(d.querySelector('[data-calendar-month]').value,'2026-12');assert.equal(d.querySelectorAll('.calendar-week.is-current-week').length,1);assert.equal(d.querySelector('.calendar-date.is-today').dataset.calendarDay,'2026-12-31');
+  assert.equal(f.puts.length,0);
+ }finally{f.close();}
+ const g=await fixture('reader',seed,[],'2027-01-01');try{g.document.querySelector('[data-view="overview"]').click();assert.equal(g.document.querySelector('[data-calendar-month]').value,'2027-01');}finally{g.close();}
+});
+test('all L3 axes share the same badge, creation label and editable title',async()=>{
+ const initial=clone(seed);initial.goals.push({id:'official',title:'원본 연구축',assetId:'official'});
+ const f=await fixture('editor',initial);try{
+  const d=f.document;d.querySelector('[data-view="goals"]').click();assert.equal(d.querySelector('[data-add-goal]').textContent,'+ L3 연구축');
+  assert.deepEqual([...d.querySelectorAll('.goal-card h3 .badge')].map(x=>x.textContent),['L3','L3']);
+  d.querySelector('[data-edit-goal="official"]').click();assert.equal(d.querySelector('#goal-title').readOnly,false);d.querySelector('#goal-title').value='수정한 연구축';d.querySelector('#goal-form').dispatchEvent(new f.w.Event('submit',{bubbles:true,cancelable:true}));await tick();
+  assert.equal(f.w.ResearchAtlas.getState().goals.find(g=>g.id==='official').title,'수정한 연구축');
+ }finally{f.close();}
+});
+test('six research categories preserve legacy tasks and expose the same choices in settings',async()=>{
+ const initial=clone(seed);initial.tasks[0].category='milestone';initial.tasks[1].category='experiment';
+ const f=await fixture('editor',initial);try{
+  f.w.ResearchAtlas.operations.openTask('root');
+  assert.deepEqual([...f.document.querySelector('#task-category').options].map(x=>x.textContent),['연구/조사','코드 구현','실험 설계','실험 검증','문서 정리','추가 협의']);
+  assert.equal(f.w.ResearchAtlas.getState().tasks.find(t=>t.id==='root').category,'writing');assert.equal(f.w.ResearchAtlas.getState().tasks.find(t=>t.id==='child').category,'experiment');
+  f.document.querySelector('#task-cancel').click();f.document.querySelector('[data-view="settings"]').click();assert.ok(f.document.querySelector('#color-design'));assert.ok(f.document.querySelector('#color-implementation'));assert.equal(f.document.querySelector('#color-milestone'),null);
+ }finally{f.close();}
+});
+const allocationSeed=()=>({...clone(seed),tasks:[
+ {id:'root',title:'상위 연구',goalId:'g1',owner:'A, B',ownerAllocations:[{owner:'A',percent:80},{owner:'B',percent:30}],start:'2026-11-02',end:'2026-11-30',planUnit:'week'},
+ {id:'child',title:'하위 연구',goalId:'g1',parentId:'root',owner:'A',ownerAllocations:[{owner:'A',percent:50}],start:'2026-11-09',end:'2026-11-15',planUnit:'week'},
+ {id:'sibling',title:'병행 연구',goalId:'g1',parentId:'root',owner:'A',ownerAllocations:[{owner:'A',percent:60}],start:'2026-11-09',end:'2026-11-15',planUnit:'week'},
+ {id:'deep',title:'더 깊은 연구',goalId:'g1',parentId:'child',owner:'A',ownerAllocations:[{owner:'A',percent:20}],start:'2026-11-11',end:'2026-11-13',planUnit:'week'},
+ {id:'unknown',title:'미입력 연구',goalId:'g1',owner:'C',start:'2026-11-02',end:'2026-11-30',planUnit:'week'}
+]});
+test('MM and overload use real overlapping dates, per-person descendants and weekday month fractions',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  const C=f.w.ResearchCalendar,rows=C.resourceSummary(f.w.ResearchAtlas.getState().tasks,'2026-11-01','2026-11-30'),a=rows.find(r=>r.owner==='A'),b=rows.find(r=>r.owner==='B');
+  assert.equal(a.peak,110);assert.equal(a.overDays,2);assert.equal(a.firstOver,'2026-11-09');assert.equal(a.mm,0.83);assert.equal(b.mm,0.30);assert.equal(b.peak,30);
+  const card=f.document.querySelector('[data-resource-owner="A"]');assert.ok(card.classList.contains('is-over'));assert.match(card.textContent,/10% 초과/);assert.equal(rows.find(r=>r.owner==='C').missing,1);assert.match(f.document.querySelector('[data-resource-owner="C"]').textContent,/MM 미산정/);
+  const task=(id,start,end,percent,extra={})=>({id,title:id,owner:'A',ownerAllocations:[{owner:'A',percent}],start,end,...extra});
+  assert.equal(C.resourceSummary([task('m','2026-12-01','2026-12-31',100)],'2026-12-01','2026-12-31')[0].mm,1);
+  assert.equal(C.resourceSummary([task('a','2026-12-01','2026-12-10',60),task('b','2026-12-11','2026-12-31',60)],'2026-12-01','2026-12-31')[0].peak,60);
+  assert.equal(C.resourceSummary([task('a','2026-12-01','2026-12-10',100),task('b','2026-12-10','2026-12-31',20)],'2026-12-01','2026-12-31')[0].peak,120);
+  assert.equal(C.resourceSummary([task('parent','2026-12-01','2026-12-31',80),task('child','2026-12-01','2026-12-31',0,{parentId:'parent'})],'2026-12-01','2026-12-31')[0].peak,0);
+  assert.equal(C.resourceSummary([task('paused','2026-12-01','2026-12-31',100,{status:'paused'})],'2026-12-01','2026-12-31').length,0);
+ }finally{f.close();}
+});
+test('allocation edits preview overload, retain individual values through sync, duplicate and backup, and reject invalid input',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  const {w,document:d}=f,api=w.ResearchAtlas;api.operations.openTask('child');
+  const input=d.querySelector('[data-allocation-input]');input.value='70';input.dispatchEvent(new w.Event('input',{bubbles:true}));assert.match(d.querySelector('#allocation-warning').textContent,/130%.*30% 초과/);
+  d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();
+  assert.equal(f.puts.at(-1).state.tasks.find(t=>t.id==='child').ownerAllocations[0].percent,70);assert.equal(d.querySelector('[data-task-row="child"] .task-allocation-percent').textContent,'70%');
+  const copyId=api.operations.duplicateTask('child');assert.equal(api.validateState(api.getState()).tasks.find(t=>t.id===copyId).ownerAllocations[0].percent,70);
+  api.operations.openTask('root');d.querySelector('#task-owner').value='B, A, D';d.querySelector('#task-owner').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal(d.querySelector('[data-allocation-owner="A"]').value,'80');assert.equal(d.querySelector('[data-allocation-owner="B"]').value,'30');assert.equal(d.querySelector('[data-allocation-owner="D"]').value,'');
+  const percent=d.querySelector('[data-allocation-owner="A"]');percent.value='101';d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(d.querySelector('#task-dialog').open,true);assert.equal(api.getState().tasks.find(t=>t.id==='root').ownerAllocations[0].percent,80);
+  percent.value='0';d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(api.getState().tasks.find(t=>t.id==='root').ownerAllocations.find(r=>r.owner==='A').percent,0);
+  const invalid=api.getState();invalid.tasks[0].ownerAllocations=[{owner:'A',percent:-1}];assert.throws(()=>api.validateState(invalid),/0~100/);
+  invalid.tasks[0].ownerAllocations=[{owner:'A',percent:NaN}];assert.throws(()=>api.validateState(invalid),/0~100/);await tick();
+ }finally{f.close();}
+});
+test('resource warnings include hidden and filtered work and readers cannot save allocation changes',async()=>{
+ const initial=allocationSeed();initial.tasks.find(t=>t.id==='sibling').roadmapHidden=true;
+ const f=await fixture('editor',initial);try{
+  chooseFilter(f,'category',[]);assert.equal(f.document.querySelectorAll('[data-task-row]').length,0);assert.match(f.document.querySelector('[data-resource-owner="A"]').textContent,/110%/);
+ }finally{f.close();}
+ const r=await fixture('reader',initial);try{
+  r.w.ResearchAtlas.operations.openTask('root');const input=r.document.querySelector('[data-allocation-input]');assert.equal(input.readOnly,true);input.value='90';r.document.querySelector('#task-form').dispatchEvent(new r.w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(r.puts.length,0);assert.equal(r.w.ResearchAtlas.getState().tasks[0].ownerAllocations[0].percent,80);
+ }finally{r.close();}
 });
