@@ -50,7 +50,7 @@
       const weekEnd=P.addDays(week,6),a=week<start?start:week,b=weekEnd>end?end:weekEnd,{segments,lanes}=packWeek(tasks,a,b);
       return `<section class="calendar-week${P.startOfWeek(today)===week?' is-current-week':''}" aria-label="${week} 주간 연구"><div class="calendar-week-dates">${Array.from({length:7},(_,i)=>{const day=P.addDays(week,i),inside=day>=start&&day<=end;return `<button type="button" class="calendar-date ${inside?'':'is-outside'}${day===today?' is-today':''}" ${day===today?'aria-current="date"':''} data-calendar-day="${day}" ${inside?'':'disabled'} aria-label="${day} 연구 일정 보기"><span>${Number(day.slice(8))}</span></button>`;}).join('')}</div><div class="calendar-week-events" style="--week-lanes:${Math.max(1,lanes)}">${segments.map(segment=>{const task=segment.task;return `<button type="button" class="calendar-research-bar ${task.parentId?'is-subtask':''} status-${esc(task.status||'planned')}" data-calendar-task="${esc(task.id)}" style="grid-column:${P.daysBetween(segment.start,week)+1} / span ${P.daysBetween(segment.end,segment.start)+1};grid-row:${segment.lane+1};--event-color:${colors[task.category]||'#3479e9'}" title="${esc(title(task))}" aria-label="${esc(title(task))}"><span><b class="calendar-level">${task.parentId?'↳ L5':'L4'}</b> ${segment.start>task.start?'‹ ':''}${esc(task.title)}${segment.end<task.end?' ›':''}</span><small>담당: ${esc(ownerNames(task).join(', '))}</small></button>`;}).join('')}</div></section>`;
     }).join('')}</div></div><div data-calendar-resources></div><div data-calendar-day-detail class="calendar-day-detail" hidden></div></section>`;
-    renderResources(host.querySelector('[data-calendar-resources]'),{tasks:state.tasks,start,end,escape:esc,owners:selectedOwner?[selectedOwner]:null});
+    renderResources(host.querySelector('[data-calendar-resources]'),{tasks:state.tasks,start,end,escape:esc,owners:selectedOwner?[selectedOwner]:null,ownerOrder:state.settings?.resourceOwnerOrder,readOnly:api.readOnly,onReorder:api.onReorder});
     const open=id=>openTask(id);
     host.querySelectorAll('[data-calendar-task]').forEach(button=>button.onclick=()=>open(button.dataset.calendarTask));
     const showDay=day=>{
@@ -67,17 +67,17 @@
     if(selectedDay>=start&&selectedDay<=end)showDay(selectedDay);
   }
   // Allocations are explicit per person. An absent entry is unknown, never 0%.
-  function normalizeAllocations(owner,values) {
+  function normalizeAllocations(owner,values,maxPercent=100) {
     if(values===undefined)return [];
     if(!Array.isArray(values))throw Error('담당자 리소스 형식을 확인해 주세요.');
     const names=new Set(ownersOf({owner})),seen=new Set();
     return values.map(row=>{
-      if(!row||typeof row.owner!=='string'||typeof row.percent!=='number'||!Number.isFinite(row.percent)||row.percent<0||row.percent>100||seen.has(row.owner))throw Error('담당자 리소스는 중복 없이 0~100%로 입력해 주세요.');
+      if(!row||typeof row.owner!=='string'||typeof row.percent!=='number'||!Number.isFinite(row.percent)||row.percent<0||row.percent>maxPercent||seen.has(row.owner))throw Error('담당자 리소스는 중복 없이 0~100%로 입력해 주세요.');
       seen.add(row.owner);return {owner:row.owner,percent:Math.round(row.percent*10)/10};
     }).filter(row=>names.has(row.owner));
   }
   function allocationsOf(task) {
-    const values=normalizeAllocations(task.owner,task.ownerAllocations);
+    const values=normalizeAllocations(task.owner,task.ownerAllocations,task.parentId?100:Infinity);
     return ownersOf(task).map(owner=>({owner,percent:values.find(row=>row.owner===owner)?.percent??null}));
   }
   const round=value=>Math.round(value*10)/10;
@@ -97,15 +97,14 @@
   }
   function resourceSummary(tasks,start,end) {
     if(!P.validDate(start)||!P.validDate(end)||start>end)return [];
-    const H=window.ResearchHierarchy;
     const groups=new Map();
     for(const task of tasks){
-      if(task.status==='paused')continue;
-      const range=H?H.effectiveRange(tasks,task.id):task;
+      if(!task.parentId||task.status==='paused')continue;
+      const range=task;
       if(!scheduled(range)||range.start>end||range.end<start)continue;
       for(const row of allocationsOf(task)){
         if(!groups.has(row.owner))groups.set(row.owner,[]);
-        groups.get(row.owner).push({...row,id:task.id,start:range.start<start?start:range.start,end:range.end>end?end:range.end,ancestors:new Set(H?H.ancestorsOf(tasks,task.id).map(t=>t.id):[])});
+        groups.get(row.owner).push({...row,id:task.id,start:range.start<start?start:range.start,end:range.end>end?end:range.end});
       }
     }
     return [...groups].map(([owner,rows])=>{
@@ -113,9 +112,7 @@
       let peak=0,mm=0,overDays=0,firstOver='',estimatedDays=0;
       for(let i=0;i<points.length-1;i++){
         const a=points[i],b=P.addDays(points[i+1],-1),active=rows.filter(row=>row.start<=a&&row.end>=a&&row.percent!==null);
-        // A child's explicit allocation replaces its ancestor for the same owner,
-        // only while that child is scheduled. Siblings remain additive.
-        const actual=active.filter(row=>!active.some(other=>other.ancestors.has(row.id)));
+        const actual=active;
         const percent=round(actual.reduce((sum,row)=>sum+row.percent,0));
         peak=Math.max(peak,percent);mm+=monthEquivalent(a,b)*percent/100;
         const days=businessDays(a,b);if(actual.length)estimatedDays+=days;
@@ -124,16 +121,57 @@
       return {owner,peak,mm:Math.round(mm*100)/100,overDays,firstOver,estimatedDays,missing:rows.filter(row=>row.percent===null).length,assigned:rows.filter(row=>row.percent!==null).length};
     }).sort((a,b)=>b.peak-a.peak||a.owner.localeCompare(b.owner,'ko'));
   }
-  function allocationHTML(task,esc) {
-    const rows=allocationsOf(task);
+function taskAllocations(task,tasks=[]) {
+    if(task.parentId||task.allocationMode==='manual')return allocationsOf(task);
+    const children=window.ResearchHierarchy.descendantsOf(tasks,task.id).filter(t=>t.parentId);
+    const scheduledChildren=children.filter(scheduled);
+    const start=scheduledChildren.reduce((a,t)=>a&&a<t.start?a:t.start,''),end=scheduledChildren.reduce((b,t)=>b>t.end?b:t.end,'');
+    const summary=resourceSummary(children,start,end),names=[...new Set([...ownersOf(task),...children.flatMap(ownersOf)])];
+    return names.map(owner=>{const row=summary.find(row=>row.owner===owner);return {owner,percent:row?.assigned?row.peak:null};});
+}
+function currentResourcePeriod(unit,day=P.iso(new Date())) {
+    if(unit==='month')return {start:P.monthStart(day),end:P.monthEnd(day),periodTitle:'이번 달'};
+    if(unit==='year')return {start:P.yearStart(day),end:P.yearEnd(day),periodTitle:'올해'};
+    return {start:P.startOfWeek(day),end:P.endOfWeek(day),periodTitle:'이번 주 / '+P.toWeek(day)};
+}
+function allocationHTML(task,esc,tasks=[]) {
+    const rows=taskAllocations(task,tasks);
     if(!rows.length)return '<span class="timeline-row-owner is-unassigned">담당 미정</span>';
-    return `<span class="task-allocation-list timeline-row-owner">${rows.map(row=>`<span class="task-allocation" style="--allocation:${row.percent??0}%"><span class="task-allocation-name">${esc(row.owner)}</span><span class="task-allocation-track" aria-hidden="true"><i></i></span><span class="task-allocation-percent">${row.percent===null?'미입력':row.percent+'%'}</span></span>`).join('')}</span>`;
-  }
-  function renderResources(host,{tasks,start,end,escape:esc,owners=null}) {
-    const rows=resourceSummary(tasks,start,end).filter(row=>owners===null||owners.includes(row.owner));
-    host.innerHTML=`<section class="resource-summary" aria-label="담당자별 리소스와 MM"><div class="resource-summary-heading"><div><h3>담당자 리소스</h3><p>${esc(start)} ~ ${esc(end)} / 전체 연구 기준</p></div><span>기간 내 최대 동시 배정</span></div><div class="resource-people">${rows.map(row=>`<div class="resource-person${row.peak>100?' is-over':''}" data-resource-owner="${esc(row.owner)}"><div class="resource-person-heading"><strong>${esc(row.owner)}</strong><span class="resource-percent">${row.assigned?row.peak+'%':'미입력'}</span></div><div class="resource-meter" role="meter" aria-label="${esc(row.owner)} 최대 동시 배정${row.peak>100?', '+round(row.peak-100)+'% 초과':''}" aria-valuemin="0" aria-valuemax="${Math.max(100,row.peak)}" aria-valuenow="${row.peak}" aria-valuetext="${row.peak}%${row.missing?', 미입력 과업 있음':''}" style="--allocation:${Math.min(100,row.peak)}%"><i></i><span></span></div><div class="resource-person-detail"><span>${row.assigned?row.mm.toFixed(2)+' MM':'MM 미산정'}</span>${row.peak>100?`<strong>! ${round(row.peak-100)}% 초과</strong>`:'<span>기준 100%</span>'}</div>${row.firstOver?`<p class="resource-over-date">${esc(row.firstOver)}부터 초과${row.overDays?' / 평일 '+row.overDays+'일':''}</p>`:''}${row.missing?`<p class="resource-missing">리소스 미입력 ${row.missing}개</p>`:''}</div>`).join('')||'<p class="field-help">기간이 정해진 연구에 담당자를 입력하면 리소스가 표시됩니다.</p>'}</div><details class="resource-method"><summary>MM 계산 기준</summary><p>월별 평일 수를 기준으로 100% 배정한 한 달을 1 MM으로 계산합니다. 주말을 제외하며 공휴일과 휴가는 반영하지 않습니다. 하위 연구에 같은 담당자의 리소스를 입력한 기간은 하위 값으로 계산하고, 나머지 기간은 상위 값을 사용합니다. 보류 연구는 제외하며 완료 연구는 배정 기록으로 포함합니다. 화면 필터나 숨김과 관계없이 전체 연구를 합산합니다. 빈칸은 계산에서 제외하므로 미입력 과업이 있으면 합계가 실제보다 작을 수 있습니다.</p></details></section>`;
-  }
+    return `<span class="task-allocation-list timeline-row-owner" title="${task.parentId?'L5 리소스':task.allocationMode==='manual'?'L4 직접 입력 / MM 집계 제외':'하위 L5의 동시 배정 최대값'}">${rows.map(row=>`<span class="task-allocation${row.percent>100?' is-over':''}" style="--allocation:${Math.min(100,row.percent??0)}%"><span class="task-allocation-name">${esc(row.owner)}</span><span class="task-allocation-track" aria-hidden="true"><i></i></span><span class="task-allocation-percent">${row.percent===null?'미입력':row.percent+'%'}</span></span>`).join('')}</span>`;
+}
+function renderResources(host,{tasks,start,end,escape:esc,owners=null,ownerOrder=[],periodTitle='',readOnly=true,onReorder=null}) {
+    const rank=new Map(ownerOrder.map((owner,index)=>[owner,index]));
+    const rows=resourceSummary(tasks,start,end).filter(row=>owners===null||owners.includes(row.owner)).sort((a,b)=>(rank.get(a.owner)??Infinity)-(rank.get(b.owner)??Infinity)||a.owner.localeCompare(b.owner,'ko'));
+    const canReorder=!readOnly&&typeof onReorder==='function';
+    host.innerHTML=`<section class="resource-summary" aria-label="담당자별 리소스와 MM"><div class="resource-summary-heading"><div><h3>담당자 리소스${periodTitle?' / '+esc(periodTitle):''}</h3><p>${esc(start)} ~ ${esc(end)} / L5 기준</p></div><span>기간 내 최대 동시 배정${canReorder?' / 끌기 또는 화살표로 순서 변경':''}</span></div><div class="resource-people">${rows.map((row,index)=>`<div class="resource-person${row.peak>100?' is-over':''}" data-resource-owner="${esc(row.owner)}">${canReorder?`<div class="resource-order-controls"><button type="button" class="resource-order-handle" draggable="true" data-resource-drag="${esc(row.owner)}" aria-label="${esc(row.owner)} 순서 변경" title="끌어서 이동 / 키보드 화살표로 이동">⠿</button><button type="button" class="resource-order-button" data-resource-move="up" data-owner="${esc(row.owner)}" aria-label="${esc(row.owner)} 앞으로 이동" ${index===0?'disabled':''}>←</button><button type="button" class="resource-order-button" data-resource-move="down" data-owner="${esc(row.owner)}" aria-label="${esc(row.owner)} 뒤로 이동" ${index===rows.length-1?'disabled':''}>→</button></div>`:''}<div class="resource-person-heading"><strong>${esc(row.owner)}</strong><span class="resource-percent">${row.assigned?row.peak+'%':'미입력'}</span></div><div class="resource-meter" role="meter" aria-label="${esc(row.owner)} 최대 동시 배정${row.peak>100?', '+round(row.peak-100)+'% 초과':''}" aria-valuemin="0" aria-valuemax="${Math.max(100,row.peak)}" aria-valuenow="${row.peak}" aria-valuetext="${row.peak}%${row.missing?', 미입력 과업 있음':''}" style="--allocation:${Math.min(100,row.peak)}%"><i></i><span></span></div><div class="resource-person-detail"><span>${row.assigned?row.mm.toFixed(2)+' MM':'MM 미산정'}</span>${row.peak>100?`<strong>! ${round(row.peak-100)}% 초과</strong>`:'<span>기준 100%</span>'}</div>${row.firstOver?`<p class="resource-over-date">${esc(row.firstOver)}부터 초과${row.overDays?' / 평일 '+row.overDays+'일':''}</p>`:''}${row.missing?`<p class="resource-missing">리소스 미입력 ${row.missing}개</p>`:''}</div>`).join('')||'<p class="field-help">이 기간에 배정된 L5 연구에 담당자와 리소스를 입력해 주세요.</p>'}</div><p class="resource-reorder-status sr-only" aria-live="polite"></p><details class="resource-method"><summary>MM 계산 기준</summary><p>L5에 입력한 리소스만 합산합니다. 월별 평일 수를 기준으로 100% 배정한 한 달을 1 MM으로 계산합니다. 주말을 제외하며 공휴일과 휴가는 반영하지 않습니다. L4는 L5의 동시 배정 최대값을 표시하며 직접 수정해도 MM 합계에는 영향을 주지 않습니다. 보류 연구는 제외하며 완료 연구는 배정 기록으로 포함합니다. 필터나 숨김과 관계없이 전체 L5를 합산합니다. 빈칸은 계산에서 제외하므로 미입력 과업이 있으면 합계가 실제보다 작을 수 있습니다.</p></details></section>`;
+    if(!canReorder)return;
+    const moveOwner=(owner,direction)=>{
+      const at=rows.findIndex(row=>row.owner===owner),target=rows[at+direction];if(target)onReorder(owner,target.owner,direction<0?'before':'after');
+    };
+    host.querySelectorAll('[data-resource-move]').forEach(button=>button.onclick=()=>moveOwner(button.dataset.owner,button.dataset.resourceMove==='up'?-1:1));
+    host.querySelectorAll('[data-resource-drag]').forEach(button=>button.onkeydown=event=>{
+      if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.key)){event.preventDefault();moveOwner(button.dataset.resourceDrag,['ArrowUp','ArrowLeft'].includes(event.key)?-1:1);}
+    });
+    let dragged='';
+    const clear=()=>{host.querySelectorAll('.is-resource-drop,.is-resource-dragging').forEach(card=>card.classList.remove('is-resource-drop','is-resource-dragging'));dragged='';};
+    host.ondragstart=event=>{
+      const handle=event.target.closest('[data-resource-drag]');if(!handle)return;
+      dragged=handle.dataset.resourceDrag;handle.closest('[data-resource-owner]').classList.add('is-resource-dragging');
+      if(event.dataTransfer){event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',dragged);}
+    };
+    host.ondragover=event=>{
+      const card=event.target.closest('[data-resource-owner]');if(!dragged||!card||card.dataset.resourceOwner===dragged)return;
+      event.preventDefault();if(event.dataTransfer)event.dataTransfer.dropEffect='move';
+      host.querySelectorAll('.is-resource-drop').forEach(item=>item.classList.remove('is-resource-drop'));card.classList.add('is-resource-drop');
+    };
+    host.ondrop=event=>{
+      const card=event.target.closest('[data-resource-owner]'),source=dragged;if(!source||!card){clear();return;}
+      event.preventDefault();const rect=card.getBoundingClientRect(),placement=event.clientY>rect.top+rect.height/2?'after':'before',target=card.dataset.resourceOwner;clear();
+      if(source!==target)onReorder(source,target,placement);
+    };
+    host.ondragend=clear;
+}
 
-  window.ResearchCalendar={render,workItems,summary,ownerSummary,packWeek,ownersOf,normalizeAllocations,allocationsOf,businessDays,resourceSummary,allocationHTML,renderResources};
+  window.ResearchCalendar={render,workItems,summary,ownerSummary,packWeek,ownersOf,normalizeAllocations,allocationsOf,businessDays,resourceSummary,taskAllocations,currentResourcePeriod,allocationHTML,renderResources};
 })();
 
