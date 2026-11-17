@@ -11,7 +11,8 @@ async function get(path){
 }
 const personal=await(await get('/personal')).text();
 assert.match(personal,/여행의 흔적/);
-assert.equal((personal.match(/class="tool-card card is-pending"/g)||[]).length,2);
+assert.match(personal,/href="\/personal\/gallery"/);
+assert.equal((personal.match(/class="tool-card card is-pending"/g)||[]).length,1);
 let travel;
 for(let attempt=0;attempt<18;attempt++){
  travel=await(await get('/personal/travel')).text();
