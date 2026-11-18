@@ -83,7 +83,9 @@
       else if(event.key==='End')next=P.addDays(value,6-P.date(value).getDay());
       if(!next)return;event.preventDefault();if(next<P.MIN_DATE)next=P.MIN_DATE;month=P.monthStart(next);render(next);
     },{signal});
-    document.addEventListener('click',event=>{if(!panel.hidden&&!root.contains(event.target))close(false);},{signal});
+    // Choosing a day replaces the day buttons. The event's original path still
+    // contains this picker even when the clicked button is no longer connected.
+    document.addEventListener('click',event=>{if(!panel.hidden&&!event.composedPath().includes(root))close(false);},{signal});
     sync();
     return {sync,open:()=>open('start',root.querySelector('[data-date-open="start"]'))};
   }

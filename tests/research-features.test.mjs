@@ -40,10 +40,12 @@ test('day picker preserves historical exact dates, cancels drafts and saves a cr
     assert.equal(d.querySelector('#period-start').value,'2026-11-11');
     d.querySelector('[data-date-open="start"]').click();
     d.querySelector('[data-date-day="2026-11-28"]').click();
+    assert.equal(d.querySelector('#research-date-panel').hidden,false,'choosing the start must keep the calendar open for the end date');
     assert.equal(d.querySelector('#period-start').value,'2026-11-11','draft does not mutate the form');
     d.querySelector('[data-date-cancel]').click();assert.equal(d.querySelector('#period-end').value,'2026-11-13');
     d.querySelector('[data-date-open="start"]').click();d.querySelector('[data-date-day="2026-11-28"]').click();
     d.querySelector('[data-date-next]').click();d.querySelector('[data-date-day="2026-12-03"]').click();
+    assert.equal(d.querySelector('#research-date-panel').hidden,false,'choosing the end must leave the Apply button visible');
     assert.equal(d.querySelector('[data-date-count]').textContent,'6일간');d.querySelector('[data-date-apply]').click();
     assert.equal(d.querySelector('#period-start').value,'2026-11-28');assert.equal(d.querySelector('#period-end').value,'2026-12-03');
     assert.match(d.querySelector('#planning-duration').textContent,/6일간/);
@@ -71,6 +73,25 @@ test('day picker supports a single day, reverse range selection, keyboard naviga
     d.querySelector('[data-date-open="start"]').click();d.querySelector('[data-date-day="2026-11-20"]').click();
     d.querySelector('[data-date-day="2026-11-18"]').click();d.querySelector('[data-date-apply]').click();
     assert.equal(d.querySelector('#period-start').value,'2026-11-18');assert.equal(d.querySelector('#period-end').value,'2026-11-20');
+  }finally{f.close();}
+});
+
+test('day clicks stay inside the calendar after rerender while an actual outside click discards only the draft',async()=>{
+  const f=await fixture();try{
+    const {w,document:d}=f;w.ResearchAtlas.operations.openTask('child');
+    d.querySelector('[data-date-open="start"]').click();
+    const clicked=d.querySelector('[data-date-day="2026-11-18"]');clicked.click();
+    assert.equal(clicked.isConnected,false,'the selected date button was replaced during the click');
+    assert.equal(d.querySelector('#research-date-panel').hidden,false);
+    assert.equal(d.querySelector('[data-date-mode="end"]').getAttribute('aria-pressed'),'true');
+    d.querySelector('[data-date-day="2026-11-20"]').click();
+    assert.equal(d.querySelector('#research-date-panel').hidden,false);
+    assert.equal(d.querySelector('[data-date-apply]').disabled,false);
+    d.querySelector('#task-title').click();
+    assert.equal(d.querySelector('#research-date-panel').hidden,true);
+    assert.equal(d.querySelector('#period-start').value,'2026-11-09');
+    assert.equal(d.querySelector('#period-end').value,'2026-11-15');
+    assert.equal(d.querySelector('#task-dialog').open,true);assert.equal(f.puts.length,0);
   }finally{f.close();}
 });
 
