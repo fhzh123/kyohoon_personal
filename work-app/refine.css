@@ -100,3 +100,135 @@ html[data-theme] body:not(#rj):not(#rk) .workspace-footer-line { border-top: 1px
 /* Paper lists inside notes and the task drawer */
 html[data-theme] body:not(#rj):not(#rk) :is(.note-papers, .task-papers) { border-color: var(--rj-hair); }
 html[data-theme] body:not(#rj):not(#rk) .field-help { color: var(--rj-faint); }
+
+/* ───────────────────────── Redesign layer ─────────────────────────
+   Structure and behaviour stay as they are (L3 → L4 → L5 rows, week / month /
+   year scales, drag and resize). Only how things look changes. */
+html[data-theme] body:not(#rj):not(#rk) {
+  --rj-tint: color-mix(in srgb, var(--rj-accent) 9%, transparent);
+  --rj-tint-strong: color-mix(in srgb, var(--rj-accent) 16%, transparent);
+  --rj-soft: color-mix(in srgb, var(--rj-ink) 4%, transparent);
+}
+
+/* Heading: an editorial title, as on the Paper and Selectstar homes */
+html[data-theme] body:not(#rj):not(#rk) .page-heading { margin: 4px 0 30px; }
+html[data-theme] body:not(#rj):not(#rk) .page-heading::before { content: "연구일지"; display: block; margin-bottom: 10px; font-size: 13px; letter-spacing: .015em; color: var(--rj-faint); }
+html[data-theme] body:not(#rj):not(#rk) .page-heading h1 { font-size: 46px; font-weight: 600; letter-spacing: -.05em; line-height: 1.1; }
+html[data-theme] body:not(#rj):not(#rk) .page-description { margin-top: 12px; font-size: 15px; }
+
+/* Summary: one ledger strip instead of four boxes */
+html[data-theme] body:not(#rj):not(#rk) .stats-row { gap: 0; margin-bottom: 36px; border-block: 1px solid var(--rj-line); }
+html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-card { padding: 20px 26px 22px; border: 0; border-left: 1px solid var(--rj-hair); border-radius: 0; background: transparent; min-width: 0; }
+html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-card:first-child { border-left: 0; padding-left: 2px; }
+html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-label { font-size: 12.5px; color: var(--rj-muted); }
+html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-value { margin-top: 8px; font-size: 38px; line-height: 1; font-weight: 600; letter-spacing: -.045em; }
+html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-value small { font-size: 14px; font-weight: 500; margin-left: 4px; }
+html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-meta { margin-top: 10px; font-size: 12px; line-height: 1.5; color: var(--rj-faint); }
+@media (max-width: 900px) {
+  html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-card:nth-child(odd) { border-left: 0; padding-left: 2px; }
+  html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-card:nth-child(n+3) { border-top: 1px solid var(--rj-hair); }
+  html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-card { padding: 16px 16px 18px; }
+  html[data-theme] body:not(#rj):not(#rk) .stats-row .stat-value { font-size: 30px; }
+}
+
+/* Planning panel */
+html[data-theme] body:not(#rj):not(#rk) .planning-panel { border-radius: 16px; overflow: hidden; }
+html[data-theme] body:not(#rj):not(#rk) .planning-toolbar { padding: 18px 22px; gap: 14px; }
+html[data-theme] body:not(#rj):not(#rk) .planning-tools { gap: 8px; }
+html[data-theme] body:not(#rj):not(#rk) .planning-tools h2 { margin-right: 10px; font-size: 21px; font-weight: 650; letter-spacing: -.035em; font-variant-numeric: tabular-nums; color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .planning-tools .secondary-button { min-height: 34px; padding: 0 13px; border-color: transparent; background: var(--rj-soft); font-weight: 500; }
+html[data-theme] body:not(#rj):not(#rk) .planning-tools .secondary-button:hover { background: var(--rj-raised); border-color: transparent; }
+html[data-theme] body:not(#rj):not(#rk) .planning-jump { gap: 8px; margin-left: 6px; color: var(--rj-faint); }
+html[data-theme] body:not(#rj):not(#rk) .planning-jump input { min-height: 34px; border-color: transparent; background: var(--rj-soft); }
+html[data-theme] body:not(#rj):not(#rk) :is(.segmented-control, .view-switch, .hierarchy-view-controls) { border-color: transparent; border-radius: 999px; background: var(--rj-soft); }
+html[data-theme] body:not(#rj):not(#rk) :is(.segmented-control, .view-switch, .hierarchy-view-controls) button { border-radius: 999px; padding-inline: 14px; }
+html[data-theme] body:not(#rj):not(#rk) :is(.segmented-control, .view-switch, .hierarchy-view-controls) button:is(.active, .primary-button, [aria-pressed="true"], [aria-selected="true"]) { background: var(--rj-ink); color: var(--ws-bg); box-shadow: none; }
+
+/* Filters: quiet fields, no frames */
+html[data-theme] body:not(#rj):not(#rk) .planning-filters { padding: 12px 22px; gap: 8px; }
+html[data-theme] body:not(#rj):not(#rk) .goal-filter > summary { min-height: 36px; border-color: transparent; background: var(--rj-soft); border-radius: 9px; color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .goal-filter > summary:hover, html[data-theme] body:not(#rj):not(#rk) .goal-filter[open] > summary { background: var(--rj-raised); }
+html[data-theme] body:not(#rj):not(#rk) .planning-caption { padding: 10px 22px; font-size: 12px; }
+
+/* Owner resources */
+html[data-theme] body:not(#rj):not(#rk) .resource-summary { padding: 22px; }
+html[data-theme] body:not(#rj):not(#rk) .resource-summary-heading h3 { font-size: 16px; font-weight: 650; letter-spacing: -.02em; }
+html[data-theme] body:not(#rj):not(#rk) .resource-people { gap: 12px; }
+html[data-theme] body:not(#rj):not(#rk) .resource-person { padding: 16px 18px; border: 0; border-radius: 12px; background: var(--rj-soft); }
+html[data-theme] body:not(#rj):not(#rk) .resource-person-heading strong { font-size: 14px; font-weight: 600; }
+html[data-theme] body:not(#rj):not(#rk) .resource-percent { font-size: 26px; font-weight: 600; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+html[data-theme] body:not(#rj):not(#rk) .resource-meter { height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--rj-ink) 10%, transparent); }
+html[data-theme] body:not(#rj):not(#rk) .resource-meter i { border-radius: 3px; }
+html[data-theme] body:not(#rj):not(#rk) :is(.resource-order-handle, .resource-order-button) { border-color: transparent; color: var(--rj-faint); }
+html[data-theme] body:not(#rj):not(#rk) :is(.resource-order-handle, .resource-order-button):hover:not(:disabled) { background: var(--rj-raised); color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .resource-person-detail { color: var(--rj-muted); font-variant-numeric: tabular-nums; }
+
+/* Timeline */
+html[data-theme] body:not(#rj):not(#rk) .research-timeline { background: transparent; }
+html[data-theme] body:not(#rj):not(#rk) .hierarchy-view-controls { margin: 18px 22px 14px; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-period-navigation { padding: 10px 22px; background: transparent; border-color: var(--rj-hair); color: var(--rj-muted); font-variant-numeric: tabular-nums; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-period-navigation button { min-height: 30px; padding: 0 12px; border-color: transparent; border-radius: 999px; background: var(--rj-soft); color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-period-navigation button:hover { background: var(--rj-raised); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-header { background: var(--rj-surface); border-bottom: 1px solid var(--rj-line); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-corner { background: var(--rj-surface); border-right-color: var(--rj-hair); color: var(--rj-faint); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-groups { background: transparent; border-bottom-color: var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-period-group { color: var(--rj-ink); font-weight: 650; letter-spacing: -.01em; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-column { border-left-color: var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-column strong { color: var(--rj-muted); font-weight: 600; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-column .timeline-week-code { color: var(--rj-ink); font-variant-numeric: tabular-nums; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-column small { color: var(--rj-faint); font-variant-numeric: tabular-nums; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-column.is-current { background: var(--rj-tint); box-shadow: inset 0 2px var(--rj-accent); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-column.is-current :is(strong, .timeline-week-code, small) { color: var(--rj-accent); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-goal-heading { min-height: 46px; background: var(--rj-raised); border-color: var(--rj-line); color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-goal-heading strong { font-size: 13.5px; font-weight: 650; letter-spacing: -.015em; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-goal-heading small { background: transparent; color: var(--rj-faint); font-variant-numeric: tabular-nums; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-task-label { background: var(--rj-surface); border-right-color: var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-task-label:hover { background: color-mix(in srgb, var(--rj-ink) 3%, var(--rj-surface)); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-task-label strong { color: var(--rj-ink); font-weight: 600; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-row.level-l5 .timeline-task-label strong { font-weight: 500; color: color-mix(in srgb, var(--rj-ink) 82%, var(--rj-surface)); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-task-label small, html[data-theme] body:not(#rj):not(#rk) .timeline-child-progress { color: var(--rj-faint); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-row { border-color: var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-lane { background: transparent; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-cell { border-left-color: var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-cell.is-current { background: var(--rj-tint); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-cell:hover, html[data-theme] body:not(#rj):not(#rk) .timeline-cell.is-current:hover { background: var(--rj-tint-strong); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-cell.is-selected { background: var(--rj-tint-strong); box-shadow: inset 0 1px var(--rj-accent), inset 0 -1px var(--rj-accent); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-level-badge { border-color: transparent; background: var(--rj-soft); color: var(--rj-muted); font-weight: 600; letter-spacing: .02em; }
+
+/* Bars: flat colour fields with a single coloured edge */
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar { border-radius: 7px; border-width: 1px; border-color: color-mix(in srgb, var(--event-color, #427be0) 30%, var(--rj-surface)); border-left: 3px solid var(--event-color, #427be0); background: color-mix(in srgb, var(--event-color, #427be0) 15%, var(--rj-surface)); color: var(--rj-ink); box-shadow: none; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar.is-summary { border-color: color-mix(in srgb, var(--event-color, #427be0) 38%, var(--rj-surface)); border-left: 3px solid var(--event-color, #427be0); background: color-mix(in srgb, var(--event-color, #427be0) 20%, var(--rj-surface)); color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar.is-summary::before, html[data-theme] body:not(#rj):not(#rk) .timeline-bar.is-summary::after { background: var(--event-color, #427be0); width: 3px; height: 8px; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar.is-subtask { border-color: color-mix(in srgb, var(--event-color, #427be0) 22%, var(--rj-surface)); border-left: 3px solid color-mix(in srgb, var(--event-color, #427be0) 75%, var(--rj-surface)); background: color-mix(in srgb, var(--event-color, #427be0) 8%, var(--rj-surface)); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar.status-paused { border-style: dashed; border-left-style: solid; background: color-mix(in srgb, var(--event-color, #d39e54) 6%, var(--rj-surface)); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar:hover { box-shadow: 0 6px 18px rgb(0 0 0 / .14); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar :is(.timeline-bar-title, .is-summary .timeline-bar-title) { color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar-level { border-color: transparent; background: color-mix(in srgb, var(--event-color, #427be0) 22%, transparent); color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .timeline-bar-meta { color: var(--rj-muted); opacity: 1; }
+html[data-theme] body:not(#rj):not(#rk) .timeline-color-legend, html[data-theme] body:not(#rj):not(#rk) .timeline-help { padding: 12px 22px; background: transparent; border-color: var(--rj-hair); color: var(--rj-faint); }
+
+/* Side cards under the roadmap */
+html[data-theme] body:not(#rj):not(#rk) .strategy-side-card { padding: 22px; border-radius: 14px; }
+html[data-theme] body:not(#rj):not(#rk) .strategy-note { border-radius: 10px; background: var(--rj-soft); }
+
+/* Card grids: L3 axes, candidates, notes */
+html[data-theme] body:not(#rj):not(#rk) :is(.goal-card, .candidate-card, .research-card, .note-card, .reference-card, .quarter-card, .year-goal-card) { border-radius: 14px; transition: border-color .18s, transform .18s; }
+html[data-theme] body:not(#rj):not(#rk) :is(.goal-card, .candidate-card, .research-card, .note-card):hover { border-color: color-mix(in srgb, var(--rj-accent) 45%, var(--rj-line)); }
+html[data-theme] body:not(#rj):not(#rk) .goal-card { padding: 24px; }
+html[data-theme] body:not(#rj):not(#rk) .goal-card .goal-header h3, html[data-theme] body:not(#rj):not(#rk) .goal-card h3 { font-size: 17px; font-weight: 650; letter-spacing: -.025em; }
+html[data-theme] body:not(#rj):not(#rk) .goal-metric { font-size: 40px; font-weight: 600; letter-spacing: -.05em; }
+html[data-theme] body:not(#rj):not(#rk) .progress-track { height: 6px; border-radius: 3px; }
+html[data-theme] body:not(#rj):not(#rk) .icon-button.card-action { border-color: transparent; background: var(--rj-soft); }
+html[data-theme] body:not(#rj):not(#rk) .board-toolbar h2, html[data-theme] body:not(#rj):not(#rk) .candidate-header h2 { font-size: 22px; font-weight: 650; letter-spacing: -.035em; }
+html[data-theme] body:not(#rj):not(#rk) .empty-state { border-style: dashed; background: transparent; }
+
+/* Year view */
+html[data-theme] body:not(#rj):not(#rk) .year-toolbar h2 { font-size: 22px; font-weight: 650; letter-spacing: -.035em; }
+html[data-theme] body:not(#rj):not(#rk) .year-focus-panel textarea { border-color: transparent; background: var(--rj-soft); }
+html[data-theme] body:not(#rj):not(#rk) .quarter-header { background: transparent; }
+
+@media (max-width: 640px) {
+  html[data-theme] body:not(#rj):not(#rk) .page-heading h1 { font-size: 34px; }
+  html[data-theme] body:not(#rj):not(#rk) .page-description { font-size: 14px; }
+  html[data-theme] body:not(#rj):not(#rk) .planning-toolbar, html[data-theme] body:not(#rj):not(#rk) .planning-filters, html[data-theme] body:not(#rj):not(#rk) .resource-summary { padding-inline: 16px; }
+}
