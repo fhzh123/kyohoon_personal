@@ -123,15 +123,6 @@ body[data-work-shell] .ws-heading p { margin: 4px 0 0; font-size: 14px; line-hei
 .ws-sidebar .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* Selectstar 홈 and 연구 데모 */
-body[data-work-shell] .hub-local-note { margin: 0 0 20px; padding: 12px 16px; border: 1px solid var(--ws-line-strong); border-radius: 10px; font-size: 13px; color: var(--ws-muted); background: var(--ws-surface); }
-body[data-work-shell] .connection-tag { font-size: 12.5px; color: var(--ws-faint); }
-.ws-tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
-body[data-work-shell] .ws-tools .tool-card { display: flex; flex-direction: column; min-width: 0; margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--ws-line-strong); border-radius: 13px; background: var(--ws-surface); color: var(--ws-ink); text-decoration: none; box-shadow: none; transform: none; transition: border-color .15s ease; }
-body[data-work-shell] .ws-tools .tool-card:hover { border-color: color-mix(in srgb, var(--ws-ink) 32%, var(--ws-line-strong)); }
-body[data-work-shell] .ws-tools .tool-illustration { height: 190px; margin: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--ws-raised) 70%, transparent); border-bottom: 1px solid var(--ws-line); }
-body[data-work-shell] .ws-tools .tool-illustration img { width: 150px; height: 150px; object-fit: contain; transition: transform .25s ease; }
-body[data-work-shell] .ws-tools .tool-card:hover .tool-illustration img { transform: translateY(-3px); }
-body[data-work-shell] .ws-tools .tool-copy { display: flex; flex-direction: column; flex: 1; padding: 18px 20px 18px; }
 body[data-work-shell] .ws-tools .tool-copy h2, body[data-work-shell] .ws-demo h2 { margin: 0 0 6px; font-size: 18px; font-weight: 750; letter-spacing: -.025em; line-height: 1.35; color: var(--ws-ink); }
 body[data-work-shell] .ws-tools .tool-copy p, body[data-work-shell] .ws-demo p { margin: 0 0 18px; font-size: 13.5px; line-height: 1.6; color: var(--ws-muted); word-break: keep-all; }
 body[data-work-shell] .tool-action { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--ws-line); font-size: 13px; font-weight: 600; color: var(--ws-accent); }
@@ -144,8 +135,6 @@ body[data-work-shell] .ws-demo:hover { border-color: color-mix(in srgb, var(--ws
 body[data-work-shell] .demo-original { align-self: flex-end; font-size: 12.5px; color: var(--ws-muted); text-decoration: none; }
 body[data-work-shell] .demo-original:hover { color: var(--ws-ink); }
 @media (max-width: 640px) { .ws-demos { grid-template-columns: minmax(0, 1fr); } .ws-demo img { width: 96px; height: 96px; } body[data-work-shell] .ws-tools .tool-illustration { height: 150px; } }
-@media (prefers-reduced-motion: reduce) { body[data-work-shell] .ws-tools .tool-illustration img { transition: none; } }
-body[data-work-shell] .ws-tools .tool-illustration img { position: static; inset: auto; max-width: none; max-height: none; }
 /* 품의 사용내역 keeps its ledger styles but takes the shell palette. */
 body[data-surface="expenses"][data-work-shell] { --ex-bg: var(--ws-bg); --ex-panel: var(--ws-surface); --ex-soft: var(--ws-raised); --ex-line: var(--ws-line-strong); --ex-text: var(--ws-ink); --ex-muted: var(--ws-muted); --ex-blue: var(--ws-accent); --ex-teal: var(--ws-accent); }
 body[data-surface="expenses"][data-work-shell] .ws-heading .year-controls { flex-wrap: wrap; }
@@ -168,13 +157,3 @@ html[data-theme] body[data-work-shell] .ws-topbar .ws-page-actions .search-box {
 html[data-theme] body[data-work-shell] .ws-topbar .ws-page-actions #add-task { flex: none; }
 html[data-theme] body[data-work-shell] .ws-topbar #work-logout { grid-column: auto; }
 @media (max-width: 640px) { html[data-theme] body[data-work-shell] .ws-topbar .ws-actions { gap: 4px; } }
-/* Selectstar landing: tools only, no sidebar. */
-body[data-work-shell] .ws-app.ws-app--bare { grid-template-columns: minmax(0, 1fr); }
-.ws-topbar--bare .ws-bar-brand { display: flex; align-items: center; gap: 10px; color: var(--ws-ink); text-decoration: none; min-width: 0; }
-.ws-bar-brand img { width: 30px; height: 30px; object-fit: contain; flex: none; }
-.ws-bar-brand span { display: grid; line-height: 1.2; }
-.ws-bar-brand strong { font-size: 15px; font-weight: 750; letter-spacing: -.02em; }
-.ws-bar-brand small { margin-top: 3px; font-size: 11.5px; color: var(--ws-faint); }
-body[data-work-shell] .ws-topbar--bare { padding-inline: max(24px, calc((100vw - 1280px) / 2)); }
-.ws-content.ws-content--landing { max-width: 1280px; padding-inline: 0; width: min(100% - 48px, 1280px); padding-top: 48px; }
-@media (max-width: 640px) { .ws-content.ws-content--landing { width: calc(100% - 32px); padding-top: 28px; } body[data-work-shell] .ws-topbar--bare { padding-inline: 16px; } .ws-bar-brand small { display: none; } }

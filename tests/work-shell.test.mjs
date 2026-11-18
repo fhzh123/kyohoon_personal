@@ -8,12 +8,22 @@ import {WORK_SECTIONS} from '../views/work-shell.mjs';
 
 const source = p => readFile(new URL('../' + p, import.meta.url), 'utf8');
 
-test('the Selectstar landing page lists the tools without the sidebar', () => {
+test('the Selectstar landing page uses the Paper-style space home without the sidebar', () => {
   const d = new JSDOM(workPage({mode: 'supabase', role: 'editor'})).window.document;
   assert.equal(d.querySelector('.ws-sidebar'), null);
   assert.equal(d.querySelector('[data-ws-open]'), null);
-  assert.equal(d.querySelectorAll('main a.tool-card').length, 4);
-  assert.equal(d.querySelector('.ws-actions').lastElementChild.id, 'work-logout');
+  assert.equal(d.querySelector('.wordmark').getAttribute('href'), '/');
+  assert.match(d.querySelector('.wordmark').textContent, /Kyohoon Jin/);
+  assert.equal(d.querySelector('.space-hero h1').textContent, 'Selectstar');
+  assert.equal(d.querySelectorAll('.space-cards a.tool-card').length, 4);
+  assert.ok(d.querySelector('.hub-header-actions form[action="/api/auth/logout"]'));
+});
+
+test('the shared sidebar brand is Kyohoon Jin and returns to the main home', () => {
+  const d = new JSDOM(demosPage()).window.document;
+  const brand = d.querySelector('.ws-sidebar .ws-brand');
+  assert.equal(brand.getAttribute('href'), '/');
+  assert.equal(brand.textContent.trim(), 'Kyohoon Jin');
 });
 
 test('static Work pages carry the current shared shell markup', async () => {
