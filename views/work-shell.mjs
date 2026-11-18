@@ -75,14 +75,18 @@ export function workSidebar(active, {footer = ''} = {}) {
  * Top bar: menu button, breadcrumb, page actions, then the same global cluster
  * (Work 홈, 전체 홈, 설정, 로그아웃) in the same order on every page.
  */
-export function workTopbar(active, {crumb = '', crumbId = '', actions = ''} = {}) {
+export function workTopbar(active, {crumb = '', crumbId = '', actions = '', bare = false} = {}) {
   const section = sectionOf(active);
   const trail = [`<a href="/work">Selectstar</a>`];
   if (section && section.key !== 'home') trail.push(crumb ? `<a href="${section.href}">${section.label}</a>` : `<strong>${section.label}</strong>`);
   if (crumb) trail.push(`<strong${crumbId ? ` id="${crumbId}"` : ''}>${crumb}</strong>`);
-  return `<header class="ws-topbar">
-  <button class="ws-menu-button" type="button" data-ws-open aria-controls="ws-sidebar" aria-expanded="false" aria-label="메뉴 열기">${shellIcon('menu')}</button>
-  <nav class="ws-crumbs" aria-label="현재 위치">${trail.join('<span aria-hidden="true">/</span>')}</nav>
+  // The Selectstar landing page has no sidebar: it shows the brand instead of the menu button.
+  const lead = bare
+    ? `<a class="ws-bar-brand" href="/work" aria-label="Selectstar 홈"><img src="/mascot/face.png" alt="" width="30" height="30"><span><strong>Selectstar</strong><small>AI 1팀 · Vertical</small></span></a>`
+    : `<button class="ws-menu-button" type="button" data-ws-open aria-controls="ws-sidebar" aria-expanded="false" aria-label="메뉴 열기">${shellIcon('menu')}</button>
+  <nav class="ws-crumbs" aria-label="현재 위치">${trail.join('<span aria-hidden="true">/</span>')}</nav>`;
+  return `<header class="ws-topbar${bare ? ' ws-topbar--bare' : ''}">
+  ${lead}
   <div class="ws-actions topbar-actions">${actions ? `<div class="ws-page-actions">${actions}</div><span class="ws-divider" aria-hidden="true"></span>` : ''}${spaceNavigation('work', 'ws-space-nav')}<a class="ws-icon-button" href="/settings" data-global-settings aria-label="설정" title="설정">${shellIcon('settings')}</a><form id="work-logout" class="ws-logout" action="/api/auth/logout" method="post"><button type="submit" aria-label="로그아웃" title="로그아웃">${shellIcon('logout')}<span>로그아웃</span></button></form></div>
 </header>`;
 }

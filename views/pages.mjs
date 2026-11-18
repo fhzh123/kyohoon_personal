@@ -105,7 +105,7 @@ export function workPage({mode, role}) {
   ];
   const status = local ? '로컬 개발 미리보기 / localhost 전용' : role === 'reader' ? '연결됨 / 읽기 전용' : '연결됨 / 편집 가능';
   return shell('Selectstar', `
-<div class="ws-app">${workSidebar('home')}<div class="ws-main">${workTopbar('home')}<main id="main" class="ws-content">
+<div class="ws-app ws-app--bare"><div class="ws-main">${workTopbar('home', {bare: true})}<main id="main" class="ws-content ws-content--landing">
   <div class="ws-heading"><div><h1>Selectstar</h1><p>연구일지와 업무 도구를 한곳에서 엽니다.</p></div><div class="ws-heading-meta"><span class="connection-tag">${status}</span></div></div>
   ${local ? '<p class="hub-local-note">개발 미리보기입니다. 연구일지 변경은 이 프로젝트 사본에 저장되며 Supabase와 동기화되지 않습니다.</p>' : ''}
   <div class="ws-tools">${tools.map(t => `<a class="tool-card" href="${t.href}"><div class="tool-illustration"><img src="/mascot/${t.image}" alt="${t.alt}" width="380" height="380"></div><div class="tool-copy"><h2>${t.title}</h2><p>${t.description}</p><span class="tool-action">${t.action}<span aria-hidden="true">→</span></span></div></a>`).join('')}</div>
