@@ -27,7 +27,7 @@ test('return destinations cannot become an external or API redirect',()=>{
 test('successful login keeps the requested destination and validates active membership',async()=>{
  const calls=[];const handler=createHandler({environment,fetcher:async(url,options)=>{calls.push({url,options});if(url.includes('grant_type=password'))return json({access_token:'private-token',refresh_token:'private-refresh',user:{id:'member'}});if(url.includes('workspace_members'))return json([{user_id:'member',role:'reader'}]);throw Error('Unexpected call');}});
  const r=await request(handler,'/api/auth/login',{method:'POST',body:{email:'member@example.invalid',password:'test-only',next:'/work/expenses/?year=2026'}});
- assert.equal(r.status,303);assert.equal(r.headers.location,'/work/expenses/?year=2026');assert.equal(r.headers['set-cookie'].length,2);assert.ok(r.headers['set-cookie'].every(c=>c.includes('HttpOnly')&&c.includes('Secure')));assert.ok(!r.text.includes('private-token'));assert.equal(calls.length,2);
+ assert.equal(r.status,303);assert.equal(r.headers.location,'/work/expenses/?year=2026');assert.equal(r.headers['set-cookie'].length,3);assert.ok(r.headers['set-cookie'].every(c=>c.includes('HttpOnly')&&c.includes('Secure')));assert.ok(!r.text.includes('private-token'));assert.equal(calls.length,2);
 });
 test('home login returns home with or without next, while named tools keep their destination',async()=>{
  const handler=createHandler({environment,fetcher:async url=>url.includes('grant_type=password')?json({access_token:'private-token',refresh_token:'private-refresh',user:{id:'member'}}):url.endsWith('/auth/v1/user')?json({id:'member'}):json([{user_id:'member',role:'reader'}])});

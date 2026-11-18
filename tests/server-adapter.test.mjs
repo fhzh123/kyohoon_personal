@@ -15,7 +15,7 @@ test('Vercel pre-parsed form and JSON bodies authenticate without rereading a co
     const headers={};let status;
     const res={setHeader(k,v){headers[k]=v;},writeHead(s,h){status=s;Object.assign(headers,h);},end(){}};
     await handler(req,res);
-    assert.equal(status,303);assert.equal(headers.Location,'/work');
+    assert.equal(status,303);assert.equal(headers.Location,'/');
     assert.equal(sent.length,1);assert.equal(sent[0].email,'fixture@example.invalid');
   }
 });

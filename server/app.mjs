@@ -1,7 +1,8 @@
 import { readFile, writeFile, rename, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { randomBytes, timingSafeEqual, randomUUID } from 'node:crypto';
+import { randomBytes, timingSafeEqual, randomUUID, createHash } from 'node:crypto';
+import {gzipSync,gunzipSync} from 'node:zlib';
 import { homePage, loginPage, workPage, demosPage, personalPage } from '../views/pages.mjs';
 import { previewAllowed, safeRelativePath, safeLoginDestination, validState } from './policy.mjs';
 import {demoRoutes} from './demo-routes.mjs';
@@ -11,10 +12,11 @@ import { appearanceRoutes } from './appearance-routes.mjs';
 import {travelRoutes} from './travel-routes.mjs';
 import {travelPage} from '../views/travel.mjs';
 import {galleryPage} from '../views/gallery.mjs';
+import {IDLE_MS,SESSION_COOKIE_AGE,sealIdle,readIdle} from './idle-session.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.ttf':'font/ttf','.json':'application/json; charset=utf-8','.pdf':'application/pdf'};
-const cookieNames = ['kh_access', 'kh_refresh', 'kh_local'];
+const cookieNames = ['kh_access', 'kh_refresh', 'kh_local', 'kh_idle'];
 const securityHeaders = {
   'X-Content-Type-Options':'nosniff',
   'X-Frame-Options':'DENY',
@@ -23,9 +25,9 @@ const securityHeaders = {
 };
 
 /** All confidential routes enter this handler and authorize before opening files. */
-export function createHandler({localPreview = false, rootDir = root, environment = process.env, fetcher = fetch} = {}) {
+export function createHandler({localPreview = false, rootDir = root, environment = process.env, fetcher = fetch, clock = () => Date.now()} = {}) {
   const localToken = randomBytes(32).toString('hex');
-  const attempts = new Map();
+  const attempts = new Map(),refreshFlights=new Map();
   // Serialize local writes; check the revision inside this queue, never before it.
   let writes = Promise.resolve();
   const configured = Boolean(environment.SUPABASE_URL && environment.SUPABASE_ANON_KEY);
@@ -33,6 +35,14 @@ export function createHandler({localPreview = false, rootDir = root, environment
   const baseHeaders = {apikey: environment.SUPABASE_ANON_KEY || ''};
   const preview = req => previewAllowed({ enabled: localPreview && environment.LOCAL_WORK_PREVIEW !== '0', development: environment.NODE_ENV === 'development', vercel: Boolean(environment.VERCEL), host: req.headers.host, address: req.socket?.remoteAddress });
   const send = (res, status, value, contentType = 'application/json; charset=utf-8', extras = {}) => {
+    if(status===200&&contentType.startsWith('text/html')&&res.siteSession&&value){
+      const session=res.siteSession,key=createHash('sha256').update(session.userId).digest('hex').slice(0,24);
+      const script=`<script src="/session-activity.js?v=20261118-1" data-idle-ms="${IDLE_MS}" data-server-now="${clock()}" data-last-active="${session.lastActive}" data-session-key="${key}" defer></script>`;
+      const compressed=extras['Content-Encoding']==='gzip';
+      const html=compressed?gunzipSync(value).toString('utf8'):String(value);
+      const tracked=html.replace(/<\/head>/i,script+'</head>');
+      value=compressed?gzipSync(Buffer.from(tracked)):tracked;
+    }
     res.writeHead(status, {...securityHeaders, 'Cache-Control':'private, no-store, max-age=0', 'Content-Type':contentType, ...extras});
     res.end(Buffer.isBuffer(value) || typeof value === 'string' ? value : JSON.stringify(value));
   };
@@ -43,30 +53,59 @@ export function createHandler({localPreview = false, rootDir = root, environment
   const bearer = token => ({Authorization:`Bearer ${token}`});
   const member = async token => {
     const response = await authFetch('/rest/v1/workspace_members?select=user_id,role&active=eq.true', {headers:bearer(token)});
+    if(response.status===429||response.status>=500)throw new Error('Authentication is temporarily unavailable');
     if (!response.ok) return null;
     const rows = await response.json();
     return Array.isArray(rows) && rows.length === 1 ? rows[0] : null;
   };
-  async function authorize(req, res) {
-    const cookies = cookiesOf(req);
-    if (preview(req) && secureEqual(cookies.kh_local,localToken)) return {mode:'local',role:'editor',userId:'localhost',token:''};
-    if (!configured || !cookies.kh_access) return null;
-    let token = cookies.kh_access;
-    // Validate identity and membership concurrently; authorization still requires both.
-    let [response, membership] = await Promise.all([
-      authFetch('/auth/v1/user', {headers:bearer(token)}), member(token)
-    ]);
-    if (response.status === 401 && cookies.kh_refresh) {
-      const refreshed = await authFetch('/auth/v1/token?grant_type=refresh_token', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:cookies.kh_refresh})});
-      if (!refreshed.ok) return null;
-      const session = await refreshed.json();
-      token = session.access_token;
-      [response, membership] = await Promise.all([authFetch('/auth/v1/user',{headers:bearer(token)}),member(token)]);
-      if (response.ok) res.setHeader('Set-Cookie',[setCookie('kh_access',token),setCookie('kh_refresh',session.refresh_token,60*60*24*7)]);
+  function queueCookies(res,values){
+    res.authCookies??=new Map();for(const value of values)res.authCookies.set(value.split('=')[0],value);
+    res.setHeader('Set-Cookie',[...res.authCookies.values()]);
+  }
+  const clearSession=res=>{res.siteSession=null;queueCookies(res,cookieNames.map(name=>setCookie(name,'',0)));};
+  function setActivity(res,lastActive){
+    const session=res.siteSession;session.lastActive=lastActive;session.expiresAt=lastActive+IDLE_MS;
+    const values=[setCookie('kh_idle',sealIdle(lastActive,session.refreshToken||session.token),SESSION_COOKIE_AGE)];
+    if(session.refreshToken)values.push(setCookie('kh_refresh',session.refreshToken,SESSION_COOKIE_AGE));
+    queueCookies(res,values);
+  }
+  async function refreshSession(refreshToken){
+    if(!refreshFlights.has(refreshToken)){
+      const pending=(async()=>{
+        const result=await authFetch('/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:refreshToken})});
+        if(result.status===429||result.status>=500)throw new Error('Authentication is temporarily unavailable');
+        if(!result.ok)return null;
+        const session=await result.json();
+        return typeof session.access_token==='string'&&session.access_token&&typeof session.refresh_token==='string'&&session.refresh_token?session:null;
+      })();
+      refreshFlights.set(refreshToken,pending);
+      pending.finally(()=>refreshFlights.delete(refreshToken)).catch(()=>{});
     }
-    if (!response.ok) return null;
-    const user = await response.json();
-    if (!membership || membership.user_id !== user.id) return null;
+    return refreshFlights.get(refreshToken);
+  }
+  async function authorize(req, res) {
+    const cookies=cookiesOf(req),now=clock();
+    if(preview(req)&&secureEqual(cookies.kh_local,localToken))return {mode:'local',role:'editor',userId:'localhost',token:''};
+    if(!configured||(!cookies.kh_access&&!cookies.kh_refresh))return null;
+    const idle=cookies.kh_idle?readIdle(cookies.kh_idle,cookies.kh_refresh||cookies.kh_access,now):null;
+    if(cookies.kh_idle&&(!idle||now>=idle.expiresAt)){clearSession(res);return null;}
+    let token=cookies.kh_access,refreshToken=cookies.kh_refresh,refreshed=null;
+    let response,membership;
+    if(token)[response,membership]=await Promise.all([authFetch('/auth/v1/user',{headers:bearer(token)}),member(token)]);
+    if((!token||response.status===401)&&refreshToken){
+      refreshed=await refreshSession(refreshToken);if(!refreshed)return null;
+      token=refreshed.access_token;refreshToken=refreshed.refresh_token;
+      [response,membership]=await Promise.all([authFetch('/auth/v1/user',{headers:bearer(token)}),member(token)]);
+    }
+    if(response?.status===429||response?.status>=500)throw new Error('Authentication is temporarily unavailable');
+    if(!response?.ok)return null;
+    const user=await response.json();if(!membership||membership.user_id!==user.id)return null;
+    // Recheck after upstream calls, so a slow refresh cannot revive an idle session.
+    if(idle&&clock()>=idle.expiresAt){clearSession(res);return null;}
+    res.siteSession={token,refreshToken,userId:user.id,lastActive:idle?.lastActive??now,expiresAt:(idle?.lastActive??now)+IDLE_MS};
+    if(refreshed)queueCookies(res,[setCookie('kh_access',token,Math.max(1,Math.min(3600,Number(refreshed.expires_in)||3600)))]);
+    const navigation=req.method==='GET'&&req.headers['sec-fetch-dest']==='document'&&!/prefetch|prerender/i.test(String(req.headers['sec-purpose']||req.headers.purpose||''));
+    if(!idle||refreshed||navigation)setActivity(res,navigation?clock():res.siteSession.lastActive);
     return {mode:'supabase',role:membership.role,userId:user.id,token};
   }
   async function localEnvelope() {
@@ -118,6 +157,20 @@ export function createHandler({localPreview = false, rootDir = root, environment
       const pathname = requestUrl.pathname;
       if (!['GET','HEAD','POST','PUT'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (['POST','PUT'].includes(req.method) && !sameOrigin(req,environment)) return send(res,403,{error:'다른 출처의 요청은 허용되지 않습니다.'});
+      if(pathname==='/api/auth/idle-logout'&&req.method==='POST'){
+        const cookies=cookiesOf(req),idle=readIdle(cookies.kh_idle,cookies.kh_refresh||cookies.kh_access,clock());
+        if(idle&&clock()<idle.expiresAt)return send(res,409,{lastActive:idle.lastActive,expiresAt:idle.expiresAt,serverNow:clock()});
+        clearSession(res);return send(res,204,'');
+      }
+      if(pathname==='/api/auth/activity'&&req.method==='POST'){
+        const access=await authorize(req,res);if(!access)return send(res,401,{error:'로그인이 만료되었습니다.'});
+        if(access.mode==='local')return send(res,200,{lastActive:clock(),expiresAt:clock()+IDLE_MS,serverNow:clock()});
+        let incoming;try{incoming=JSON.parse(await body(req,1024)||'{}');}catch{return send(res,400,{error:'활동 시간을 확인해 주세요.'});}
+        const now=clock();
+        if(!incoming||!Number.isSafeInteger(incoming.lastActivity)||incoming.lastActivity>now+60000||incoming.lastActivity<now-IDLE_MS)return send(res,400,{error:'활동 시간을 확인해 주세요.'});
+        setActivity(res,Math.max(res.siteSession.lastActive,Math.min(now,incoming.lastActivity)));
+        return send(res,200,{lastActive:res.siteSession.lastActive,expiresAt:res.siteSession.expiresAt,serverNow:clock()});
+      }
       if(await handleTravel(req,res,requestUrl))return;
       if(await handleDemos(req,res,requestUrl))return;
       if(await handleExpenses(req,res,requestUrl))return;
@@ -140,7 +193,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
         const session = await result.json();
         const membership = await member(session.access_token);
         if (!membership || membership.user_id !== session.user?.id) return send(res,403,loginPage({configured,preview:preview(req),next,message:'이 계정에는 업무 공간 접근 권한이 없습니다.'}),'text/html; charset=utf-8');
-        return redirect(res,next,[setCookie('kh_access',session.access_token),setCookie('kh_refresh',session.refresh_token,604800)]);
+        return redirect(res,next,[setCookie('kh_access',session.access_token),setCookie('kh_refresh',session.refresh_token,SESSION_COOKIE_AGE),setCookie('kh_idle',sealIdle(clock(),session.refresh_token||session.access_token),SESSION_COOKIE_AGE)]);
       }
       if (pathname === '/api/auth/logout' && req.method === 'POST') {
         const access = cookiesOf(req).kh_access;
@@ -153,7 +206,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
         const next=safeLoginDestination(requestUrl.searchParams.get('next'));
         const access=await authorize(req,res);
         if(access)return redirect(res,next);
-        return send(res,200,req.method==='HEAD'?'':loginPage({configured,preview:preview(req),next}),'text/html; charset=utf-8');
+        return send(res,200,req.method==='HEAD'?'':loginPage({configured,preview:preview(req),next,message:requestUrl.searchParams.get('reason')==='idle'?'3시간 동안 활동이 없어 로그아웃되었습니다. 다시 로그인해 주세요.':''}),'text/html; charset=utf-8');
       }
       if (pathname === '/work/preview') {
         if (req.method !== 'GET') return send(res,405,{error:'허용되지 않은 요청입니다.'});
