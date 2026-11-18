@@ -8,6 +8,14 @@ import {WORK_SECTIONS} from '../views/work-shell.mjs';
 
 const source = p => readFile(new URL('../' + p, import.meta.url), 'utf8');
 
+test('the Selectstar landing page lists the tools without the sidebar', () => {
+  const d = new JSDOM(workPage({mode: 'supabase', role: 'editor'})).window.document;
+  assert.equal(d.querySelector('.ws-sidebar'), null);
+  assert.equal(d.querySelector('[data-ws-open]'), null);
+  assert.equal(d.querySelectorAll('main a.tool-card').length, 4);
+  assert.equal(d.querySelector('.ws-actions').lastElementChild.id, 'work-logout');
+});
+
 test('static Work pages carry the current shared shell markup', async () => {
   for (const [file, config] of Object.entries(STATIC_PAGES)) {
     const html = await source(file);
@@ -17,7 +25,7 @@ test('static Work pages carry the current shared shell markup', async () => {
 
 test('every Work page shows one sidebar with the same sections and only its own section expanded', async () => {
   const pages = {
-    home: workPage({mode: 'supabase', role: 'editor'}), demos: demosPage(),
+    demos: demosPage(),
     research: await source('work-app/index.html'), team: await source('views/team-resources.html'), expenses: await source('work-expenses/index.html'),
   };
   for (const [key, html] of Object.entries(pages)) {
@@ -33,4 +41,16 @@ test('every Work page shows one sidebar with the same sections and only its own 
     assert.ok(actions.querySelector('[data-space-navigation="work"] a[href="/work"]'), key);
     assert.ok(actions.querySelector('[data-global-settings]'), key);
   }
+});
+
+test('the research journal loads the neutral tone and polish after the shared shell', async () => {
+  const html = await source('work-app/index.html');
+  const shell = html.indexOf('<!--/ws:assets-->'), tone = html.indexOf('href="research-tone.css'), polish = html.indexOf('href="refine.css');
+  assert.ok(shell > 0 && tone > shell && polish > tone);
+  const {buildTone, retone, scopeSelector} = await import('../scripts/build-research-tone.mjs');
+  assert.equal(await source('work-app/research-tone.css'), await buildTone());
+  // Navy surfaces lose their blue cast; accents, category and status colours stay.
+  assert.ok(retone('#121823'));
+  for (const kept of ['#3479e9', '#a8c3ff', '#12a898', '#291313', '#ffffff']) assert.equal(retone(kept), null, kept);
+  assert.equal(scopeSelector('.search-box input::placeholder'), '.search-box input:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *)::placeholder');
 });

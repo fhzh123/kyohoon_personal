@@ -168,3 +168,13 @@ html[data-theme] body[data-work-shell] .ws-topbar .ws-page-actions .search-box {
 html[data-theme] body[data-work-shell] .ws-topbar .ws-page-actions #add-task { flex: none; }
 html[data-theme] body[data-work-shell] .ws-topbar #work-logout { grid-column: auto; }
 @media (max-width: 640px) { html[data-theme] body[data-work-shell] .ws-topbar .ws-actions { gap: 4px; } }
+/* Selectstar landing: tools only, no sidebar. */
+body[data-work-shell] .ws-app.ws-app--bare { grid-template-columns: minmax(0, 1fr); }
+.ws-topbar--bare .ws-bar-brand { display: flex; align-items: center; gap: 10px; color: var(--ws-ink); text-decoration: none; min-width: 0; }
+.ws-bar-brand img { width: 30px; height: 30px; object-fit: contain; flex: none; }
+.ws-bar-brand span { display: grid; line-height: 1.2; }
+.ws-bar-brand strong { font-size: 15px; font-weight: 750; letter-spacing: -.02em; }
+.ws-bar-brand small { margin-top: 3px; font-size: 11.5px; color: var(--ws-faint); }
+body[data-work-shell] .ws-topbar--bare { padding-inline: max(24px, calc((100vw - 1280px) / 2)); }
+.ws-content.ws-content--landing { max-width: 1280px; padding-inline: 0; width: min(100% - 48px, 1280px); padding-top: 48px; }
+@media (max-width: 640px) { .ws-content.ws-content--landing { width: calc(100% - 32px); padding-top: 28px; } body[data-work-shell] .ws-topbar--bare { padding-inline: 16px; } .ws-bar-brand small { display: none; } }

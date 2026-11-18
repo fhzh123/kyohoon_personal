@@ -1,0 +1,102 @@
+/* Research journal polish, loaded after research-tone.css.
+   Brings the journal's surfaces in line with Team resources: one neutral surface,
+   1px borders, 12px corners, quiet labels and heavy tabular numbers. Visual only:
+   no element is added, hidden or moved, except the duplicated planning-panel top
+   stripe and drop shadows. The double id prefix outranks the generated tone layer. */
+
+html[data-theme] body:not(#rj):not(#rk) {
+  --rj-surface: var(--ws-surface); --rj-raised: var(--ws-raised); --rj-line: var(--ws-line-strong); --rj-hair: var(--ws-line);
+  --rj-ink: var(--ws-ink); --rj-muted: var(--ws-muted); --rj-faint: var(--ws-faint); --rj-accent: var(--ws-accent);
+  --rj-radius: 12px;
+}
+
+/* Page heading, same scale as the Team resources heading */
+html[data-theme] body:not(#rj):not(#rk) .page-heading { margin-bottom: 24px; }
+html[data-theme] body:not(#rj):not(#rk) .page-heading h1 { font-size: 32px; font-weight: 800; letter-spacing: -.035em; line-height: 1.2; color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .page-description { margin-top: 6px; font-size: 14px; color: var(--rj-muted); }
+
+/* Section headings, as on Team resources */
+html[data-theme] body:not(#rj):not(#rk) :is(.board-toolbar, .candidate-header) h2 { font-size: 19px; font-weight: 750; letter-spacing: -.025em; color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) :is(.board-toolbar, .candidate-header) h2 + p { margin-top: 3px; font-size: 13px; color: var(--rj-muted); }
+html[data-theme] body:not(#rj):not(#rk) .goal-metric { font-weight: 800; letter-spacing: -.03em; color: var(--rj-ink); font-variant-numeric: tabular-nums; }
+html[data-theme] body:not(#rj):not(#rk) .goal-metric small { font-weight: 600; color: var(--rj-muted); letter-spacing: 0; }
+html[data-theme] body:not(#rj):not(#rk) .progress-label { font-size: 11.5px; color: var(--rj-faint); }
+
+/* Summary numbers */
+html[data-theme] body:not(#rj):not(#rk) .stats-row { gap: 14px; margin-bottom: 28px; }
+html[data-theme] body:not(#rj):not(#rk) .stat-card { padding: 16px 18px; border: 1px solid var(--rj-line); border-radius: var(--rj-radius); background: var(--rj-surface); box-shadow: none; }
+html[data-theme] body:not(#rj):not(#rk) .stat-label { font-size: 12.5px; font-weight: 500; color: var(--rj-muted); }
+html[data-theme] body:not(#rj):not(#rk) .stat-value { margin-top: 4px; font-size: 28px; line-height: 1.2; font-weight: 800; letter-spacing: -.03em; color: var(--rj-ink); font-variant-numeric: tabular-nums; }
+html[data-theme] body:not(#rj):not(#rk) .stat-value small { font-size: 13px; font-weight: 600; margin-left: 3px; letter-spacing: 0; color: var(--rj-muted); }
+html[data-theme] body:not(#rj):not(#rk) .stat-meta { margin-top: 2px; font-size: 12.5px; color: var(--rj-faint); }
+html[data-theme] body:not(#rj):not(#rk) .planning-summary .stat-card:first-child .stat-value { color: var(--rj-ink); }
+
+/* Cards and panels: one surface, one border, one radius */
+html[data-theme] body:not(#rj):not(#rk) :is(.planning-panel, .main-panel, .panel-card, .goal-card, .research-card, .note-card, .reference-card, .phase-card, .quarter-card, .year-goal-card, .strategy-side-card, .strategy-focus, .settings-panel, .note-editor-layout, .month-planning, .empty-state, .empty-page, .candidate-card) {
+  border: 1px solid var(--rj-line); border-radius: var(--rj-radius); background: var(--rj-surface); box-shadow: none;
+}
+html[data-theme] body:not(#rj):not(#rk) :is(.research-card, .note-card, .reference-card, .goal-card, .candidate-card):hover { border-color: color-mix(in srgb, var(--rj-ink) 22%, var(--rj-line)); }
+html[data-theme] body:not(#rj):not(#rk) .planning-panel { margin-bottom: 28px; }
+
+/* Panel bands: hairlines instead of tinted strips */
+html[data-theme] body:not(#rj):not(#rk) :is(.planning-toolbar, .year-toolbar, .settings-heading, .quarter-header) { background: transparent; border-bottom: 1px solid var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .planning-toolbar { padding: 16px 20px; }
+html[data-theme] body:not(#rj):not(#rk) .year-toolbar { border: 1px solid var(--rj-line); border-bottom-color: var(--rj-hair); border-radius: var(--rj-radius) var(--rj-radius) 0 0; background: var(--rj-surface); }
+html[data-theme] body:not(#rj):not(#rk) .year-focus-panel { border: 1px solid var(--rj-line); border-top: 0; border-radius: 0 0 var(--rj-radius) var(--rj-radius); background: var(--rj-surface); }
+html[data-theme] body:not(#rj):not(#rk) .planning-filters { background: transparent; border-bottom: 1px solid var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .planning-caption { background: transparent; border-color: var(--rj-hair); color: var(--rj-faint); }
+html[data-theme] body:not(#rj):not(#rk) .resource-summary { background: transparent; border-color: var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .settings-footer { background: transparent; border-top: 1px solid var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) #appearance-status { padding: 0 22px 20px; margin: 0; color: var(--rj-muted); font-size: 13px; }
+html[data-theme] body:not(#rj):not(#rk) .theme-options button { padding: 10px 16px; border: 1px solid var(--rj-line); border-radius: 8px; background: transparent; color: var(--rj-muted); }
+html[data-theme] body:not(#rj):not(#rk) .theme-options button:hover { color: var(--rj-ink); background: var(--rj-raised); }
+html[data-theme] body:not(#rj):not(#rk) .theme-options button[aria-pressed="true"] { color: var(--rj-ink); background: var(--rj-raised); border-color: color-mix(in srgb, var(--rj-accent) 55%, var(--rj-line)); font-weight: 600; }
+html[data-theme] body:not(#rj):not(#rk) .quarter-header { padding-block: 12px; }
+
+/* Section labels inside panels */
+html[data-theme] body:not(#rj):not(#rk) .section-label { font-size: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--rj-muted); }
+html[data-theme] body:not(#rj):not(#rk) :is(.strategy-note, .note-list) { background: var(--rj-raised); }
+html[data-theme] body:not(#rj):not(#rk) .note-list { border-right: 1px solid var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .note-list-item.active { background: var(--rj-surface); color: var(--rj-ink); box-shadow: inset 0 0 0 1px var(--rj-line); }
+html[data-theme] body:not(#rj):not(#rk) .note-list-item:hover:not(.active) { background: color-mix(in srgb, var(--rj-ink) 5%, transparent); }
+
+/* Buttons and fields */
+html[data-theme] body:not(#rj):not(#rk) :is(.secondary-button, .icon-button, .close-button):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--rj-line); background: transparent; color: var(--rj-ink); border-radius: 8px; box-shadow: none; }
+html[data-theme] body:not(#rj):not(#rk) :is(.secondary-button, .icon-button, .close-button):not(.ws-sidebar *, .ws-topbar *):hover:not(:disabled) { background: var(--rj-raised); border-color: var(--rj-line); }
+html[data-theme] body:not(#rj):not(#rk) .primary-button:not(.ws-sidebar *, .ws-topbar *) { border-radius: 8px; box-shadow: none; }
+html[data-theme] body:not(#rj):not(#rk) .icon-button.card-action.is-danger:hover { color: #e5484d; border-color: color-mix(in srgb, #e5484d 45%, var(--rj-line)); }
+html[data-theme] body:not(#rj):not(#rk) :is(input:not([type="checkbox"], [type="radio"], [type="color"], [type="range"]), select, textarea):not(.ws-sidebar *, .ws-topbar *, .note-textarea) {
+  border: 1px solid var(--rj-line); border-radius: 8px; background-color: var(--rj-surface); color: var(--rj-ink); box-shadow: none;
+}
+html[data-theme] body:not(#rj):not(#rk) :is(input, select, textarea):not(.ws-sidebar *, .ws-topbar *):focus-visible { border-color: var(--rj-accent); outline: 2px solid color-mix(in srgb, var(--rj-accent) 28%, transparent); outline-offset: 0; }
+html[data-theme] body:not(#rj):not(#rk) .note-textarea { background: transparent; color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) .goal-filter > summary { border: 1px solid var(--rj-line); border-radius: 8px; background: var(--rj-surface); }
+html[data-theme] body:not(#rj):not(#rk) :is(.goal-filter-menu, .goal-filter-footer) { background: var(--rj-surface); border-color: var(--rj-line); }
+html[data-theme] body:not(#rj):not(#rk) .goal-filter-menu { border-radius: 10px; box-shadow: 0 12px 32px rgb(0 0 0 / .18); }
+
+/* Segmented controls: a quiet track with a raised selection */
+html[data-theme] body:not(#rj):not(#rk) :is(.segmented-control, .view-switch, .hierarchy-view-controls) { padding: 3px; gap: 2px; border: 1px solid var(--rj-line); border-radius: 9px; background: var(--rj-raised); }
+html[data-theme] body:not(#rj):not(#rk) :is(.segmented-control, .view-switch, .hierarchy-view-controls) button { border: 0; border-radius: 6px; background: transparent; color: var(--rj-muted); box-shadow: none; }
+html[data-theme] body:not(#rj):not(#rk) :is(.segmented-control, .view-switch, .hierarchy-view-controls) button:hover { color: var(--rj-ink); }
+html[data-theme] body:not(#rj):not(#rk) :is(.segmented-control, .view-switch, .hierarchy-view-controls) button:is(.active, .primary-button, [aria-pressed="true"], [aria-selected="true"]) { background: var(--rj-surface); color: var(--rj-ink); font-weight: 600; box-shadow: 0 0 0 1px var(--rj-line); }
+
+/* Badges */
+html[data-theme] body:not(#rj):not(#rk) :is(.badge, .tag, .chip, .timeline-level-badge):not([style]) { background: var(--rj-raised); color: var(--rj-muted); border-radius: 5px; }
+
+/* Progress */
+html[data-theme] body:not(#rj):not(#rk) .progress-track { height: 4px; background: color-mix(in srgb, var(--rj-ink) 9%, transparent); }
+html[data-theme] body:not(#rj):not(#rk) .progress-fill { background: var(--rj-accent); }
+html[data-theme] body:not(#rj):not(#rk) .resource-person { border-color: var(--rj-line); border-radius: 10px; background: transparent; }
+html[data-theme] body:not(#rj):not(#rk) .resource-meter { background: color-mix(in srgb, var(--rj-ink) 9%, transparent); }
+
+/* Dialogs */
+html[data-theme] body:not(#rj):not(#rk) :is(.drawer, .modal) { background: var(--rj-surface); color: var(--rj-ink); border: 1px solid var(--rj-line); }
+html[data-theme] body:not(#rj):not(#rk) :is(.drawer-footer, .modal-footer) { background: var(--rj-surface); border-top: 1px solid var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) :is(.drawer-header, .modal-header) { border-bottom: 1px solid var(--rj-hair); }
+
+/* Footer line at the end of the page */
+html[data-theme] body:not(#rj):not(#rk) .workspace-footer-line { border-top: 1px solid var(--rj-hair); color: var(--rj-faint); }
+
+/* Paper lists inside notes and the task drawer */
+html[data-theme] body:not(#rj):not(#rk) :is(.note-papers, .task-papers) { border-color: var(--rj-hair); }
+html[data-theme] body:not(#rj):not(#rk) .field-help { color: var(--rj-faint); }
