@@ -287,8 +287,8 @@ test('allowed remote login uses HttpOnly Secure SameSite cookies and never retur
   const handler = createHandler({ rootDir: await fixture(), environment: remoteEnvironment, fetcher });
   const response = await request(handler, '/api/auth/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: { email: 'fixture@example.invalid', password: 'synthetic-only' } });
   assert.equal(response.status, 303);
-  assert.equal(response.headers.location, '/work');
-  assert.equal(response.headers['set-cookie'].length, 2);
+  assert.equal(response.headers.location, '/');
+  assert.equal(response.headers['set-cookie'].length, 3);
   for (const cookie of response.headers['set-cookie']) {
     assert.match(cookie, /; HttpOnly;/);
     assert.match(cookie, /; SameSite=Strict;/);
@@ -314,7 +314,7 @@ test('expired remote access refreshes and revalidates identity before serving wo
   assert.equal(JSON.parse(response.text).revision, '5');
   assert.equal(calls.filter(call => call.url.endsWith('/auth/v1/user')).length, 2);
   assert.equal(calls.find(call => call.url.includes('/workspaces?')).authorization, 'Bearer synthetic-refreshed');
-  assert.equal(response.headers['set-cookie'].length, 2);
+  assert.equal(response.headers['set-cookie'].length, 3);
 });
 
 test('remote identity/member mismatch and upstream failures fail closed', async () => {
@@ -348,7 +348,7 @@ test('Personal is public while demo picker still enforces allowed membership',as
  const headers={cookie:'kh_access=synthetic-private'};
  const personal=await request(handler,'/personal',{headers});assert.match(personal.text,/travel-globe.webp/);assert.match(personal.headers['cache-control'],/no-store/);
  assert.match((await request(handler,'/work/demos',{headers})).text,/Document Parsing/);
- for(const [space,destination]of [['personal','/personal'],['selectstar','/work'],['https://outside.invalid','/work']]){
+ for(const [space,destination]of [['personal','/personal'],['selectstar','/'],['https://outside.invalid','/']]){
   const r=await request(handler,'/api/auth/login',{method:'POST',headers:{'content-type':'application/json'},body:{space,email:'fixture@example.invalid',password:'synthetic'}});assert.equal(r.headers.location,destination);
  }
  allowed=false;assert.equal((await request(handler,'/personal',{headers})).status,200);assert.equal((await request(handler,'/work/demos',{headers})).status,303);
