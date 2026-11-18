@@ -89,10 +89,11 @@
     .forEach(
       ([id], i) => (PROJECTS.get(id).color = palette[i % palette.length]),
     );
+  const TABS = { overview: "과업 배분", people: "월별 변화", records: "주간 원본 기록" };
   const state = {
     month: DATA.months.at(-1),
     people: new Set(DATA.people.map((p) => p.id)),
-    tab: "overview",
+    tab: TABS[location.hash.slice(1)] ? location.hash.slice(1) : "overview",
     allTasks: false,
     query: "",
     page: 0,
@@ -218,50 +219,29 @@
       });
     return list;
   }
-  function donutArcPath(cx, cy, r, start, span) {
-    const x1 = cx + r * Math.cos(start),
-      y1 = cy + r * Math.sin(start),
-      end = start + span,
-      x2 = cx + r * Math.cos(end),
-      y2 = cy + r * Math.sin(end);
-    return `M ${x1} ${y1} A ${r} ${r} 0 ${span > Math.PI ? 1 : 0} 1 ${x2} ${y2}`;
+  const segmentAttrs = (s, person) =>
+    `${s.other ? `data-other="${person.id}"` : `data-project="${s.id}" data-task-key="${s.id}"`} data-lead-person="${person.id}" data-segment-name="${esc(s.name)}" data-segment-share="${s.share}" data-segment-color="${s.color}"`;
+  function strip(segs, person) {
+    if (!segs.length) return '<div class="tr-strip is-empty" aria-hidden="true"></div>';
+    return `<div class="tr-strip" role="group" aria-label="${esc(person.name)}의 과업 비중, 기록된 업무를 100퍼센트로 표시">${segs
+      .map(
+        (s) =>
+          `<span class="tr-seg" ${segmentAttrs(s, person)} role="button" tabindex="0" title="${esc(s.name)} ${f(s.share)}%" aria-label="${esc(person.name)}, ${esc(s.name)} ${f(s.share)}퍼센트, ${s.other ? "모든 과업 펼치기" : "과업 상세 보기"}" style="flex-grow:${Math.max(s.share, 0.4)};--task-color:${s.color}"></span>`,
+      )
+      .join("")}</div>`;
   }
-  function donut(one, person) {
-    const segs = displaySegments(one, 5),
-      R = 72,
-      C = 2 * Math.PI * R,
-      cx = 105,
-      cy = 105;
-    let offset = 0;
-    const paths = segs
-      .map((s) => {
-        const length = (s.share / 100) * C,
-          arc = `<path class="donut-segment" ${s.other ? 'data-other="' + person.id + '"' : 'data-project="' + s.id + '" data-task-key="' + s.id + '"'} data-donut-person="${person.id}" data-segment-name="${esc(s.name)}" data-segment-share="${s.share}" tabindex="0" role="button" aria-label="${esc(person.name)}, ${esc(s.name)} ${f(s.share)}퍼센트, ${s.other ? "모든 과업 펼치기" : "과업 상세 보기"}" d="${donutArcPath(cx, cy, R, -Math.PI / 2 + offset / R, Math.max(0, length - 0.9) / R)}" fill="none" stroke="${s.color}" stroke-width="25"><title>${esc(s.name)} ${f(s.share)}%</title></path>`;
-        offset += length;
-        return arc;
-      })
-      .join("");
-    const top = segs[0];
-    return `<div class="donut-wrap"><svg class="donut-svg" viewBox="0 0 210 210" aria-label="${esc(person.name)} 과업 비중, 기록된 업무를 100퍼센트로 표시"><circle cx="105" cy="105" r="72" fill="none" stroke="var(--track)" stroke-width="25"/>${paths}<text class="donut-center-label" x="105" y="89" text-anchor="middle">가장 집중한 과업</text><text class="donut-center-value" id="donut-value-${person.id}" x="105" y="122" text-anchor="middle">${top ? f(top.share) : "—"}<tspan class="donut-percent">${top ? "%" : ""}</tspan></text></svg><p class="donut-selected" id="donut-name-${person.id}" ${top ? `style="--task-color:${top.color}"` : ""}>${top ? esc(top.name) : "기록 없음"}</p></div>`;
+  function shareRow(s, person, extra = "") {
+    return `<button type="button" class="tr-row ${extra}" ${segmentAttrs(s, person)}${s.other ? ' aria-expanded="false"' : ""}><i class="color-square" style="--task-color:${s.color}"></i><span class="tr-row-name" title="${esc(s.name)}">${esc(s.name)}${s.other ? ' <span class="expand-sign">+</span>' : ""}</span><span class="tr-row-bar" aria-hidden="true"><i style="width:${Math.min(100, s.share)}%;--task-color:${s.color}"></i></span><b>${f(s.share)}<small>%</small></b></button>`;
   }
   function personCards() {
-    return `<div class="people-grid allocation-people">${DATA.people
+    return `<div class="tr-people">${DATA.people
       .filter((p) => state.people.has(p.id))
       .map((person) => {
         const one = allPersonProjects(person.id),
           segs = displaySegments(one, 5),
-          top = one.projects[0];
-        return `<article class="panel allocation-person" data-person-card="${person.id}"><div class="allocation-person-head"><div class="avatar" style="--person:${personColor(person.id)}">${person.name.slice(1)}</div><h3>${esc(person.name)}</h3><span class="person-task-count">${one.projects.length}개 과업</span></div>${donut(one, person)}<div class="donut-legend">${segs.map((s) => (s.other ? `<button class="donut-legend-row other-row" data-other="${person.id}"><span class="color-square" style="--task-color:${s.color}"></span><span class="donut-task-name">${s.name} <span class="expand-sign">+</span></span><b>${f(s.share)}<small>%</small></b></button>` : `<button class="donut-legend-row" data-project="${s.id}" data-task-key="${s.id}"><span class="color-square" style="--task-color:${s.color}"></span><span class="donut-task-name" title="${esc(s.name)}">${esc(s.name)}</span><b>${f(s.share)}<small>%</small></b></button>`)).join("") || '<p class="empty">이 기간의 기록이 없습니다.</p>'}</div>${
-          one.projects.length > 5
-            ? `<div id="other-${person.id}" class="other-tasks" hidden>${one.projects
-                .slice(5)
-                .map(
-                  (s) =>
-                    `<button class="donut-legend-row" data-project="${s.id}" data-task-key="${s.id}"><span class="color-square" style="--task-color:${s.color}"></span><span class="donut-task-name">${esc(s.name)}</span><b>${f(pct(s.hours, one.total))}<small>%</small></b></button>`,
-                )
-                .join("")}</div>`
-            : ""
-        }</article>`;
+          top = segs[0];
+        const rest = one.projects.slice(5).map((p) => ({ ...p, share: pct(p.hours, one.total) }));
+        return `<article class="tr-person" data-person-card="${person.id}" style="--person:${personColor(person.id)}"><header class="tr-person-head"><h3><i class="dot" style="background:var(--person)"></i>${esc(person.name)}</h3><span>${one.projects.length}개 과업</span></header><div class="tr-lead"><span class="tr-lead-label" id="lead-label-${person.id}">가장 집중한 과업</span><div class="tr-lead-value" id="lead-value-${person.id}">${top ? `${f(top.share)}<small>%</small>` : "—"}</div><p class="tr-lead-name" id="lead-name-${person.id}" ${top ? `style="--task-color:${top.color}"` : ""}>${top ? esc(top.name) : "기록 없음"}</p></div>${strip(segs, person)}<div class="tr-rows">${segs.map((s) => shareRow(s, person, s.other ? "other-row" : "")).join("") || '<p class="empty">이 기간의 기록이 없습니다.</p>'}</div>${rest.length ? `<div id="other-${person.id}" class="tr-rows other-tasks" hidden>${rest.map((s) => shareRow(s, person)).join("")}</div>` : ""}</article>`;
       })
       .join("")}</div>`;
   }
@@ -296,19 +276,22 @@
     }
     return out;
   }
+  // Greedy word wrap; only a word wider than the tile is split by character.
   function wrapText(text, width, fontSize, maxLines = 3) {
+    const measure = (value) => [...value].reduce((n, c) => n + (c.charCodeAt(0) > 255 ? fontSize : fontSize * 0.56), 0);
     const lines = [];
-    let current = "",
-      size = 0;
-    for (const char of text) {
-      const step = char.charCodeAt(0) > 255 ? fontSize : fontSize * 0.56;
-      if (size + step > width && current) {
-        lines.push(current);
-        current = "";
-        size = 0;
+    let current = "";
+    for (const word of text.split(/\s+/).filter(Boolean)) {
+      const next = current ? current + " " + word : word;
+      if (measure(next) <= width) { current = next; continue; }
+      if (current) lines.push(current);
+      current = "";
+      let piece = "";
+      for (const char of word) {
+        if (measure(piece + char) > width && piece) { lines.push(piece); piece = ""; }
+        piece += char;
       }
-      current += char;
-      size += step;
+      current = piece;
     }
     if (current) lines.push(current);
     if (lines.length > maxLines) {
@@ -338,11 +321,11 @@
       ),
       svg = boxes
         .map((t) => {
-          const fs = t.w > 190 ? 20 : 17,
-            lines = wrapText(t.name, t.w - 30, fs, t.h > 120 ? 3 : 2),
-            textheight = lines.length * 25,
+          const fs = t.w > 190 ? 16 : 14,
+            lines = wrapText(t.name, t.w - 28, fs, t.h > 120 ? 3 : 2),
+            textheight = lines.length * 21,
             hasRoom = t.h > textheight + 40 && t.w > 90;
-          return `<g class="treemap-tile" ${t.other ? 'data-action="all-tasks"' : 'data-project="' + t.id + '" data-task-key="' + t.id + '"'} role="button" tabindex="0" aria-label="${esc(t.name)}, 팀 전체 과업의 ${pc(t.hours, a.total)}, ${t.other ? "전체 과업 목록 보기" : "과업 상세 보기"}"><title>${esc(t.name)} ${pc(t.hours, a.total)}</title><rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" fill="${t.color}" stroke="var(--surface)" stroke-width="4"/>${hasRoom ? `<text x="${t.x + 15}" y="${t.y + 26}" font-size="${fs}" font-weight="550">${lines.map((line, i) => `<tspan x="${t.x + 15}" dy="${i ? 25 : 0}">${esc(line)}</tspan>`).join("")}</text><text class="treemap-value" x="${t.x + 15}" y="${t.y + t.h - 17}" font-size="${t.h > 100 ? 30 : 20}">${f(pct(t.hours, a.total))}<tspan font-size="12">%</tspan></text>` : `<text x="${t.x + t.w / 2}" y="${t.y + t.h / 2 + 4}" text-anchor="middle" font-size="12">${pc(t.hours, a.total)}</text>`}</g>`;
+          return `<g class="treemap-tile" ${t.other ? 'data-action="all-tasks"' : 'data-project="' + t.id + '" data-task-key="' + t.id + '"'} role="button" tabindex="0" aria-label="${esc(t.name)}, 팀 전체 과업의 ${pc(t.hours, a.total)}, ${t.other ? "전체 과업 목록 보기" : "과업 상세 보기"}"><title>${esc(t.name)} ${pc(t.hours, a.total)}</title><rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" rx="5" fill="${t.color}"/>${hasRoom ? `<text x="${t.x + 14}" y="${t.y + 24}" font-size="${fs}" font-weight="600">${lines.map((line, i) => `<tspan x="${t.x + 14}" dy="${i ? 21 : 0}">${esc(line)}</tspan>`).join("")}</text><text class="treemap-value" x="${t.x + 14}" y="${t.y + t.h - 15}" font-size="${t.h > 100 ? 26 : 18}">${f(pct(t.hours, a.total))}<tspan font-size="12">%</tspan></text>` : `<text x="${t.x + t.w / 2}" y="${t.y + t.h / 2 + 4}" text-anchor="middle" font-size="12">${pc(t.hours, a.total)}</text>`}</g>`;
         })
         .join("");
     return `<svg class="team-treemap ${mobile ? "mobile-treemap" : "desktop-treemap"}" viewBox="0 0 ${mobile ? 520 : 760} ${mobile ? 440 : 330}" role="group" aria-label="팀 전체 과업 비중 면적 차트. 각 면적은 과업별 비중에 비례합니다.">${svg}</svg>`;
@@ -367,12 +350,12 @@
     const top = a.projects[0],
       shared = a.projects.filter((t) => t.people.size > 1),
       top3 = a.projects.slice(0, 3).reduce((s, t) => s + t.hours, 0);
-    return `<div class="team-summary"><div><span class="summary-label">가장 비중이 큰 과업</span><b>${top ? esc(top.name) : "—"}</b><span class="summary-note">${top ? pc(top.hours, a.total) + " / 팀 전체 업무 중" : ""}</span></div><div><span class="summary-label">상위 3개 과업</span><b>${pc(top3, a.total)}</b><span class="summary-note">${a.projects.length}개 과업 중</span></div><div><span class="summary-label">함께 진행한 과업</span><b>${shared.length}<small>개</small></b><span class="summary-note">선택한 팀원 중 2명 이상 투입</span></div></div>`;
+    return `<div class="tr-stats"><div class="tr-stat"><span class="tr-stat-label">가장 비중이 큰 과업</span><b class="tr-stat-text">${top ? esc(top.name) : "—"}</b><span class="tr-stat-note">${top ? "팀 전체 업무의 " + pc(top.hours, a.total) : ""}</span></div><div class="tr-stat"><span class="tr-stat-label">상위 3개 과업</span><b>${pc(top3, a.total)}</b><span class="tr-stat-note">전체 ${a.projects.length}개 과업 중</span></div><div class="tr-stat"><span class="tr-stat-label">함께 진행한 과업</span><b>${shared.length}<small>개</small></b><span class="tr-stat-note">2명 이상이 시간을 쓴 과업</span></div></div>`;
   }
   function overview(a) {
     return (
       coverage(a) +
-      `<div class="allocation-section-head"><div><h2>팀원별 과업 배분</h2><p>각자의 업무를 100%로 보았습니다.</p></div><span class="chart-interaction-hint">조각이나 과업명을 누르면 상세 보기</span></div>${personCards()}<section class="team-section"><div class="allocation-section-head"><div><h2>팀 전체 과업 배분</h2><p>선택한 팀원의 업무를 합산한 과업별 비중입니다.</p></div></div>${teamSummary(a)}<div class="team-comparison-grid"><section class="panel treemap-panel"><div class="panel-head"><div><h3>과업별 비중</h3><p class="panel-subtitle">면적이 클수록 팀 전체에서 비중이 큰 과업입니다.</p></div><button class="text-button" data-action="all-tasks">${state.allTasks ? "주요 과업만" : "전체 과업 보기"} ${state.allTasks ? "↑" : "↓"}</button></div><div class="treemap-container">${treemap(a)}${treemap(a, true)}</div></section><section class="panel matrix-panel"><div class="panel-head"><div><h3>누가 어떤 과업을 맡았을까</h3><p class="panel-subtitle">각 팀원 업무 중 해당 과업의 비중입니다.</p></div></div>${matrix(a, state.allTasks)}<div class="matrix-foot">진한 칸은 해당 팀원에게 비중이 큰 과업입니다.</div></section></div>${state.allTasks ? `<section class="panel all-tasks-panel"><div class="panel-head"><h3>전체 과업 ${a.projects.length}개</h3></div><div class="task-share-list">${a.projects.map((t) => `<button data-project="${t.id}" data-task-key="${t.id}"><i class="color-square" style="--task-color:${t.color}"></i><span>${esc(t.name)}</span><b>${pc(t.hours, a.total)}</b></button>`).join("")}</div></section>` : ""}</section>`
+      `<section class="tr-section"><div class="allocation-section-head"><div><h2>팀원별 배분</h2><p>각자 기록한 업무를 100%로 보고 과업별 비중을 나눴습니다.</p></div><span class="chart-interaction-hint">막대나 과업명을 누르면 근거 기록을 엽니다</span></div>${personCards()}</section><section class="tr-section team-section"><div class="allocation-section-head"><div><h2>팀 전체 배분</h2><p>선택한 팀원의 업무 시간을 합산한 비중입니다.</p></div></div>${teamSummary(a)}<div class="team-comparison-grid"><section class="panel treemap-panel"><div class="panel-head"><div><h3>과업별 비중</h3><p class="panel-subtitle">면적이 클수록 팀 전체에서 비중이 큰 과업입니다.</p></div><button class="text-button" data-action="all-tasks">${state.allTasks ? "주요 과업만" : "전체 과업 보기"} ${state.allTasks ? "↑" : "↓"}</button></div><div class="treemap-container">${treemap(a)}${treemap(a, true)}</div></section><section class="panel matrix-panel"><div class="panel-head"><div><h3>팀원별 과업 비중</h3><p class="panel-subtitle">각 팀원 업무 중 해당 과업의 비중입니다.</p></div></div>${matrix(a, state.allTasks)}<div class="matrix-foot">진한 칸은 해당 팀원에게 비중이 큰 과업입니다.</div></section></div>${state.allTasks ? `<section class="panel all-tasks-panel"><div class="panel-head"><h3>전체 과업 ${a.projects.length}개</h3></div><div class="task-share-list">${a.projects.map((t) => `<button data-project="${t.id}" data-task-key="${t.id}"><i class="color-square" style="--task-color:${t.color}"></i><span>${esc(t.name)}</span><b>${pc(t.hours, a.total)}</b></button>`).join("")}</div></section>` : ""}</section>`
     );
   }
   function trendPerson() {
@@ -564,11 +547,16 @@
     const a = aggregate();
     $("#record-count").textContent = a.rows.length;
     $("#month").value = state.month;
+    // The shared sidebar's sub-menu links are this page's tabs.
     $$("[data-tab]").forEach((b) => {
       const active = b.dataset.tab === state.tab;
-      b.setAttribute("aria-selected", active);
-      b.tabIndex = active ? 0 : -1;
+      b.classList.toggle("is-active", active);
+      if (active) b.setAttribute("aria-current", "page");
+      else b.removeAttribute("aria-current");
     });
+    const crumb = $("#crumb");
+    if (crumb) crumb.textContent = TABS[state.tab];
+    document.title = `${TABS[state.tab]} · 팀 리소스 | Selectstar`;
     $("#view").setAttribute("aria-labelledby", "tab-" + state.tab);
     $("#people-filters").innerHTML = DATA.people
       .map(
@@ -641,6 +629,10 @@
     render();
   }
   function changeTab(t) {
+    if (!TABS[t]) return;
+    if (location.hash.slice(1) !== t) history.pushState(null, "", "#" + t);
+    window.WorkShell?.setActive(t);
+    if (state.tab === t) return;
     state.tab = t;
     state.page = 0;
     render();
@@ -667,35 +659,20 @@
         el.classList.remove("is-task-active"),
       );
     }
-    const personId = source?.dataset.donutPerson;
-    if (personId) {
-      const one = allPersonProjects(personId),
-        top = one.projects[0],
-        name = $("#donut-name-" + personId),
-        value = $("#donut-value-" + personId);
-      if (name && value) {
-        const label = source
-          .closest("svg")
-          ?.querySelector(".donut-center-label");
-        if (label) label.textContent = key ? "선택한 과업" : "가장 집중한 과업";
-        const s = key
-          ? source?.dataset.segmentShare
-          : top
-            ? pct(top.hours, one.total)
-            : null;
-        name.textContent = key
-          ? source.dataset.segmentName
-          : top?.name || "기록 없음";
-        name.style.setProperty(
-          "--task-color",
-          key ? source.getAttribute("stroke") : top?.color || "var(--other)",
-        );
-        value.innerHTML =
-          s != null
-            ? `${f(Number(s))}<tspan class="donut-percent">%</tspan>`
-            : "—";
-      }
-    }
+    const personId = source?.dataset.leadPerson;
+    if (!personId) return;
+    const name = $("#lead-name-" + personId),
+      value = $("#lead-value-" + personId),
+      label = $("#lead-label-" + personId);
+    if (!name || !value) return;
+    const one = allPersonProjects(personId),
+      top = one.projects[0],
+      chosen = key && key !== "other";
+    if (label) label.textContent = chosen ? "선택한 과업" : "가장 집중한 과업";
+    const share = chosen ? Number(source.dataset.segmentShare) : top ? pct(top.hours, one.total) : null;
+    name.textContent = chosen ? source.dataset.segmentName : top?.name || "기록 없음";
+    name.style.setProperty("--task-color", chosen ? source.dataset.segmentColor : top?.color || "var(--other)");
+    value.innerHTML = share != null ? `${f(share)}<small>%</small>` : "—";
   }
   $("#month").innerHTML =
     DATA.months
@@ -703,7 +680,7 @@
       .join("") + '<option value="all">전체 기간</option>';
   $("#month").addEventListener("change", (e) => changeMonth(e.target.value));
   const targetSelector =
-    "[data-action],[data-tab],[data-person],[data-project],[data-view],[data-chart-month],[data-other],[data-trend-person]";
+    "[data-action],[data-tab],[data-person],[data-project],[data-chart-month],[data-other],[data-trend-person]";
   function activate(el) {
     if (el.dataset.project) {
       openDetail(el.dataset.project);
@@ -729,10 +706,6 @@
     }
     if (el.dataset.tab) {
       changeTab(el.dataset.tab);
-      return;
-    }
-    if (el.dataset.view) {
-      changeTab(el.dataset.view);
       return;
     }
     if (el.dataset.trendPerson) {
@@ -776,7 +749,15 @@
   }
   document.addEventListener("click", (e) => {
     const el = e.target.closest(targetSelector);
-    if (el && !el.disabled) activate(el);
+    if (!el || el.disabled) return;
+    if (el.dataset.tab) e.preventDefault();
+    activate(el);
+  });
+  const fromHash = () => (TABS[location.hash.slice(1)] ? location.hash.slice(1) : "overview");
+  window.addEventListener("popstate", () => {
+    const t = fromHash();
+    if (t !== state.tab) { state.tab = t; state.page = 0; render(); }
+    window.WorkShell?.setActive(t);
   });
   document.addEventListener("pointerover", (e) => {
     const el = e.target.closest("[data-task-key]");
@@ -814,26 +795,10 @@
     });
   }
   document.addEventListener("keydown", (e) => {
-    const interactive = e.target.closest("svg [role=button]");
+    const interactive = e.target.closest("svg [role=button], .tr-seg");
     if (interactive && (e.key === "Enter" || e.key === " ")) {
       e.preventDefault();
       activate(interactive);
-      return;
-    }
-    const tab = e.target.closest("[data-tab]");
-    if (tab && ["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
-      e.preventDefault();
-      const tabs = $$("[data-tab]"),
-        i = tabs.indexOf(tab),
-        next =
-          e.key === "Home"
-            ? 0
-            : e.key === "End"
-              ? tabs.length - 1
-              : (i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) %
-                tabs.length;
-      changeTab(tabs[next].dataset.tab);
-      tabs[next].focus();
       return;
     }
   });

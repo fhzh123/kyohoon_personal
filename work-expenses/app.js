@@ -11,7 +11,14 @@ async function api(url,options={}){
   const response=await fetch(url,{credentials:'same-origin',...options,headers:{...(options.body?{'Content-Type':'application/json'}:{}),...options.headers}});
   const data=await response.json();if(!response.ok)throw new Error(data.error||'요청을 처리하지 못했습니다.');return data;
 }
-function selectTab(tab){state.tab=tab;$('#report-view').hidden=tab!=='report';$('#files-view').hidden=tab!=='files';document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===tab)));}
+const tabs={report:'품의 분석',files:'월별 파일'};
+function selectTab(tab){
+  if(!tabs[tab])tab='report';state.tab=tab;$('#report-view').hidden=tab!=='report';$('#files-view').hidden=tab!=='files';
+  // Sub-menu links in the shared sidebar act as this page's tabs.
+  document.querySelectorAll('[data-tab]').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('is-active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  const crumb=$('#ws-crumb');if(crumb)crumb.textContent=tabs[tab];
+  if(location.hash.slice(1)!==tab)history.replaceState(null,'',location.pathname+location.search+'#'+tab);
+}
 function setBusy(value){state.busy=value;$('#year').disabled=value;$('#card').disabled=value;$('#reload').disabled=value;$('#upload-files').disabled=value||state.role!=='editor';document.querySelectorAll('#upload-panel button,#upload-panel input').forEach(x=>x.disabled=value);}
 async function load(){
   const ticket=++generation;$('#loading').hidden=false;$('#report-view').hidden=true;$('#files-view').hidden=true;
@@ -136,8 +143,10 @@ const initial=new URLSearchParams(location.search);state.year=Number(initial.get
 for(let y=Math.max(2020,state.year-3);y<=Math.min(2100,state.year+2);y++){const option=document.createElement('option');option.value=y;option.textContent=y+'년';$('#year').append(option);}$('#year').value=state.year;$('#approval').value=state.number;
 $('#year').onchange=()=>{state.year=Number($('#year').value);state.staged=[];renderUpload();load();};
 $('#card').onchange=()=>{state.card=$('#card').value;renderFiles();renderSuggestions();if(state.number)renderReport();};
-$('#reload').onclick=()=>{notice('');load();};document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
-$('#approval-search').onsubmit=event=>{event.preventDefault();const number=approvalNumber($('#approval').value);if(!number){$('#approval').setCustomValidity('2026-785처럼 연도-번호 형식으로 입력해 주세요.');$('#approval').reportValidity();return;}state.number=number;$('#approval').value=number;const year=Number(number.split('-')[0]);if(year!==state.year){state.year=year;if(![...$('#year').options].some(o=>o.value===String(year))){const o=document.createElement('option');o.value=year;o.textContent=year+'년';$('#year').append(o);}$('#year').value=year;load();}else renderReport();history.replaceState(null,'',`?year=${state.year}&approval=${number}`);notice('');};
+$('#reload').onclick=()=>{notice('');load();};document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=event=>{event.preventDefault();selectTab(b.dataset.tab);});
+window.addEventListener('hashchange',()=>{const tab=location.hash.slice(1);if(tabs[tab]&&tab!==state.tab&&$('#loading').hidden)selectTab(tab);});
+if(tabs[location.hash.slice(1)])state.tab=location.hash.slice(1);
+$('#approval-search').onsubmit=event=>{event.preventDefault();const number=approvalNumber($('#approval').value);if(!number){$('#approval').setCustomValidity('2026-785처럼 연도-번호 형식으로 입력해 주세요.');$('#approval').reportValidity();return;}state.number=number;$('#approval').value=number;const year=Number(number.split('-')[0]);if(year!==state.year){state.year=year;if(![...$('#year').options].some(o=>o.value===String(year))){const o=document.createElement('option');o.value=year;o.textContent=year+'년';$('#year').append(o);}$('#year').value=year;load();}else renderReport();history.replaceState(null,'',`?year=${state.year}&approval=${number}#${state.tab}`);notice('');};
 $('#approval').oninput=()=>$('#approval').setCustomValidity('');$('#include-pending').onchange=()=>{if(state.number)renderReport();};
 $('#recent-approvals').onclick=event=>{const button=event.target.closest('[data-approval]');if(button){$('#approval').value=button.dataset.approval;$('#approval-search').requestSubmit();}};
 $('#upload-files').onchange=event=>{stageFiles(event.target.files);event.target.value='';};
