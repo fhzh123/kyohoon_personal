@@ -136,6 +136,7 @@
 .resource-summary{padding:24px;border-top:1px solid var(--line);color:var(--ink);background:var(--surface);--resource-danger:#b4493e}
 .resource-summary-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
 .resource-summary-heading h3{margin:0;font-size:15px;font-weight:700}
+.resource-owner-count{display:inline-block;margin-left:6px;font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap}
 .resource-summary-heading p,.resource-summary-heading>span{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
 .resource-people{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px}
 .resource-person{padding:16px;border:1px solid var(--line);border-radius:8px;min-width:0}
@@ -150,12 +151,15 @@
 .resource-person.is-over{border-color:color-mix(in srgb,var(--resource-danger) 45%,var(--line))}
 .resource-person.is-over .resource-percent,.resource-person.is-over .resource-person-detail strong{color:var(--resource-danger)}
 .resource-person.is-over .resource-meter>i{background:var(--resource-danger)}
-.resource-over-date,.resource-missing{font-size:11px;line-height:1.6;margin:8px 0 0;color:var(--muted)}
+.resource-over-date,.resource-missing,.resource-period-empty{font-size:11px;line-height:1.6;margin:8px 0 0;color:var(--muted)}
 .resource-method{margin-top:16px;font-size:12px;line-height:1.8;color:var(--muted)}
 .resource-method summary{cursor:pointer;min-height:32px;display:flex;align-items:center}
 .resource-method summary:before{content:'›';margin-right:8px}
 .resource-method[open] summary:before{content:'⌄'}
-.resource-method p{margin:4px 0 0;max-width:90ch}
+.resource-method{width:100%;min-width:0}
+.resource-method-content{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px 24px;width:100%;padding-top:10px}
+.resource-method-content p{margin:0;max-width:none;min-width:0;overflow-wrap:anywhere}
+.resource-method-content strong{display:block;margin-bottom:5px;font-size:12px;font-weight:650;color:var(--ink)}
 html[data-theme=dark] .resource-summary,html[data-theme=dark] .allocation-warning{--resource-danger:#f29185}
 @media(max-width:640px){.resource-summary{padding:16px}.resource-summary-heading{align-items:flex-start;flex-direction:column;gap:4px}.resource-people{grid-template-columns:1fr}.allocation-row{grid-template-columns:minmax(48px,1fr) minmax(32px,1fr) 92px;gap:8px}.task-allocation{grid-template-columns:minmax(0,1fr) 24px 40px;gap:4px}.task-allocation-name{font-size:10px}.allocation-value input{width:70px}.resource-method summary{min-height:44px}}
 

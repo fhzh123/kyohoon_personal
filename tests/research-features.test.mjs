@@ -612,13 +612,47 @@ test('roadmap resources use this week, this month and this year independently of
  const initial=allocationSeed();initial.tasks.push({id:'future-allocation',title:'Future',parentId:'root',goalId:'g1',owner:'A',ownerAllocations:[{owner:'A',percent:90}],start:'2027-02-01',end:'2027-02-28',planUnit:'week'});
  const f=await fixture('editor',initial,[],'2026-11-17');try{
   const d=f.document,heading=()=>d.querySelector('#roadmap-resources').textContent;
-  assert.match(heading(),/이번 주.*2026-W47/);assert.match(heading(),/2026-11-16 ~ 2026-11-22/);assert.equal(d.querySelector('[data-resource-owner="A"]'),null);
+  assert.match(heading(),/이번 주.*2026-W47/);assert.match(heading(),/2026-11-16 ~ 2026-11-22/);assert.equal(d.querySelector('[data-resource-owner="A"] .resource-percent').textContent,'0%');assert.match(d.querySelector('[data-resource-owner="A"]').textContent,/이 기간에 배정된 L5 없음/);
   d.querySelector('[data-step-period="1"]').click();assert.match(heading(),/2026-11-16 ~ 2026-11-22/);
   d.querySelector('[data-unit="month"]').click();assert.match(heading(),/이번 달/);assert.match(heading(),/2026-11-01 ~ 2026-11-30/);assert.match(d.querySelector('[data-resource-owner="A"]').textContent,/130%/);
   d.querySelector('[data-unit="year"]').click();assert.match(heading(),/올해/);assert.match(heading(),/2026-01-01 ~ 2026-12-31/);assert.match(d.querySelector('[data-resource-owner="A"]').textContent,/0.29 MM/);
  }finally{f.close();}
 });
 const resourceOrder=f=>[...f.document.querySelectorAll('#roadmap-resources [data-resource-owner]')].map(card=>card.dataset.resourceOwner);
+test('resource roster includes more than three owners across L4, future, pending and paused work without inflating MM',async()=>{
+ const initial=allocationSeed();initial.tasks.push(
+  {id:'root-only',title:'L4 only',goalId:'g1',owner:'D',start:'2026-11-01',end:'2026-11-30',ownerAllocations:[{owner:'D',percent:200}],allocationMode:'manual'},
+  {id:'future-owner',title:'Future',parentId:'root',goalId:'g1',owner:'E',start:'2027-02-01',end:'2027-02-28',ownerAllocations:[{owner:'E',percent:100}]},
+  {id:'pending-owner',title:'Pending',parentId:'root',goalId:'g1',owner:'F',ownerAllocations:[{owner:'F',percent:60}]},
+  {id:'paused-owner',title:'Paused',parentId:'root',goalId:'g1',owner:'G',start:'2026-11-01',end:'2026-11-30',status:'paused',ownerAllocations:[{owner:'G',percent:80}]},
+  {id:'zero-owner',title:'Zero',parentId:'root',goalId:'g1',owner:'H',start:'2026-11-01',end:'2026-11-30',ownerAllocations:[{owner:'H',percent:0}]}
+ );initial.settings={resourceOwnerOrder:['Deleted owner']};
+ const f=await fixture('editor',initial);try{
+  const {w,document:d}=f;d.querySelector('[data-unit="month"]').click();
+  assert.deepEqual(resourceOrder(f),['A','B','C','D','E','F','G','H']);
+  assert.equal(d.querySelector('.resource-owner-count').textContent,'8명');
+  for(const name of ['D','E','F','G']){
+   const card=d.querySelector(`[data-resource-owner="${name}"]`);
+   assert.equal(card.querySelector('.resource-percent').textContent,'0%');assert.match(card.textContent,/0.00 MM/);assert.ok(card.querySelector('.resource-period-empty'));
+  }
+  assert.match(d.querySelector('[data-resource-owner="C"]').textContent,/미입력.*MM 미산정/);
+  assert.equal(d.querySelector('[data-resource-owner="H"] .resource-period-empty'),null);
+  const rows=w.ResearchCalendar.resourceSummary(w.ResearchAtlas.getState().tasks,'2026-11-01','2026-11-30');
+  assert.equal(rows.find(r=>r.owner==='A').mm,0.29);assert.equal(rows.find(r=>r.owner==='D'),undefined);
+  assert.equal(f.puts.length,0,'rendering the roster never writes shared research data');
+  assert.equal(w.ResearchAtlas.operations.reorderResourceOwner('D','A'),true);await tick();assert.equal(resourceOrder(f)[0],'D');
+  assert.equal(f.puts.at(-1).state.settings.resourceOwnerOrder.includes('D'),true);
+  for(const unit of ['year','week','month']){d.querySelector(`[data-unit="${unit}"]`).click();assert.equal(resourceOrder(f).length,8);}
+  d.querySelector('[data-view="overview"]').click();assert.equal(d.querySelectorAll('[data-resource-owner]').length,8);
+ }finally{f.close();}
+});
+test('resource owner filters remain explicit and exclude unselected people while preserving full totals',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  chooseFilter(f,'owner',['C','A']);
+  assert.deepEqual(resourceOrder(f),['A','C']);assert.equal(f.document.querySelector('.resource-owner-count').textContent,'2명 / 필터 적용');
+  assert.match(f.document.querySelector('[data-resource-owner="A"]').textContent,/130%/);
+ }finally{f.close();}
+});
 test('resource order changes by buttons and keyboard, persists across views, validation and sync, and preserves absent people',async()=>{
  const initial=allocationSeed();initial.settings={colors:{research:'#3479e9'},resourceOwnerOrder:['Not this week','C','B','A']};
  const f=await fixture('editor',initial);try{

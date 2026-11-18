@@ -203,7 +203,7 @@
   }
 function reorderResourceOwner(owner,target,placement='before'){
     if(readOnly||owner===target||!['before','after'].includes(placement))return false;
-    const people=[...new Set(state.tasks.filter(t=>t.parentId).flatMap(t=>window.ResearchCalendar.ownersOf(t)))].sort((a,b)=>a.localeCompare(b,'ko'));
+    const people=[...new Set(state.tasks.flatMap(t=>window.ResearchCalendar.ownersOf(t)))].sort((a,b)=>a.localeCompare(b,'ko'));
     const previous=state.settings?clone(state.settings):undefined,order=[...new Set([...(previous?.resourceOwnerOrder||[]),...people])];
     if(!order.includes(owner)||!order.includes(target))return false;
     const next=order.filter(name=>name!==owner);next.splice(next.indexOf(target)+(placement==='after'?1:0),0,owner);
