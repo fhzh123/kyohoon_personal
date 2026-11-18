@@ -27,7 +27,7 @@
     }
     window.ResearchLoading?.stage('기술과 세부 연구를 로드맵에 배치하고 있습니다.');
     if (window.startResearchAtlas) window.startResearchAtlas();
-    else for (const name of ['papers.js', 'taxonomy.js', 'notebook.js', 'periods.js', 'hierarchy.js', 'timeline.js', 'calendar.js', 'workspace-sync.js', 'app.js']) {
+    else for (const name of ['papers.js', 'taxonomy.js', 'notebook.js', 'periods.js', 'date-picker.js', 'hierarchy.js', 'timeline.js', 'calendar.js', 'workspace-sync.js', 'app.js']) {
       await new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = '/work/app/' + name;
