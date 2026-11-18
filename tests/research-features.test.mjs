@@ -26,10 +26,82 @@ async function fixture(role='editor', initial=seed, catalog=[], currentDate='202
     else gets.push(url);
     return {ok:true,status:200,json:async()=>clone(remote)};
   };
-  for(const name of ['papers','taxonomy','notebook','periods','hierarchy','timeline','calendar','workspace-sync','app'])w.eval(await readFile(new URL(`work-app/${name}.js`,root),'utf8'));
+  for(const name of ['papers','taxonomy','notebook','periods','date-picker','hierarchy','timeline','calendar','workspace-sync','app'])w.eval(await readFile(new URL(`work-app/${name}.js`,root),'utf8'));
   await tick();
   return {w,document:w.document,puts,gets,close:()=>w.close()};
 }
+
+test('day picker preserves historical exact dates, cancels drafts and saves a cross-month range to shared state',async()=>{
+  const initial=clone(seed);Object.assign(initial.tasks[1],{start:'2026-11-11',end:'2026-11-13',planUnit:'month'});
+  const f=await fixture('editor',initial);try{
+    const {w,document:d}=f,api=w.ResearchAtlas;
+    api.operations.openTask('child');
+    assert.equal(d.querySelector('#task-unit').type,'hidden');assert.equal(d.querySelector('#task-unit').value,'day');
+    assert.equal(d.querySelector('#period-start').value,'2026-11-11');
+    d.querySelector('[data-date-open="start"]').click();
+    d.querySelector('[data-date-day="2026-11-28"]').click();
+    assert.equal(d.querySelector('#period-start').value,'2026-11-11','draft does not mutate the form');
+    d.querySelector('[data-date-cancel]').click();assert.equal(d.querySelector('#period-end').value,'2026-11-13');
+    d.querySelector('[data-date-open="start"]').click();d.querySelector('[data-date-day="2026-11-28"]').click();
+    d.querySelector('[data-date-next]').click();d.querySelector('[data-date-day="2026-12-03"]').click();
+    assert.equal(d.querySelector('[data-date-count]').textContent,'6일간');d.querySelector('[data-date-apply]').click();
+    assert.equal(d.querySelector('#period-start').value,'2026-11-28');assert.equal(d.querySelector('#period-end').value,'2026-12-03');
+    assert.match(d.querySelector('#planning-duration').textContent,/6일간/);
+    d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();
+    const saved=f.puts.at(-1).state.tasks.find(t=>t.id==='child');
+    assert.equal(saved.start,'2026-11-28');assert.equal(saved.end,'2026-12-03');assert.equal(saved.planUnit,'day');
+    assert.equal(api.validateState(api.getState()).tasks.find(t=>t.id==='child').planUnit,'day');
+    for(const unit of ['month','year','week'])d.querySelector(`[data-unit="${unit}"]`).click();
+    assert.equal(api.getState().tasks.find(t=>t.id==='child').start,'2026-11-28');
+    api.operations.openTask('child');assert.equal(d.querySelector('#period-end').value,'2026-12-03');
+  }finally{f.close();}
+});
+
+test('day picker supports a single day, reverse range selection, keyboard navigation and Escape without closing the editor',async()=>{
+  const f=await fixture();try{
+    const {w,document:d}=f;w.ResearchAtlas.operations.openTask('child');
+    d.querySelector('[data-date-open="start"]').click();d.querySelector('[data-date-day="2026-11-10"]').click();d.querySelector('[data-date-day="2026-11-10"]').click();
+    assert.equal(d.querySelector('[data-date-count]').textContent,'1일간');d.querySelector('[data-date-apply]').click();
+    assert.equal(d.querySelector('#period-start').value,d.querySelector('#period-end').value);
+    d.querySelector('[data-date-open="start"]').click();
+    d.querySelector('[data-date-day="2026-11-10"]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));
+    assert.equal(d.activeElement.dataset.dateDay,'2026-11-11');
+    d.activeElement.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+    assert.equal(d.querySelector('#research-date-panel').hidden,true);assert.equal(d.querySelector('#task-dialog').open,true);
+    d.querySelector('[data-date-open="start"]').click();d.querySelector('[data-date-day="2026-11-20"]').click();
+    d.querySelector('[data-date-day="2026-11-18"]').click();d.querySelector('[data-date-apply]').click();
+    assert.equal(d.querySelector('#period-start').value,'2026-11-18');assert.equal(d.querySelector('#period-end').value,'2026-11-20');
+  }finally{f.close();}
+});
+
+test('daily parent translations keep all descendant offsets and resizing leaves children unchanged',async()=>{
+  const f=await fixture();try{
+    const api=f.w.ResearchAtlas;
+    api.operations.reschedule('root','2026-11-03','2026-12-07','month');
+    let tasks=api.getState().tasks;assert.equal(tasks.find(t=>t.id==='child').start,'2026-11-10');assert.equal(tasks.find(t=>t.id==='child').end,'2026-11-16');
+    api.operations.reschedule('root','2026-11-03','2026-12-08','year');
+    tasks=api.getState().tasks;assert.equal(tasks.find(t=>t.id==='child').start,'2026-11-10');assert.equal(tasks.find(t=>t.id==='root').end,'2026-12-08');
+    assert.equal(tasks.find(t=>t.id==='root').planUnit,'day');
+    api.operations.openTask('root');f.document.querySelector('#fit-children-range').click();
+    assert.equal(f.document.querySelector('#period-start').value,'2026-11-10');assert.equal(f.document.querySelector('#period-end').value,'2026-11-16');await tick();
+  }finally{f.close();}
+});
+
+test('unscheduled dates can be set using the calendar, restored to pending, and remain read-only for readers',async()=>{
+  const f=await fixture();try{
+    const {w,document:d}=f;w.ResearchAtlas.operations.openTask('done');
+    assert.equal(d.querySelector('[data-date-open="start"]').disabled,true);
+    d.querySelector('#unscheduled').click();assert.equal(d.querySelector('#research-date-panel').hidden,false);
+    d.querySelector('[data-date-day="2026-11-12"]').click();d.querySelector('[data-date-day="2026-11-13"]').click();d.querySelector('[data-date-apply]').click();
+    d.querySelector('#unscheduled').click();
+    d.querySelector('#task-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick();
+    assert.equal(w.ResearchAtlas.getState().tasks.find(t=>t.id==='done').start,'');
+  }finally{f.close();}
+  const reader=await fixture('reader');try{
+    reader.w.ResearchAtlas.operations.openTask('child');assert.equal(reader.document.querySelector('[data-date-open="start"]').disabled,true);
+    assert.equal(reader.puts.length,0);
+  }finally{reader.close();}
+});
 
 test('roadmap visibility can hide and restore a subtree without removing its data',async()=>{
   const f=await fixture();try{
@@ -293,6 +365,30 @@ test('filter cancellation preserves applied selection across roadmap, overview a
 function pointer(f,target,type,x,y){
  const event=new f.w.MouseEvent(type,{bubbles:true,cancelable:true,button:0,clientX:x,clientY:y});Object.defineProperties(event,{pointerId:{value:7},isPrimary:{value:true}});target.dispatchEvent(event);
 }
+test('timeline dragging and resizing preserve daily precision in week, month and year views',async()=>{
+ for(const unit of ['week','month','year']) {
+  const initial=clone(seed);Object.assign(initial.tasks[1],{start:'2026-11-11',end:'2026-11-13',planUnit:'day'});
+  const f=await fixture('editor',initial);try{
+   const {w,document:d}=f,p=w.ResearchPeriods;d.querySelector(`[data-unit="${unit}"]`).click();
+   const cols=p.columns('2026-11-09',unit),width=cols.length*4000;
+   const x=date=>{const i=cols.findIndex(c=>c.start<=date&&date<=c.end),c=cols[i];return (i+(p.daysBetween(date,c.start)+.5)/(p.daysBetween(c.end,c.start)+1))*4000;};
+   const prepare=()=>{const bar=d.querySelector('[data-timeline-task="child"]');bar.closest('.timeline-lane').getBoundingClientRect=()=>({left:0,width});return bar;};
+   let bar=prepare();pointer(f,bar,'pointerdown',x('2026-11-11'),200);pointer(f,d,'pointermove',x('2026-11-12'),200);pointer(f,d,'pointerup',x('2026-11-12'),200);await tick();
+   let task=w.ResearchAtlas.getState().tasks.find(t=>t.id==='child');assert.equal(task.start,'2026-11-12',unit);assert.equal(task.end,'2026-11-14',unit);
+   bar=prepare();pointer(f,bar.querySelector('[data-resize="end"]'),'pointerdown',x('2026-11-14'),200);pointer(f,d,'pointermove',x('2026-11-15'),200);pointer(f,d,'pointerup',x('2026-11-15'),200);await tick();
+   task=w.ResearchAtlas.getState().tasks.find(t=>t.id==='child');assert.equal(task.start,'2026-11-12');assert.equal(task.end,'2026-11-15');assert.equal(task.planUnit,'day');
+  }finally{f.close();}
+ }
+});
+test('timeline range creation selects days inside a month rather than expanding to month boundaries',async()=>{
+ const f=await fixture();try{
+  const {w,document:d}=f;d.querySelector('[data-unit="month"]').click();
+  const cell=d.querySelector('[data-task-row="root"] .timeline-cell'),lane=cell.closest('.timeline-lane');lane.getBoundingClientRect=()=>({left:0,width:3720});
+  pointer(f,cell,'pointerdown',105,200);pointer(f,d,'pointermove',125,200);pointer(f,d,'pointerup',125,200);
+  assert.equal(d.querySelector('#period-start').value,'2026-11-11');assert.equal(d.querySelector('#period-end').value,'2026-11-13');
+  assert.equal(d.querySelector('#task-unit').value,'day');
+ }finally{f.close();}
+});
 function positionGoalRows(f){
  const rect=(top,height=60)=>({top,bottom:top+height,left:0,right:900,width:900,height,x:0,y:top,toJSON(){return this;}});
  const host=f.document.querySelector('#timeline-host');host.getBoundingClientRect=()=>rect(100,1600);

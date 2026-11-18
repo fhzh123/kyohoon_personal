@@ -66,12 +66,6 @@
     const visibleEnd = columns[columns.length - 1].end;
     let interaction = null, orderFrame=null, suppressClick=false;
 
-    function floor(value) {
-      return unit === 'week' ? p.startOfWeek(value) : unit === 'month' ? p.monthStart(value) : p.yearStart(value);
-    }
-    function ceil(value) {
-      return unit === 'week' ? p.endOfWeek(value) : unit === 'month' ? p.monthEnd(value) : p.yearEnd(value);
-    }
     function position(value, isEnd) {
       if (value < visibleStart) return 0;
       if (value > visibleEnd) return columns.length;
@@ -81,10 +75,7 @@
       return index + (dayDistance(value, column.start) + (isEnd ? 1 : 0)) / (dayDistance(column.end, column.start) + 1);
     }
     function geometry(start, end) {
-      // Week planning intentionally fills the complete week column, even for
-      // historical day-level data. Coarser views retain date proportions.
-      const first = unit === 'week' ? floor(start) : start;
-      const last = unit === 'week' ? ceil(end) : end;
+      const first=start,last=end;
       if (last < visibleStart || first > visibleEnd) return {left: 0, width: 0, outside: true};
       const left = position(first, false), right = position(last, true);
       return {left: left / columns.length * 100, width: Math.max(0, right - left) / columns.length * 100, outside: false};
@@ -93,7 +84,7 @@
     function cells(goalId, task) {
       const scheduleTask = task && !hasRange(rangeOf(task)) ? task.id : '';
       const action = scheduleTask ? '이 연구의 기간 정하기' : task ? 'L5 세부 연구 만들기' : 'L4 기술 연구 만들기';
-      return columns.map((column, index) => `<button type="button" class="timeline-cell${p.isCurrent(column)?' is-current':''}" data-column="${index}" data-goal-id="${esc(goalId)}" data-parent-id="${esc(task?.id || '')}" data-schedule-task="${esc(scheduleTask)}" aria-label="${esc(column.group + ' ' + column.label + '에 ' + action)}" title="${esc(column.start)} — ${esc(column.end)} · ${action} · 기간을 끌어서 선택"></button>`).join('');
+      return columns.map((column, index) => `<button type="button" class="timeline-cell${p.isCurrent(column)?' is-current':''}" data-column="${index}" data-goal-id="${esc(goalId)}" data-parent-id="${esc(task?.id || '')}" data-schedule-task="${esc(scheduleTask)}" aria-label="${esc(column.group + ' ' + column.label + '에 ' + action)}" title="${esc(column.start)} — ${esc(column.end)} · ${action} · 일 단위로 끌어 선택한 뒤 달력에서 확인"></button>`).join('');
     }
     function barHTML(task) {
       const range = rangeOf(task);
@@ -106,7 +97,7 @@
       const status = Object.hasOwn(statusLabels, task.status) ? task.status : 'planned';
       const depth=ancestorsOf(task.id).length, level=depth?'L5 하위 연구':'L4 기술', owner=task.owner?.trim()||'담당 미정';
       const label = `${level} / 담당: ${owner} / ${displayTitle(task)} · ${spanLabel({...task, ...range})}${parent ? ` · ${progress.done}/${progress.total} 완료` : ''} · Enter로 상세 편집`;
-      return `<div class="timeline-bar status-${status}${parent ? ' is-summary' : ''}${ancestorsOf(task.id).length ? ' is-subtask' : ''}" role="button" tabindex="0" data-timeline-task="${esc(task.id)}" aria-label="${esc(label)}" title="${esc(label)}" style="left:${geo.left}%;width:${geo.width}%;--event-color:${color}"><span class="timeline-resize" data-resize="start" title="시작 ${UNIT_LABELS[unit]} 조정" aria-hidden="true"></span><span class="timeline-bar-copy"><span class="timeline-bar-heading"><b class="timeline-bar-level">${depth?'↳ L5':'L4'}</b><strong class="timeline-bar-title">${esc(task.title)}</strong></span><span class="timeline-bar-meta"><span class="timeline-bar-owner ${task.owner?.trim()?'':'is-unassigned'}">담당: ${esc(owner)}</span><span>${parent ? `${progress.done}/${progress.total} 완료` : esc(statusLabels[status])}</span>${range.derived ? '<span class="timeline-derived-badge">세부 기간</span>' : ''}</span></span><span class="timeline-resize" data-resize="end" title="종료 ${UNIT_LABELS[unit]} 조정" aria-hidden="true"></span></div>`;
+      return `<div class="timeline-bar status-${status}${parent ? ' is-summary' : ''}${ancestorsOf(task.id).length ? ' is-subtask' : ''}" role="button" tabindex="0" data-timeline-task="${esc(task.id)}" aria-label="${esc(label)}" title="${esc(label)}" style="left:${geo.left}%;width:${geo.width}%;--event-color:${color}"><span class="timeline-resize" data-resize="start" title="시작일 조정" aria-hidden="true"></span><span class="timeline-bar-copy"><span class="timeline-bar-heading"><b class="timeline-bar-level">${depth?'↳ L5':'L4'}</b><strong class="timeline-bar-title">${esc(task.title)}</strong></span><span class="timeline-bar-meta"><span class="timeline-bar-owner ${task.owner?.trim()?'':'is-unassigned'}">담당: ${esc(owner)}</span><span>${parent ? `${progress.done}/${progress.total} 완료` : esc(statusLabels[status])}</span>${range.derived ? '<span class="timeline-derived-badge">세부 기간</span>' : ''}</span></span><span class="timeline-resize" data-resize="end" title="종료일 조정" aria-hidden="true"></span></div>`;
     }
     function reorderHTML(task) {
       if(!api.reorderTask)return '';
@@ -162,7 +153,7 @@
     const rangeLabel=columns[0].start.replaceAll('-','.')+' — '+columns.at(-1).end.replaceAll('-','.');
     const navigation=api.stepPeriod?`<div class="timeline-period-navigation" role="group" aria-label="표시 기간 이동"><button type="button" data-step-period="-1" ${columns[0].start<=MIN_DATE?'disabled':''}>‹ 이전 1${{week:'주',month:'개월',year:'년'}[unit]}</button><span>${esc(rangeLabel)}</span><button type="button" data-step-period="1">다음 1${{week:'주',month:'개월',year:'년'}[unit]} ›</button></div>`:'';
     const legend=`<div class="timeline-color-legend" aria-label="연구 유형 색상 범례"><strong>색상 · 연구 유형</strong>${Object.entries(api.categories||{research:'연구/조사',implementation:'코드 구현',design:'실험 설계',experiment:'실험 검증',writing:'문서 정리',meeting:'추가 협의'}).map(([key,label])=>`<span><i style="background:${safeColor(colors[key])}" aria-hidden="true"></i>${esc(label)}</span>`).join('')}<small>진한 막대: 전체 기간 · 완료: 흐리게 · 보류: 점선</small></div>`;
-    host.innerHTML = `<section class="research-timeline timeline-unit-${unit}" aria-label="${UNIT_LABELS[unit]} 연구 타임라인"><div class="hierarchy-view-controls" role="group" aria-label="세부 과업 표시"><button type="button" data-hierarchy-view="roots" aria-pressed="${!showChildren}">L4 기술만</button><button type="button" data-hierarchy-view="all" aria-pressed="${showChildren}">L5 세부 연구까지</button></div>${navigation}<div class="timeline-scroll" tabindex="0" aria-label="연구 타임라인 가로 스크롤"><div class="timeline-chart" style="--timeline-columns:${columns.length};--timeline-min-column:${unit === 'week' ? 96 : unit === 'month' ? 38 : 86}px"><div class="timeline-header"><div class="timeline-corner"><strong>L3 → L4 → L5</strong><small>기술과 세부 연구 일정</small></div><div class="timeline-axis"><div class="timeline-groups">${periodGroups.map(group => `<div class="timeline-period-group" style="grid-column:span ${group.count}">${esc(group.label)}</div>`).join('')}</div><div class="timeline-columns">${columns.map(column => `<div class="timeline-column${p.isCurrent(column)?' is-current':''}" ${p.isCurrent(column)?'aria-current="date"':''}><strong>${esc(column.label)}</strong>${unit==='week'?`<span class="timeline-week-code" title="ISO 주차 ${esc(column.weekCode)}">${esc(column.weekCode)}</span>`:''}<small>${p.isCurrent(column)?(unit==='week'?'이번 주 / ':unit==='month'?'이번 달 / ':'올해 / '):''}${esc(column.detail || '')}</small></div>`).join('')}</div></div></div>${groups.map(group => `${groupHeading(group)}${groupRows(group)}`).join('')}${selectedL3?.size===0?'<p class="timeline-filter-empty">선택한 L3가 없습니다. L3 연구축 필터에서 표시할 항목을 선택해 주세요.</p>':!groups.length&&api.hideEmptyGroups?'<p class="timeline-filter-empty">조건에 맞는 연구가 없습니다. 필터를 변경해 주세요.</p>':''}</div></div>${navigation}${legend}<div class="timeline-help"><span>L3 제목 줄을 끌면 하위 L4/L5도 함께 이동 · 연구명으로 L4/L5 순서 변경</span><span>막대 이동 · 양 끝으로 기간 조정 · Enter로 상세 편집</span></div><div class="timeline-announcement sr-only" aria-live="polite"></div></section>`;
+    host.innerHTML = `<section class="research-timeline timeline-unit-${unit}" aria-label="${UNIT_LABELS[unit]} 연구 타임라인"><div class="hierarchy-view-controls" role="group" aria-label="세부 과업 표시"><button type="button" data-hierarchy-view="roots" aria-pressed="${!showChildren}">L4 기술만</button><button type="button" data-hierarchy-view="all" aria-pressed="${showChildren}">L5 세부 연구까지</button></div>${navigation}<div class="timeline-scroll" tabindex="0" aria-label="연구 타임라인 가로 스크롤"><div class="timeline-chart" style="--timeline-columns:${columns.length};--timeline-min-column:${unit === 'week' ? 96 : unit === 'month' ? 38 : 86}px"><div class="timeline-header"><div class="timeline-corner"><strong>L3 → L4 → L5</strong><small>기술과 세부 연구 일정</small></div><div class="timeline-axis"><div class="timeline-groups">${periodGroups.map(group => `<div class="timeline-period-group" style="grid-column:span ${group.count}">${esc(group.label)}</div>`).join('')}</div><div class="timeline-columns">${columns.map(column => `<div class="timeline-column${p.isCurrent(column)?' is-current':''}" ${p.isCurrent(column)?'aria-current="date"':''}><strong>${esc(column.label)}</strong>${unit==='week'?`<span class="timeline-week-code" title="ISO 주차 ${esc(column.weekCode)}">${esc(column.weekCode)}</span>`:''}<small>${p.isCurrent(column)?(unit==='week'?'이번 주 / ':unit==='month'?'이번 달 / ':'올해 / '):''}${esc(column.detail || '')}</small></div>`).join('')}</div></div></div>${groups.map(group => `${groupHeading(group)}${groupRows(group)}`).join('')}${selectedL3?.size===0?'<p class="timeline-filter-empty">선택한 L3가 없습니다. L3 연구축 필터에서 표시할 항목을 선택해 주세요.</p>':!groups.length&&api.hideEmptyGroups?'<p class="timeline-filter-empty">조건에 맞는 연구가 없습니다. 필터를 변경해 주세요.</p>':''}</div></div>${navigation}${legend}<div class="timeline-help"><span>L3 제목 줄을 끌면 하위 L4/L5도 함께 이동 · 연구명으로 L4/L5 순서 변경</span><span>막대는 하루 단위로 이동 · 양 끝으로 시작일과 종료일 조정 · 클릭하여 달력에서 선택</span></div><div class="timeline-announcement sr-only" aria-live="polite"></div></section>`;
 
     let contextMenu=null,contextSource=null;
     function closeMenu(restoreFocus=false){contextMenu?.remove();contextMenu=null;if(restoreFocus)contextSource?.focus?.({preventScroll:true});}
@@ -283,14 +274,16 @@
       const a = Math.min(interaction.first, interaction.last), b = Math.max(interaction.first, interaction.last);
       interaction.lane.querySelectorAll('.timeline-cell').forEach((cell, index) => cell.classList.toggle('is-selected', index >= a && index <= b));
     }
+    function dateAt(lane,clientX) {
+      const rect=lane.getBoundingClientRect(),point=Math.max(0,Math.min(columns.length-0.000001,(clientX-rect.left)/rect.width*columns.length));
+      const index=Math.floor(point),column=columns[index],days=dayDistance(column.end,column.start)+1;
+      return p.addDays(column.start,Math.floor((point-index)*days));
+    }
     function proposedRange(task, delta, mode) {
-      const covered = p.cover(task.start, task.end, unit);
-      let start = floor(covered.start), end = ceil(covered.end);
-      if (mode !== 'end') start = floor(p.step(start, delta, unit));
-      if (mode !== 'start') end = ceil(p.step(floor(end), delta, unit));
-      if (start < floor(MIN_DATE) || end < MIN_DATE || start > end) return null;
-      start = start < MIN_DATE ? MIN_DATE : start;
-      return {start, end};
+      const start=mode==='end'?task.start:p.addDays(task.start,delta);
+      const end=mode==='start'?task.end:p.addDays(task.end,delta);
+      if(start<MIN_DATE||end<start||!p.validDate(start)||!p.validDate(end))return null;
+      return {start,end};
     }
     function begin(event) {
       if (event.button !== 0 || interaction || event.isPrimary === false) return;
@@ -316,14 +309,14 @@
         if (!hasRange(task)) return;
         event.preventDefault();
         bar.focus({preventScroll: true});
-        interactionActive=true;interaction = {kind: 'bar', task, bar, lane: bar.closest('.timeline-lane'), mode: target.closest('[data-resize]')?.dataset.resize || 'move', x: event.clientX, pointerId: event.pointerId, delta: 0, moved: false, range: null};
+        interactionActive=true;interaction = {kind: 'bar', task, bar, lane: bar.closest('.timeline-lane'), mode: target.closest('[data-resize]')?.dataset.resize || 'move', x: event.clientX, day:dateAt(bar.closest('.timeline-lane'),event.clientX), pointerId: event.pointerId, delta: 0, moved: false, range: null};
         return;
       }
       const cell = target.closest('.timeline-cell');
       if (!cell || !host.contains(cell)) return;
       event.preventDefault();
       cell.focus({preventScroll: true});
-      interactionActive=true;interaction = {kind: 'selection', lane: cell.closest('.timeline-lane'), first: +cell.dataset.column, last: +cell.dataset.column, goalId: cell.dataset.goalId || '', parentId: cell.dataset.parentId || '', scheduleTask: cell.dataset.scheduleTask || '', pointerId: event.pointerId};
+      interactionActive=true;interaction = {kind: 'selection', lane: cell.closest('.timeline-lane'), first: +cell.dataset.column, last: +cell.dataset.column, startDate:dateAt(cell.closest('.timeline-lane'),event.clientX),endDate:dateAt(cell.closest('.timeline-lane'),event.clientX), goalId: cell.dataset.goalId || '', parentId: cell.dataset.parentId || '', scheduleTask: cell.dataset.scheduleTask || '', pointerId: event.pointerId};
       paintSelection();
     }
     function move(event) {
@@ -335,13 +328,13 @@
       }
       if (interaction.kind === 'selection') {
         interaction.last = columnAt(interaction.lane, event.clientX);
+        interaction.endDate=dateAt(interaction.lane,event.clientX);
         paintSelection();
         return;
       }
       const drag = interaction, distance = event.clientX - drag.x;
       drag.moved ||= Math.abs(distance) > 4;
-      const width = drag.lane.getBoundingClientRect().width / columns.length;
-      const delta = Math.round(distance / width);
+      const delta = dayDistance(dateAt(drag.lane,event.clientX),drag.day);
       if (delta === drag.delta && drag.range) return;
       drag.delta = delta;
       drag.range = delta ? proposedRange(drag.task, delta, drag.mode) : null;
@@ -355,6 +348,8 @@
       const geo = geometry(drag.range.start, drag.range.end);
       drag.bar.style.left = geo.left + '%';
       drag.bar.style.width = geo.width + '%';
+      host.querySelector('.timeline-announcement').textContent=p.spanLabel(drag.range);
+      drag.bar.title=p.spanLabel(drag.range);
     }
     function finish(event) {
       if (!interaction || event.pointerId !== interaction.pointerId) return;
@@ -373,15 +368,15 @@
         return;
       }
       if (completed.kind === 'selection') {
-        const first = columns[Math.min(completed.first, completed.last)], last = columns[Math.max(completed.first, completed.last)];
-        openSelection(completed, first.start, last.end);
+        const dates=[completed.startDate,completed.endDate].sort();
+        openSelection(completed,dates[0],dates[1]);
       } else if (!completed.moved) api.openTask(completed.task.id);
       else if (completed.delta && completed.range && (completed.range.start !== completed.task.start || completed.range.end !== completed.task.end)) {
-        api.reschedule(completed.task.id, completed.range.start, completed.range.end, unit);
+        api.reschedule(completed.task.id, completed.range.start, completed.range.end, 'day');
       } else if (completed.delta && !completed.range) api.toast?.('선택한 기간으로 옮길 수 없습니다. 연구 계획은 2026년 11월부터 만들 수 있습니다.');
     }
     function openSelection(selection, start, end) {
-      const defaults = {start, end, goalId: selection.goalId || '', planUnit: unit};
+      const defaults = {start, end, goalId: selection.goalId || '', planUnit: 'day'};
       if (selection.scheduleTask) api.openTask(selection.scheduleTask, defaults);
       else api.openTask(null, {...defaults, parentId: selection.parentId || ''});
     }
@@ -390,7 +385,7 @@
       const parent = taskMap.get(id);
       if (!parent) return;
       const range = rangeOf(parent);
-      api.openTask(null, {parentId: id, goalId: rootGoalId(parent), phaseId: parent.phaseId || '', owner: parent.owner || '', category: parent.category, planUnit: parent.planUnit || unit, ...(hasRange(range) ? {start: range.start, end: range.end} : {})});
+      api.openTask(null, {parentId: id, goalId: rootGoalId(parent), phaseId: parent.phaseId || '', owner: parent.owner || '', category: parent.category, planUnit: 'day', ...(hasRange(range) ? {start: range.start, end: range.end} : {})});
     }
     host.addEventListener('pointerdown', begin, {signal});
     document.addEventListener('pointermove', move, {signal});
@@ -444,7 +439,7 @@
       if (!cell) return;
       event.preventDefault();
       const column = columns[+cell.dataset.column];
-      openSelection({goalId: cell.dataset.goalId, parentId: cell.dataset.parentId, scheduleTask: cell.dataset.scheduleTask}, column.start, column.end);
+      openSelection({goalId: cell.dataset.goalId, parentId: cell.dataset.parentId, scheduleTask: cell.dataset.scheduleTask}, column.start, column.start);
     }, {signal});
   }
 
