@@ -11,7 +11,8 @@
   const close = () => { if (dialog?.open) dialog.close(); };
   opener?.addEventListener('click', open);
   dialog?.querySelectorAll('[data-contact-close]').forEach(button => button.addEventListener('click', close));
-  dialog?.addEventListener('click', event => {
+  // Keep backdrop dismissal on browsers without the closedBy property.
+  if (dialog && !('closedBy' in dialog)) dialog.addEventListener('click', event => {
     if (event.target !== dialog) return;
     const bounds = dialog.getBoundingClientRect();
     if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) close();

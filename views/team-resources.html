@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="page-type" content="software" />
+    <meta name="site-kind" content="software" />
+    <meta
+      name="description"
+      content="AI 1팀의 과업별 배분과 월별 집중 과업을 살펴봅니다."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <title>팀 리소스 | Selectstar</title>
+    <script src="/theme.js?v=20261116-2"></script>
+    <link rel="stylesheet" href="/team-resources.css?v=20261118-1" />
+    <script defer src="/team-resources.js?v=20261118-1"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">본문으로</a>
+    <div class="app">
+      <aside class="sidebar">
+        <a class="brand" href="/work" aria-label="Selectstar 홈">
+          <img src="/mascot/face.png" alt="" width="36" height="36" />
+          <span>kyohoon<span class="brand-dot">.</span> </span>
+        </a>
+        <div class="workspace">
+          <img
+            src="/mascot/selectstar-logo.png"
+            alt=""
+            width="30"
+            height="30"
+          />
+          <div>
+            <b>Selectstar</b>
+            <small>AI 1팀 / Vertical</small>
+          </div>
+        </div>
+        <p class="nav-label">워크스페이스</p>
+        <nav aria-label="업무 도구">
+          <a href="/work"> <span data-icon="grid"> </span>Selectstar 홈</a>
+          <a href="/work/app/index.html">
+            <span data-icon="book"> </span>연구일지<span class="external"
+              >↗</span
+            >
+          </a>
+          <a class="active" href="/work/team-resources" aria-current="page">
+            <span data-icon="chart"> </span>팀 리소스</a
+          >
+          <a href="/work/demos">
+            <span data-icon="layers"> </span>데모<span class="external"
+              >↗</span
+            >
+          </a>
+          <a href="/work/expenses/">
+            <span data-icon="wallet"> </span>품의 사용내역<span class="external"
+              >↗</span
+            >
+          </a>
+        </nav>
+        <div class="sidebar-bottom">
+          <button class="text-button" type="button" data-action="method">
+            집계 기준
+          </button>
+        </div>
+      </aside>
+      <div class="workspace-body">
+        <header class="topbar">
+          <div class="breadcrumbs">
+            <a href="/work">Selectstar</a>
+            <span>/</span>
+            <span id="crumb">팀 리소스</span>
+          </div>
+          <div class="top-actions">
+            <a
+              class="icon-button"
+              href="/settings"
+              data-global-settings
+              aria-label="설정"
+            >
+              <img src="/icons/ui-settings.svg" width="18" height="18" alt="" />
+            </a>
+            <form method="post" action="/api/auth/logout">
+              <button type="submit" class="logout-link">로그아웃</button>
+            </form>
+            <a class="icon-button" href="/" aria-label="전체 홈">
+              <span data-icon="home"> </span>
+            </a>
+          </div>
+        </header>
+        <main id="main">
+          <section id="dashboard">
+            <div class="page-heading">
+              <div class="heading-copy">
+                <div class="eyebrow">
+                  <span class="live-dot"> </span> AI 1팀
+                </div>
+                <h1>팀 리소스</h1>
+                <p>각자의 집중 과업과 팀 전체의 배분을 살펴봅니다.</p>
+              </div>
+              <div class="heading-side">
+                <img
+                  class="heading-mascot"
+                  src="/mascot/team-resources.png"
+                  width="104"
+                  height="104"
+                  alt="과업 카드를 정리하는 마스코트"
+                />
+                <a
+                  class="source-link"
+                  href="{{SOURCE}}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="notion-letter" aria-hidden="true">N</span>Notion
+                  원본 <span>↗</span>
+                </a>
+              </div>
+            </div>
+            <div class="source-status">
+              <div>
+                <span data-icon="database"> </span>
+                <span
+                  >기록 기준 <b>{{SNAPSHOT}}</b>
+                  <span class="status-divider">/</span> 마지막 기록
+                  <b>{{LATEST}}</b>
+                </span>
+              </div>
+              <button type="button" data-action="method">
+                집계 기준 <span data-icon="info"> </span>
+              </button>
+            </div>
+            <div class="toolbar">
+              <div class="period-control">
+                <button
+                  type="button"
+                  class="icon-button"
+                  data-action="prev"
+                  aria-label="이전 달"
+                >
+                  <span data-icon="left"> </span>
+                </button>
+                <label class="month-select">
+                  <span class="sr-only">분석 기간</span>
+                  <select id="month"></select>
+                  <span data-icon="chevron"> </span>
+                </label>
+                <button
+                  type="button"
+                  class="icon-button"
+                  data-action="next"
+                  aria-label="다음 달"
+                >
+                  <span data-icon="right"> </span>
+                </button>
+              </div>
+              <div
+                class="people-filters"
+                id="people-filters"
+                aria-label="분석 대상 선택"
+              ></div>
+              <div class="toolbar-end">
+                <span class="allocation-basis">휴가를 제외한 업무 배분</span>
+              </div>
+            </div>
+            <div class="tabs" role="tablist" aria-label="분석 보기">
+              <button
+                type="button"
+                role="tab"
+                data-tab="overview"
+                id="tab-overview"
+                aria-selected="true"
+              >
+                과업 배분
+              </button>
+              <button
+                type="button"
+                role="tab"
+                data-tab="people"
+                id="tab-people"
+                aria-selected="false"
+              >
+                월별 변화
+              </button>
+              <button
+                type="button"
+                role="tab"
+                data-tab="records"
+                id="tab-records"
+                aria-selected="false"
+              >
+                주간 원본 기록<span class="tab-count" id="record-count"> </span>
+              </button>
+            </div>
+            <div id="view" role="tabpanel" aria-labelledby="tab-overview"></div>
+            <footer class="dashboard-footer">
+              <span
+                >선택한 팀원 기록 기준
+                <span class="status-divider">/</span> 진교훈 제외</span
+              >
+              <button type="button" data-action="method">
+                Notion 기록 갱신 기준
+              </button>
+            </footer>
+          </section>
+        </main>
+      </div>
+    </div>
+    <dialog id="detail" class="detail" closedby="any" aria-labelledby="detail-title"></dialog>
+    <dialog closedby="any" id="method" aria-labelledby="method-title">
+      <div class="modal-heading">
+        <div>
+          <span class="eyebrow">집계 기준</span>
+          <h2 id="method-title">과업 비중은 이렇게 계산합니다.</h2>
+        </div>
+        <button
+          type="button"
+          class="icon-button"
+          data-action="close-method"
+          aria-label="집계 기준 닫기"
+        >
+          ✕
+        </button>
+      </div>
+      <div class="method-content">
+        <dl>
+          <div>
+            <dt>분석 대상</dt>
+            <dd>
+              선택 가능한 팀원의 기록 {{RECORDS}}개입니다. 진교훈은 집계에서
+              제외했습니다.
+            </dd>
+          </div>
+          <div>
+            <dt>팀원별 도넛 차트</dt>
+            <dd>
+              각자 기록한 업무를 100%로 두고 과업별 비중을 계산합니다. 도넛의
+              크기는 모두 같습니다. 총 업무시간이나 다른 팀원과의 근무량 차이를
+              표현하지 않습니다.
+            </dd>
+          </div>
+          <div>
+            <dt>팀 전체의 과업 비중</dt>
+            <dd>
+              선택한 팀원들의 기록된 업무시간을 합산한 뒤 과업별 비중을
+              계산합니다. 개인 차트는 각 개인의 업무가 분모이고, 팀 차트는
+              선택한 팀원의 전체 업무가 분모입니다.
+            </dd>
+          </div>
+          <div>
+            <dt>휴가와 연휴</dt>
+            <dd>
+              연차, 반차, 시간차, 병가, 연휴로 분류된 항목은 업무 배분 계산에서
+              제외합니다. 개인별 사용량이나 업무시간 합계는 비교하지 않습니다.
+            </dd>
+          </div>
+          <div>
+            <dt>원본 과업과 시간</dt>
+            <dd>
+              Notion의 Task 1–5 과업과 투입시간 속성을 사용합니다. 과업명과
+              분류는 원본 그대로이며, 비어 있는 분류는 ‘미분류’입니다. 입력한
+              시간을 임의로 주 40시간에 맞춰 보정하지 않았습니다. 원본 시간은
+              주간 기록 탭에서만 확인할 수 있습니다.
+            </dd>
+          </div>
+          <div>
+            <dt>월 경계를 넘는 주</dt>
+            <dd>
+              주간 과업 시간을 평일 수에 비례해 해당 월에 나눈 다음 비중을
+              계산합니다. 따라서 월별 과업 배분은 주간 기록을 나눈 추정치입니다.
+            </dd>
+          </div>
+          <div>
+            <dt>월별 변화와 부분 기록</dt>
+            <dd>
+              월마다 기록된 업무를 각각 100%로 환산합니다. 기록이 없는 기간은
+              업무량 0으로 계산하지 않습니다. 부분 기록 표시를 함께 확인해
+              주세요.
+            </dd>
+          </div>
+          <div>
+            <dt>업데이트</dt>
+            <dd>
+              상단 기준일에 가져온 Notion 기록입니다. 현재는 기록을 다시 가져와
+              갱신합니다.
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="primary-button" data-action="close-method">
+          확인
+        </button>
+      </div>
+    </dialog>
+    <div id="announcer" class="sr-only" aria-live="polite"></div>
+    <script id="resource-data" type="application/json">
+      {{DATA}}
+    </script>
+  </body>
+</html>

@@ -18,7 +18,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261116-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${surface === 'demos' ? '<link rel="stylesheet" href="/demo-links.css?v=20261116-1">' : ''}
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261118-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${surface === 'demos' ? '<link rel="stylesheet" href="/demo-links.css?v=20261116-1">' : ''}
 </head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {
@@ -42,7 +42,7 @@ export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
       </a>
       <a class="portal card selectstar-portal work-portal" href="/work" aria-labelledby="work-label">
         ${artwork('selectstar-idle.webp', 'selectstar-hover.webp', 'Selectstar 마스코트')}
-        <div class="portal-copy"><div class="portal-title"><h2 id="work-label">Selectstar</h2><span class="arrow" aria-hidden="true">→</span></div><p>연구일지, 데모, 품의 사용내역</p><span class="portal-detail">로그인 필요</span></div>
+        <div class="portal-copy"><div class="portal-title"><h2 id="work-label">Selectstar</h2><span class="arrow" aria-hidden="true">→</span></div><p>연구일지, 팀 리소스와 업무 도구</p><span class="portal-detail">로그인 필요</span></div>
       </a>
       <a class="portal card paper-portal" href="/paper" aria-labelledby="paper-label">
         ${artwork('paper.png', 'paper-hover.png', '논문과 펜을 든 마스코트')}
@@ -79,14 +79,14 @@ export function loginPage({configured, preview, message = '', next = '/'}) {
   ${preview ? '<div class="preview-box"><strong>로컬 미리보기</strong><p>localhost 전용 개발 미리보기입니다.</p><a class="secondary-button btn btn--secondary" href="/work/preview">로컬 미리보기 열기 →</a></div>' : ''}
   </section>
 </main>${footer()}</div>
-<dialog id="account-help" class="contact-dialog" aria-labelledby="contact-title" aria-describedby="contact-description">
+<dialog id="account-help" closedby="any" class="contact-dialog" aria-labelledby="contact-title" aria-describedby="contact-description">
  <div class="contact-content"><button class="dialog-close" type="button" data-contact-close aria-label="문의 안내 닫기">×</button>
  <div class="auth-mascot auth-mascot--support" aria-hidden="true"><img src="/mascot/login-mascots.png" alt="" width="1920" height="819"></div>
  <h2 id="contact-title">계정 도움이 필요하신가요?</h2><p id="contact-description">비밀번호를 잊으셨다면<br>아래 연락처로 관리자에게 직접 문의해 주세요.</p>
  <div class="contact-methods"><div class="contact-qr"><div class="qr-frame"><img src="https://i.ibb.co/VYhm8hmW/image.png" alt="관리자 카카오톡 QR코드" width="164" height="164"></div><strong>카카오톡으로 문의</strong><p>카카오톡 앱으로 QR코드를 스캔해 주세요.</p></div>
  <div class="contact-email"><span>관리자 이메일</span><a href="mailto:fhzh@naver.com">fhzh@naver.com</a><button type="button" class="btn" data-copy-email>이메일 주소 복사</button><p class="copy-status" role="status" aria-live="polite"></p></div></div>
  <button type="button" class="btn btn--primary contact-done" data-contact-close>확인</button></div>
-</dialog><script src="/auth.js?v=20261113-1" defer></script>`, 'login');
+</dialog><script src="/auth.js?v=20261118-1" defer></script>`, 'login');
 }
 
 function privateHeader(back = '/', section = '') {
@@ -100,6 +100,7 @@ export function workPage({mode, role}) {
     {title:'연구일지', image:'journal.webp', alt:'연구 노트를 쓰는 마스코트', description:'연구 로드맵과 실험 기록을 관리합니다.', href:'/work/app/index.html', action:'연구일지 열기'},
     {title:'데모', image:'demo.webp', alt:'홀로그램을 시연하는 마스코트', description:'Ontology와 Document Parsing을 실행합니다.', href:'/work/demos', action:'데모 선택하기'},
     {title:'품의 사용내역', image:'expenses.webp', alt:'계산기와 영수증을 든 마스코트', description:'월별 카드 내역과 품의별 예산을 확인합니다.', href:'/work/expenses/', action:'품의 분석 열기'},
+    {title:'팀 리소스', image:'team-resources.png', alt:'과업 카드를 든 마스코트', description:'팀원별 과업 배분과 월별 변화를 확인합니다.', href:'/work/team-resources', action:'과업 배분 보기'},
   ];
   return shell('Selectstar', `
 <div class="hub-shell spaces-hub">${privateHeader('/work')}<main id="main" class="hub-main">

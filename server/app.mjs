@@ -6,6 +6,7 @@ import {gzipSync,gunzipSync} from 'node:zlib';
 import { homePage, loginPage, workPage, demosPage, personalPage } from '../views/pages.mjs';
 import { previewAllowed, safeRelativePath, safeLoginDestination, validState } from './policy.mjs';
 import {demoRoutes} from './demo-routes.mjs';
+import {teamResourceRoutes} from './team-resource-routes.mjs';
 import { expenseRoutes } from './expense-routes.mjs';
 import { paperRoutes } from './paper-routes.mjs';
 import { appearanceRoutes } from './appearance-routes.mjs';
@@ -147,6 +148,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
     catch { return send(res,404,{error:'찾을 수 없습니다.'}); }
   }
   const handleDemos=demoRoutes({authorize,send,rootDir});
+  const handleTeamResources=teamResourceRoutes({authorize,authFetch,bearer,redirect,rootDir,send});
   const handleExpenses=expenseRoutes({authorize,authFetch,bearer,send,body,serveFile,rootDir});
   const handlePaper=paperRoutes({authorize,authFetch,bearer,send,body,rootDir,environment,fetcher});
   const handleAppearance=appearanceRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
@@ -229,6 +231,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
         const access=await authorize(req,res).catch(()=>null);
         return send(res,200,req.method==='HEAD'?'':travelPage(access),'text/html; charset=utf-8');
       }
+      if (await handleTeamResources(req,res,requestUrl)) return;
       if (pathname === '/work/demos' || pathname === '/work/demos/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
         const access=await authorize(req,res);

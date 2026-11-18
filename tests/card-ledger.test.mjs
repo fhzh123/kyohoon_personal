@@ -96,7 +96,7 @@ test('settings persist with revisions and a reader cannot mutate settings or upl
   for(const [url,method]of [['/api/card-ledger/inspect','POST'],['/api/card-ledger/upload','POST'],['/api/card-ledger/settings','PUT']])assert.equal((await request(remote,url,{method,headers:{cookie:'kh_access=fixture'},body:{}})).status,403);
 });
 test('Selectstar retains approval expenses',async()=>{
-  const {handler,headers}=await context();const r=await request(handler,'/work',{headers});assert.equal(r.status,200);assert.match(r.data,/href="\/work\/expenses\/"/);assert.match(r.data,/3개의 도구/);assert.match(r.data,/href="\/work\/demos"/);
+  const {handler,headers}=await context();const r=await request(handler,'/work',{headers});assert.equal(r.status,200);assert.match(r.data,/href="\/work\/expenses\/"/);assert.match(r.data,/href="\/work\/team-resources"/);assert.match(r.data,/href="\/work\/demos"/);
 });
 
 async function ui(role='editor'){

@@ -16,12 +16,12 @@
   }
   function descendantsOf(tasks, id) {
     const result = [], seen = new Set([id]);
-    const pending = childrenOf(tasks, id).slice().reverse();
+    const pending = childrenOf(tasks, id).reverse();
     while (pending.length) {
       const task = pending.pop();
       if (seen.has(task.id)) continue;
       seen.add(task.id); result.push(task);
-      pending.push(...childrenOf(tasks, task.id).slice().reverse());
+      pending.push(...childrenOf(tasks, task.id).reverse());
     }
     return result;
   }

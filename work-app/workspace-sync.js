@@ -11,13 +11,16 @@
     let revision = null, ready = false, paused = false, running = false, pending = null, conflict = null, lastSynced;
     let status = {mode:'local', message:'이 브라우저에 자동 저장', revision};
     const report = (mode, message) => { status = {mode, message, revision}; onStatus({...status}); };
-    const request = async (method, body) => {
-      const abort = new AbortController(), timer = setTimeout(() => abort.abort(), 8000);
+    const request = async (method, body, priority) => {
+      const supportsTimeout = typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function';
+      const controller = supportsTimeout ? null : new AbortController();
+      const timer = controller ? setTimeout(() => controller.abort(), 8000) : undefined;
+      const signal = controller?.signal ?? AbortSignal.timeout(8000);
       let response, value;
       try {
-        response = await fetch('/api/research-state', {method, signal:abort.signal, cache:'no-store', credentials:'same-origin', headers:body ? {'Content-Type':'application/json'} : {}, ...(body ? {body:JSON.stringify(body)} : {})});
+        response = await fetch('/api/research-state', {method, ...(priority ? {priority} : {}), signal, cache:'no-store', credentials:'same-origin', headers:body ? {'Content-Type':'application/json'} : {}, ...(body ? {body:JSON.stringify(body)} : {})});
         value = await response.json();
-      } finally { clearTimeout(timer); }
+      } finally { if (timer !== undefined) clearTimeout(timer); }
       if (!response.ok && response.status !== 409) throw Error(value.error || 'Workspace unavailable');
       if (!Object.hasOwn(value, 'revision') || !Object.hasOwn(value, 'state')) throw Error('Invalid workspace response');
       return {value, conflict:response.status === 409};
@@ -53,11 +56,11 @@
         report('offline', '이 브라우저에 저장됨 · 업무 저장 연결 확인 필요');
       } finally { running = false; }
     };
-    const refresh = async (initialEnvelope = null) => {
+    const refresh = async (initialEnvelope = null, {priority} = {}) => {
       if (running) return false;
       const before = stable(readState());
       try {
-        const {value} = initialEnvelope ? {value:copy(initialEnvelope)} : await request('GET');
+        const {value} = initialEnvelope ? {value:copy(initialEnvelope)} : await request('GET', undefined, priority);
         if(options.normalizeState&&value.state)value.state=options.normalizeState(value.state);
         revision = value.revision; ready = true;
         const local = readState();

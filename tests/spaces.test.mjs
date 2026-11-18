@@ -9,8 +9,8 @@ test('four home destinations preserve existing poses; tools use unique illustrat
  assert.deepEqual([...d.querySelectorAll('a.portal')].map(a=>a.getAttribute('href')),['/resume','/work','/paper','/personal']);
  for(const a of d.querySelectorAll('a.portal'))assert.notEqual(a.querySelector('.pose-idle').src,a.querySelector('.pose-active').src);
  const hub=new JSDOM(workPage({mode:'supabase',role:'editor'})).window.document;
- assert.deepEqual([...hub.querySelectorAll('a.tool-card')].map(a=>a.getAttribute('href')),['/work/app/index.html','/work/demos','/work/expenses/']);
- assert.equal(new Set([...hub.querySelectorAll('.tool-illustration img')].map(x=>x.src)).size,3);
+ assert.deepEqual([...hub.querySelectorAll('a.tool-card')].map(a=>a.getAttribute('href')),['/work/app/index.html','/work/demos','/work/expenses/','/work/team-resources']);
+ assert.equal(new Set([...hub.querySelectorAll('.tool-illustration img')].map(x=>x.src)).size,4);
  assert.equal(new JSDOM(demosPage()).window.document.querySelectorAll('a[target="_blank"][rel="noopener noreferrer"]').length,4);
  const personal=new JSDOM(personalPage()).window.document;assert.equal(personal.querySelectorAll('.personal-tools .tool-card').length,3);assert.equal(personal.querySelectorAll('.personal-tools .is-pending').length,1);assert.equal(personal.querySelector('.personal-tools a').getAttribute('href'),'/personal/travel');
 });

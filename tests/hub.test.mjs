@@ -12,7 +12,7 @@ const demos = [
   'https://selectstar-ai-vertical-research-feasibility.kyohoon-jin.chatgpt.site/',
   'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/',
 ];
-const titles = ['연구일지', '데모', '품의 사용내역'];
+const titles = ['연구일지', '데모', '품의 사용내역', '팀 리소스'];
 const servers = [];
 let development;
 let production;
@@ -59,13 +59,14 @@ test('unauthenticated Work contains login only and hides Draft tools and demo UR
   }
 });
 
-test('authorized local Work groups demos and provides three illustrated tools', async () => {
+test('authorized local Work groups demos and provides four illustrated tools', async () => {
   const cookie = await localCookie();
   const { response, text } = await request(development, '/work', { cookie });
   assert.equal(response.status, 200);
   const links = [...text.matchAll(/<a class="tool-card(?: [^"]*)?"[^>]+>/g)].map(match => match[0]);
   const pending = [...text.matchAll(/<button class="tool-card is-pending"[^>]*>/g)].map(match => match[0]);
-  assert.equal(links.length, 3);
+  assert.equal(links.length, 4);
+  assert.match(links[3], /href="\/work\/team-resources"/);
   assert.equal(pending.length, 0);
   assert.match(links[2], /href="\/work\/expenses\/"/);
   assert.match(links[0], /href="\/work\/app\/index\.html"/);
@@ -77,7 +78,7 @@ test('authorized local Work groups demos and provides three illustrated tools', 
   for (const button of pending) assert.match(button, /\sdisabled(?:\s|>)/);
   assert.equal((text.match(/공사 중/g) || []).length, 0);
   const document = new JSDOM(text).window.document;
-  assert.ok([...document.querySelectorAll('a[href="/"]')].some(link => link.textContent.trim() === '홈으로'));
+  assert.ok([...document.querySelectorAll('a[href="/"]')].some(link => link.getAttribute('aria-label') === '전체 홈'));
   assert.match(text, /<form action="\/api\/auth\/logout" method="post">/);
   assert.match(text, /localhost 전용/);
   assert.match(text, /이 프로젝트 사본에 저장/);

@@ -423,7 +423,7 @@ function reorderResourceOwner(owner,target,placement='before'){
       const parentId=$('#task-parent').value,parent=state.tasks.find(t=>t.id===parentId),context=$('#hierarchy-parent-context');
       $('#task-goal').disabled=!!parent||!!task.assetId;$('#task-parent').disabled=!!task.assetId;
       if(parent){$('#task-goal').value=H.rootOf(state.tasks,parentId)?.goalId||'';const range=H.effectiveRange(state.tasks,parentId);context.innerHTML=`<strong>${esc(parent.title)}</strong><span>${esc(P.spanLabel({...parent,...range}))}</span><small>상위 L4와 같은 L3 연구축에 연결됩니다.</small>`;}
-      else context.innerHTML='';
+      else context.replaceChildren();
       try {
         const period=original&&!periodEdited?{start:original.start,end:original.end}:readEditorPeriod();
         const next=state.tasks.map(t=>t.id===id?{...t,...period,parentId}:t);
@@ -560,10 +560,25 @@ function renderAllocations(){
       onConflict:()=>{toast('서로 다른 저장본이 있습니다. 백업 메뉴에서 비교해 주세요.');$('#backup-open').classList.add('needs-attention');}
     });
     workspaceSync=sync;
-    const refresh=()=>{if(!dirty&&view!=='settings'&&!window.ResearchTimeline?.isInteracting?.()&&document.visibilityState!=='hidden'&&!$('#utility-dialog').open&&!$('#task-dialog').open&&!sync.getStatus().paused)void sync.refresh();};
+    const refresh=()=>{if(!dirty&&view!=='settings'&&!window.ResearchTimeline?.isInteracting?.()&&document.visibilityState!=='hidden'&&!$('#utility-dialog').open&&!$('#task-dialog').open&&!sync.getStatus().paused)void sync.refresh(null, {priority: 'low'});};
     window.addEventListener('focus',refresh);
-    document.addEventListener('visibilitychange',refresh);
-    setInterval(refresh,10000);
+    let refreshTimer;
+    function stopPolling() {
+      clearInterval(refreshTimer);
+      refreshTimer = undefined;
+    }
+    function resumePolling() {
+      if (document.hidden) {
+        stopPolling();
+      } else if (refreshTimer === undefined) {
+        refresh();
+        refreshTimer = setInterval(refresh, 10000);
+      }
+    }
+    document.addEventListener('visibilitychange', resumePolling);
+    window.addEventListener('pagehide', stopPolling);
+    window.addEventListener('pageshow', resumePolling);
+    if (!document.hidden) refreshTimer = setInterval(refresh, 10000);
   }
   function openWorkspaceConflict(){
     const conflict=workspaceSync?.exportConflict();

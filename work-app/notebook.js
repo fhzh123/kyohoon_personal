@@ -43,13 +43,14 @@
   function dialog(title, body, footer) {
     const node = document.createElement('dialog');
     node.className = 'modal';
+    node.setAttribute('closedby', 'any');
     node.setAttribute('aria-label', title);
     node.style.cssText = 'border:0;padding:0;margin:auto;max-width:min(900px,calc(100vw - 32px))';
     node.innerHTML = '<div class="modal-header"><h2>' + e(title) + '</h2><button type="button" class="icon-button" data-close aria-label="닫기">✕</button></div><div class="modal-body">' + body + '</div>' + (footer ? '<div class="modal-footer">' + footer + '</div>' : '');
     document.body.appendChild(node);
     node.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => node.close()));
     node.addEventListener('close', () => node.remove());
-    node.addEventListener('click', event => { if (event.target === node) { const bounds = node.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) node.close(); } });
+    if (!('closedBy' in node)) node.addEventListener('click', event => { if (event.target === node) { const bounds = node.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) node.close(); } });
     node.showModal();
     return node;
   }

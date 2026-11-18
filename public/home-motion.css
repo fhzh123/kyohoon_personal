@@ -31,3 +31,13 @@ body[data-surface="home"] .portal-grid > :nth-child(4) { animation-delay: 260ms;
 @media print {
   body[data-surface="home"] .home-main { --home-entrance: none !important; }
 }
+
+/* Older engines keep the explicit sequence above. */
+@supports (animation-delay: calc(sibling-index() * 1ms)) {
+  body[data-surface="home"] .intro > * {
+    animation-delay: calc((sibling-index() - 1) * 50ms);
+  }
+  body[data-surface="home"] .portal-grid > * {
+    animation-delay: calc(20ms + sibling-index() * 60ms);
+  }
+}
