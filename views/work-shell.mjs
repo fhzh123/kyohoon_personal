@@ -65,7 +65,7 @@ function sectionEntry(section, active) {
 /** Left sidebar shared by every Work page. `footer` is page-specific markup. */
 export function workSidebar(active, {footer = ''} = {}) {
   return `<aside class="ws-sidebar" id="ws-sidebar" aria-label="Selectstar 메뉴">
-  <div class="ws-sidebar-head"><a class="ws-brand" href="/work" aria-label="Selectstar 홈"><img src="/mascot/face.png" alt="" width="32" height="32"><span><strong>Selectstar</strong><small>AI 1팀 · Vertical</small></span></a><button class="ws-drawer-close" type="button" data-ws-close aria-label="메뉴 닫기">${shellIcon('close')}</button></div>
+  <div class="ws-sidebar-head"><a class="ws-brand" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="32" height="32"><span><strong>Kyohoon Jin</strong></span></a><button class="ws-drawer-close" type="button" data-ws-close aria-label="메뉴 닫기">${shellIcon('close')}</button></div>
   <nav class="ws-nav" aria-label="워크스페이스"><ul>${WORK_SECTIONS.map(section => sectionEntry(section, active)).join('')}</ul></nav>
   ${footer ? `<div class="ws-sidebar-foot">${footer}</div>` : ''}
 </aside><div class="ws-scrim" data-ws-close hidden></div>`;
@@ -75,18 +75,14 @@ export function workSidebar(active, {footer = ''} = {}) {
  * Top bar: menu button, breadcrumb, page actions, then the same global cluster
  * (Work 홈, 전체 홈, 설정, 로그아웃) in the same order on every page.
  */
-export function workTopbar(active, {crumb = '', crumbId = '', actions = '', bare = false} = {}) {
+export function workTopbar(active, {crumb = '', crumbId = '', actions = ''} = {}) {
   const section = sectionOf(active);
   const trail = [`<a href="/work">Selectstar</a>`];
   if (section && section.key !== 'home') trail.push(crumb ? `<a href="${section.href}">${section.label}</a>` : `<strong>${section.label}</strong>`);
   if (crumb) trail.push(`<strong${crumbId ? ` id="${crumbId}"` : ''}>${crumb}</strong>`);
-  // The Selectstar landing page has no sidebar: it shows the brand instead of the menu button.
-  const lead = bare
-    ? `<a class="ws-bar-brand" href="/work" aria-label="Selectstar 홈"><img src="/mascot/face.png" alt="" width="30" height="30"><span><strong>Selectstar</strong><small>AI 1팀 · Vertical</small></span></a>`
-    : `<button class="ws-menu-button" type="button" data-ws-open aria-controls="ws-sidebar" aria-expanded="false" aria-label="메뉴 열기">${shellIcon('menu')}</button>
-  <nav class="ws-crumbs" aria-label="현재 위치">${trail.join('<span aria-hidden="true">/</span>')}</nav>`;
-  return `<header class="ws-topbar${bare ? ' ws-topbar--bare' : ''}">
-  ${lead}
+  return `<header class="ws-topbar">
+  <button class="ws-menu-button" type="button" data-ws-open aria-controls="ws-sidebar" aria-expanded="false" aria-label="메뉴 열기">${shellIcon('menu')}</button>
+  <nav class="ws-crumbs" aria-label="현재 위치">${trail.join('<span aria-hidden="true">/</span>')}</nav>
   <div class="ws-actions topbar-actions">${actions ? `<div class="ws-page-actions">${actions}</div><span class="ws-divider" aria-hidden="true"></span>` : ''}${spaceNavigation('work', 'ws-space-nav')}<a class="ws-icon-button" href="/settings" data-global-settings aria-label="설정" title="설정">${shellIcon('settings')}</a><form id="work-logout" class="ws-logout" action="/api/auth/logout" method="post"><button type="submit" aria-label="로그아웃" title="로그아웃">${shellIcon('logout')}<span>로그아웃</span></button></form></div>
 </header>`;
 }

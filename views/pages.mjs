@@ -1,5 +1,5 @@
 import {spaceNavigation} from './navigation.mjs';
-import {workSidebar, workTopbar, WORK_SHELL_ASSETS} from './work-shell.mjs';
+import {workSidebar, workTopbar, WORK_SHELL_ASSETS, WORK_SECTIONS} from './work-shell.mjs';
 const uiIcon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="18" height="18" alt="" aria-hidden="true">`;
 const themeButton = () => `<a class="theme-toggle theme-toggle--icon space-nav-button" href="/settings" data-global-settings aria-label="설정" title="설정">${uiIcon('settings')}</a>`;
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
@@ -19,8 +19,8 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261118-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${['selectstar', 'demos'].includes(surface) ? WORK_SHELL_ASSETS : ''}
-</head><body data-surface="${surface}"${['selectstar', 'demos'].includes(surface) ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261118-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
+</head><body data-surface="${surface}"${surface === 'demos' ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {
   return `<div class="portal-art ${hover && hover !== idle ? 'has-swap' : ''}"><img class="pose-idle" src="/mascot/${idle}" alt="${alt}" width="768" height="768" decoding="async">${hover && hover !== idle ? `<img class="pose-active" src="/mascot/${hover}" alt="" aria-hidden="true" width="768" height="768" decoding="async">` : ''}</div>`;
@@ -95,21 +95,50 @@ function privateHeader(back = '/', section = '') {
   return `<header class="site-header">${brand()}<div class="hub-header-actions">${spaceNavigation(space)}${themeButton()}<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form></div></header>`;
 }
 
+// Space landing pages (Selectstar, Personal) share the Paper home layout: a large
+// title with its mascot, then big two-column cards that wrap as tools are added.
+const SPACE_HUB_CSS = '<link rel="stylesheet" href="/space-hub.css?v=20261118-1">';
+function spaceHub({header, eyebrow, title, description, hero, heroAlt, note = '', label, cards, extraClass = ''}) {
+  const card = c => {
+    const body = `<img class="space-card-art" src="/mascot/${c.image}" alt="" width="168" height="168" decoding="async"><span class="space-card-kicker">${c.kicker}</span><div class="space-card-title"><h2>${c.title}</h2>${c.href ? '<span class="space-card-arrow" aria-hidden="true">→</span>' : ''}</div><span class="space-card-text">${c.description}</span><span class="space-card-meta">${c.meta}</span>`;
+    return c.href
+      ? `<a class="tool-card space-card" href="${c.href}" aria-label="${c.title}: ${c.action}">${body}</a>`
+      : `<article class="tool-card space-card is-pending">${body}</article>`;
+  };
+  return `${SPACE_HUB_CSS}<div class="hub-shell space-shell">${header}<main id="main" class="space-main"><section class="space-hero"><div><p class="space-eyebrow">${eyebrow}</p><h1>${title}</h1><p class="space-lede">${description}</p>${note}</div><img src="/mascot/${hero}" alt="${heroAlt}" width="220" height="220"></section><nav class="space-cards${extraClass ? ' ' + extraClass : ''}" aria-label="${label}">${cards.map(card).join('')}</nav></main>${footer()}</div>`;
+}
+
+const subMenu = key => (WORK_SECTIONS.find(section => section.key === key)?.items || []).map(item => item[1]).join(' · ');
+
 export function workPage({mode, role}) {
   const local = mode === 'local';
-  const tools = [
-    {title:'연구일지', image:'journal.webp', alt:'연구 노트를 쓰는 마스코트', description:'연구 로드맵, L3 연구축과 연구 노트를 관리합니다.', href:'/work/app/index.html', action:'연구일지 열기'},
-    {title:'팀 리소스', image:'team-resources.png', alt:'과업 카드를 든 마스코트', description:'주간 기록으로 팀원별 과업 배분과 월별 변화를 봅니다.', href:'/work/team-resources', action:'과업 배분 보기'},
-    {title:'데모', image:'demo.webp', alt:'홀로그램을 시연하는 마스코트', description:'Ontology와 Document Parsing 데모를 실행합니다.', href:'/work/demos', action:'데모 선택하기'},
-    {title:'품의 사용내역', image:'expenses.webp', alt:'계산기와 영수증을 든 마스코트', description:'월별 카드 내역과 품의별 예산을 확인합니다.', href:'/work/expenses/', action:'품의 분석 열기'},
+  const cards = [
+    {kicker:'연구 관리', title:'연구일지', image:'journal.webp', description:'연구 로드맵과 L3 연구축을 세우고<br>연구 노트를 함께 남깁니다.', meta:subMenu('research'), href:'/work/app/index.html', action:'연구일지 열기'},
+    {kicker:'팀 운영', title:'팀 리소스', image:'team-resources.png', description:'주간 기록으로 팀원별 과업 배분과<br>월별 변화를 봅니다.', meta:subMenu('team'), href:'/work/team-resources', action:'과업 배분 보기'},
+    {kicker:'시연', title:'데모', image:'demo.webp', description:'연구 결과를 바로 보여 줄 수 있는<br>데모를 새 창에서 엽니다.', meta:subMenu('demos'), href:'/work/demos', action:'데모 선택하기'},
+    {kicker:'예산', title:'품의 사용내역', image:'expenses.webp', description:'월별 카드 내역과 품의별 예산을<br>한눈에 확인합니다.', meta:subMenu('expenses'), href:'/work/expenses/', action:'품의 분석 열기'},
   ];
-  const status = local ? '로컬 개발 미리보기 / localhost 전용' : role === 'reader' ? '연결됨 / 읽기 전용' : '연결됨 / 편집 가능';
-  return shell('Selectstar', `
-<div class="ws-app ws-app--bare"><div class="ws-main">${workTopbar('home', {bare: true})}<main id="main" class="ws-content ws-content--landing">
-  <div class="ws-heading"><div><h1>Selectstar</h1><p>연구일지와 업무 도구를 한곳에서 엽니다.</p></div><div class="ws-heading-meta"><span class="connection-tag">${status}</span></div></div>
-  ${local ? '<p class="hub-local-note">개발 미리보기입니다. 연구일지 변경은 이 프로젝트 사본에 저장되며 Supabase와 동기화되지 않습니다.</p>' : ''}
-  <div class="ws-tools">${tools.map(t => `<a class="tool-card" href="${t.href}"><div class="tool-illustration"><img src="/mascot/${t.image}" alt="${t.alt}" width="380" height="380"></div><div class="tool-copy"><h2>${t.title}</h2><p>${t.description}</p><span class="tool-action">${t.action}<span aria-hidden="true">→</span></span></div></a>`).join('')}</div>
-</main></div></div>`, 'selectstar');
+  const status = local ? '로컬 개발 미리보기 · localhost 전용' : role === 'reader' ? '연결됨 · 읽기 전용' : '연결됨 · 편집 가능';
+  const note = `<p class="space-status"><span aria-hidden="true"></span>${status}</p>${local ? '<p class="space-notice">개발 미리보기입니다. 연구일지 변경은 이 프로젝트 사본에 저장되며 Supabase와 동기화되지 않습니다.</p>' : ''}`;
+  return shell('Selectstar', spaceHub({
+    header: privateHeader('/work'), eyebrow: 'AI 1팀 · Vertical 업무 공간', title: 'Selectstar',
+    description: '연구와 팀 업무에 쓰는 도구를<br>한곳에서 엽니다.', hero: 'selectstar-idle.webp', heroAlt: 'Selectstar 로고를 든 마스코트',
+    note, label: 'Selectstar 도구', cards,
+  }), 'selectstar');
+}
+
+export function personalPage(access) {
+  const header = access ? privateHeader('/personal') : publicHeader('personal').replace('</div></header>', '<a class="btn" href="/login?next=%2Fpersonal">로그인</a></div></header>');
+  const cards = [
+    {kicker:'기록', title:'여행의 흔적', image:'travel-globe.webp', description:'다녀온 곳의 사진과 이야기를<br>지구본 위에 남깁니다.', meta:'지구본 · 여행 기록', href:'/personal/travel', action:'여행 기록 보기'},
+    {kicker:'컬렉션', title:'갤러리', image:'gallery.png', description:'마스코트의 다양한 모습을<br>둘러보고 내려받습니다.', meta:'모아보기 · 8방향 · 걷는 모습', href:'/personal/gallery', action:'갤러리 보기'},
+    {kicker:'준비 중', title:'공사중', image:'personal-coming-two.webp', description:'새로운 기능을<br>준비하고 있습니다.', meta:'<span class="pending-label">공사 중</span>'},
+  ];
+  return shell('Personal', spaceHub({
+    header, eyebrow: '여행과 일상을 위한 공간', title: 'Personal',
+    description: '여행과 일상의 기록을<br>모아두는 공간입니다.', hero: 'personal-idle.webp', heroAlt: '소파에 앉아 쉬는 마스코트',
+    label: 'Personal 도구', cards, extraClass: 'personal-tools',
+  }), 'personal');
 }
 
 export function demosPage() {
@@ -128,11 +157,6 @@ function publicHeader(section='') {
   return '<header class="site-header">'+brand()+'<div class="hub-header-actions">'+spaceNavigation(section)+themeButton()+'</div></header>';
 }
 
-export function personalPage(access) {
- const header=access?privateHeader('/personal'):publicHeader('personal').replace('</div></header>','<a class="btn" href="/login?next=%2Fpersonal">로그인</a></div></header>');
- const tools=[{title:'여행의 흔적',image:'travel-globe.webp',description:'다녀온 곳의 사진과 이야기를 지구본에 남깁니다.',href:'/personal/travel'},{title:'갤러리',image:'gallery.png',description:'마스코트의 다양한 모습을 둘러보고 내려받습니다.',href:'/personal/gallery',action:'갤러리 보기'},{title:'공사중',image:'personal-coming-two.webp',description:'새로운 기능을 준비하고 있습니다.'}];
- return shell('Personal',`<link rel="stylesheet" href="/personal.css?v=20261116-3"><div class="hub-shell personal-shell">${header}<main id="main" class="personal-main hero" data-enter><div class="personal-heading hero-text"><div><h1>Personal</h1><p>여행과 일상의 기록을 모아두는 공간입니다.</p></div></div><div class="illustrated-tools personal-tools">${tools.map(t=>`<${t.href?'a href="'+t.href+'"':'article'} class="tool-card card ${t.href?'':'is-pending'}"><div class="tool-illustration"><img src="/mascot/${t.image}" width="512" height="512" alt="${t.title} 마스코트"></div><div class="tool-copy"><h2>${t.title}</h2><p>${t.description}</p><div class="tool-action">${t.href?'<span>'+ (t.action||'여행 기록 보기') +'</span><span aria-hidden="true">↗</span>':'<span class="pending-label">공사 중</span>'}</div></div></${t.href?'a':'article'}>`).join('')}</div></main>${footer()}</div>`,'personal');
-}
 
 export {shell,privateHeader,publicHeader,footer};
 

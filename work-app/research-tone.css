@@ -2739,16 +2739,6 @@ body.ws-drawer-open .ws-app .ws-sidebar:not(#ws-tone):not(.ws-sidebar *, .ws-top
 }
 .ws-sidebar .sr-only:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) {border:0
 }
-body[data-work-shell] .hub-local-note:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--ws-line-strong); color: var(--ws-muted); background: var(--ws-surface)
-}
-body[data-work-shell] .connection-tag:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { color: var(--ws-faint)
-}
-body[data-work-shell] .ws-tools .tool-card:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--ws-line-strong); background: var(--ws-surface); color: var(--ws-ink); text-decoration: none; box-shadow: none
-}
-body[data-work-shell] .ws-tools .tool-card:hover:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border-color: color-mix(in srgb, var(--ws-ink) 32%, var(--ws-line-strong))
-}
-body[data-work-shell] .ws-tools .tool-illustration:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { background: color-mix(in srgb, var(--ws-raised) 70%, transparent); border-bottom: 1px solid var(--ws-line)
-}
 body[data-work-shell] .ws-tools .tool-copy h2:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *),
 body[data-work-shell] .ws-demo h2:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { color: var(--ws-ink)
 }
@@ -2770,8 +2760,4 @@ body[data-surface="expenses"][data-work-shell]:not(#ws-tone):not(.ws-sidebar *, 
 @media (max-width: 640px) {
 html[data-theme] body[data-work-shell] .ws-page-actions .search-box:focus-within:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { background: var(--ws-surface)
 }
-}
-.ws-topbar--bare .ws-bar-brand:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { color: var(--ws-ink); text-decoration: none
-}
-.ws-bar-brand small:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { color: var(--ws-faint)
 }
