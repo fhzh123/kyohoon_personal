@@ -53,9 +53,11 @@ console.log('Travel assets, syntax and worldwide region registry verified.');
 for(const f of ['views/gallery.mjs','public/gallery/gallery.js'])execFileSync(process.execPath,['--check',f],{cwd:root,stdio:'inherit'});
 for(const f of ['views/gallery.html','public/gallery/gallery.css'])await access(path.join(root,f));
 
-for (const file of ['server/team-resource-routes.mjs', 'public/team-resources.js']) {
+// The static Work pages must carry the same sidebar and top bar as the server-rendered ones.
+execFileSync(process.execPath, ['scripts/sync-work-shell.mjs', '--check'], {cwd: root, stdio: 'inherit'});
+for (const file of ['server/team-resource-routes.mjs', 'public/team-resources.js', 'public/work-shell.js', 'views/work-shell.mjs']) {
   execFileSync(process.execPath, ['--check', file], {cwd: root, stdio: 'inherit'});
 }
-for (const file of ['views/team-resources.html', 'public/team-resources.css', 'public/mascot/team-resources.png']) {
+for (const file of ['views/team-resources.html', 'public/team-resources.css', 'public/work-shell.css', 'public/mascot/team-resources.png']) {
   await access(path.join(root, file));
 }

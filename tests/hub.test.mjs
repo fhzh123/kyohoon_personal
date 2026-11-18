@@ -66,20 +66,21 @@ test('authorized local Work groups demos and provides four illustrated tools', a
   const links = [...text.matchAll(/<a class="tool-card(?: [^"]*)?"[^>]+>/g)].map(match => match[0]);
   const pending = [...text.matchAll(/<button class="tool-card is-pending"[^>]*>/g)].map(match => match[0]);
   assert.equal(links.length, 4);
-  assert.match(links[3], /href="\/work\/team-resources"/);
+  assert.match(links[1], /href="\/work\/team-resources"/);
   assert.equal(pending.length, 0);
-  assert.match(links[2], /href="\/work\/expenses\/"/);
+  assert.match(links[3], /href="\/work\/expenses\/"/);
   assert.match(links[0], /href="\/work\/app\/index\.html"/);
-  assert.match(links[1],/href="\/work\/demos"/);
+  assert.match(links[2],/href="\/work\/demos"/);
   const picker=await request(development,'/work/demos',{cookie});
   for(const demo of demos)assert.ok(picker.text.includes(demo));
-  assert.equal((picker.text.match(/rel="noopener noreferrer"/g)||[]).length,4);
+  // Four launch links in the page plus the two demo shortcuts in the shared sidebar.
+  assert.equal((picker.text.match(/rel="noopener noreferrer"/g)||[]).length,6);
   for (const title of titles) assert.ok(text.includes(`<h2>${title}</h2>`));
   for (const button of pending) assert.match(button, /\sdisabled(?:\s|>)/);
   assert.equal((text.match(/공사 중/g) || []).length, 0);
   const document = new JSDOM(text).window.document;
   assert.ok([...document.querySelectorAll('a[href="/"]')].some(link => link.getAttribute('aria-label') === '전체 홈'));
-  assert.match(text, /<form action="\/api\/auth\/logout" method="post">/);
+  assert.match(text, /<form[^>]* action="\/api\/auth\/logout" method="post"/);
   assert.match(text, /localhost 전용/);
   assert.match(text, /이 프로젝트 사본에 저장/);
   assert.match(text, /Supabase와 동기화되지 않습니다/);

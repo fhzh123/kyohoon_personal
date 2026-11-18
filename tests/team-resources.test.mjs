@@ -52,8 +52,11 @@ test('team resource data is available to active members only and renders as a pr
     try {
       assert.deepEqual(JSON.parse(dom.window.document.querySelector('#resource-data').textContent), payload);
       dom.window.eval(await readFile(new URL('../public/team-resources.js', import.meta.url), 'utf8'));
-      assert.equal(dom.window.document.querySelectorAll('.donut-segment').length, 1);
-      assert.match(dom.window.document.querySelector('.donut-selected').textContent, /Fixture task <\/script>/);
+      assert.equal(dom.window.document.querySelectorAll('.tr-seg').length, 1);
+      assert.match(dom.window.document.querySelector('.tr-lead-name').textContent, /Fixture task <\/script>/);
+      // Tabs live in the shared Work sidebar as sub-menu links.
+      assert.equal(dom.window.document.querySelectorAll('.ws-sidebar [data-tab]').length, 3);
+      assert.equal(dom.window.document.querySelector('.ws-sidebar [data-tab="overview"]').getAttribute('aria-current'), 'page');
       dom.window.document.querySelector('#tab-people').click();
       assert.ok(dom.window.document.querySelector('.allocation-area'));
       assert.doesNotMatch(dom.window.document.querySelector('.allocation-area').innerHTML, /NaN/);

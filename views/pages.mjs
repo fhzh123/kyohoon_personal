@@ -1,4 +1,5 @@
 import {spaceNavigation} from './navigation.mjs';
+import {workSidebar, workTopbar, WORK_SHELL_ASSETS} from './work-shell.mjs';
 const uiIcon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="18" height="18" alt="" aria-hidden="true">`;
 const themeButton = () => `<a class="theme-toggle theme-toggle--icon space-nav-button" href="/settings" data-global-settings aria-label="설정" title="설정">${uiIcon('settings')}</a>`;
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
@@ -18,8 +19,8 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261118-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${surface === 'demos' ? '<link rel="stylesheet" href="/demo-links.css?v=20261116-1">' : ''}
-</head><body data-surface="${surface}"><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261118-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${['selectstar', 'demos'].includes(surface) ? WORK_SHELL_ASSETS : ''}
+</head><body data-surface="${surface}"${['selectstar', 'demos'].includes(surface) ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 function artwork(idle, hover, alt) {
   return `<div class="portal-art ${hover && hover !== idle ? 'has-swap' : ''}"><img class="pose-idle" src="/mascot/${idle}" alt="${alt}" width="768" height="768" decoding="async">${hover && hover !== idle ? `<img class="pose-active" src="/mascot/${hover}" alt="" aria-hidden="true" width="768" height="768" decoding="async">` : ''}</div>`;
@@ -97,17 +98,18 @@ function privateHeader(back = '/', section = '') {
 export function workPage({mode, role}) {
   const local = mode === 'local';
   const tools = [
-    {title:'연구일지', image:'journal.webp', alt:'연구 노트를 쓰는 마스코트', description:'연구 로드맵과 실험 기록을 관리합니다.', href:'/work/app/index.html', action:'연구일지 열기'},
-    {title:'데모', image:'demo.webp', alt:'홀로그램을 시연하는 마스코트', description:'Ontology와 Document Parsing을 실행합니다.', href:'/work/demos', action:'데모 선택하기'},
+    {title:'연구일지', image:'journal.webp', alt:'연구 노트를 쓰는 마스코트', description:'연구 로드맵, L3 연구축과 연구 노트를 관리합니다.', href:'/work/app/index.html', action:'연구일지 열기'},
+    {title:'팀 리소스', image:'team-resources.png', alt:'과업 카드를 든 마스코트', description:'주간 기록으로 팀원별 과업 배분과 월별 변화를 봅니다.', href:'/work/team-resources', action:'과업 배분 보기'},
+    {title:'데모', image:'demo.webp', alt:'홀로그램을 시연하는 마스코트', description:'Ontology와 Document Parsing 데모를 실행합니다.', href:'/work/demos', action:'데모 선택하기'},
     {title:'품의 사용내역', image:'expenses.webp', alt:'계산기와 영수증을 든 마스코트', description:'월별 카드 내역과 품의별 예산을 확인합니다.', href:'/work/expenses/', action:'품의 분석 열기'},
-    {title:'팀 리소스', image:'team-resources.png', alt:'과업 카드를 든 마스코트', description:'팀원별 과업 배분과 월별 변화를 확인합니다.', href:'/work/team-resources', action:'과업 배분 보기'},
   ];
+  const status = local ? '로컬 개발 미리보기 / localhost 전용' : role === 'reader' ? '연결됨 / 읽기 전용' : '연결됨 / 편집 가능';
   return shell('Selectstar', `
-<div class="hub-shell spaces-hub">${privateHeader('/work')}<main id="main" class="hub-main">
-  <section class="hub-intro hero" data-enter><div class="hero-text"><h1>Selectstar</h1><p>연구일지와 업무 도구</p><span class="connection-tag">${local ? '로컬 개발 미리보기 / localhost 전용' : role === 'reader' ? '연결됨 / 읽기 전용' : '연결됨 / 편집 가능'}</span></div></section>
+<div class="ws-app">${workSidebar('home')}<div class="ws-main">${workTopbar('home')}<main id="main" class="ws-content">
+  <div class="ws-heading"><div><h1>Selectstar</h1><p>연구일지와 업무 도구를 한곳에서 엽니다.</p></div><div class="ws-heading-meta"><span class="connection-tag">${status}</span></div></div>
   ${local ? '<p class="hub-local-note">개발 미리보기입니다. 연구일지 변경은 이 프로젝트 사본에 저장되며 Supabase와 동기화되지 않습니다.</p>' : ''}
-  <div class="tool-grid illustrated-tools">${tools.map(t => `<a class="tool-card card" href="${t.href}"><div class="tool-illustration"><img src="/mascot/${t.image}" alt="${t.alt}" width="380" height="380"></div><div class="tool-copy"><h2>${t.title}</h2><p>${t.description}</p><span class="tool-action">${t.action}<span aria-hidden="true">→</span></span></div></a>`).join('')}</div>
-</main>${footer()}</div>`, 'selectstar');
+  <div class="ws-tools">${tools.map(t => `<a class="tool-card" href="${t.href}"><div class="tool-illustration"><img src="/mascot/${t.image}" alt="${t.alt}" width="380" height="380"></div><div class="tool-copy"><h2>${t.title}</h2><p>${t.description}</p><span class="tool-action">${t.action}<span aria-hidden="true">→</span></span></div></a>`).join('')}</div>
+</main></div></div>`, 'selectstar');
 }
 
 export function demosPage() {
@@ -116,10 +118,10 @@ export function demosPage() {
     {title:'Document Parsing', image:'parsing.webp', alt:'돋보기로 문서를 살펴보는 마스코트', text:'문서의 레이아웃을 분석하고 텍스트와 표를 추출합니다.', href:'/work/demos/document-parsing/', original:'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/'},
   ];
   return shell('연구 데모', `
-<div class="hub-shell demo-shell">${privateHeader('/work')}<main id="main" class="hub-main">
-  <section class="demo-heading hero" data-enter><div class="hero-text"><h1>연구 데모</h1><p>각 데모는 새 창에서 열립니다.</p></div></section>
-  <div class="portal-grid demo-portals">${demos.map(d => `<article class="demo-entry"><a class="portal card demo-portal" href="${d.href}" target="_blank" rel="noopener noreferrer">${artwork(d.image, d.image, d.alt)}<div class="portal-copy"><div class="portal-title"><h2>${d.title}</h2></div><p>${d.text}</p><span class="demo-launch">데모 열기 <span aria-hidden="true">↗</span></span><span class="sr-only">새 창에서 열림</span></div></a><a class="demo-original link" href="${d.original}" target="_blank" rel="noopener noreferrer">기존 GPT Sites에서 열기 <span aria-hidden="true">↗</span><span class="sr-only">새 창에서 열림</span></a></article>`).join('')}</div>
-</main>${footer()}</div>`, 'demos');
+<div class="ws-app">${workSidebar('demos')}<div class="ws-main">${workTopbar('demos')}<main id="main" class="ws-content">
+  <div class="ws-heading"><div><h1>연구 데모</h1><p>각 데모는 새 창에서 열립니다.</p></div></div>
+  <div class="ws-demos">${demos.map(d => `<article class="demo-entry"><a class="ws-demo" href="${d.href}" target="_blank" rel="noopener noreferrer"><div class="ws-demo-copy"><h2>${d.title}</h2><p>${d.text}</p><span class="tool-action">데모 열기 <span aria-hidden="true">↗</span></span><span class="sr-only">새 창에서 열림</span></div><img src="/mascot/${d.image}" alt="${d.alt}" width="180" height="180" decoding="async"></a><a class="demo-original link" href="${d.original}" target="_blank" rel="noopener noreferrer">기존 GPT Sites에서 열기 <span aria-hidden="true">↗</span><span class="sr-only">새 창에서 열림</span></a></article>`).join('')}</div>
+</main></div></div>`, 'demos');
 }
 
 function publicHeader(section='') {

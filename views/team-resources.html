@@ -3,205 +3,57 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="page-type" content="software" />
-    <meta name="site-kind" content="software" />
-    <meta
-      name="description"
-      content="AI 1팀의 과업별 배분과 월별 집중 과업을 살펴봅니다."
-    />
+    <meta name="description" content="AI 1팀의 과업별 배분과 월별 집중 과업을 살펴봅니다." />
     <meta name="color-scheme" content="light dark" />
     <title>팀 리소스 | Selectstar</title>
+    <link rel="icon" href="/mascot/face.png" />
     <script src="/theme.js?v=20261116-2"></script>
-    <link rel="stylesheet" href="/team-resources.css?v=20261118-1" />
-    <script defer src="/team-resources.js?v=20261118-1"></script>
+    <link rel="stylesheet" href="/typography.css?v=20261112-1" />
+    <link rel="stylesheet" href="/taste.css?v=20261113-1" />
+    <link rel="stylesheet" href="/atmosphere.css?v=20261115-2" />
+    <link rel="stylesheet" href="/space-navigation.css?v=20261117-1" />
+    <link rel="stylesheet" href="/team-resources.css?v=20261118-2" />
+    <!--ws:assets--><link rel="stylesheet" href="/work-shell.css?v=20261118-1"><script src="/work-shell.js?v=20261118-1" defer></script><!--/ws:assets-->
+    <script defer src="/team-resources.js?v=20261118-2"></script>
   </head>
-  <body>
-    <a class="skip" href="#main">본문으로</a>
-    <div class="app">
-      <aside class="sidebar">
-        <a class="brand" href="/work" aria-label="Selectstar 홈">
-          <img src="/mascot/face.png" alt="" width="36" height="36" />
-          <span>kyohoon<span class="brand-dot">.</span> </span>
-        </a>
-        <div class="workspace">
-          <img
-            src="/mascot/selectstar-logo.png"
-            alt=""
-            width="30"
-            height="30"
-          />
-          <div>
-            <b>Selectstar</b>
-            <small>AI 1팀 / Vertical</small>
+  <body data-surface="team-resources" data-work-shell>
+    <div class="ambient-sky" aria-hidden="true"></div>
+    <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+    <div class="ws-app">
+<!--ws:sidebar--><aside class="ws-sidebar" id="ws-sidebar" aria-label="Selectstar 메뉴">
+  <div class="ws-sidebar-head"><a class="ws-brand" href="/work" aria-label="Selectstar 홈"><img src="/mascot/face.png" alt="" width="32" height="32"><span><strong>Selectstar</strong><small>AI 1팀 · Vertical</small></span></a><button class="ws-drawer-close" type="button" data-ws-close aria-label="메뉴 닫기"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <nav class="ws-nav" aria-label="워크스페이스"><ul><li class="ws-nav-item" data-ws-section="home"><div class="ws-nav-row"><a class="ws-nav-link" href="/work"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span class="ws-nav-label">Selectstar 홈</span></a></div></li><li class="ws-nav-item" data-ws-section="research"><div class="ws-nav-row"><a class="ws-nav-link" href="/work/app/index.html"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h6a3 3 0 0 1 3 3v12a3 3 0 0 0-3-2.5H4z"/><path d="M20 4.5h-4a3 3 0 0 0-3 3v12a3 3 0 0 1 3-2.5h4z"/></svg><span class="ws-nav-label">연구일지</span></a><button class="ws-nav-toggle" type="button" aria-expanded="false" aria-controls="ws-sub-research" aria-label="연구일지 하위 메뉴 펼치기"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button></div><div class="ws-sub" id="ws-sub-research" hidden><div class="ws-sub-list"><a class="ws-sub-link" href="/work/app/index.html#roadmap" data-ws-item="roadmap"><span>연구 로드맵</span></a><a class="ws-sub-link" href="/work/app/index.html#overview" data-ws-item="overview"><span>연간 조망</span></a><a class="ws-sub-link" href="/work/app/index.html#backlog" data-ws-item="backlog"><span>연구 후보</span></a><a class="ws-sub-link" href="/work/app/index.html#goals" data-ws-item="goals"><span>L3 연구축</span></a><a class="ws-sub-link" href="/work/app/index.html#notes" data-ws-item="notes"><span>연구 노트</span></a><a class="ws-sub-link" href="/work/app/index.html#settings" data-ws-item="settings"><span>설정</span></a></div></div></li><li class="ws-nav-item is-current" data-ws-section="team"><div class="ws-nav-row"><a class="ws-nav-link" href="/work/team-resources" aria-current="page"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><path d="M8.5 16v-4M12.5 16V8M16.5 16v-6"/></svg><span class="ws-nav-label">팀 리소스</span></a><button class="ws-nav-toggle" type="button" aria-expanded="true" aria-controls="ws-sub-team" aria-label="팀 리소스 하위 메뉴 접기"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button></div><div class="ws-sub" id="ws-sub-team"><div class="ws-sub-list"><a class="ws-sub-link" href="#overview" data-ws-item="overview" data-tab="overview" id="tab-overview"><span>과업 배분</span></a><a class="ws-sub-link" href="#people" data-ws-item="people" data-tab="people" id="tab-people"><span>월별 변화</span></a><a class="ws-sub-link" href="#records" data-ws-item="records" data-tab="records" id="tab-records"><span>주간 원본 기록</span><span class="ws-count" id="record-count"></span></a></div></div></li><li class="ws-nav-item" data-ws-section="demos"><div class="ws-nav-row"><a class="ws-nav-link" href="/work/demos"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 4 8.5 4.5L12 13 3.5 8.5z"/><path d="m3.5 12.5 8.5 4.5 8.5-4.5"/><path d="m3.5 16.5 8.5 4.5 8.5-4.5"/></svg><span class="ws-nav-label">데모</span></a><button class="ws-nav-toggle" type="button" aria-expanded="false" aria-controls="ws-sub-demos" aria-label="데모 하위 메뉴 펼치기"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button></div><div class="ws-sub" id="ws-sub-demos" hidden><div class="ws-sub-list"><a class="ws-sub-link" href="/work/demos/ontology/" target="_blank" rel="noopener noreferrer" data-ws-item="ontology"><span>Ontology</span><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16 16 8M9 8h7v7"/></svg><span class="sr-only">새 창에서 열림</span></a><a class="ws-sub-link" href="/work/demos/document-parsing/" target="_blank" rel="noopener noreferrer" data-ws-item="document-parsing"><span>Document Parsing</span><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16 16 8M9 8h7v7"/></svg><span class="sr-only">새 창에서 열림</span></a></div></div></li><li class="ws-nav-item" data-ws-section="expenses"><div class="ws-nav-row"><a class="ws-nav-link" href="/work/expenses/"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="14" rx="2.5"/><path d="M3.5 9.5h17M15.5 14.5h2"/></svg><span class="ws-nav-label">품의 사용내역</span></a><button class="ws-nav-toggle" type="button" aria-expanded="false" aria-controls="ws-sub-expenses" aria-label="품의 사용내역 하위 메뉴 펼치기"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button></div><div class="ws-sub" id="ws-sub-expenses" hidden><div class="ws-sub-list"><a class="ws-sub-link" href="/work/expenses/#report" data-ws-item="report"><span>품의 분석</span></a><a class="ws-sub-link" href="/work/expenses/#files" data-ws-item="files"><span>월별 파일</span><span class="ws-count"></span></a></div></div></li></ul></nav>
+  <div class="ws-sidebar-foot"><div class="ws-foot-mascot"><img src="/mascot/team-resources.png" alt="" width="44" height="44"><p>주간 기록은 수동으로 갱신합니다.</p></div><button type="button" data-action="method">집계 기준 보기</button></div>
+</aside><div class="ws-scrim" data-ws-close hidden></div><!--/ws:sidebar-->
+      <div class="ws-main">
+<!--ws:topbar--><header class="ws-topbar">
+  <button class="ws-menu-button" type="button" data-ws-open aria-controls="ws-sidebar" aria-expanded="false" aria-label="메뉴 열기"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
+  <nav class="ws-crumbs" aria-label="현재 위치"><a href="/work">Selectstar</a><span aria-hidden="true">/</span><a href="/work/team-resources">팀 리소스</a><span aria-hidden="true">/</span><strong id="crumb">과업 배분</strong></nav>
+  <div class="ws-actions topbar-actions"><nav class="space-navigation ws-space-nav" data-space-navigation="work" aria-label="홈 이동"><a class="space-nav-button" href="/work" aria-label="Work 홈" title="Work 홈" data-space-parent><img src="/icons/ui-briefcase-business.svg" width="20" height="20" alt="" aria-hidden="true"></a><a class="space-nav-button" href="/" aria-label="전체 홈" title="전체 홈" ><img src="/icons/ui-house.svg" width="20" height="20" alt="" aria-hidden="true"></a></nav><a class="ws-icon-button" href="/settings" data-global-settings aria-label="설정" title="설정"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></a><form id="work-logout" class="ws-logout" action="/api/auth/logout" method="post"><button type="submit" aria-label="로그아웃" title="로그아웃"><svg class="ws-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h4"/><path d="m15 16 4-4-4-4M19 12H9"/></svg><span>로그아웃</span></button></form></div>
+</header><!--/ws:topbar-->
+        <main id="main" class="ws-content tr-main">
+          <div class="ws-heading">
+            <div>
+              <h1>팀 리소스</h1>
+              <p>AI 1팀의 주간 기록으로 각자의 집중 과업과 팀 전체 배분을 봅니다.</p>
+            </div>
+            <div class="ws-heading-meta">
+              <span>기록 기준 <b>{{SNAPSHOT}}</b></span>
+              <span>마지막 주간 기록 <b>{{LATEST}}</b></span>
+              <a href="{{SOURCE}}" target="_blank" rel="noopener noreferrer">Notion 원본<span aria-hidden="true">↗</span><span class="sr-only">새 창에서 열림</span></a>
+            </div>
           </div>
-        </div>
-        <p class="nav-label">워크스페이스</p>
-        <nav aria-label="업무 도구">
-          <a href="/work"> <span data-icon="grid"> </span>Selectstar 홈</a>
-          <a href="/work/app/index.html">
-            <span data-icon="book"> </span>연구일지<span class="external"
-              >↗</span
-            >
-          </a>
-          <a class="active" href="/work/team-resources" aria-current="page">
-            <span data-icon="chart"> </span>팀 리소스</a
-          >
-          <a href="/work/demos">
-            <span data-icon="layers"> </span>데모<span class="external"
-              >↗</span
-            >
-          </a>
-          <a href="/work/expenses/">
-            <span data-icon="wallet"> </span>품의 사용내역<span class="external"
-              >↗</span
-            >
-          </a>
-        </nav>
-        <div class="sidebar-bottom">
-          <button class="text-button" type="button" data-action="method">
-            집계 기준
-          </button>
-        </div>
-      </aside>
-      <div class="workspace-body">
-        <header class="topbar">
-          <div class="breadcrumbs">
-            <a href="/work">Selectstar</a>
-            <span>/</span>
-            <span id="crumb">팀 리소스</span>
+          <div class="tr-controls">
+            <div class="period-control">
+              <button type="button" class="tr-step" data-action="prev" aria-label="이전 달"><span data-icon="left"></span></button>
+              <label class="month-select"><span class="sr-only">분석 기간</span><select id="month"></select><span data-icon="chevron"></span></label>
+              <button type="button" class="tr-step" data-action="next" aria-label="다음 달"><span data-icon="right"></span></button>
+            </div>
+            <div class="people-filters" id="people-filters" role="group" aria-label="분석 대상 선택"></div>
+            <button type="button" class="tr-basis" data-action="method"><span data-icon="info"></span>휴가를 제외한 업무 기준</button>
           </div>
-          <div class="top-actions">
-            <a
-              class="icon-button"
-              href="/settings"
-              data-global-settings
-              aria-label="설정"
-            >
-              <img src="/icons/ui-settings.svg" width="18" height="18" alt="" />
-            </a>
-            <form method="post" action="/api/auth/logout">
-              <button type="submit" class="logout-link">로그아웃</button>
-            </form>
-            <a class="icon-button" href="/" aria-label="전체 홈">
-              <span data-icon="home"> </span>
-            </a>
-          </div>
-        </header>
-        <main id="main">
-          <section id="dashboard">
-            <div class="page-heading">
-              <div class="heading-copy">
-                <div class="eyebrow">
-                  <span class="live-dot"> </span> AI 1팀
-                </div>
-                <h1>팀 리소스</h1>
-                <p>각자의 집중 과업과 팀 전체의 배분을 살펴봅니다.</p>
-              </div>
-              <div class="heading-side">
-                <img
-                  class="heading-mascot"
-                  src="/mascot/team-resources.png"
-                  width="104"
-                  height="104"
-                  alt="과업 카드를 정리하는 마스코트"
-                />
-                <a
-                  class="source-link"
-                  href="{{SOURCE}}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="notion-letter" aria-hidden="true">N</span>Notion
-                  원본 <span>↗</span>
-                </a>
-              </div>
-            </div>
-            <div class="source-status">
-              <div>
-                <span data-icon="database"> </span>
-                <span
-                  >기록 기준 <b>{{SNAPSHOT}}</b>
-                  <span class="status-divider">/</span> 마지막 기록
-                  <b>{{LATEST}}</b>
-                </span>
-              </div>
-              <button type="button" data-action="method">
-                집계 기준 <span data-icon="info"> </span>
-              </button>
-            </div>
-            <div class="toolbar">
-              <div class="period-control">
-                <button
-                  type="button"
-                  class="icon-button"
-                  data-action="prev"
-                  aria-label="이전 달"
-                >
-                  <span data-icon="left"> </span>
-                </button>
-                <label class="month-select">
-                  <span class="sr-only">분석 기간</span>
-                  <select id="month"></select>
-                  <span data-icon="chevron"> </span>
-                </label>
-                <button
-                  type="button"
-                  class="icon-button"
-                  data-action="next"
-                  aria-label="다음 달"
-                >
-                  <span data-icon="right"> </span>
-                </button>
-              </div>
-              <div
-                class="people-filters"
-                id="people-filters"
-                aria-label="분석 대상 선택"
-              ></div>
-              <div class="toolbar-end">
-                <span class="allocation-basis">휴가를 제외한 업무 배분</span>
-              </div>
-            </div>
-            <div class="tabs" role="tablist" aria-label="분석 보기">
-              <button
-                type="button"
-                role="tab"
-                data-tab="overview"
-                id="tab-overview"
-                aria-selected="true"
-              >
-                과업 배분
-              </button>
-              <button
-                type="button"
-                role="tab"
-                data-tab="people"
-                id="tab-people"
-                aria-selected="false"
-              >
-                월별 변화
-              </button>
-              <button
-                type="button"
-                role="tab"
-                data-tab="records"
-                id="tab-records"
-                aria-selected="false"
-              >
-                주간 원본 기록<span class="tab-count" id="record-count"> </span>
-              </button>
-            </div>
-            <div id="view" role="tabpanel" aria-labelledby="tab-overview"></div>
-            <footer class="dashboard-footer">
-              <span
-                >선택한 팀원 기록 기준
-                <span class="status-divider">/</span> 진교훈 제외</span
-              >
-              <button type="button" data-action="method">
-                Notion 기록 갱신 기준
-              </button>
-            </footer>
-          </section>
+          <div id="view" aria-labelledby="tab-overview"></div>
+          <p class="tr-footnote">선택한 팀원의 Notion 주간 기록 기준이며 진교훈은 집계에서 제외했습니다.</p>
         </main>
       </div>
     </div>
