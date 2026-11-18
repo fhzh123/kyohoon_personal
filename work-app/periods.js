@@ -25,13 +25,14 @@
   const yearStart = value => `${date(value).getFullYear()}-01-01`;
   const yearEnd = value => `${date(value).getFullYear()}-12-31`;
   function step(value, n, unit) {
+    if (unit === 'day') return addDays(value,n);
     if (unit === 'week') return addDays(value, n * 7);
     if (unit !== 'month' && unit !== 'year') throw new Error('Unknown period unit: ' + unit);
     const d = date(value), day = d.getDate(); d.setDate(1);
     if (unit === 'month') d.setMonth(d.getMonth() + n); else d.setFullYear(d.getFullYear() + n);
     const last = date(monthEnd(iso(d))).getDate(); d.setDate(Math.min(day, last)); return iso(d);
   }
-  const bounds = { week: [startOfWeek, endOfWeek], month: [monthStart, monthEnd], year: [yearStart, yearEnd] };
+  const bounds = { day: [value=>value,value=>value], week: [startOfWeek, endOfWeek], month: [monthStart, monthEnd], year: [yearStart, yearEnd] };
   function cover(start, end, unit) {
     if (!validDate(start) || !validDate(end) || start > end || !bounds[unit]) throw new Error('올바른 기간을 입력하세요.');
     const [first, last] = bounds[unit];
@@ -66,18 +67,7 @@
   }
   function spanLabel(task) {
     if (!task || !validDate(task.start) || !validDate(task.end) || task.start > task.end) return '기간 미정';
-    const unit = bounds[task.planUnit] ? task.planUnit : 'week', a = date(task.start), b = date(task.end);
-    if (unit === 'year') return a.getFullYear() === b.getFullYear() ? `${a.getFullYear()}년` : `${a.getFullYear()} — ${b.getFullYear()}년`;
-    if (unit === 'month') {
-      const count = (b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth() + 1;
-      return count === 1 ? `${a.getFullYear()}년 ${a.getMonth() + 1}월 · 1개월` : `${a.getFullYear()}.${a.getMonth() + 1} — ${a.getFullYear() === b.getFullYear() ? '' : b.getFullYear() + '.'}${b.getMonth() + 1}월 · ${count}개월`;
-    }
-    const count = Math.floor(daysBetween(startOfWeek(task.end), startOfWeek(task.start)) / 7) + 1;
-    const first = startOfWeek(task.start), last = startOfWeek(task.end);
-    const firstLabel = first < MIN_DATE ? '11월 시작 주' : weekLabel(first);
-    const lastLabel = last < MIN_DATE ? '11월 시작 주' : weekLabel(last);
-    const firstYear = date(first < MIN_DATE ? MIN_DATE : first).getFullYear(), lastYear = date(last < MIN_DATE ? MIN_DATE : last).getFullYear();
-    return `${firstYear} · ${firstLabel} — ${firstYear === lastYear ? '' : lastYear + ' · '}${lastLabel} · ${count}주`;
+    return `${task.start.replaceAll('-','.')} — ${task.end.replaceAll('-','.')} (${daysBetween(task.end,task.start)+1}일간)`;
   }
   window.ResearchPeriods = { MIN_DATE, isCurrent, iso, date, addDays, daysBetween, validDate, startOfWeek, endOfWeek, monthStart, monthEnd, yearStart, yearEnd, step, cover, columns, spanLabel, weekLabel, toWeek, fromWeek };
 })();

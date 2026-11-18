@@ -70,9 +70,9 @@
           obj.category=obj.category==='milestone'?'writing':Object.hasOwn(categories,obj.category)?obj.category:'research';
           obj.status=Object.hasOwn(statuses,obj.status)?obj.status:(obj.start?'planned':'backlog');
           obj.dependencies=Array.isArray(item.dependencies)?item.dependencies.filter(x=>typeof x==='string'):[];
-          obj.planUnit=Object.hasOwn(units,item.planUnit)?item.planUnit:'week';
-          // Preserve existing exact dates. A deliberate period edit is required to round them to weeks.
-          obj.legacyDates=!!obj.start && (!Object.hasOwn(units,item.planUnit)||item.legacyDates===true);
+          obj.planUnit=['day',...Object.keys(units)].includes(item.planUnit)?item.planUnit:'day';
+          // Preserve historical dates exactly; display scale never changes stored dates.
+          obj.legacyDates=item.legacyDates===true;
         }
         return obj;
       });
@@ -191,7 +191,7 @@
     const hiddenCount=state.tasks.filter(t=>!H.isRoadmapVisible(state.tasks,t.id)).length;
     const cols=P.columns(anchor,unit), focusYear=P.date(anchor).getFullYear(),resourcePeriod=window.ResearchCalendar.currentResourcePeriod(unit,today());
     const focus=state.annualPlans.find(p=>p.year===focusYear);
-    host.innerHTML=`<section class="planning-panel"><div class="planning-toolbar"><div class="planning-tools"><h2>${rangeHeading(cols)}</h2><button type="button" id="roadmap-visibility" class="secondary-button roadmap-visibility-button">기술 표시 설정${hiddenCount?` <span>숨김 ${hiddenCount}</span>`:''}</button><button type="button" id="roadmap-today" class="secondary-button">오늘</button><label class="planning-jump"><span>기준 월</span><input id="anchor-month" type="month" min="2026-11" value="${anchor.slice(0,7)}" aria-label="로드맵 기준 월"></label></div><div class="planning-scale segmented-control" role="group" aria-label="로드맵 시간 단위">${Object.entries(units).map(([key,label])=>`<button data-unit="${key}" class="${unit===key?'active':''}" aria-pressed="${unit===key}">${label}</button>`).join('')}</div></div>${filtersHTML()}<div class="planning-caption"><span>${unit==='week'?'13주를 한눈에 · 월요일부터 일요일까지, 매월 첫 월요일이 첫째주':unit==='month'?'12개월을 한눈에 · 연구를 월 단위로 배치':'5년을 한눈에 · 장기 연구 방향을 배치'}</span><span>구간 드래그로 연구 배치 ↔</span></div><div id="roadmap-resources"></div><div id="timeline-host"></div></section><div class="bigpicture-strip"><div class="strategy-side-card"><div class="section-label">${focusYear}년의 연구 방향 <button class="text-button" id="edit-year-direction">방향 정리 ↗</button></div><p class="strategy-note">${esc(focus?.focus||'이 해의 핵심 질문을 먼저 정해 보세요. 어떤 가능성을 검증하고, 어떤 성과로 이어갈까요?')}</p></div><div class="strategy-side-card"><div class="section-label">L3별 배치</div><div class="year-goal-summary">${state.goals.filter(g=>goalFilter===null||goalFilter.includes(g.id)).map(g=>`<span class="strategy-meter"><span>${esc(g.title)}</span><strong>${state.tasks.filter(t=>t.goalId===g.id&&t.start).length}<small>개</small></strong></span>`).join('')}</div></div><div class="strategy-side-card"><div class="section-label">기획의 기준</div><p class="strategy-note">“언제까지 무엇을 밝혀낼까?”</p><p class="focus-help">하루의 할 일보다 연구 질문과 구간별 결과물에 집중해 보세요. 자세한 생각은 연구 노트에 이어서 남길 수 있어요.</p></div></div>${candidateHTML(6)}`;
+    host.innerHTML=`<section class="planning-panel"><div class="planning-toolbar"><div class="planning-tools"><h2>${rangeHeading(cols)}</h2><button type="button" id="roadmap-visibility" class="secondary-button roadmap-visibility-button">기술 표시 설정${hiddenCount?` <span>숨김 ${hiddenCount}</span>`:''}</button><button type="button" id="roadmap-today" class="secondary-button">오늘</button><label class="planning-jump"><span>기준 월</span><input id="anchor-month" type="month" min="2026-11" value="${anchor.slice(0,7)}" aria-label="로드맵 기준 월"></label></div><div class="planning-scale segmented-control" role="group" aria-label="로드맵 시간 단위">${Object.entries(units).map(([key,label])=>`<button data-unit="${key}" class="${unit===key?'active':''}" aria-pressed="${unit===key}">${label}</button>`).join('')}</div></div>${filtersHTML()}<div class="planning-caption"><span>${unit==='week'?'13주를 한눈에 · 월요일부터 일요일까지, 매월 첫 월요일이 첫째주':unit==='month'?'12개월을 한눈에 · 목표 기간은 일 단위로 설정':'5년을 한눈에 · 목표 기간은 일 단위로 설정'}</span><span>목표 기간은 달력에서 시작일과 종료일 선택</span></div><div id="roadmap-resources"></div><div id="timeline-host"></div></section><div class="bigpicture-strip"><div class="strategy-side-card"><div class="section-label">${focusYear}년의 연구 방향 <button class="text-button" id="edit-year-direction">방향 정리 ↗</button></div><p class="strategy-note">${esc(focus?.focus||'이 해의 핵심 질문을 먼저 정해 보세요. 어떤 가능성을 검증하고, 어떤 성과로 이어갈까요?')}</p></div><div class="strategy-side-card"><div class="section-label">L3별 배치</div><div class="year-goal-summary">${state.goals.filter(g=>goalFilter===null||goalFilter.includes(g.id)).map(g=>`<span class="strategy-meter"><span>${esc(g.title)}</span><strong>${state.tasks.filter(t=>t.goalId===g.id&&t.start).length}<small>개</small></strong></span>`).join('')}</div></div><div class="strategy-side-card"><div class="section-label">기획의 기준</div><p class="strategy-note">“언제까지 무엇을 밝혀낼까?”</p><p class="focus-help">하루의 할 일보다 연구 질문과 구간별 결과물에 집중해 보세요. 자세한 생각은 연구 노트에 이어서 남길 수 있어요.</p></div></div>${candidateHTML(6)}`;
     window.ResearchTimeline.render($('#timeline-host'),{state,unit,anchor,escape:esc,filteredTasks,openTask,reschedule,toast,periods:P,categories,statusLabels:statuses,colors:palette(),hierarchy:H,addChild,selectedL3Ids:goalFilter,strictTaskFilter:[categoryFilter,statusFilter,ownerFilter].some(v=>v!==null),hideEmptyGroups:!!search||[categoryFilter,statusFilter,ownerFilter].some(v=>v!==null),moveTask,reorderTask,stepPeriod,readOnly,hideTask,deleteTask:confirmDeleteTask,reorderGoal,moveGoal});
     window.ResearchCalendar.renderResources($('#roadmap-resources'),{tasks:state.tasks,...resourcePeriod,escape:esc,owners:ownerFilter,ownerOrder:state.settings?.resourceOwnerOrder,readOnly,onReorder:reorderResourceOwner});
     $('#roadmap-today').onclick=()=>{anchor=today()<MIN_DATE?MIN_DATE:today();render();};
@@ -325,28 +325,22 @@ function reorderResourceOwner(owner,target,placement='before'){
   function addChild(parentId) {
     if(readOnly)return false;
     const parent=state.tasks.find(t=>t.id===parentId);if(!parent)return;
-    const range=H.effectiveRange(state.tasks,parentId), childUnit=parent.planUnit||unit;
-    const first=range.start?P.cover(range.start,range.start,childUnit):{start:'',end:''};
-    openTask(null,{...first,parentId,planUnit:childUnit,goalId:H.rootOf(state.tasks,parentId)?.goalId||'',status:first.start?'planned':'backlog'});
+    const range=H.effectiveRange(state.tasks,parentId);
+    const first=range.start?{start:range.start,end:range.start}:{start:'',end:''};
+    openTask(null,{...first,parentId,planUnit:'day',goalId:H.rootOf(state.tasks,parentId)?.goalId||'',status:first.start?'planned':'backlog'});
   }
   function groupRangeUpdates(tasks,id,period,planUnit,moveChildren=true) {
     const task=tasks.find(t=>t.id===id), old=H.effectiveRange(tasks,id);
     if(!task)return [];
     const stamp=new Date().toISOString(), updates=[{id,...period,planUnit,legacyDates:false,updatedAt:stamp}];
     if(!moveChildren||!old.start||!period.start||!H.childrenOf(tasks,id).length)return updates;
-    const floor=d=>planUnit==='week'?P.startOfWeek(d):planUnit==='month'?P.monthStart(d):P.yearStart(d);
-    const ceil=d=>planUnit==='week'?P.endOfWeek(d):planUnit==='month'?P.monthEnd(d):P.yearEnd(d);
-    const n=planUnit==='week'?Math.round(P.daysBetween(floor(period.start),floor(old.start))/7):planUnit==='month'?(+period.start.slice(0,4)-+old.start.slice(0,4))*12+(+period.start.slice(5,7)-+old.start.slice(5,7)):+period.start.slice(0,4)-+old.start.slice(0,4);
-    const expectedStart=floor(P.step(floor(old.start),n,planUnit)), expectedEnd=ceil(P.step(floor(old.end),n,planUnit));
-    // A resize changes the overall target; a translation carries the subtree together.
-    if(!n||period.start!==(expectedStart<MIN_DATE?MIN_DATE:expectedStart)||period.end!==expectedEnd)return updates;
+    const n=P.daysBetween(period.start,old.start);
+    // Only an exact translation moves descendants; resizing preserves their dates.
+    if(!n||P.addDays(old.end,n)!==period.end)return updates;
     for(const child of H.descendantsOf(tasks,id).filter(t=>t.start)) {
-      const start=P.step(child.start,n,planUnit);
-      let end=P.step(child.end,n,planUnit);
-      if(planUnit!=='week'&&child.end===P.monthEnd(child.end))end=P.monthEnd(end);
+      const start=P.addDays(child.start,n),end=P.addDays(child.end,n);
       if(!P.validDate(start)||!P.validDate(end)||start<MIN_DATE||end<start)throw Error('세부 연구가 계획 시작 범위를 벗어나 이동할 수 없습니다.');
-      const covered=P.cover(start,end,child.planUnit||'week');
-      updates.push({id:child.id,start,end,legacyDates:covered.start!==start||covered.end!==end,updatedAt:stamp});
+      updates.push({id:child.id,start,end,planUnit:'day',legacyDates:false,updatedAt:stamp});
     }
     return updates;
   }
@@ -359,7 +353,7 @@ function reorderResourceOwner(owner,target,placement='before'){
     if(readOnly)return false;
     const task=state.tasks.find(t=>t.id===id);if(!task)return;
     try {
-      const period=P.cover(start,end,planUnit),updates=groupRangeUpdates(state.tasks,id,period,planUnit,true);
+      const period=P.cover(start,end,'day'),updates=groupRangeUpdates(state.tasks,id,period,'day',true);
       for(const change of updates)Object.assign(state.tasks.find(t=>t.id===change.id),change);
       if(task.status==='backlog')task.status='planned';
       const ok=save();render();toast((ok?`연구 구간을 옮겼습니다.${updates.length>1?' 세부 연구도 함께 이동했습니다.':''}`:'화면에 반영했습니다. JSON 백업을 저장해 주세요.')+overflowMessage(id));
@@ -397,25 +391,17 @@ function reorderResourceOwner(owner,target,placement='before'){
     return `<section class="subtask-section field-full"><div class="subtask-section-header"><div><h3>세부 연구 <small>${children.length}개</small></h3>${children.length?`<p class="subtask-summary">세부 완료 ${progress.done}/${progress.total} · ${progress.percent}%</p>`:''}</div><button type="button" class="secondary-button" id="editor-add-child">＋ 세부 연구</button></div><div class="subtask-list">${children.map(child=>{const range=H.effectiveRange(state.tasks,child.id);return `<div class="subtask-item"><button type="button" class="subtask-title" data-edit-child="${esc(child.id)}">${esc(child.title)}</button><span class="subtask-period">${esc(P.spanLabel({...child,...range}))}</span><span class="badge status-${child.status}">${statuses[child.status]}</span></div>`;}).join('')||'<p class="subtask-empty">전체 연구 아래에 기능 연구·실험·증분 업데이트를 나눠 보세요.</p>'}</div>${children.length?'<button type="button" class="text-button hierarchy-inline-action" id="fit-children-range">전체 목표 기간을 세부 기간에 맞추기 ↔</button>':''}</section>`;
   }
   function periodFieldsHTML(task) {
-    const u=task.planUnit||unit, start=task.start||anchor, end=task.end||start, disabled=!task.start?'disabled':'';
-    const label={week:['시작 주','마지막 주'],month:['시작 월','마지막 월'],year:['시작 연도','마지막 연도']}[u];
-    const type={week:'week',month:'month',year:'number'}[u],min={week:P.toWeek(MIN_DATE),month:'2026-11',year:'2026'}[u];
-    const value=s=>u==='week'?P.toWeek(s):u==='month'?s.slice(0,7):s.slice(0,4);
-    return `<div class="period-fields"><div class="form-field"><label for="period-start">${label[0]}</label><input id="period-start" name="periodStart" type="${type}" min="${min}" ${u==='year'?'max="9998"':''} value="${value(start)}" ${disabled}></div><div class="form-field"><label for="period-end">${label[1]}</label><input id="period-end" name="periodEnd" type="${type}" min="${min}" ${u==='year'?'max="9998"':''} value="${value(end)}" ${disabled}></div></div><p class="field-help">${u==='week'?'월요일부터 일요일까지를 한 주로 봅니다. 월을 걸치는 주도 한 구간입니다.':u==='month'?'한 달 전체를 하나의 연구 구간으로 배치합니다.':'한 해 전체를 하나의 연구 구간으로 배치합니다.'}</p><div class="planning-duration" id="planning-duration">${task.start?esc(P.spanLabel({...task,planUnit:u})):'아직 기간을 정하지 않았습니다.'}</div>`;
+    return window.ResearchDatePicker.markup(task)+`<p class="field-help">시작일과 종료일을 하루 단위로 선택합니다.</p><div class="planning-duration" id="planning-duration">${task.start?esc(P.spanLabel(task)):'아직 기간을 정하지 않았습니다.'}</div>`;
   }
   function readEditorPeriod() {
     if($('#unscheduled').checked)return {start:'',end:''};
-    const u=$('#task-unit').value,a=$('#period-start').value,b=$('#period-end').value;
-    let start='',end='';
-    if(u==='week'){start=P.fromWeek(a);const monday=P.fromWeek(b);end=monday?P.endOfWeek(monday):'';}
-    if(u==='month'&&/^\d{4}-\d{2}$/.test(a)&&/^\d{4}-\d{2}$/.test(b)){start=a+'-01';end=P.monthEnd(b+'-01');}
-    if(u==='year'&&/^\d{4}$/.test(a)&&/^\d{4}$/.test(b)){start=a+'-01-01';end=b+'-12-31';}
-    if(!P.validDate(start)||!P.validDate(end)||end<start||end<MIN_DATE)throw Error('시작 구간과 마지막 구간을 올바른 순서로 입력해 주세요.');
-    return P.cover(start,end,u);
+    const start=$('#period-start').value,end=$('#period-end').value;
+    if(!P.validDate(start)||!P.validDate(end)||end<start||start<MIN_DATE)throw Error('시작일과 종료일을 올바른 순서로 선택해 주세요.');
+    return {start,end};
   }
   function updateDuration() {
-    try {const period=readEditorPeriod();$('#planning-duration').textContent=period.start?P.spanLabel({...period,planUnit:$('#task-unit').value}):'아직 기간을 정하지 않았습니다.';}
-    catch(e){$('#planning-duration').textContent='연구 구간을 확인해 주세요.';}
+    try {const period=readEditorPeriod();$('#planning-duration').textContent=period.start?P.spanLabel(period):'아직 기간을 정하지 않았습니다.';}
+    catch(e){$('#planning-duration').textContent='시작일과 종료일을 선택해 주세요.';}
   }
   function markDirty() {dirty=true;$('#task-save-status').textContent='아직 저장하지 않은 변경';}
   function openTask(id,defaults={}) {
@@ -423,12 +409,13 @@ function reorderResourceOwner(owner,target,placement='before'){
     const original=id?state.tasks.find(t=>t.id===id):null;if(id&&!original)return;
     editorEvents?.abort();editorEvents=new AbortController();
     lastFocus=document.activeElement;
-    const task={title:'',start:'',end:'',status:'backlog',category:'research',goalId:goalFilter?.length===1?goalFilter[0]:'',phaseId:'',description:'',deliverable:'',notes:'',dependencies:[],owner:'',planUnit:unit,parentId:'',...clone(original||{}),...defaults};
+    const task={title:'',start:'',end:'',status:'backlog',category:'research',goalId:goalFilter?.length===1?goalFilter[0]:'',phaseId:'',description:'',deliverable:'',notes:'',dependencies:[],owner:'',planUnit:'day',parentId:'',...clone(original||{}),...defaults};
+    task.planUnit='day';
     if(task.parentId)task.goalId=H.rootOf(state.tasks,task.parentId)?.goalId||'';
     if(task.start&&task.status==='backlog')task.status='planned';
     editorDraft=task;periodEdited=!!defaults.start;
     const children=original?H.childrenOf(state.tasks,id):[],dialog=$('#task-dialog');
-    dialog.innerHTML=`<form id="task-form" class="task-form"><div class="drawer-header"><div><span class="eyebrow">${task.parentId?'L5 · SUB RESEARCH':'L4 · RESEARCH TECHNOLOGY'}</span><h2 id="task-dialog-title">${task.parentId?'세부 연구 수정':original?'연구 기간 수정':'연구 추가'}</h2><p>${task.start?esc(P.spanLabel(task)):'기간 없이 연구 후보로 등록할 수 있습니다.'}</p></div><button class="close-button" type="button" id="task-close" aria-label="닫기">×</button></div><div class="drawer-body"><div class="form-grid">${!original&&task.start?`<div class="form-field field-full"><label for="assign-existing">기존 연구 후보를 이 구간에 배치</label><select id="assign-existing"><option value="">새 연구 구간 작성</option>${state.tasks.filter(t=>!t.start&&(!task.parentId||(!t.assetId&&H.canParent(state.tasks,t.id,task.parentId)))).map(t=>`<option value="${esc(t.id)}">${esc(t.title)}</option>`).join('')}</select></div>`:''}${task.assetId?`<div class="taxonomy-source-card field-full"><span>L4 · 기술자산 맵 ${esc(task.sourceCell||'')}</span><strong>${esc((task.officialTitle||task.title).split(/\s*->\s*/)[0])}</strong><small>기술의 공식 분류입니다. 아래 제목·일정·메모는 수정할 수 있습니다.</small></div>`:''}<div class="form-field field-full"><label for="task-title">${task.parentId?'L5 세부 연구':'L4 기술 · 연구'} <span class="required">*</span></label><input id="task-title" name="title" value="${esc(task.title)}" required maxlength="300" placeholder="연구 제목"></div><div class="form-field field-full owner-editor-field"><label for="task-owner">담당자</label><input id="task-owner" name="owner" value="${esc(task.owner)}" placeholder="담당자 이름을 입력하세요"><span class="field-help">공동 담당자는 쉼표로 구분해 주세요.</span><label class="allocation-mode" id="allocation-mode-field" ${task.parentId?'hidden':''}><input type="checkbox" id="l4-allocation-manual" ${task.allocationMode==='manual'?'checked':''} ${readOnly?'disabled':''}> L4 리소스 직접 수정</label><div id="task-allocations" class="allocation-editor"></div></div><div class="hierarchy-editor field-full"><div class="form-field"><label for="task-parent">상위 기술 · 연구</label><select class="hierarchy-parent-picker" id="task-parent" name="parentId">${hierarchyParentOptions(id,task.parentId)}</select></div><div id="hierarchy-parent-context" class="hierarchy-parent-context"></div><p class="hierarchy-editor-help">L4는 기술의 전체 기간, L5는 그 아래에서 진행할 세부 연구입니다. 기존의 더 깊은 연결도 유지합니다.</p></div><div class="form-field field-full"><label for="task-goal">연결할 L3 연구축</label><select id="task-goal" name="goalId">${goalOptions(task.goalId,'L3 미연결')}</select></div><div class="planning-intent field-full"><div class="form-field"><label for="task-unit">계획 단위</label><select id="task-unit" name="planUnit">${options(units,task.planUnit)}</select></div><label class="period-unscheduled"><input id="unscheduled" type="checkbox" ${!task.start?'checked':''}> ${children.length?'전체 목표 기간은 미정 · 세부 기간으로 요약 표시':'기간은 아직 미정'}</label><div id="period-fields">${periodFieldsHTML(task)}</div>${children.length?'<label class="period-unscheduled hierarchy-parent-note"><input type="checkbox" id="move-children" checked> 전체 기간을 이동할 때 세부 연구도 함께 이동</label><p class="field-help">전체 기간의 길이만 늘이거나 줄이면 세부 기간은 유지됩니다.</p>':''}${task.legacyDates&&!defaults.start?'<p class="legacy-period-note">기존에 입력한 기간은 그대로 보존했습니다. 기간을 수정할 때 선택한 주·월·연 단위로 맞춥니다.</p>':''}</div><div class="hierarchy-warning field-full" id="hierarchy-period-warning"></div>${original?subtaskSectionHTML(original):''}<label class="task-visibility-field field-full"><input id="task-roadmap-visible" type="checkbox" ${!task.roadmapHidden?'checked':''}> 연구 로드맵에 표시</label><div class="task-papers field-full" id="task-papers"></div><div class="form-field"><label for="task-status">연구 상태</label><select id="task-status" name="status">${options(statuses,task.status)}</select></div><div class="form-field"><label for="task-category">연구 유형</label><select id="task-category" name="category">${options(categories,task.category)}</select></div><details class="advanced-plan field-full"><summary>연구 단계 · 담당 · 선행 연구 · 상세 메모</summary><div class="form-grid"><div class="form-field"><label for="task-phase">로드맵 단계</label><select id="task-phase" name="phaseId"><option value="">단계 미연결</option>${state.phases.map(p=>`<option value="${esc(p.id)}" ${task.phaseId===p.id?'selected':''}>${esc(p.title)}</option>`).join('')}</select></div><div class="form-field field-full"><label for="task-dependencies">먼저 확인해야 하는 연구</label><select id="task-dependencies" name="dependencies" multiple size="4">${state.tasks.filter(t=>t.id!==id).map(t=>`<option value="${esc(t.id)}" ${task.dependencies.includes(t.id)?'selected':''}>${esc(t.title)}</option>`).join('')}</select><span class="field-help">⌘/Ctrl+클릭으로 여러 개 선택. 선행 연구에 따라 구간을 자동 이동하지는 않습니다.</span></div><div class="form-field field-full"><label for="task-notes">상세 메모</label><textarea id="task-notes" name="notes" rows="7">${esc(task.notes)}</textarea></div></div></details>${original?`<div class="linked-notes field-full"><div class="section-label">이 연구축의 기록</div>${state.notes.filter(n=>n.goalId&&n.goalId===task.goalId).slice(0,4).map(n=>`<button class="linked-note" type="button" data-note="${esc(n.id)}">▧ ${esc(n.title)} ↗</button>`).join('')||'<p class="field-help">연구 노트에 같은 연구축을 지정하면 여기에 표시됩니다.</p>'}</div>`:''}<p class="form-error field-full" id="task-error" role="alert"></p></div></div><div class="drawer-footer"><div class="button-row">${original?'<button type="button" class="danger-button" id="task-delete">삭제</button><button type="button" class="secondary-button" id="task-duplicate">복제</button>':''}<span class="field-help" id="task-save-status">밖을 누르거나 닫으면 자동 저장됩니다.</span></div><div class="button-row"><button type="button" class="secondary-button" id="task-cancel">변경 취소</button><button type="submit" class="primary-button">연구 구간 저장</button></div></div></form>`;
+    dialog.innerHTML=`<form id="task-form" class="task-form"><div class="drawer-header"><div><span class="eyebrow">${task.parentId?'L5 · SUB RESEARCH':'L4 · RESEARCH TECHNOLOGY'}</span><h2 id="task-dialog-title">${task.parentId?'세부 연구 수정':original?'연구 기간 수정':'연구 추가'}</h2><p>${task.start?esc(P.spanLabel(task)):'기간 없이 연구 후보로 등록할 수 있습니다.'}</p></div><button class="close-button" type="button" id="task-close" aria-label="닫기">×</button></div><div class="drawer-body"><div class="form-grid">${!original&&task.start?`<div class="form-field field-full"><label for="assign-existing">기존 연구 후보를 이 구간에 배치</label><select id="assign-existing"><option value="">새 연구 구간 작성</option>${state.tasks.filter(t=>!t.start&&(!task.parentId||(!t.assetId&&H.canParent(state.tasks,t.id,task.parentId)))).map(t=>`<option value="${esc(t.id)}">${esc(t.title)}</option>`).join('')}</select></div>`:''}${task.assetId?`<div class="taxonomy-source-card field-full"><span>L4 · 기술자산 맵 ${esc(task.sourceCell||'')}</span><strong>${esc((task.officialTitle||task.title).split(/\s*->\s*/)[0])}</strong><small>기술의 공식 분류입니다. 아래 제목·일정·메모는 수정할 수 있습니다.</small></div>`:''}<div class="form-field field-full"><label for="task-title">${task.parentId?'L5 세부 연구':'L4 기술 · 연구'} <span class="required">*</span></label><input id="task-title" name="title" value="${esc(task.title)}" required maxlength="300" placeholder="연구 제목"></div><div class="form-field field-full owner-editor-field"><label for="task-owner">담당자</label><input id="task-owner" name="owner" value="${esc(task.owner)}" placeholder="담당자 이름을 입력하세요"><span class="field-help">공동 담당자는 쉼표로 구분해 주세요.</span><label class="allocation-mode" id="allocation-mode-field" ${task.parentId?'hidden':''}><input type="checkbox" id="l4-allocation-manual" ${task.allocationMode==='manual'?'checked':''} ${readOnly?'disabled':''}> L4 리소스 직접 수정</label><div id="task-allocations" class="allocation-editor"></div></div><div class="hierarchy-editor field-full"><div class="form-field"><label for="task-parent">상위 기술 · 연구</label><select class="hierarchy-parent-picker" id="task-parent" name="parentId">${hierarchyParentOptions(id,task.parentId)}</select></div><div id="hierarchy-parent-context" class="hierarchy-parent-context"></div><p class="hierarchy-editor-help">L4는 기술의 전체 기간, L5는 그 아래에서 진행할 세부 연구입니다. 기존의 더 깊은 연결도 유지합니다.</p></div><div class="form-field field-full"><label for="task-goal">연결할 L3 연구축</label><select id="task-goal" name="goalId">${goalOptions(task.goalId,'L3 미연결')}</select></div><div class="planning-intent field-full"><input id="task-unit" name="planUnit" type="hidden" value="day"><p class="allocation-heading">목표 기간</p><label class="period-unscheduled"><input id="unscheduled" type="checkbox" ${!task.start?'checked':''}> ${children.length?'전체 목표 기간은 미정 · 세부 기간으로 요약 표시':'기간은 아직 미정'}</label><div id="period-fields">${periodFieldsHTML(task)}</div>${children.length?'<label class="period-unscheduled hierarchy-parent-note"><input type="checkbox" id="move-children" checked> 전체 기간을 이동할 때 세부 연구도 함께 이동</label><p class="field-help">전체 기간의 길이만 늘이거나 줄이면 세부 기간은 유지됩니다.</p>':''}</div><div class="hierarchy-warning field-full" id="hierarchy-period-warning"></div>${original?subtaskSectionHTML(original):''}<label class="task-visibility-field field-full"><input id="task-roadmap-visible" type="checkbox" ${!task.roadmapHidden?'checked':''}> 연구 로드맵에 표시</label><div class="task-papers field-full" id="task-papers"></div><div class="form-field"><label for="task-status">연구 상태</label><select id="task-status" name="status">${options(statuses,task.status)}</select></div><div class="form-field"><label for="task-category">연구 유형</label><select id="task-category" name="category">${options(categories,task.category)}</select></div><details class="advanced-plan field-full"><summary>연구 단계 · 담당 · 선행 연구 · 상세 메모</summary><div class="form-grid"><div class="form-field"><label for="task-phase">로드맵 단계</label><select id="task-phase" name="phaseId"><option value="">단계 미연결</option>${state.phases.map(p=>`<option value="${esc(p.id)}" ${task.phaseId===p.id?'selected':''}>${esc(p.title)}</option>`).join('')}</select></div><div class="form-field field-full"><label for="task-dependencies">먼저 확인해야 하는 연구</label><select id="task-dependencies" name="dependencies" multiple size="4">${state.tasks.filter(t=>t.id!==id).map(t=>`<option value="${esc(t.id)}" ${task.dependencies.includes(t.id)?'selected':''}>${esc(t.title)}</option>`).join('')}</select><span class="field-help">⌘/Ctrl+클릭으로 여러 개 선택. 선행 연구에 따라 구간을 자동 이동하지는 않습니다.</span></div><div class="form-field field-full"><label for="task-notes">상세 메모</label><textarea id="task-notes" name="notes" rows="7">${esc(task.notes)}</textarea></div></div></details>${original?`<div class="linked-notes field-full"><div class="section-label">이 연구축의 기록</div>${state.notes.filter(n=>n.goalId&&n.goalId===task.goalId).slice(0,4).map(n=>`<button class="linked-note" type="button" data-note="${esc(n.id)}">▧ ${esc(n.title)} ↗</button>`).join('')||'<p class="field-help">연구 노트에 같은 연구축을 지정하면 여기에 표시됩니다.</p>'}</div>`:''}<p class="form-error field-full" id="task-error" role="alert"></p></div></div><div class="drawer-footer"><div class="button-row">${original?'<button type="button" class="danger-button" id="task-delete">삭제</button><button type="button" class="secondary-button" id="task-duplicate">복제</button>':''}<span class="field-help" id="task-save-status">밖을 누르거나 닫으면 자동 저장됩니다.</span></div><div class="button-row"><button type="button" class="secondary-button" id="task-cancel">변경 취소</button><button type="submit" class="primary-button">연구 구간 저장</button></div></div></form>`;
     const form=$('#task-form');dirty=false;
     window.ResearchPapers.mount($('#task-papers'),task,{readOnly,onChange:markDirty,toast,uid});
     $('#task-roadmap-visible').onchange=markDirty;
@@ -482,14 +469,16 @@ function renderAllocations(){
       }catch{host.textContent='리소스는 0~100%로 입력하고 연구 기간을 확인해 주세요.';}
     }
     $('#task-status').onchange=updateAllocationWarning;
-    const bindPeriodInputs=()=>{for(const inputId of ['period-start','period-end'])$('#'+inputId).onchange=()=>{periodEdited=true;markDirty();updateDuration();syncHierarchy();};};bindPeriodInputs();
+    let datePicker;
+    const bindPeriodInputs=()=>{
+      datePicker=window.ResearchDatePicker.mount($('#period-fields'),{signal:editorEvents.signal,readOnly,onChange:()=>{periodEdited=true;markDirty();updateDuration();syncHierarchy();}});
+      for(const inputId of ['period-start','period-end'])$('#'+inputId).onchange=()=>{datePicker.sync();periodEdited=true;markDirty();updateDuration();syncHierarchy();};
+    };bindPeriodInputs();
     $('#task-parent').onchange=()=>{markDirty();renderAllocations();syncHierarchy();};
-    $('#task-unit').onchange=()=>{
-      let previous;try{previous=readPeriodForPreviousUnit(task.planUnit);}catch(e){previous={start:task.start||anchor,end:task.end||anchor};}
-      task.planUnit=$('#task-unit').value;const pending=$('#unscheduled').checked;
-      $('#period-fields').innerHTML=periodFieldsHTML({...task,...previous,start:pending?'':previous.start,end:pending?'':previous.end});bindPeriodInputs();periodEdited=true;markDirty();updateDuration();syncHierarchy();
+    $('#unscheduled').onchange=()=>{
+      datePicker.sync();periodEdited=true;markDirty();updateDuration();syncHierarchy();
+      if(!$('#unscheduled').checked)datePicker.open();
     };
-    $('#unscheduled').onchange=()=>{for(const inputId of ['period-start','period-end'])$('#'+inputId).disabled=$('#unscheduled').checked;periodEdited=true;markDirty();updateDuration();syncHierarchy();};
     const assign=$('#assign-existing');if(assign)assign.onchange=()=>{if(!assign.value)return;if(dirty&&!confirm('작성 중인 내용을 닫고 연구 후보를 배치할까요?')){assign.value='';return;}const chosen=state.tasks.find(t=>t.id===assign.value);dirty=false;openTask(assign.value,{start:task.start,end:task.end,planUnit:task.planUnit,parentId:task.parentId||chosen.parentId||'',status:'planned'});};
     $('#task-close').onclick=()=>closeTask();$('#task-cancel').onclick=()=>closeTask('discard');dialog.oncancel=e=>{e.preventDefault();closeTask();};
     // Only dismiss a gesture that starts and ends on the backdrop.
@@ -543,13 +532,6 @@ function renderAllocations(){
     };
     form.onsubmit=e=>{e.preventDefault();commitEditor();};
     renderAllocations();syncHierarchy();if(!dialog.open)dialog.showModal();$('#task-title').focus();
-  }
-  function readPeriodForPreviousUnit(previousUnit) {
-    if($('#unscheduled').checked)return {start:editorDraft.start||anchor,end:editorDraft.end||anchor};
-    const a=$('#period-start').value,b=$('#period-end').value;
-    if(previousUnit==='week'){const start=P.fromWeek(a),end=P.fromWeek(b);if(!start||!end)throw Error();return {start,end:P.endOfWeek(end)};}
-    if(previousUnit==='month'){const start=a+'-01',end=P.monthEnd(b+'-01');if(!P.validDate(start)||!P.validDate(end))throw Error();return {start,end};}
-    const start=a+'-01-01',end=b+'-12-31';if(!P.validDate(start)||!P.validDate(end))throw Error();return {start,end};
   }
   function taskError(message){$('#task-error').textContent=message;$('#task-error').scrollIntoView({block:'nearest'});return false;}
   function closeTask(mode='save'){
