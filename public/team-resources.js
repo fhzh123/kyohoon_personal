@@ -90,7 +90,22 @@
       ([id], i) => (PROJECTS.get(id).color = palette[i % palette.length]),
     );
   const TABS = { overview: "과업 배분", people: "월별 변화", records: "주간 원본 기록" };
+  // A period is a month ("YYYY-MM"), "all", or a week keyed by its Monday ("YYYY-MM-DD").
+  const isWeek = (key) => key?.length === 10;
+  const shiftDay = (day, n) => {
+    const d = new Date(day + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() + n);
+    return d.toISOString().slice(0, 10);
+  };
+  const mondayOf = (day) => shiftDay(day, -((new Date(day + "T00:00:00Z").getUTCDay() + 6) % 7));
+  const WEEKS = [...new Set(DATA.rows.map((r) => mondayOf(r.start)))].sort();
+  // A week belongs to the month of its Thursday, the same rule as the Notion 주차 titles.
+  const weekMonth = (monday) => shiftDay(monday, 3).slice(0, 7);
+  const periodMonth = (key) => (isWeek(key) ? weekMonth(key) : key);
+  const inPeriod = (day, key) =>
+    key === "all" || (isWeek(key) ? day >= key && day <= shiftDay(key, 6) : day.startsWith(key));
   const state = {
+    unit: "month",
     month: DATA.months.at(-1),
     people: new Set(DATA.people.map((p) => p.id)),
     tab: TABS[location.hash.slice(1)] ? location.hash.slice(1) : "overview",
@@ -107,10 +122,20 @@
       }).format(v || 0),
     pct = (v, t) => (t ? (100 * v) / t : 0),
     pc = (v, t) => f(pct(v, t), 1) + "%",
+    weekName = (monday) => {
+      const thursday = shiftDay(monday, 3);
+      return `${Number(thursday.slice(0, 4))}년 ${Number(thursday.slice(5, 7))}월 ${Math.ceil(Number(thursday.slice(8)) / 7)}주차`;
+    },
+    weekRange = (monday) => {
+      const friday = shiftDay(monday, 4), short = (d) => Number(d.slice(5, 7)) + "." + Number(d.slice(8));
+      return short(monday) + "–" + short(friday);
+    },
     monthName = (m) =>
       m === "all"
         ? "전체 기간"
-        : Number(m.slice(0, 4)) + "년 " + Number(m.slice(5)) + "월",
+        : isWeek(m)
+          ? weekName(m)
+          : Number(m.slice(0, 4)) + "년 " + Number(m.slice(5)) + "월",
     shortMonth = (m) => Number(m.slice(5)) + "월",
     personColor = (id) => `var(--p${PEOPLE.get(id).index})`;
   const daysCache = new Map();
@@ -137,9 +162,7 @@
 
     for (const row of DATA.rows) {
       if (!ids.has(row.person)) continue;
-      const days = row.days.filter(
-        (day) => month === "all" || day.startsWith(month),
-      );
+      const days = row.days.filter((day) => inPeriod(day, month));
       if (!days.length) continue;
       rows.push(row);
       for (const day of days) covered.add(row.person + "|" + day);
@@ -167,7 +190,9 @@
     const expectedDays =
       month === "all"
         ? DATA.months.reduce((count, key) => count + monthDays(key).length, 0)
-        : monthDays(month).length;
+        : isWeek(month)
+          ? 5
+          : monthDays(month).length;
     return {
       total,
       projects: [...projects.values()].sort((a, b) => b.hours - a.hours),
@@ -188,7 +213,7 @@
 
   function coverage(a) {
     return a.coverage < 99.99
-      ? `<div class="record-note">${icon("info")}<span>${state.month === "all" ? "일부 기간의" : monthName(state.month) + "은 일부"} 주간 기록이 비어 있습니다. 배분 비중은 확인된 기록으로 계산합니다.</span><button data-action="method">집계 기준</button></div>`
+      ? `<div class="record-note">${icon("info")}<span>${state.month === "all" ? "일부 기간의 주간 기록이" : isWeek(state.month) ? monthName(state.month) + "는 일부 팀원의 기록이" : monthName(state.month) + "은 일부 주간 기록이"} 비어 있습니다. 배분 비중은 확인된 기록으로 계산합니다.</span><button data-action="method">집계 기준</button></div>`
       : "";
   }
   function taskName(id) {
@@ -434,7 +459,7 @@
     });
     monthly.forEach(({ m, a }, i) => {
       const top = a.projects[0],
-        selected = m === state.month;
+        selected = m === periodMonth(state.month);
       svg += `<g class="area-month" data-chart-month="${m}" role="button" tabindex="0" aria-label="${monthName(m)} ${top ? esc(top.name) + " " + pc(top.hours, a.total) : "기록 없음"}${a.coverage < 99.99 ? ", 부분 기록" : ""}, 이 달 보기"><title>${monthName(m)}${a.coverage < 99.99 ? " (부분 기록)" : ""}\n${a.projects.map((t) => t.name + " " + pc(t.hours, a.total)).join("\n")}</title><line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${H - B}" class="month-guide ${selected ? "is-selected" : ""}"/><rect x="${x(i) - (pw / Math.max(1, monthly.length - 1)) * 0.43}" y="${T}" width="${(pw / Math.max(1, monthly.length - 1)) * 0.86}" height="${ph}" fill="transparent"/><text class="chart-tick ${selected ? "selected-month" : ""}" x="${x(i)}" y="${H - 19}" text-anchor="middle">${shortMonth(m)}${a.coverage < 99.99 ? "*" : ""}</text></g>`;
     });
     return `<svg class="allocation-area" viewBox="0 0 ${W} ${H}" role="group" aria-label="${PEOPLE.get(id).name}의 월별 과업 비중, 매달 업무를 100퍼센트로 환산">${svg}</svg>`;
@@ -444,7 +469,7 @@
     return `<div class="month-focus-grid">${monthly
       .map(({ m, a }) => {
         const top = a.projects[0],
-          sel = state.month === m;
+          sel = periodMonth(state.month) === m;
         return `<button class="month-focus-card ${sel ? "is-selected" : ""}" data-chart-month="${m}"><span class="month-focus-label">${shortMonth(m)}${a.coverage < 99.99 ? "<small>부분 기록</small>" : ""}</span><span class="month-focus-task"><i class="color-square" style="--task-color:${top?.color || "var(--other)"}"></i>${top ? esc(top.name) : "기록 없음"}</span><span class="month-focus-share">${top ? pc(top.hours, a.total) : "—"}<small>이 달의 주된 과업</small></span></button>`;
       })
       .join("")}</div>`;
@@ -546,7 +571,7 @@
   function render() {
     const a = aggregate();
     $("#record-count").textContent = a.rows.length;
-    $("#month").value = state.month;
+    periodOptions();
     // The shared sidebar's sub-menu links are this page's tabs.
     $$("[data-tab]").forEach((b) => {
       const active = b.dataset.tab === state.tab;
@@ -571,9 +596,10 @@
         : state.tab === "people"
           ? peopleView(a)
           : recordsView(a);
-    const i = DATA.months.indexOf(state.month);
+    const list = periods(),
+      i = list.indexOf(state.month);
     $("[data-action=prev]").disabled = i <= 0;
-    $("[data-action=next]").disabled = i < 0 || i >= DATA.months.length - 1;
+    $("[data-action=next]").disabled = i < 0 || i >= list.length - 1;
     $("#announcer").textContent =
       `${monthName(state.month)}, ${state.people.size}명, ${a.projects.length}개 과업의 배분`;
     if (state.detail) openDetail(state.detail);
@@ -591,7 +617,7 @@
       .filter((r) => r.tasks.some((t) => t.project === id))
       .sort((a, b) => b.start.localeCompare(a.start));
     $("#detail").innerHTML =
-      `<div class="detail-heading"><div><div class="eyebrow">과업 상세 / ${esc(p.category)}</div><h2 id="detail-title">${esc(p.name)}</h2></div><button class="icon-button" data-action="close-detail" aria-label="과업 상세 닫기">✕</button></div><p class="detail-meta">${monthName(state.month)} / ${state.people.size}명 선택${p.code ? " / " + esc(p.code) : ""}</p><div class="detail-share">${f(pct(sum.hours, a.total))}<small>%</small></div><p class="detail-caption">선택한 팀원 전체 업무 중 이 과업의 비중</p><div class="detail-section"><h3>각 팀원의 업무에서 차지하는 비중</h3>${DATA.people
+      `<div class="detail-heading"><div><div class="eyebrow">과업 상세 / ${esc(p.category)}</div><h2 id="detail-title">${esc(p.name)}</h2></div><button class="icon-button" data-action="close-detail" aria-label="과업 상세 닫기">✕</button></div><p class="detail-meta">${monthName(state.month)}${isWeek(state.month) ? " (" + weekRange(state.month) + ")" : ""} /${state.people.size}명 선택${p.code ? " / " + esc(p.code) : ""}</p><div class="detail-share">${f(pct(sum.hours, a.total))}<small>%</small></div><p class="detail-caption">선택한 팀원 전체 업무 중 이 과업의 비중</p><div class="detail-section"><h3>각 팀원의 업무에서 차지하는 비중</h3>${DATA.people
         .filter((person) => state.people.has(person.id))
         .map((person) => {
           const v = sum.people.get(person.id) || { hours: 0 },
@@ -621,8 +647,40 @@
     state.detail = null;
     $("#detail").close();
   }
+  // Months (with 전체 기간) or the weeks that have records, oldest first.
+  function periods(unit = state.unit) {
+    return unit === "week" ? WEEKS : DATA.months;
+  }
+  function periodOptions() {
+    const select = $("#month"),
+      key = state.unit + "|" + WEEKS.length;
+    if (select.dataset.unit !== key) {
+      select.dataset.unit = key;
+      select.innerHTML =
+        state.unit === "week"
+          ? [...WEEKS].reverse().map((w) => `<option value="${w}">${weekName(w)} · ${weekRange(w)}</option>`).join("")
+          : DATA.months.map((m) => `<option value="${m}">${monthName(m)}</option>`).join("") +
+            '<option value="all">전체 기간</option>';
+      $("[data-action=prev]").setAttribute("aria-label", state.unit === "week" ? "이전 주" : "이전 달");
+      $("[data-action=next]").setAttribute("aria-label", state.unit === "week" ? "다음 주" : "다음 달");
+    }
+    select.value = state.month;
+    $$("[data-unit]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.unit === state.unit)));
+  }
+  function setUnit(unit) {
+    if (unit === state.unit || !WEEKS.length) return;
+    if (unit === "week") {
+      // Open the latest recorded week of the month on screen.
+      const month = state.month === "all" ? DATA.months.at(-1) : periodMonth(state.month);
+      state.month = WEEKS.filter((w) => weekMonth(w) <= month).at(-1) || WEEKS[0];
+    } else state.month = periodMonth(state.month);
+    state.unit = unit;
+    state.page = 0;
+    render();
+  }
   function changeMonth(m, overview = false) {
     if (!m) return;
+    state.unit = isWeek(m) ? "week" : "month";
     state.month = m;
     state.page = 0;
     if (overview && !state.detail) state.tab = "overview";
@@ -674,14 +732,14 @@
     name.style.setProperty("--task-color", chosen ? source.dataset.segmentColor : top?.color || "var(--other)");
     value.innerHTML = share != null ? `${f(share)}<small>%</small>` : "—";
   }
-  $("#month").innerHTML =
-    DATA.months
-      .map((m) => `<option value="${m}">${monthName(m)}</option>`)
-      .join("") + '<option value="all">전체 기간</option>';
   $("#month").addEventListener("change", (e) => changeMonth(e.target.value));
   const targetSelector =
-    "[data-action],[data-tab],[data-person],[data-project],[data-chart-month],[data-other],[data-trend-person]";
+    "[data-action],[data-tab],[data-person],[data-project],[data-chart-month],[data-other],[data-trend-person],[data-unit]";
   function activate(el) {
+    if (el.dataset.unit) {
+      setUnit(el.dataset.unit);
+      return;
+    }
     if (el.dataset.project) {
       openDetail(el.dataset.project);
       return;
@@ -725,10 +783,10 @@
         $("#method").close();
         break;
       case "prev":
-        changeMonth(DATA.months[DATA.months.indexOf(state.month) - 1]);
+        changeMonth(periods()[periods().indexOf(state.month) - 1]);
         break;
       case "next":
-        changeMonth(DATA.months[DATA.months.indexOf(state.month) + 1]);
+        changeMonth(periods()[periods().indexOf(state.month) + 1]);
         break;
       case "all-tasks":
         state.allTasks = !state.allTasks;

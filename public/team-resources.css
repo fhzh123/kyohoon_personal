@@ -25,6 +25,11 @@ body[data-surface="team-resources"] main p { margin: 0; }
 /* Controls */
 .tr-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 10px 12px; margin: 0 0 28px; border: 1px solid var(--tr-border); border-radius: var(--tr-radius); background: var(--tr-surface); }
 .period-control { display: flex; align-items: center; gap: 2px; padding-right: 20px; border-right: 1px solid var(--tr-hair); }
+.unit-toggle { display: inline-flex; gap: 2px; padding: 2px; margin-right: 10px; border-radius: 9px; background: var(--tr-raised); }
+.unit-toggle button { min-width: 34px; height: 28px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: var(--tr-muted); font-size: 13px; font-weight: 600; cursor: pointer; }
+.unit-toggle button:hover { color: var(--tr-ink); }
+.unit-toggle button[aria-pressed="true"] { background: var(--tr-surface); color: var(--tr-ink); box-shadow: 0 0 0 1px var(--tr-border); }
+.unit-toggle button:focus-visible { outline: 2px solid var(--tr-accent); outline-offset: 1px; }
 .tr-step { all: unset; box-sizing: border-box; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; color: var(--tr-muted); cursor: pointer; }
 .tr-step:hover:not(:disabled) { background: var(--tr-raised); color: var(--tr-ink); }
 .tr-step:disabled { opacity: .35; cursor: default; }
@@ -244,6 +249,10 @@ dialog#method .modal-heading { padding: 24px 26px 0; }
 }
 @media (max-width: 640px) {
   .tr-controls { padding: 10px; gap: 10px; }
+  .period-control { width: 100%; min-width: 0; }
+  .unit-toggle { margin-right: 4px; flex: none; }
+  .month-select { flex: 1; min-width: 0; }
+  .month-select select { width: 100%; min-width: 0; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tr-stats { grid-template-columns: minmax(0, 1fr); gap: 10px; }
   .tr-people { grid-template-columns: minmax(0, 1fr); }
   .allocation-section-head { display: block; }

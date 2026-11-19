@@ -20,7 +20,7 @@ export const STATIC_PAGES = {
   'views/team-resources.html': {
     section: 'team',
     topbar: {crumb: '과업 배분', crumbId: 'crumb'},
-    footer: '<div class="ws-foot-mascot"><img src="/mascot/team-resources.png" alt="" width="44" height="44"><p>주간 기록은 수동으로 갱신합니다.</p></div><button type="button" data-action="method">집계 기준 보기</button>',
+    footer: '<div class="ws-foot-mascot"><img src="/mascot/team-resources.png" alt="" width="44" height="44"><p>주간 기록은 매주 목요일 오전 7시에 갱신합니다.</p></div><button type="button" data-action="method">집계 기준 보기</button>',
   },
   'work-expenses/index.html': {
     section: 'expenses',

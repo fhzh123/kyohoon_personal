@@ -60,6 +60,16 @@ test('team resource data is available to active members only and renders as a pr
       dom.window.document.querySelector('#tab-people').click();
       assert.ok(dom.window.document.querySelector('.allocation-area'));
       assert.doesNotMatch(dom.window.document.querySelector('.allocation-area').innerHTML, /NaN/);
+      // The period can switch to weeks; the fixture's Thursday-1 week is named after its Thursday.
+      dom.window.document.querySelector('#tab-overview').click();
+      dom.window.document.querySelector('[data-unit="week"]').click();
+      const period = dom.window.document.querySelector('#month');
+      assert.equal(period.value, '2026-09-28');
+      assert.equal(period.selectedOptions[0].textContent, '2026년 10월 1주차 · 9.28–10.2');
+      assert.equal(dom.window.document.querySelector('[data-unit="week"]').getAttribute('aria-pressed'), 'true');
+      assert.match(dom.window.document.querySelector('.tr-lead-value').textContent, /100/);
+      dom.window.document.querySelector('[data-unit="month"]').click();
+      assert.equal(period.value, '2026-10');
     } finally {
       dom.window.close();
     }
