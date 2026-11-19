@@ -26,7 +26,7 @@ async function fixture(role='editor', initial=seed, catalog=[], currentDate='202
     else gets.push(url);
     return {ok:true,status:200,json:async()=>clone(remote)};
   };
-  for(const name of ['papers','taxonomy','notebook','periods','date-picker','hierarchy','timeline','calendar','workspace-sync','app'])w.eval(await readFile(new URL(`work-app/${name}.js`,root),'utf8'));
+  for(const name of ['papers','taxonomy','notebook','periods','date-picker','hierarchy','timeline','calendar','resources','workspace-sync','app'])w.eval(await readFile(new URL(`work-app/${name}.js`,root),'utf8'));
   await tick();
   return {w,document:w.document,puts,gets,close:()=>w.close()};
 }
@@ -677,5 +677,28 @@ test('failed order persistence restores both prior order and unrelated settings'
  const f=await fixture('editor',allocationSeed());try{
   const before=clone(f.w.ResearchAtlas.getState());f.w.Storage.prototype.setItem=()=>{throw Error('full');};
   assert.equal(f.w.ResearchAtlas.operations.reorderResourceOwner('C','A'),false);assert.deepEqual(clone(f.w.ResearchAtlas.getState()),before);assert.match(f.document.querySelector('#toast').textContent,/순서 변경을 취소/);
+ }finally{f.close();}
+});
+test('per-person resource view follows the roadmap MM rules by month and by week, with team-resource period keys',async()=>{
+ const f=await fixture('editor',allocationSeed());try{
+  const {w,document:d}=f,R=w.ResearchResources,tasks=w.ResearchAtlas.getState().tasks;
+  const range=R.planRange(tasks);assert.equal(range.start+'~'+range.end,'2026-11-01~2026-11-30');
+  const month=R.plan(tasks,{...range,unit:'month'}),a=month.people.find(p=>p.owner==='A'),b=month.people.find(p=>p.owner==='B');
+  const summary=w.ResearchCalendar.resourceSummary(tasks,'2026-11-01','2026-11-30');
+  assert.deepEqual([...month.periods.map(p=>p.key)],['2026-11']);
+  assert.equal(a.mm,summary.find(r=>r.owner==='A').mm);assert.equal(b.mm,summary.find(r=>r.owner==='B').mm);
+  assert.equal(a.peak,130);assert.equal(a.periods[0].overDays,5);assert.equal(b.periods[0].average,30);
+  assert.equal(month.people.find(p=>p.owner==='C').missing.length,1);assert.equal(month.people.some(p=>p.taskIds.includes('root')),false,'L4 allocations never count');
+  const week=R.plan(tasks,{...range,unit:'week'}),aw=week.people.find(p=>p.owner==='A');
+  assert.deepEqual([...week.periods.map(p=>p.key)],['2026-11-02','2026-11-09','2026-11-16','2026-11-23','2026-11-30'],'weeks start on Monday like 팀 리소스, and a week with no weekday in range is left out');
+  assert.deepEqual([...week.periods.slice(0,2).map(p=>p.label)],['11월 1주','11월 2주']);
+  assert.equal(aw.periods[1].average,122);assert.equal(aw.periods[1].peak,130);assert.equal(aw.periods[0].average,0);
+  d.querySelector('[data-view="resources"]').click();
+  assert.match(d.querySelector('.rp-matrix').textContent,/11월/);
+  d.querySelector('[data-resource-unit="week"]').click();d.querySelector('[data-resource-person="B"]').click();
+  assert.equal(d.querySelector('[data-resource-unit="week"]').getAttribute('aria-pressed'),'true');
+  assert.equal(d.querySelector('.rp-person h2').textContent,'B');assert.equal(d.querySelectorAll('.rp-matrix thead th').length,7);
+  d.querySelector('[data-resource-task="b-work"]').click();assert.equal(d.querySelector('#task-dialog').open,true);
+  assert.equal(f.puts.length,0,'viewing resources never writes the research state');
  }finally{f.close();}
 });

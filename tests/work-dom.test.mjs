@@ -91,8 +91,8 @@ test('DOM simulation: original Work navigation, real startup counts, search and 
     assert.ok(f.document.querySelector('a[href="/work"]'),'research diary returns to protected Work hub');
     const logout=f.document.querySelector('#work-logout');
     assert.equal(logout.method,'post'); assert.equal(logout.getAttribute('action'),'/api/auth/logout');
-    for (const view of ['goals','overview','notes','settings','backlog','roadmap']) await f.navigate(view);
-    assert.equal(f.document.querySelectorAll('#navigation [data-view]').length,6);
+    for (const view of ['goals','overview','resources','notes','settings','backlog','roadmap']) await f.navigate(view);
+    assert.equal(f.document.querySelectorAll('#navigation [data-view]').length,7);
     const query=f.original.tasks.find(task=>task.title.length>20).title;
     const input=f.document.querySelector('#global-search');
     input.value=query; input.dispatchEvent(new f.dom.window.Event('input',{bubbles:true}));

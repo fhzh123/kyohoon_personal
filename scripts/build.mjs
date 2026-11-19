@@ -14,8 +14,8 @@ await mkdir(path.join(root,'artifacts'),{recursive:true});
 await writeFile(path.join(root,'artifacts/build-result.json'),JSON.stringify({builtAt:new Date().toISOString(),resume:'source built',typecheck:'policy and workspace contracts',productionPreview:false},null,2));
 console.log('Build passed: Resume, assets, syntax, policy types and deployment preview guard.');
 
-const researchScripts = ['papers.js','taxonomy.js','notebook.js','periods.js','date-picker.js','hierarchy.js','timeline.js','calendar.js','workspace-sync.js','app.js'];
-const researchStyles = ['styles.css','details.css','planning.css','hierarchy.css','taxonomy.css','integration.css','features.css','date-picker.css'];
+const researchScripts = ['papers.js','taxonomy.js','notebook.js','periods.js','date-picker.js','hierarchy.js','timeline.js','calendar.js','resources.js','workspace-sync.js','app.js'];
+const researchStyles = ['styles.css','details.css','planning.css','hierarchy.css','taxonomy.css','integration.css','features.css','date-picker.css','resources.css'];
 const scripts = await Promise.all(researchScripts.map(file => readFile(path.join(root,'work-app',file),'utf8')));
 const css = await Promise.all(researchStyles.map(file => readFile(path.join(root,'work-app',file),'utf8')));
 const bootstrap = await readFile(path.join(root,'work-app/bootstrap.js'),'utf8');
