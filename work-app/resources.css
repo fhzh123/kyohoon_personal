@@ -1,0 +1,71 @@
+/* 담당자 리소스: one ledger of everyone, then one person in depth. */
+.rp { --rp-ink: var(--ws-ink, #191c21); --rp-muted: var(--ws-muted, #5b636e); --rp-faint: var(--ws-faint, #8b929c); --rp-line: var(--ws-line, #e4e7ec); --rp-line-strong: var(--ws-line-strong, #d5d9e0); --rp-surface: var(--ws-surface, #fff); --rp-raised: var(--ws-raised, #eff1f5); --rp-accent: var(--ws-accent, #234eb7); --rp-over: #c2453d; display: grid; gap: 28px; color: var(--rp-ink); }
+html[data-theme="dark"] .rp { --rp-over: #ef8a80; }
+.rp-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.rp-toolbar p { margin: 0; font-size: 12.5px; color: var(--rp-muted); }
+.rp-unit { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--rp-raised); }
+.rp-unit button { height: 30px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--rp-muted); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.rp-unit button[aria-pressed="true"] { background: var(--rp-ink); color: var(--ws-bg, #fff); }
+.rp-unit button:focus-visible, .rp-matrix button:focus-visible, .rp-task:focus-visible { outline: 2px solid var(--rp-accent); outline-offset: 2px; }
+.rp-block { display: grid; gap: 14px; }
+.rp-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+.rp-head h2 { margin: 0; font-size: 20px; font-weight: 650; letter-spacing: -.02em; }
+.rp-head span { font-size: 12.5px; color: var(--rp-muted); }
+
+.rp-matrix-wrap { overflow-x: auto; border: 1px solid var(--rp-line-strong); border-radius: 12px; background: var(--rp-surface); }
+.rp-matrix { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 13px; }
+.rp-matrix th, .rp-matrix td { padding: 0; border-bottom: 1px solid var(--rp-line); text-align: center; white-space: nowrap; }
+.rp-matrix tr:last-child > * { border-bottom: 0; }
+.rp-matrix thead th { height: 38px; padding: 0 8px; font-size: 12px; font-weight: 600; color: var(--rp-muted); background: transparent; }
+.rp-matrix thead th.is-now { color: var(--rp-accent); box-shadow: inset 0 -2px var(--rp-accent); }
+.rp-matrix tbody th { position: sticky; left: 0; z-index: 1; text-align: left; background: var(--rp-surface); border-right: 1px solid var(--rp-line); }
+.rp-matrix tbody th button { all: unset; box-sizing: border-box; display: flex; align-items: center; width: 100%; min-width: 108px; height: 44px; padding: 0 16px; font-weight: 600; cursor: pointer; }
+.rp-matrix tbody th button:hover { color: var(--rp-accent); }
+.rp-matrix tr.is-selected th button { color: var(--rp-accent); box-shadow: inset 3px 0 var(--rp-accent); }
+.rp-matrix td { min-width: 58px; height: 44px; }
+.rp-matrix td span { display: inline-grid; place-items: center; min-width: 48px; height: 28px; padding: 0 6px; border-radius: 6px; }
+.rp-matrix td.is-none span { color: var(--rp-faint); }
+.rp-matrix td.is-some span { background: color-mix(in srgb, var(--rp-accent) 10%, transparent); }
+.rp-matrix td.is-high span { background: color-mix(in srgb, var(--rp-accent) 22%, transparent); font-weight: 600; }
+.rp-matrix td.is-over span { background: color-mix(in srgb, var(--rp-over) 16%, transparent); color: var(--rp-over); font-weight: 700; }
+.rp-matrix td.is-now { background: color-mix(in srgb, var(--rp-accent) 4%, transparent); }
+.rp-matrix td.rp-total { padding: 0 16px; border-left: 1px solid var(--rp-line); font-weight: 650; text-align: right; }
+.rp-matrix td.rp-total small { font-weight: 500; color: var(--rp-muted); }
+
+.rp-person { padding: 24px; border: 1px solid var(--rp-line-strong); border-radius: 12px; background: var(--rp-surface); }
+.rp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--rp-line); border-bottom: 1px solid var(--rp-line); }
+.rp-stats > div { display: grid; gap: 2px; padding: 14px 16px 14px 0; }
+.rp-stats > div + div { padding-left: 16px; border-left: 1px solid var(--rp-line); }
+.rp-stats span { font-size: 12px; color: var(--rp-muted); }
+.rp-stats b { font-size: 28px; font-weight: 650; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.rp-stats b small { font-size: 14px; font-weight: 500; color: var(--rp-muted); }
+.rp-stats b.is-over { color: var(--rp-over); }
+.rp-stats > div > small { font-size: 12px; color: var(--rp-faint); }
+.rp-chart-wrap { overflow-x: auto; }
+.rp-chart { display: block; max-width: none; overflow: visible; }
+.rp-grid { stroke: var(--rp-line); stroke-width: 1; }
+.rp-grid.is-full { stroke: var(--rp-muted); stroke-dasharray: 4 4; }
+.rp-tick { fill: var(--rp-faint); font-size: 11px; }
+.rp-value { fill: var(--rp-ink); font-size: 11.5px; font-weight: 600; }
+.rp-value.is-over { fill: var(--rp-over); }
+.rp-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--rp-muted); }
+.rp-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.rp-legend i, .rp-task i { flex: none; width: 9px; height: 9px; border-radius: 2px; }
+.rp-tasks { width: 100%; border-collapse: collapse; font-size: 13px; }
+.rp-tasks th { padding: 8px 0; font-size: 12px; font-weight: 600; color: var(--rp-muted); text-align: left; border-bottom: 1px solid var(--rp-line); }
+.rp-tasks td { padding: 4px 0; border-bottom: 1px solid var(--rp-line); vertical-align: middle; }
+.rp-tasks .num { text-align: right; padding-left: 16px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rp-task { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 0; cursor: pointer; }
+.rp-task span { display: grid; min-width: 0; }
+.rp-task b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-task small { font-size: 11.5px; color: var(--rp-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-task:hover b { color: var(--rp-accent); }
+
+@media (max-width: 767px) {
+  .rp-person { padding: 18px 16px; }
+  .rp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rp-stats > div:nth-child(3) { padding-left: 0; border-left: 0; border-top: 1px solid var(--rp-line); }
+  .rp-stats > div:nth-child(4) { border-top: 1px solid var(--rp-line); }
+  .rp-stats b { font-size: 24px; }
+  .rp-tasks th:nth-child(2), .rp-tasks td:nth-child(2) { display: none; }
+}

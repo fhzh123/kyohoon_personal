@@ -12,7 +12,7 @@
   const categories = {research:'연구/조사',implementation:'코드 구현',design:'실험 설계',experiment:'실험 검증',writing:'문서 정리',meeting:'추가 협의'};
   const statuses = {backlog:'기간 미정',planned:'계획',active:'진행 중',done:'완료',paused:'보류'};
   const defaultColors = {research:'#3479e9',implementation:'#64748b',design:'#b78231',experiment:'#12a898',writing:'#527f97',meeting:'#b06c43'};
-  const views = {roadmap:'연구 로드맵',overview:'연간 조망',backlog:'연구 후보',goals:'L3 연구축',notes:'연구 노트',settings:'설정'};
+  const views = {roadmap:'연구 로드맵',overview:'연간 조망',resources:'담당자 리소스',backlog:'연구 후보',goals:'L3 연구축',notes:'연구 노트',settings:'설정'};
   const alias = key => ({calendar:'roadmap',gantt:'roadmap',references:'roadmap'}[key] || key);
   let hasUserData=false, workspaceSync=null, workspaceMessage='이 브라우저에 자동 저장';
   let state = validateState(clone(window.RESEARCH_SEED));
@@ -124,11 +124,12 @@
     // The shared Work sidebar owns these links; only the current item changes here.
     $('#navigation').querySelectorAll('[data-view]').forEach(link=>{const on=link.dataset.view===view;link.classList.toggle('is-active',on);if(on)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');});
     $('#breadcrumb-view').textContent=views[view];
-    const titles={roadmap:['연구 로드맵','L4 연구의 기간을 배정하고 L5 세부 작업을 관리합니다.'],overview:['연간 조망','월별 핵심 성과와 분기별 연구 주제를 확인합니다.'],backlog:['연구 후보','기간 미정인 연구와 진행 중인 연구를 함께 관리합니다.'],goals:['L3 연구축','L3 연구축에 L4 기술과 L5 세부 연구를 연결합니다.'],notes:['연구 노트','회의록, 논문 검토, 실험 메모를 기록합니다.'],settings:['설정','화면 테마와 연구 분류별 색상을 설정합니다.'],references:['연구 자료','로드맵과 목표 정의, 참고 자료를 확인합니다.']};
+    const titles={roadmap:['연구 로드맵','L4 연구의 기간을 배정하고 L5 세부 작업을 관리합니다.'],overview:['연간 조망','월별 핵심 성과와 분기별 연구 주제를 확인합니다.'],resources:['담당자 리소스','팀원마다 L5 계획에 배정된 리소스를 월별, 주별로 봅니다.'],backlog:['연구 후보','기간 미정인 연구와 진행 중인 연구를 함께 관리합니다.'],goals:['L3 연구축','L3 연구축에 L4 기술과 L5 세부 연구를 연결합니다.'],notes:['연구 노트','회의록, 논문 검토, 실험 메모를 기록합니다.'],settings:['설정','화면 테마와 연구 분류별 색상을 설정합니다.'],references:['연구 자료','로드맵과 목표 정의, 참고 자료를 확인합니다.']};
     $('#page-title').textContent=titles[view][0];$('#page-description').textContent=titles[view][1];updateStats();
-    const host=$('#view-host');$('#stats').hidden=view==='settings';
+    const host=$('#view-host');$('#stats').hidden=view==='settings'||view==='resources';
     if(view==='roadmap')renderRoadmap(host);
     else if(view==='overview')renderOverview(host);
+    else if(view==='resources')window.ResearchResources.render(host,{state,escape:esc,openTask});
     else if(view==='settings')renderSettings(host);
     else if(view==='backlog'){host.innerHTML=backlogHTML();bindFilters();bindTasks(host);}
     else window.ResearchNotebook.render(view,host,{state,readOnly,escape:esc,uid,save,refresh:render,toast,openTask,navigate,rememberRecovery,updateStats,hierarchy:H,categoryLabels:categories,statusLabels:statuses});
