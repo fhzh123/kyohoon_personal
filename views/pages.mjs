@@ -28,7 +28,7 @@ function artwork(idle, hover, alt) {
 
 export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
 <div class="home-shell">
-  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동"><a class="text-link home-shortcut" href="/resume">${uiIcon('file-text')}<span>Resume</span></a><a class="space-nav-button" href="/work" aria-label="Work 홈" title="Work 홈">${uiIcon('briefcase-business')}</a>${themeButton()}${authenticated ? '<form action="/api/auth/logout" method="post"><button class="btn header-login" type="submit">로그아웃</button></form>' : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
+  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동">${themeButton()}${authenticated ? logoutButton() : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
   <main id="main" class="home-main hero hero--split" data-enter="off" aria-labelledby="intro-title">
     <section class="intro hero-text">
       <p class="home-role">AI Research Engineer</p>
@@ -90,9 +90,11 @@ export function loginPage({configured, preview, message = '', next = '/'}) {
 </dialog><script src="/auth.js?v=20261118-1" defer></script>`, 'login');
 }
 
+// 모든 화면이 같은 로그아웃 버튼을 씁니다: 아이콘과 글자, 테두리 있는 버튼.
+const logoutButton = () => `<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form>`;
 function privateHeader(back = '/', section = '') {
   const space=section||(back==='/personal'?'personal':back==='/paper'?'paper':back==='/work'?'work':'');
-  return `<header class="site-header">${brand()}<div class="hub-header-actions">${spaceNavigation(space)}${themeButton()}<form action="/api/auth/logout" method="post"><button class="logout-button btn btn--secondary" type="submit">${uiIcon('log-out')}<span>로그아웃</span></button></form></div></header>`;
+  return `<header class="site-header">${brand()}<div class="hub-header-actions">${spaceNavigation(space)}${themeButton()}${logoutButton()}</div></header>`;
 }
 
 // Space landing pages (Selectstar, Personal) share the Paper home layout: a large
@@ -141,13 +143,13 @@ export function personalPage(access) {
   }), 'personal');
 }
 
-export function demosPage() {
+export function demosPage({authenticated = true} = {}) {
   const demos = [
     {title:'Ontology', image:'ontology.webp', alt:'지식 그래프를 살펴보는 마스코트', text:'문서에서 개념과 관계를 추출하고 지식 구조를 확인합니다.', href:'/work/demos/ontology/', original:'https://selectstar-ai-vertical-research-feasibility.kyohoon-jin.chatgpt.site/'},
     {title:'Document Parsing', image:'parsing.webp', alt:'돋보기로 문서를 살펴보는 마스코트', text:'문서의 레이아웃을 분석하고 텍스트와 표를 추출합니다.', href:'/work/demos/document-parsing/', original:'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/'},
   ];
   return shell('연구 데모', `
-<div class="ws-app">${workSidebar('demos')}<div class="ws-main">${workTopbar('demos')}<main id="main" class="ws-content">
+<div class="ws-app">${workSidebar('demos')}<div class="ws-main">${workTopbar('demos', {authenticated, next: '/work/demos'})}<main id="main" class="ws-content">
   <div class="ws-heading"><div><h1>연구 데모</h1><p>각 데모는 새 창에서 열립니다.</p></div></div>
   <div class="ws-demos">${demos.map(d => `<article class="demo-entry"><a class="ws-demo" href="${d.href}" target="_blank" rel="noopener noreferrer"><div class="ws-demo-copy"><h2>${d.title}</h2><p>${d.text}</p><span class="tool-action">데모 열기 <span aria-hidden="true">↗</span></span><span class="sr-only">새 창에서 열림</span></div><img src="/mascot/${d.image}" alt="${d.alt}" width="180" height="180" decoding="async"></a><a class="demo-original link" href="${d.original}" target="_blank" rel="noopener noreferrer">기존 GPT Sites에서 열기 <span aria-hidden="true">↗</span><span class="sr-only">새 창에서 열림</span></a></article>`).join('')}</div>
 </main></div></div>`, 'demos');

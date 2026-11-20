@@ -8,7 +8,9 @@ html[data-theme] body:not(#rj):not(#rk) .page-actions .search-box:focus-within {
 html[data-theme] body:not(#rj):not(#rk) .page-actions .search-box input, html[data-theme] body:not(#rj):not(#rk) .page-actions .search-box input:focus { width: 100%; min-width: 0; height: auto; opacity: 1; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; outline: none; font-size: 13.5px; color: var(--ws-ink, var(--ink)); }
 html[data-theme] body:not(#rj):not(#rk) .page-actions .icon-button, html[data-theme] body:not(#rj):not(#rk) .page-actions .primary-button { box-sizing: border-box; height: 40px; min-height: 40px; }
 html[data-theme] body:not(#rj):not(#rk) .page-actions .icon-button { width: 40px; padding: 0; display: inline-grid; place-items: center; border: 1px solid var(--ws-line-strong, var(--line)); border-radius: 10px; background: var(--ws-surface, var(--surface)); }
-html[data-theme] body:not(#rj):not(#rk) .page-actions .primary-button { padding: 0 16px; gap: 6px; border-radius: 10px; white-space: nowrap; }
+/* 구간 추가도 검색창, 보관 버튼과 같은 테두리 버튼으로 맞춰 한 묶음으로 보이게 합니다. */
+html[data-theme] body:not(#rj):not(#rk) .page-actions .primary-button { display: inline-flex; align-items: center; padding: 0 16px 0 13px; gap: 7px; border: 1px solid var(--ws-line-strong, var(--line)); border-radius: 10px; background: var(--ws-surface, var(--surface)); color: var(--ws-ink, var(--ink)); font-size: 13.5px; font-weight: 600; white-space: nowrap; box-shadow: none; }
+html[data-theme] body:not(#rj):not(#rk) .page-actions :is(.primary-button, .icon-button):hover { background: var(--ws-raised, var(--surface-alt)); border-color: var(--ws-line-strong, var(--line)); color: var(--ws-ink, var(--ink)); }
 @media (max-width: 900px) {
   html[data-theme] body:not(#rj):not(#rk) .page-heading { grid-template-columns: minmax(0, 1fr); }
   html[data-theme] body:not(#rj):not(#rk) .page-actions { margin-top: 18px; padding-bottom: 0; }
