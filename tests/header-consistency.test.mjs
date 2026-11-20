@@ -30,8 +30,10 @@ test('the home header no longer carries Resume and Work shortcuts', () => {
 test('Resume projects link the ontology and document parsing demos inside Selectstar', async () => {
   const data = await readFile(new URL('../legacy/resume/src/projectsData.js', import.meta.url), 'utf8');
   assert.match(data, /title: '전문가의 워크플로우가 포함된 온톨로지 구축',\n  period: 'Aug 2026 - '/);
-  assert.match(data, /demo: '\/work\/demos\/ontology\/'/);
-  assert.match(data, /demo: '\/work\/demos\/document-parsing\/'/);
+  // The demo is a button in the project's 추가 정보, not a link on the card.
+  assert.match(data, /externalLinks: \[\{ name: '데모', url: '\/work\/demos\/ontology\/' \}\]/);
+  assert.match(data, /externalLinks: \[\{name:'데모', url:'\/work\/demos\/document-parsing\/'\}\]/);
+  assert.doesNotMatch(data, /\bdemo: '/);
   assert.doesNotMatch(data, /document-parsing\.kyohoon-jin\.chatgpt\.site/);
   const experience = await readFile(new URL('../legacy/resume/src/experienceData.js', import.meta.url), 'utf8');
   const dates = [...experience.split('const experienceEN_')[0].matchAll(/\((\d{4}\.\d{2}) - (\d{4}\.\d{2})? ?\)/g)].map(m => m[1] + (m[2] ? '~' + m[2] : '~'));
