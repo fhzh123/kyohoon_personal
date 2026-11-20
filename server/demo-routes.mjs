@@ -12,8 +12,8 @@ export function demoRoutes({authorize,send,rootDir}) {
     const match=/^\/work\/demos\/(ontology|document-parsing)(\/.*)?$/.exec(url.pathname);
     if(!match)return false;
     if(!['GET','HEAD'].includes(req.method)){send(res,405,{error:'허용되지 않은 요청입니다.'});return true;}
-    const access=await authorize(req,res);
-    if(!access){send(res,303,'','text/plain',{Location:'/login?next='+encodeURIComponent(url.pathname+url.search)});return true;}
+    // Public: the demos open without signing in. A signed-in visit still refreshes the session.
+    await authorize(req,res).catch(()=>null);
     if(!match[2]){send(res,308,'','text/plain',{Location:url.pathname+'/'+url.search});return true;}
     const relative=safeRelativePath(match[2]==='/'?'index.html':match[2]);
     const format=relative&&formats[path.extname(relative)];

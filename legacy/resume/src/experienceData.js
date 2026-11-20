@@ -10,7 +10,7 @@ const experience_ = [
       title: 'AI Research Engineer',
       company: '[Selectstar] AI연구1팀장, AI실, 기술본부',
       period: 'Mar 2025 - Present',
-      description: '- Vertical AI 개발을 위한 데이터수집, 정제 및 파이프라인 구성 자동화 에이전트 개발 (2026.08 - )<br />- 사용자의 모델 혹은 원천 문서 등이 주어지면 니즈에 맞는 커스텀된 벤치마크 자동 생성 (2025.03 - 2026.08)<br />- 문서 내 & 문서 간 구조 계층화 연구 (2025.03 - 2025.12)<br />- 실시간으로 고객의 AI모델을 점검하고 평가할 수 있는 운영 모니터링 대시보드 개발 (2026.01 - 2026.08)',
+      description: '- Vertical AI 개발을 위한 데이터수집, 정제 및 파이프라인 구성 자동화 에이전트 개발 (2026.08 - )<br />- 실시간으로 고객의 AI모델을 점검하고 평가할 수 있는 운영 모니터링 대시보드 개발 (2026.01 - 2026.08)<br />- 사용자의 모델 혹은 원천 문서 등이 주어지면 니즈에 맞는 커스텀된 벤치마크 자동 생성 (2025.03 - 2026.08)<br />- 문서 내 & 문서 간 구조 계층화 연구 (2025.03 - 2025.12)',
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Selectstar Logo" />, // Selectstar logo
     },
     {
@@ -34,7 +34,7 @@ const experienceEN_ = [
       title: 'AI Research Engineer',
       company: '[Selectstar] Team Lead, AI Research Team 1 (AI Lab)',
       period: 'Mar 2025 - Present',
-      description: '- Led the development of an automated system for generating customized benchmarks tailored to user-provided models and source documents <br /> -Developed multimodal document preprocessing pipelines enabling LLMs to handle images, text, and tabular data uniformly<br /> -Conducted research on intra- and inter-document structural hierarchy modeling to improve document understanding for LLMs<br /> -Designed and built a real-time operational monitoring dashboard for continuous evaluation of customer AI model performance  Development of data connection and metadata technology for performance and reliability verification of AI models',
+      description: '- Designed and built a real-time operational monitoring dashboard for continuous evaluation of customer AI model performance  Development of data connection and metadata technology for performance and reliability verification of AI models <br /> -Led the development of an automated system for generating customized benchmarks tailored to user-provided models and source documents <br /> -Developed multimodal document preprocessing pipelines enabling LLMs to handle images, text, and tabular data uniformly<br /> -Conducted research on intra- and inter-document structural hierarchy modeling to improve document understanding for LLMs',
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Selectstar Logo" />, // Selectstar logo
     },
     {

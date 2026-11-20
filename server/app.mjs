@@ -234,9 +234,9 @@ export function createHandler({localPreview = false, rootDir = root, environment
       if (await handleTeamResources(req,res,requestUrl)) return;
       if (pathname === '/work/demos' || pathname === '/work/demos/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
-        const access=await authorize(req,res);
-        if(!access)return redirect(res,'/login?next='+encodeURIComponent(pathname+requestUrl.search));
-        return send(res,200,demosPage(),'text/html; charset=utf-8');
+        // 데모는 로그인 없이 공개합니다 (Resume 프로젝트에서 바로 연결). 로그인한 경우에만 업무 메뉴를 보여 줍니다.
+        const access=await authorize(req,res).catch(()=>null);
+        return send(res,200,req.method==='HEAD'?'':demosPage({authenticated:Boolean(access)}),'text/html; charset=utf-8');
       }
       if (pathname === '/work' || pathname === '/work/') {
         const access = await authorize(req,res);

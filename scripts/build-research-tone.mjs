@@ -94,6 +94,9 @@ export async function buildTone() {
     const css = await readFile(path.join(root, file), 'utf8');
     postcss.parse(css, {from: file}).walkRules(rule => {
       if (rule.parent?.type === 'atrule' && /keyframes/i.test(rule.parent.name)) return;
+      // The page background belongs to background.css (the image chosen in 설정 > 배경). A bumped
+      // copy here would outrank it and pin the research page to the default sky.
+      if (rule.selector.includes('.ambient-sky')) return;
       const decls = [];
       rule.each(node => {
         if (node.type !== 'decl' || !COLOR_PROPS.test(node.prop)) return;

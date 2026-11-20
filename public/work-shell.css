@@ -79,9 +79,13 @@ body[data-work-shell] .ws-topbar { position: sticky; top: 0; z-index: 30; height
 .ws-topbar .space-nav-button img { width: 18px; height: 18px; }
 .ws-topbar .space-nav-button:hover, .ws-topbar .ws-icon-button:hover, .ws-topbar .ws-menu-button:hover { background: var(--ws-raised); border-color: var(--ws-line-strong); transform: none; }
 .ws-logout { margin: 0; display: flex; }
-.ws-topbar .ws-logout button { box-sizing: border-box; display: inline-flex; align-items: center; gap: 7px; height: 40px; min-height: 40px; padding: 0 10px 0 8px; margin: 0; border: 0; border-radius: 10px; background: transparent; color: var(--ws-muted); font: inherit; font-size: 13px; cursor: pointer; }
+/* 로그아웃: 홈, Paper, Personal과 같은 모양 (아이콘 + 글자, 테두리 있는 버튼). */
+.ws-topbar .ws-logout button { box-sizing: border-box; display: inline-flex; align-items: center; gap: 8px; height: 40px; min-height: 40px; padding: 0 14px 0 12px; margin: 0; border: 1px solid var(--ws-line-strong); border-radius: 10px; background: transparent; color: var(--ws-ink); font: inherit; font-size: 13px; cursor: pointer; }
 .ws-topbar .ws-menu-button { display: none; }
 .ws-topbar .ws-logout button:hover { color: var(--ws-ink); background: var(--ws-raised); }
+html[data-theme] body[data-work-shell] .ws-topbar #work-logout { margin: 0; padding: 0; border: 0; }
+.ws-topbar .ws-login { box-sizing: border-box; display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border: 1px solid var(--ws-line-strong); border-radius: 10px; color: var(--ws-ink); font-size: 13px; text-decoration: none; }
+.ws-topbar .ws-login:hover { background: var(--ws-raised); }
 .ws-topbar a:focus-visible, .ws-topbar button:focus-visible, .ws-sidebar a:focus-visible, .ws-sidebar button:focus-visible { outline: 2px solid var(--ws-accent); outline-offset: 2px; }
 
 /* Page frame shared by pages that do not carry their own layout. */

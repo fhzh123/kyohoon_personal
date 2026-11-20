@@ -75,7 +75,7 @@ export function workSidebar(active, {footer = ''} = {}) {
  * Top bar: menu button, breadcrumb, page actions, then the same global cluster
  * (Work 홈, 전체 홈, 설정, 로그아웃) in the same order on every page.
  */
-export function workTopbar(active, {crumb = '', crumbId = '', actions = ''} = {}) {
+export function workTopbar(active, {crumb = '', crumbId = '', actions = '', authenticated = true, next = '/work'} = {}) {
   const section = sectionOf(active);
   const trail = [`<a href="/work">Selectstar</a>`];
   if (section && section.key !== 'home') trail.push(crumb ? `<a href="${section.href}">${section.label}</a>` : `<strong>${section.label}</strong>`);
@@ -83,8 +83,8 @@ export function workTopbar(active, {crumb = '', crumbId = '', actions = ''} = {}
   return `<header class="ws-topbar">
   <button class="ws-menu-button" type="button" data-ws-open aria-controls="ws-sidebar" aria-expanded="false" aria-label="메뉴 열기">${shellIcon('menu')}</button>
   <nav class="ws-crumbs" aria-label="현재 위치">${trail.join('<span aria-hidden="true">/</span>')}</nav>
-  <div class="ws-actions topbar-actions">${actions ? `<div class="ws-page-actions">${actions}</div><span class="ws-divider" aria-hidden="true"></span>` : ''}${spaceNavigation('work', 'ws-space-nav')}<a class="ws-icon-button" href="/settings" data-global-settings aria-label="설정" title="설정">${shellIcon('settings')}</a><form id="work-logout" class="ws-logout" action="/api/auth/logout" method="post"><button type="submit" aria-label="로그아웃" title="로그아웃">${shellIcon('logout')}<span>로그아웃</span></button></form></div>
+  <div class="ws-actions topbar-actions">${actions ? `<div class="ws-page-actions">${actions}</div><span class="ws-divider" aria-hidden="true"></span>` : ''}${spaceNavigation('work', 'ws-space-nav')}<a class="ws-icon-button" href="/settings" data-global-settings aria-label="설정" title="설정">${shellIcon('settings')}</a>${authenticated ? `<form id="work-logout" class="ws-logout" action="/api/auth/logout" method="post"><button type="submit" aria-label="로그아웃" title="로그아웃">${shellIcon('logout')}<span>로그아웃</span></button></form>` : `<a class="ws-login" href="/login?next=${encodeURIComponent(next)}">로그인</a>`}</div>
 </header>`;
 }
 
-export const WORK_SHELL_ASSETS = '<link rel="stylesheet" href="/work-shell.css?v=20261118-1"><script src="/work-shell.js?v=20261118-1" defer></script>';
+export const WORK_SHELL_ASSETS = '<link rel="stylesheet" href="/work-shell.css?v=20261121-1"><script src="/work-shell.js?v=20261118-1" defer></script>';

@@ -1430,6 +1430,10 @@ html[data-theme] body:not(#rj):not(#rk) .page-actions .search-box input:focus:no
 }
 html[data-theme] body:not(#rj):not(#rk) .page-actions .icon-button:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--ws-line-strong, var(--line)); background: var(--ws-surface, var(--surface))
 }
+html[data-theme] body:not(#rj):not(#rk) .page-actions .primary-button:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--ws-line-strong, var(--line)); background: var(--ws-surface, var(--surface)); color: var(--ws-ink, var(--ink)); box-shadow: none
+}
+html[data-theme] body:not(#rj):not(#rk) .page-actions :is(.primary-button, .icon-button):hover:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { background: var(--ws-raised, var(--surface-alt)); border-color: var(--ws-line-strong, var(--line)); color: var(--ws-ink, var(--ink))
+}
 html[data-theme="dark"]:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) {--bg:#121418;--surface:#1e2125;--ink:#e4e9ee;--muted:#aeb2b8;--line:#33373b;--blue:#8eb5ff;--navy:#101316;--navy-soft:#202327;--planning-line:#33373b;--planning-muted:#aeb2b8;--planning-shadow:0 8px 26px #00000022
 }
 .theme-toggle:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) {border:1px solid #d5dadf;background:#fff;color:#5c5f64
@@ -2605,27 +2609,6 @@ body:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { --bg: #fff; --ink: #191c21
 }
 html[data-theme="dark"]:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { --bg: #080a0d; --surface: #12161b; --surface-alt: #1d2024; --line: #34383c
 }
-.ambient-sky:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { background: var(--bg)
-}
-.ambient-sky:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *)::before {
-  background: radial-gradient(ellipse at 88% 10%,#dde1e7 0%,#e8edf2 25%,transparent 62%),
-    radial-gradient(ellipse at 4% 92%,#e6dfd0 0%,#f3eee4 28%,transparent 70%)
-}
-.ambient-sky:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *)::after { background: repeating-radial-gradient(ellipse at 105% -30%,transparent 0 92px,#888c9120 93px,transparent 94px 168px)
-}
-html[data-theme="dark"] .ambient-sky:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *)::before {
-  background: url('/mascot/galaxy.webp') center / cover no-repeat
-}
-html[data-theme="dark"] .ambient-sky:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *)::after {
-  background: radial-gradient(ellipse at 55% 25%,transparent 0%,#080a0d1a 48%,#080a0da8 100%)
-}
-html[data-theme="light"] body[data-typography="resume"] .ambient-sky:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *)::before {
-  background: radial-gradient(ellipse at 100% 0%,#e0e4ea 0%,#eaeff4 25%,transparent 62%),
-    radial-gradient(ellipse at 0% 100%,#e8dfd0 0%,#f6f0e5 30%,transparent 68%)
-}
-html[data-theme="light"] body[data-typography="resume"] .ambient-sky:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *)::after {
-  background: repeating-radial-gradient(ellipse at 110% -20%,transparent 0 68px,#7d818620 69px,transparent 70px 132px)
-}
 .site-header .text-link:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid transparent
 }
 .site-header .text-link:hover:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border-color: var(--line); background: var(--surface)
@@ -2798,9 +2781,15 @@ body[data-work-shell] .ws-topbar:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) 
 .ws-topbar .ws-icon-button:hover:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *),
 .ws-topbar .ws-menu-button:hover:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { background: var(--ws-raised); border-color: var(--ws-line-strong)
 }
-.ws-topbar .ws-logout button:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 0; background: transparent; color: var(--ws-muted)
+.ws-topbar .ws-logout button:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--ws-line-strong); background: transparent; color: var(--ws-ink)
 }
 .ws-topbar .ws-logout button:hover:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { color: var(--ws-ink); background: var(--ws-raised)
+}
+html[data-theme] body[data-work-shell] .ws-topbar #work-logout:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 0
+}
+.ws-topbar .ws-login:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--ws-line-strong); color: var(--ws-ink); text-decoration: none
+}
+.ws-topbar .ws-login:hover:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { background: var(--ws-raised)
 }
 .ws-topbar a:focus-visible:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *),
 .ws-topbar button:focus-visible:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *),

@@ -272,7 +272,9 @@ Object.assign(projects_[1], {
  subtitle: '작업 목적에 맞춘 문서 분할과 구조 분석',
  fullDescription: '기업 문서의 텍스트, 이미지, 표를 다루기 위한 OCR 및 문서 레이아웃 분석 연구입니다. 작업 목적에 따라 문서 분할 단위를 제어하는 Policy-Adaptive DLA를 연구하고, 연구 방법과 실험 결과를 Document Parsing Research 데모에서 소개합니다.',
  imageUrl: '/resume/projects/document-parsing.png', companyOrInstitution: 'Selectstar', role: '문서 레이아웃 분석 및 Policy-Adaptive DLA 연구',
- externalLinks: [{name:'Document Parsing 데모 ↗', url:'https://selectstar-ai-vertical-research-feasibility-document-parsing.kyohoon-jin.chatgpt.site/'}]
+ externalLinks: [{name:'Document Parsing 데모 ↗', url:'/work/demos/document-parsing/'}],
+ // Our own demo inside Selectstar > 데모, open to visitors without signing in.
+ demo: '/work/demos/document-parsing/'
 });
 const projectEnglishCopy = [
   {
@@ -414,6 +416,22 @@ const projectEnglishCopy = [
   }
 ];
 Object.assign(projectEnglishCopy[1], {description:'- Document layout analysis for extracting text, figures and tables<br />- Policy-Adaptive DLA with task-dependent segmentation', subtitle:'Task-dependent document segmentation and layout analysis', fullDescription:'Research on OCR and document layout analysis for enterprise documents containing text, figures and tables. Policy-Adaptive DLA controls segmentation granularity according to the target task. The Document Parsing Research demo presents the research approach and experimental results.', companyOrInstitution:'Selectstar', role:'Document layout analysis and Policy-Adaptive DLA research', externalLinkNames:['Document Parsing demo ↗']});
+// In progress since Aug 2026. Details come later; for now the card links to the ontology demo.
+projects_.unshift({
+  title: '전문가의 워크플로우가 포함된 온톨로지 구축',
+  period: 'Aug 2026 - ',
+  description: '',
+  link: '#',
+  icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
+  imageUrl: '',
+  subtitle: '',
+  fullDescription: '',
+  companyOrInstitution: '',
+  role: '',
+  externalLinks: [],
+  demo: '/work/demos/ontology/',
+});
+projectEnglishCopy.unshift({ title: 'Ontology Construction with Expert Workflows' });
 const projectsEN_ = projects_.map((project, index) => {
   const { externalLinkNames, ...copy } = projectEnglishCopy[index] || {};
   return { ...project, ...copy, externalLinks: project.externalLinks.map((link, linkIndex) => ({ ...link, name: externalLinkNames?.[linkIndex] || link.name })) };

@@ -31,11 +31,10 @@ test('demo cards open both local copies and retain both original GPT Sites links
  assert.equal((html.match(/\.chatgpt\.site\//g)||[]).length,2);
  assert.equal((html.match(/<article class="demo-entry">/g)||[]).length,2);
 });
-test('all local demo pages, data and images require membership and preserve login destinations',()=>withServer(async request=>{
+test('all local demo pages, data and images open without signing in, and login destinations stay safe',()=>withServer(async request=>{
  const image=(await readdir(path.join(rootDir,'work-demos/ontology/resources'))).find(x=>x.endsWith('.png'));
  for(const route of ['ontology/','document-parsing/','ontology/outputs/evaluation_results.html','ontology/outputs/hits5_case_analysis.html','ontology/resources/widget-data-00.js','ontology/resources/'+image]){
-  const url=prefix+route;const response=await request(url);assert.equal(response.status,303,url);
-  const login=new URL(response.headers.get('location'),'https://fixture.invalid');assert.equal(login.pathname,'/login');assert.equal(login.searchParams.get('next'),url);
+  const url=prefix+route;const response=await request(url);assert.equal(response.status,200,url);
  }
  for(const url of [prefix+'ontology/',prefix+'document-parsing/',prefix+'ontology/outputs/hits5_case_analysis.html#case-1'])assert.equal(safeLoginDestination(url),url);
  assert.equal(safeLoginDestination('//outside.invalid'),'/');

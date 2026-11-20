@@ -110,6 +110,7 @@ const App = () => {
     },
     buttons: {
       viewDetails: '자세히 보기',
+      demo: '데모',
       internationalPaper: '🌐 International Paper',
       domesticPaper: '🇰🇷 Domestic Paper',
       lecture: '👨‍🏫 Lecture',
@@ -177,6 +178,7 @@ const App = () => {
     },
     buttons: {
       viewDetails: '자세히 보기',
+      demo: 'Demo',
       internationalPaper: '🌐 International Paper',
       domesticPaper: '🇰🇷 Domestic Paper',
       lecture: '👨‍🏫 Lecture',
@@ -341,12 +343,27 @@ const App = () => {
                   </div>
                   <div className="text-sm md:text-base text-gray-400 mb-2">{project.period}</div>
                   <p className="text-sm md:text-base text-gray-300 mb-2" dangerouslySetInnerHTML={{ __html: project.description }}></p>
-                  <button
-                    onClick={() => setSelectedProject(project)}
-                    className="text-blue-400 hover:underline text-sm md:text-base cursor-pointer"
-                  >
-                    {currentData.buttons.viewDetails}
-                  </button>
+                  <div className="flex items-center gap-4">
+                    {/* A project with only a demo shows the demo link in place of an empty detail view. */}
+                    {!(project.demo && !project.description?.trim() && !project.fullDescription?.trim()) && (
+                      <button
+                        onClick={() => setSelectedProject(project)}
+                        className="text-blue-400 hover:underline text-sm md:text-base cursor-pointer"
+                      >
+                        {currentData.buttons.viewDetails}
+                      </button>
+                    )}
+                    {project.demo && (
+                      <a
+                        href={project.demo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="resume-demo-link text-blue-400 hover:underline text-sm md:text-base"
+                      >
+                        {currentData.buttons.demo} <span aria-hidden="true">↗</span><span className="sr-only">{language === 'ko' ? ' (새 창에서 열림)' : ' (opens in a new tab)'}</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

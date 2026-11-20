@@ -334,7 +334,7 @@ test('preview policy requires every independent environment and network conditio
   for (const disabled of [{ enabled: false }, { development: false }, { vercel: true }, { host: 'evil.example' }, { address: '192.0.2.10' }]) assert.equal(previewAllowed({ ...allowed, ...disabled }), false);
 });
 
-test('Personal is public while demo picker still enforces allowed membership',async()=>{
+test('Personal and the demo picker are public; signed-in visitors get the work shell logout',async()=>{
  let allowed=true;
  const fetcher=async url=>{
   if(url.includes('/auth/v1/token?grant_type=password'))return jsonResponse({access_token:'synthetic-private',refresh_token:'synthetic-refresh',user:{id:'space-user'}});
@@ -344,12 +344,12 @@ test('Personal is public while demo picker still enforces allowed membership',as
  };
  const handler=createHandler({rootDir:await fixture(),environment:remoteEnvironment,fetcher});
  const anonymous=await request(handler,'/personal');assert.equal(anonymous.status,200);assert.ok(anonymous.text.includes('travel-globe.webp'));assert.ok(!anonymous.text.includes('/api/auth/logout'));
- assert.equal((await request(handler,'/work/demos')).status,303);
+ const anonymousDemos=await request(handler,'/work/demos');assert.equal(anonymousDemos.status,200);assert.match(anonymousDemos.text,/Document Parsing/);assert.ok(!anonymousDemos.text.includes('/api/auth/logout'));
  const headers={cookie:'kh_access=synthetic-private'};
  const personal=await request(handler,'/personal',{headers});assert.match(personal.text,/travel-globe.webp/);assert.match(personal.headers['cache-control'],/no-store/);
- assert.match((await request(handler,'/work/demos',{headers})).text,/Document Parsing/);
+ const signedDemos=(await request(handler,'/work/demos',{headers})).text;assert.match(signedDemos,/Document Parsing/);assert.match(signedDemos,/\/api\/auth\/logout/);
  for(const [space,destination]of [['personal','/personal'],['selectstar','/'],['https://outside.invalid','/']]){
   const r=await request(handler,'/api/auth/login',{method:'POST',headers:{'content-type':'application/json'},body:{space,email:'fixture@example.invalid',password:'synthetic'}});assert.equal(r.headers.location,destination);
  }
- allowed=false;assert.equal((await request(handler,'/personal',{headers})).status,200);assert.equal((await request(handler,'/work/demos',{headers})).status,303);
+ allowed=false;assert.equal((await request(handler,'/personal',{headers})).status,200);assert.equal((await request(handler,'/work/demos',{headers})).status,200);
 });
