@@ -1421,6 +1421,15 @@ html[data-theme="dark"] .rp:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { --r
 .rp-stats > div:nth-child(4):not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border-top: 1px solid var(--rp-line)
 }
 }
+html[data-theme] body:not(#rj):not(#rk) .page-actions .search-box:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--ws-line-strong, var(--line)); background: var(--ws-surface, var(--surface))
+}
+html[data-theme] body:not(#rj):not(#rk) .page-actions .search-box:focus-within:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border-color: var(--ws-accent, var(--action)); box-shadow: none
+}
+html[data-theme] body:not(#rj):not(#rk) .page-actions .search-box input:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *),
+html[data-theme] body:not(#rj):not(#rk) .page-actions .search-box input:focus:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 0; background: transparent; box-shadow: none; outline: none; color: var(--ws-ink, var(--ink))
+}
+html[data-theme] body:not(#rj):not(#rk) .page-actions .icon-button:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) { border: 1px solid var(--ws-line-strong, var(--line)); background: var(--ws-surface, var(--surface))
+}
 html[data-theme="dark"]:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) {--bg:#121418;--surface:#1e2125;--ink:#e4e9ee;--muted:#aeb2b8;--line:#33373b;--blue:#8eb5ff;--navy:#101316;--navy-soft:#202327;--planning-line:#33373b;--planning-muted:#aeb2b8;--planning-shadow:0 8px 26px #00000022
 }
 .theme-toggle:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) {border:1px solid #d5dadf;background:#fff;color:#5c5f64

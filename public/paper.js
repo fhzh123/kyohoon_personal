@@ -35,19 +35,19 @@
 
   function renderLanding(){
     view='landing';workspace=null;current=null;query='';filter='all';
-    app.innerHTML='<section class="paper-welcome"><div><p class="paper-eyebrow">논문을 위한 작업 공간</p><h1>Paper</h1><p>리뷰탈과 논문 리뷰를<br>나누어 관리합니다.</p></div><img src="/mascot/paper.png" alt="논문과 펜을 든 마스코트" width="210" height="210"></section>'+
+    app.innerHTML='<section class="paper-welcome"><div><p class="paper-eyebrow">논문을 위한 작업 공간</p><h1>Paper</h1><p>리뷰탈, 논문 리뷰, 학회 마감을<br>나누어 관리합니다.</p></div><img src="/mascot/paper.png" alt="논문과 펜을 든 마스코트" width="210" height="210"></section>'+
       (preview?'<p class="paper-preview-note">가상 논문으로 구성한 미리보기입니다. 편집 내용은 이 화면에서만 유지됩니다.</p>':'')+
       '<nav class="paper-choices" aria-label="논문 작업 선택">'+['rebuttal','review'].map(type=>{
         const count=data.projects.filter(x=>x.data.type===type&&x.data.status==='active').length;
         return '<button type="button" class="paper-choice" data-action="choose-'+type+'"><img src="/mascot/'+(type==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"><span class="paper-choice-role">'+(type==='rebuttal'?'저자로서':'리뷰어로서')+'</span><span class="paper-choice-title">'+workspaceName(type)+'<span aria-hidden="true">→</span></span><span class="paper-choice-description">'+(type==='rebuttal'?'리뷰어별 쟁점을 정리하고<br>근거를 담은 답변을 준비합니다.':'네 항목에 평가 메모를 적고<br>영문 리뷰를 작성합니다.')+'</span><span class="paper-choice-count">진행 중인 논문 '+count+'편</span></button>';
-      }).join('')+'</nav><div class="paper-help"><p>작업을 선택하면 해당 논문 목록으로 이동합니다.</p>'+'</div>';
+      }).join('')+'<button type="button" class="paper-choice paper-choice-soon" data-action="choose-deadlines"><img src="/mascot/personal-coming-one.webp" alt="" width="168" height="168"><span class="paper-choice-role">투고 일정</span><span class="paper-choice-title">AI 컨퍼런스 데드라인<span aria-hidden="true">→</span></span><span class="paper-choice-description">AI 학회 마감일을<br>한곳에 모아 봅니다.</span><span class="paper-choice-count">준비 중</span></button></nav><div class="paper-help"><p>작업을 선택하면 해당 화면으로 이동합니다.</p>'+'</div>';
     app.setAttribute('aria-busy','false');
   }
   function renderList(){
     if(!workspace){renderLanding();return;}
     view='list';app.innerHTML='<button class="paper-back" data-action="back-paper">← Paper</button><section class="paper-welcome paper-workspace-welcome"><div><p class="paper-eyebrow">Paper / '+(workspace==='rebuttal'?'저자 작업':'리뷰어 작업')+'</p><h1>'+workspaceName(workspace)+'</h1><p>'+(workspace==='rebuttal'?'리뷰어별 쟁점과 답변을 정리합니다.':'평가 메모를 영문 리뷰로 다듬습니다.')+'</p></div><img src="/mascot/'+(workspace==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"></section>'+
       (preview?'<p class="paper-preview-note">가상 논문으로 구성한 미리보기입니다. 편집 내용은 이 화면에서만 유지됩니다.</p>':'')+
-      '<div class="paper-topline"><div class="paper-actions">'+btn(workspace==='rebuttal'?'＋ 리뷰탈 논문 추가':'＋ 리뷰할 논문 추가','new-'+workspace,'primary')+'</div>'+'</div>'+
+      '<div class="paper-topline"><div class="paper-actions">'+btn(workspace==='rebuttal'?'＋ 리뷰탈 논문 추가':'＋ 리뷰할 논문 추가','new-'+workspace,'primary')+btn('프롬프트 설정','prompts')+'</div>'+'</div>'+
       '<div class="paper-toolbar"><div class="paper-tabs" role="tablist" aria-label="작업 상태">'+[['all','전체'],...Object.entries(statuses)].map(([k,label])=>'<button type="button" role="tab" class="paper-tab" aria-selected="'+(filter===k)+'" data-filter="'+k+'">'+label+'<span>'+data.projects.filter(x=>x.data.type===workspace&&(k==='all'||x.data.status===k)).length+'</span></button>').join('')+'</div><input class="paper-search" id="paper-search" type="search" aria-label="논문 제목 또는 학회 검색" placeholder="제목 또는 학회 검색" value="'+esc(query)+'"></div><div class="paper-list" id="paper-list"></div>'+
       '<div class="paper-help"><p>'+esc(names[data.settings.provider])+' / '+esc(data.settings.models[data.settings.provider])+'<br>'+(!data.settings.keys[data.settings.provider].configured?'설정에서 API 키를 연결해 주세요.':'선택한 모델 하나로 모든 작업을 실행합니다.')+'</p></div>';
     renderRows();app.setAttribute('aria-busy','false');
@@ -56,6 +56,26 @@
     const rows=data.projects.filter(x=>x.data.type===workspace&&(filter==='all'||x.data.status===filter)&&[x.data.title,x.data.venue].join(' ').toLowerCase().includes(query.toLowerCase())).sort((a,b)=>b.updated_at.localeCompare(a.updated_at));
     $('#paper-list').innerHTML=rows.length?rows.map(row=>{const p=row.data;const isAcl=/\b(?:ACL|ARR|EMNLP|NAACL|EACL|AACL)\b/i.test(p.venue);const venueLabel=esc(p.venue.trim().replace(/\b20\d{2}\b/g,'').trim()||'미지정');return '<article class="paper-row" tabindex="0" role="button" data-open="'+esc(p.id)+'" aria-label="'+esc(p.title)+' 열기"><div class="paper-venue '+(isAcl?'paper-venue-acl':'')+'">'+(isAcl?'<img src="/icons/venues/acl.svg" width="54" height="54" alt="ACL">':'<span>'+venueLabel+'</span>')+'</div><div><span class="paper-type">'+types[p.type]+' / '+statuses[p.status]+'</span><h2>'+esc(p.title)+'</h2><div class="paper-meta"><span>'+esc(p.venue||'학회 미입력')+'</span>'+(p.type==='rebuttal'?'<span>'+p.reviewers.length+'명 리뷰어</span>':'')+'</div></div><div class="paper-row-end"><strong>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</strong></div><span class="paper-arrow" aria-hidden="true">→</span></article>';}).join(''):'<div class="paper-empty"><h2>'+(query?'검색 결과가 없습니다.':'첫 번째 논문을 등록해 주세요.')+'</h2><p>제목과 학회를 적고 바로 메모를 시작할 수 있습니다.</p></div>';
 
+  }
+  // AI 컨퍼런스 데드라인: 아직 만드는 중입니다. 정리 방식이 정해지면 이 화면을 채웁니다.
+  function renderDeadlines(){
+    view='deadlines';workspace=null;current=null;
+    app.innerHTML='<button class="paper-back" data-action="back-paper">← Paper</button><section class="paper-construction" aria-labelledby="paper-construction-title"><img src="/mascot/personal-coming-one.webp" alt="안전모를 쓰고 블록을 나르는 공사 중 마스코트" width="240" height="240"><p class="paper-eyebrow">Paper / 투고 일정</p><h1 id="paper-construction-title">AI 컨퍼런스 데드라인</h1><p>지금 공사 중입니다.<br>학회 마감일을 정리하는 방식이 정해지면 이곳에 열립니다.</p></section>';
+    app.setAttribute('aria-busy','false');
+  }
+  // 작업별 기본 프롬프트는 그 작업 화면에서 고칩니다. 저장은 공통 LLM 설정과 같은 곳에 합니다.
+  const promptGroups={rebuttal:[['translate','리뷰 원문 → 한국어 번역'],['rebuttal','대응 메모와 실험 결과 → 영문 리뷰탈']],review:[['review','Summary, Strength, Weakness, ETC 메모와 논문 → 영문 리뷰']]};
+  function showPromptDialog(){
+    const group=promptGroups[workspace],readOnly=data.role&&data.role!=='editor';
+    dialog.innerHTML='<form id="paper-prompt-form" class="paper-prompt-form"><h2 id="paper-dialog-title">'+workspaceName(workspace)+' 프롬프트</h2><p class="paper-subtle">작업 데이터는 자동으로 덧붙입니다. 아래에는 작성 방식만 적어 주세요.'+(readOnly?'<br>읽기 전용 계정은 프롬프트를 바꿀 수 없습니다.':'')+'</p>'+
+      group.map(([key,label])=>'<div class="paper-prompt"><div class="paper-field-head"><label for="paper-prompt-'+key+'">'+label+'</label>'+btn('기본값 복원','reset-prompt','quiet','data-prompt="'+key+'"'+(readOnly?' disabled':''))+'</div><textarea id="paper-prompt-'+key+'" maxlength="12000" '+(readOnly?'readonly':'')+'>'+esc(data.settings.prompts[key])+'</textarea></div>').join('')+
+      '<div class="paper-actions">'+btn('취소','close-dialog')+(readOnly?'':'<button class="paper-btn primary" type="submit">프롬프트 저장</button>')+'</div></form>';
+    $('#paper-prompt-form').onsubmit=e=>{e.preventDefault();run(async()=>{
+      const prompts={};for(const [key] of group){const value=$('#paper-prompt-'+key).value;if(!value.trim())throw Error('프롬프트는 비워 둘 수 없습니다.');prompts[key]=value;}
+      const s=data.settings,r=await api('/api/settings/llm','PUT',{provider:s.provider,models:s.models,efforts:s.efforts,prompts,keys:{},expectedRevision:s.revision});
+      data.settings=r.settings;dialog.close();notice('프롬프트를 저장했습니다.');
+    },e.submitter);};
+    showDialog();
   }
   function newProject(type){showProjectDialog({id:id(),type,title:'',venue:'',deadline:'',status:'planned',charLimit:0,context:'',pdf:null,reviewers:[],sections:{summary:'',strength:'',weakness:'',etc:''},reviewDraft:'',history:[]},true);}
   function showProjectDialog(p,isNew=false){
@@ -174,6 +194,9 @@
     await run(async()=>{
       if(a==='new-rebuttal'||a==='new-review'){newProject(a==='new-review'?'review':'rebuttal');return;}
       if(a==='choose-rebuttal'||a==='choose-review'){workspace=a==='choose-rebuttal'?'rebuttal':'review';query='';filter='all';route('list');renderList();return;}
+      if(a==='choose-deadlines'){route('deadlines');renderDeadlines();return;}
+      if(a==='prompts'){showPromptDialog();return;}
+      if(a==='reset-prompt'){if(confirm('기본 프롬프트로 되돌릴까요? 저장을 눌러야 적용됩니다.'))$('#paper-prompt-'+n.dataset.prompt).value=data.defaults[n.dataset.prompt];return;}
       if(a==='back-paper'){await save();route('landing');renderLanding();return;}
       if(a==='back'){await save();route('list');current=null;renderList();return;}
       if(a==='edit-meta'){showProjectDialog(current.data);return;}
@@ -200,8 +223,8 @@
     catch(e){notice(e.message||'작업을 완료하지 못했습니다.',true);}
     finally{busy=false;if(button)button.disabled=false;app.setAttribute('aria-busy','false');for(const node of app.querySelectorAll('textarea,input,select'))node.readOnly=false;}
   }
-  function route(kind,projectId=null,replace=false){const hash=kind==='landing'?'':kind==='editor'?'#'+workspace+'/'+projectId:'#'+workspace;const url=location.pathname+location.search+hash;if(url!==location.pathname+location.search+location.hash)history[replace?'replaceState':'pushState']({paper:true},'',url);window.AtlasTheme?.refresh();}
-  async function restoreRoute(){const [type,projectId]=location.hash.slice(1).split('/');if(!['review','rebuttal'].includes(type)){renderLanding();return;}workspace=type;if(projectId&&data.projects.some(p=>p.id===projectId&&p.data.type===type)){await openProject(projectId,true);}else{current=null;renderList();}}
+  function route(kind,projectId=null,replace=false){const hash=kind==='landing'?'':kind==='deadlines'?'#deadlines':kind==='editor'?'#'+workspace+'/'+projectId:'#'+workspace;const url=location.pathname+location.search+hash;if(url!==location.pathname+location.search+location.hash)history[replace?'replaceState':'pushState']({paper:true},'',url);window.AtlasTheme?.refresh();}
+  async function restoreRoute(){const [type,projectId]=location.hash.slice(1).split('/');if(type==='deadlines'){renderDeadlines();return;}if(!['review','rebuttal'].includes(type)){renderLanding();return;}workspace=type;if(projectId&&data.projects.some(p=>p.id===projectId&&p.data.type===type)){await openProject(projectId,true);}else{current=null;renderList();}}
   window.addEventListener('popstate',async()=>{if(routeBusy)return;routeBusy=true;try{if(busy)throw Error('진행 중인 작업을 마친 뒤 이동해 주세요.');await save();await restoreRoute();}catch(e){if(current){workspace=current.data.type;route('editor',current.id,true);}notice(e.message,true);}finally{routeBusy=false;}});
   // Header back and settings links save first; the editor always returns to its own contents list.
   document.addEventListener('click',async e=>{const link=e.target.closest('a[href]');if(!link||e.defaultPrevented||!current||e.metaKey||e.ctrlKey||e.shiftKey||e.button)return;const url=new URL(link.href,location.href);if(url.origin!==location.origin||url.pathname==='/api/paper/file')return;if(link.hasAttribute('data-paper-back')){e.preventDefault();if(busy)return;try{await save();route('list');current=null;renderList();}catch(error){notice(error.message,true);}return;}if(link.hasAttribute('data-global-settings')){e.preventDefault();if(!busy)try{await openSettings();}catch(error){notice(error.message,true);}return;}e.preventDefault();if(!busy)try{await save();location.assign(link.href);}catch(error){notice(error.message,true);}});

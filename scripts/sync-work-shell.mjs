@@ -6,14 +6,13 @@ import {fileURLToPath} from 'node:url';
 import {workSidebar, workTopbar, WORK_SHELL_ASSETS} from '../views/work-shell.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const icon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="18" height="18" alt="" aria-hidden="true">`;
 
 export const STATIC_PAGES = {
   'work-app/index.html': {
     section: 'research',
     topbar: {
       crumb: '연구 로드맵', crumbId: 'breadcrumb-view',
-      actions: `<label class="search-box">${icon('search')}<input id="global-search" type="search" placeholder="연구 주제 검색" aria-label="연구 주제 검색"></label><button class="icon-button" id="backup-top" type="button" title="백업 및 가져오기" aria-label="백업 및 가져오기">${icon('upload')}</button><button class="primary-button" id="add-task" type="button">${icon('plus')}<span>연구 구간 추가</span></button>`,
+      // 검색, 큰 그림 보관, 구간 추가는 상단 바가 아니라 본문 제목 줄 오른쪽에 있습니다 (work-app/index.html).
     },
     footer: '<div class="ws-foot-mascot"><img src="/mascot/journal.webp" alt="" width="44" height="44"><p>큰 목표를, 작은 한 걸음으로.</p></div><div class="ws-foot-status workspace-note"><span class="save-dot"></span><span id="storage-status">이 브라우저에 자동 저장</span></div><button id="backup-open" type="button">백업 · 가져오기</button>',
   },
