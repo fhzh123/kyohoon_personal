@@ -93,6 +93,8 @@ test('DOM simulation: original Work navigation, real startup counts, search and 
     assert.equal(logout.method,'post'); assert.equal(logout.getAttribute('action'),'/api/auth/logout');
     for (const view of ['goals','overview','resources','notes','settings','backlog','roadmap']) await f.navigate(view);
     assert.equal(f.document.querySelectorAll('#navigation [data-view]').length,7);
+    assert.deepEqual([...f.document.querySelectorAll('#navigation [data-view]')].slice(0,3).map(n=>n.dataset.view),['roadmap','resources','overview']);
+    assert.equal(f.document.querySelector('.ws-topbar #global-search'),null,'research actions sit beside the page title, not in the top bar');assert.ok(f.document.querySelector('.page-heading .page-actions #global-search'));assert.ok(f.document.querySelector('.page-heading .page-actions #add-task'));assert.ok(f.document.querySelector('.page-heading .page-actions #backup-top'));
     const query=f.original.tasks.find(task=>task.title.length>20).title;
     const input=f.document.querySelector('#global-search');
     input.value=query; input.dispatchEvent(new f.dom.window.Event('input',{bubbles:true}));

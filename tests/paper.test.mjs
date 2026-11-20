@@ -99,7 +99,7 @@ test('Paper DOM supports project editing, issue fields, review tabs, settings an
  const w=new JSDOM(paperPage(),{url:'https://test.invalid/paper',runScripts:'outside-only'}).window;
  w.PAPER_PREVIEW=fixture;Object.defineProperty(w,'crypto',{value:{randomUUID}});w.scrollTo=()=>{};w.confirm=()=>true;w.prompt=()=>null;
  w.eval(await readFile(new URL('../public/paper.js',import.meta.url),'utf8'));await new Promise(r=>setTimeout(r,10));
- assert.equal(w.document.querySelectorAll('.paper-choice').length,2);assert.equal(w.document.querySelectorAll('[data-open]').length,0);
+ assert.equal(w.document.querySelectorAll('.paper-choice').length,3);assert.equal(w.document.querySelectorAll('[data-open]').length,0);
  w.document.querySelector('[data-action=choose-rebuttal]').click();await new Promise(r=>setTimeout(r,10));
  assert.equal(w.document.querySelectorAll('[data-open]').length,1);assert.equal(w.document.querySelectorAll('img[src=x]').length,0);
  w.document.querySelector('[data-open]').click();await new Promise(r=>setTimeout(r,10));

@@ -18,7 +18,8 @@ export function reasoningOptions(provider,model,effort='none'){
   if(!effort||effort==='none')return {};
   if(provider==='openai')return {reasoning:{effort}};
   if(provider==='anthropic')return {output_config:{effort},...(/claude-(?:opus|sonnet|haiku)-(?:4-6|[5-9])/.test(model)?{thinking:{type:'adaptive'}}:{})};
-  return {thinkingConfig:/gemini-2\.5/.test(model)?{thinkingBudget:{minimal:128,low:1024,medium:4096,high:8192}[effort]}:{thinkingLevel:effort}};
+  if(/gemini-2\.5/.test(model)){const budget={minimal:128,low:1024,medium:4096,high:8192}[effort]??(/^\d+$/.test(effort)?Number(effort):undefined);return budget===undefined?{}:{thinkingConfig:{thinkingBudget:budget}};}
+  return {thinkingConfig:{thinkingLevel:effort}};
 }
 export async function generate({provider,key,model,system,user,pdf,effort='none'},fetcher=fetch){
   let response,text;

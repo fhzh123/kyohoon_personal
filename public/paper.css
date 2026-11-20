@@ -49,3 +49,12 @@ html[data-theme="light"] body[data-surface="paper"]{--paper-accent:#345c83}
 @media(prefers-reduced-motion:reduce){.paper-choice{transition:none}}
 
 .paper-venue{width:64px;min-height:60px;display:flex;align-items:center;justify-content:center;text-align:center;padding:5px;color:var(--muted);font-size:12px;font-weight:600;line-height:1.4;overflow-wrap:anywhere}.paper-venue img{width:54px;height:54px;object-fit:contain}.paper-venue-acl{background:#fff;border-radius:6px}.paper-save-bar{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:24px 0 8px;margin-top:20px;border-top:1px solid var(--line)}.paper-main .paper-project-status select{width:auto;min-height:36px;padding:6px 28px 6px 10px;font-size:12px}.paper-history pre{font-family:var(--font-sans)}@media(max-width:1023px){.paper-venue{width:48px;min-height:48px}.paper-venue img{width:40px;height:40px}}@media(max-width:639px){.paper-venue{width:38px;min-height:40px;padding:3px;font-size:10px}.paper-venue img{width:32px;height:32px}.paper-save-bar{padding-top:18px;justify-content:space-between}.paper-row-end{grid-column:2;grid-row:2}.paper-venue{grid-row:1/3}}
+/* 세 가지 작업: 리뷰탈, 리뷰, AI 컨퍼런스 데드라인 */
+@media(min-width:1024px){.paper-choices{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.paper-choices .paper-choice{grid-template-columns:minmax(0,1fr) 104px;padding:26px;min-height:260px}.paper-choices .paper-choice img{width:104px;height:148px}.paper-choices .paper-choice-title{font-size:21px}}
+.paper-choice-soon .paper-choice-count{color:var(--muted)}
+.paper-construction{display:grid;justify-items:center;gap:6px;max-width:560px;margin:24px auto 40px;text-align:center}
+.paper-construction img{width:220px;height:220px;object-fit:contain}
+.paper-construction h1{margin:4px 0 6px;font-size:clamp(28px,4vw,40px);letter-spacing:-.035em}
+.paper-construction>p:last-child{margin:0;color:var(--muted);line-height:1.7}
+.paper-dialog:has(.paper-prompt-form){width:min(760px,calc(100vw - 32px));max-width:none}.paper-prompt-form{display:grid;gap:14px;min-width:0}
+.paper-prompt-form .paper-prompt textarea{width:100%;min-height:150px;font-size:13px;line-height:1.7}

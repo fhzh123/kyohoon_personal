@@ -23,7 +23,7 @@ export const shellIcon = name => `<svg class="ws-icon" aria-hidden="true" viewBo
 export const WORK_SECTIONS = [
   {key: 'home', label: 'Selectstar 홈', href: '/work', icon: 'grid'},
   {key: 'research', label: '연구일지', href: '/work/app/index.html', icon: 'book', hook: 'view', items: [
-    ['roadmap', '연구 로드맵'], ['overview', '연간 조망'], ['resources', '담당자 리소스'], ['backlog', '연구 후보'],
+    ['roadmap', '연구 로드맵'], ['resources', '담당자 리소스'], ['overview', '연간 조망'], ['backlog', '연구 후보'],
     ['goals', 'L3 연구축'], ['notes', '연구 노트'], ['settings', '설정'],
   ]},
   {key: 'team', label: '팀 리소스', href: '/work/team-resources', icon: 'chart', hook: 'tab', items: [

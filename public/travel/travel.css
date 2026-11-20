@@ -12,3 +12,18 @@
 #travel-app .tg-stage{min-height:520px;border-top:0}#travel-app canvas{height:520px}#travel-app .tg-nav{padding:16px 20px;gap:16px;align-items:center}#travel-app .tg-nav button,#travel-app .tg-zoom button{min-height:44px}#travel-app .tg-region-search{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--muted)}#travel-app .tg-region-search select{max-width:230px;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font:inherit}#travel-app .tg-modal{max-height:none}#travel-app .tg-modal-content{font-family:inherit}#travel-app .tg-editor input,#travel-app .tg-editor textarea,#travel-app .tg-editor select{font-size:16px;min-height:44px}#travel-app .tg-modal-actions button{min-height:44px}#travel-app .tg-stage.has-modal.is-editing{min-height:790px}#travel-app .tg-photo-credit:empty{display:none}#travel-app .tg-modal-close{min-height:44px;width:44px}#travel-app .tg-records{padding:18px 20px 8px}#travel-app .tg-records button{min-height:44px}#travel-app .tg-empty-records{color:var(--muted)}#travel-app .tg-page-status{margin:0;padding:0 20px;color:var(--muted);font-size:13px}#travel-app .tg-page-status:empty{display:none}#travel-app .tg-foot{padding:12px 20px 18px;font-size:12px}#travel-app .tg-modal input[type=file]{font-size:12px;min-height:44px}#travel-app .tg-editor-note{font-size:12px}#travel-app h3{font-family:inherit;font-weight:500}
 @container travel-globe (max-width:650px){#travel-app .tg-nav{padding:14px;gap:12px}#travel-app .tg-region-search{width:100%}#travel-app .tg-region-search select{flex:1;max-width:none}#travel-app canvas{height:430px}#travel-app .tg-stage{min-height:430px}#travel-app .tg-stage.has-modal{min-height:700px}#travel-app .tg-stage.has-modal.is-editing{min-height:1030px}#travel-app .tg-modal-content{padding:22px 18px}}
 @media(prefers-reduced-motion:no-preference){#travel-app button{transition:translate .16s var(--ease),background .16s var(--ease)}#travel-app button:hover{translate:0 -1px}#travel-app button:active{translate:0 1px}}
+/* 지구본 색상 설정 창 (여행의 흔적 안) */
+.travel-colors-open{border:0;background:none;padding:0;font:inherit;cursor:pointer}
+.travel-colors-dialog{width:min(520px,calc(100vw - 32px));padding:24px 26px;border:1px solid var(--line);border-radius:14px;background:var(--surface,#fff);color:var(--ink,inherit)}
+.travel-colors-dialog::backdrop{background:rgba(8,10,14,.45);backdrop-filter:blur(2px)}
+.travel-colors-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.travel-colors-head h2{margin:0;font-size:21px;letter-spacing:-.02em}
+.travel-colors-close{width:36px;height:36px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;font-size:20px;line-height:1;cursor:pointer}
+.travel-colors-intro,.travel-colors-dialog .paper-subtle{margin:10px 0 0;font-size:13.5px;line-height:1.6;color:var(--muted)}
+.travel-colors-dialog .travel-color-fields{margin:12px 0 0}
+.travel-colors-dialog .background-save{display:grid;gap:12px;margin-top:16px}
+.travel-colors-dialog .background-save .error{color:#c36565}
+.travel-colors-dialog .paper-actions{display:flex;justify-content:flex-end;gap:8px}
+.travel-colors-dialog .paper-btn{min-height:40px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.travel-colors-dialog .paper-btn.primary{border-color:transparent;background:var(--ink,#191c21);color:var(--surface,#fff)}
+.travel-colors-dialog .paper-btn:disabled{opacity:.5;cursor:default}

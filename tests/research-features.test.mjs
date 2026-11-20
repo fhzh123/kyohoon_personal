@@ -294,11 +294,11 @@ test('annual overview month calendar filters by owner and reveals a selected day
   }finally{f.close();}
 });
 
-test('appearance is only in Settings and library bookmarks return to roadmap',async()=>{
+test('research settings hold only category colors and library bookmarks return to roadmap',async()=>{
  const f=await fixture();try{
   const d=f.document;assert.equal(d.querySelector('[data-theme-toggle]'),null);assert.equal(d.querySelector('[data-view="references"]'),null);
   d.querySelector('[data-view="settings"]').click();await tick();
-  assert.deepEqual([...d.querySelectorAll('[data-theme-value]')].map(x=>x.dataset.themeValue),['dark','light','system']);
+  assert.equal(d.querySelectorAll('[data-theme-value]').length,0,'screen theme lives in the global settings only');assert.ok(d.querySelector('#color-settings-form'));
   f.w.location.hash='references';await tick();assert.equal(d.querySelector('#breadcrumb-view').textContent,'연구 로드맵');
  }finally{f.close();}
 });
