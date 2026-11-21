@@ -36,6 +36,12 @@ jobs:
         run: node --test tests/space-navigation.test.mjs tests/spaces.test.mjs tests/gallery.test.mjs tests/paper-preferences.test.mjs tests/paper-layout.test.mjs tests/demos.test.mjs tests/settings-access.test.mjs
 
       - name: Verify public travel endpoints
-        run: node scripts/check-travel-live.mjs
-        env:
-          EXPECT_TRAVEL_VERSION: ${{ github.ref == 'refs/heads/main' && '20261117-1' || '' }}
+        # On main, wait until production serves the travel.js version this commit
+        # ships. The version is read from views/travel.mjs so it never goes stale.
+        run: |
+          if [ "$GITHUB_REF" = refs/heads/main ]; then
+            EXPECT_TRAVEL_VERSION=$(grep -o 'travel/travel.js?v=[0-9-]*' views/travel.mjs | head -1 | cut -d= -f2)
+            test -n "$EXPECT_TRAVEL_VERSION" || { echo 'travel.js version not found in views/travel.mjs'; exit 1; }
+            export EXPECT_TRAVEL_VERSION
+          fi
+          node scripts/check-travel-live.mjs
