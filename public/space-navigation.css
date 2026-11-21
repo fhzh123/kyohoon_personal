@@ -9,6 +9,5 @@ html[data-theme=dark] .space-nav-button{border-color:#ffffff26;background:#fffff
 html[data-theme=dark] .space-nav-button:hover{border-color:#ffffff45;background:#ffffff0c}
 html[data-theme=dark] .space-nav-button img{filter:brightness(0) invert(.92)}
 .hub-header-actions,.header-actions{align-items:center}
-.demo-spacebar{box-sizing:border-box;width:100%;display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:10px max(20px,calc((100vw - 1280px)/2));border-bottom:1px solid var(--line,#dde2e7);background:var(--paper,#f8f9fa)}
-@media(max-width:640px){.space-navigation{gap:6px}.demo-spacebar{padding:8px 16px}.site-header .space-nav-button,.space-nav-button{width:44px;height:44px}.hub-header-actions{gap:6px}}
+@media(max-width:640px){.space-navigation{gap:6px}.site-header .space-nav-button,.space-nav-button{width:44px;height:44px}.hub-header-actions{gap:6px}}
 @media(prefers-reduced-motion:reduce){.space-nav-button,.site-header .space-nav-button{transition:none}.space-nav-button:hover{transform:none}}
