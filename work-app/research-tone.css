@@ -2694,8 +2694,6 @@ html[data-theme=dark] .space-nav-button:not(#ws-tone):not(.ws-sidebar *, .ws-top
 }
 html[data-theme=dark] .space-nav-button:hover:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) {border-color:#ffffff45;background:#ffffff0c
 }
-.demo-spacebar:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) {border-bottom:1px solid var(--line,#dde2e7);background:var(--paper,#f8f9fa)
-}
 :root:not(#ws-tone):not(.ws-sidebar *, .ws-topbar *) {
   --ws-bg: #f7f8fa; --ws-side: #ffffff; --ws-surface: #ffffff; --ws-raised: #eff1f5;
   --ws-line: #e4e7ec; --ws-line-strong: #d5d9e0; --ws-ink: #191c21; --ws-muted: #5f6367;

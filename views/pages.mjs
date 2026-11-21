@@ -134,13 +134,19 @@ export function personalPage(access) {
   const cards = [
     {kicker:'기록', title:'여행의 흔적', image:'travel-globe.webp', description:'다녀온 곳의 사진과 이야기를<br>지구본 위에 남깁니다.', meta:'지구본 · 여행 기록', href:'/personal/travel', action:'여행 기록 보기'},
     {kicker:'컬렉션', title:'갤러리', image:'gallery.png', description:'마스코트의 다양한 모습을<br>둘러보고 내려받습니다.', meta:'모아보기 · 8방향 · 걷는 모습', href:'/personal/gallery', action:'갤러리 보기'},
-    {kicker:'준비 중', title:'공사중', image:'personal-coming-two.webp', description:'새로운 기능을<br>준비하고 있습니다.', meta:'<span class="pending-label">공사 중</span>'},
+    {kicker:'글쓰기', title:'마크다운 에디터', image:'markdown-editor.webp', description:'마크다운으로 글을 쓰고<br>모양을 바로 확인합니다.', meta:'<span class="pending-label">공사 중</span>', href:'/personal/markdown', action:'마크다운 에디터 열기'},
   ];
   return shell('Personal', spaceHub({
     header, eyebrow: '여행과 일상을 위한 공간', title: 'Personal',
     description: '여행과 일상의 기록을<br>모아두는 공간입니다.', hero: 'personal-idle.webp', heroAlt: '소파에 앉아 쉬는 마스코트',
     label: 'Personal 도구', cards, extraClass: 'personal-tools',
   }), 'personal');
+}
+
+// 마크다운 에디터: 아직 만드는 중입니다. 어떻게 만들지 정해지면 이 화면을 채웁니다.
+export function markdownPage(access) {
+  const header = access ? privateHeader('/personal') : publicHeader('personal').replace('</div></header>', '<a class="btn" href="/login?next=%2Fpersonal%2Fmarkdown">로그인</a></div></header>');
+  return shell('마크다운 에디터', `${SPACE_HUB_CSS}<div class="hub-shell space-shell">${header}<main id="main" class="space-main"><section class="space-construction" aria-labelledby="space-construction-title"><img src="/mascot/personal-coming-one.webp" alt="안전모를 쓰고 블록을 나르는 공사 중 마스코트" width="240" height="240"><p class="space-eyebrow">Personal / 글쓰기</p><h1 id="space-construction-title">마크다운 에디터</h1><p>지금 공사 중입니다.<br>어떻게 만들지 정해지면 이곳에 열립니다.</p><a class="btn" href="/personal">← Personal로 돌아가기</a></section></main>${footer()}</div>`, 'personal');
 }
 
 export function demosPage({authenticated = true} = {}) {

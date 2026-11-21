@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, timingSafeEqual, randomUUID, createHash } from 'node:crypto';
 import {gzipSync,gunzipSync} from 'node:zlib';
-import { homePage, loginPage, workPage, demosPage, personalPage } from '../views/pages.mjs';
+import { homePage, loginPage, workPage, demosPage, personalPage, markdownPage } from '../views/pages.mjs';
 import { previewAllowed, safeRelativePath, safeLoginDestination, validState } from './policy.mjs';
 import {demoRoutes} from './demo-routes.mjs';
 import {teamResourceRoutes} from './team-resource-routes.mjs';
@@ -225,6 +225,11 @@ export function createHandler({localPreview = false, rootDir = root, environment
         if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'지원하지 않는 요청입니다.'});
         const access=await authorize(req,res).catch(()=>null);
         return send(res,200,req.method==='HEAD'?'':galleryPage(access),'text/html; charset=utf-8');
+      }
+      if(pathname==='/personal/markdown'||pathname==='/personal/markdown/'){
+        if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'허용되지 않은 요청입니다.'});
+        const access=await authorize(req,res).catch(()=>null);
+        return send(res,200,req.method==='HEAD'?'':markdownPage(access),'text/html; charset=utf-8');
       }
       if(pathname==='/personal/travel'||pathname==='/personal/travel/'){
         if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'허용되지 않은 요청입니다.'});
