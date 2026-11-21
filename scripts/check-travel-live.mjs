@@ -12,7 +12,9 @@ async function get(path){
 const personal=await(await get('/personal')).text();
 assert.match(personal,/여행의 흔적/);
 assert.match(personal,/href="\/personal\/gallery"/);
-assert.equal((personal.match(/class="tool-card card is-pending"/g)||[]).length,1);
+// Exactly one "coming soon" card. Match the two class names, not the full class
+// string, so a layout class change (card -> space-card in #24) does not break it.
+assert.equal((personal.match(/class="tool-card\b[^"]*\bis-pending\b[^"]*"/g)||[]).length,1,'/personal must show exactly one pending card');
 let travel;
 for(let attempt=0;attempt<18;attempt++){
  travel=await(await get('/personal/travel')).text();
