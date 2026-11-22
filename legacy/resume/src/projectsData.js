@@ -446,21 +446,29 @@ const projectEnglishCopy = [
   }
 ];
 Object.assign(projectEnglishCopy[1], {description:'- Document layout analysis for extracting text, figures and tables<br />- Policy-Adaptive DLA with task-dependent segmentation', subtitle:'Task-dependent document segmentation and layout analysis', fullDescription:'Research on OCR and document layout analysis for enterprise documents containing text, figures and tables. Policy-Adaptive DLA controls segmentation granularity according to the target task. The Document Parsing Research demo presents the research approach and experimental results.', companyOrInstitution:'Selectstar', role:'Document layout analysis and Policy-Adaptive DLA research', externalLinkNames:['Demo']});
-// In progress since Aug 2026. Details come later; 추가 정보 links the ontology demo.
+// In progress since Aug 2026. Text grounded in the ontology demo (SELECTSTAR KG Research); the figure is an original overview, not a captured UI.
 projects_.unshift({
   title: '전문가의 워크플로우가 포함된 온톨로지 구축',
   period: 'Aug 2026 - ',
-  description: '',
+  description: '- 도메인 전문가 관점(페르소나·용어집·CQ)을 반영한 판례 온톨로지 및 지식그래프 구축 <br /> - Human Evaluation과 Graph RAG 기반 판례 검색 실험, 제안서 Agent로 확장',
   link: '#',
   icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
-  imageUrl: '',
-  subtitle: '',
-  fullDescription: '',
-  companyOrInstitution: '',
-  role: '',
+  imageUrl: '/resume/projects/ontology-expert-workflow.png',
+  subtitle: '판례 기반 온톨로지·지식그래프 구축과 판례 검색',
+  fullDescription: '판례 문서에서 온톨로지와 지식그래프(KG)를 구축하고, 이를 판례 검색에 활용하는 연구입니다. 국가법령정보센터 판례 OpenAPI로 판결문을 수집하고, 원심·참조판례 관계를 원문과 함께 연결한 데이터셋을 구성했습니다. 자체 방법은 Schema·Instance·Context·Document의 네 관점(Four-View), 도메인이 달라져도 유지되는 8개 상위 범주(Fixed-Category), 코퍼스에서 도메인 전문가 페르소나·용어집·역량 질문(CQ)을 만들어 후속 LLM 단계에 전달하는 Domain Adaptation을 결합한 설계입니다. 같은 판례를 AutoSchemaKG, Domain-specific KG와 함께 구축해 사람이 이해 가능성·관련성·검색 목적 부합성 기준으로 비교하는 Human Evaluation을 진행하고, HippoRAG2·GraphRAG 등 Graph RAG 방법으로 관련 판례 검색 성능을 실험했습니다. 이후 검증한 지식 연결을 제안서 작성 업무 흐름을 수행하는 제안서 Agent로 확장할 계획입니다.',
+  companyOrInstitution: 'Selectstar',
+  role: '판례 온톨로지·KG 구축 방법론 연구, Human Evaluation 및 Graph RAG 기반 판례 검색 실험',
   externalLinks: [{ name: '데모', url: '/work/demos/ontology/' }],
 });
-projectEnglishCopy.unshift({ title: 'Ontology Construction with Expert Workflows', externalLinkNames: ['Demo'] });
+projectEnglishCopy.unshift({
+  title: 'Ontology Construction with Expert Workflows',
+  description: '- Built a case-law ontology and knowledge graph that reflects a domain expert’s perspective (persona, glossary and competency questions) <br /> - Human evaluation and Graph RAG precedent retrieval experiments, extending toward a proposal agent',
+  subtitle: 'Case-Law Ontology and Knowledge Graph for Precedent Retrieval',
+  fullDescription: 'Research on building an ontology and knowledge graph (KG) from court decisions and using it for precedent retrieval. We collected rulings through the Korean National Law Information Center’s case-law Open API and built a dataset that links each ruling to its lower-court decisions and cited precedents, together with the source text. Our approach combines four views (Schema, Instance, Context and Document), eight fixed upper categories that hold across domains, and Domain Adaptation, which derives a domain-expert persona, a glossary and competency questions (CQs) from the corpus and passes them to later LLM steps. We also built KGs for the same cases with AutoSchemaKG and a domain-specific KG; the three are being compared through human evaluation of comprehensibility, relevancy and fitness for retrieval, and we ran precedent retrieval experiments with Graph RAG methods such as HippoRAG2 and GraphRAG. Next, we plan to extend these validated knowledge connections into a proposal agent that follows the proposal-writing workflow.',
+  companyOrInstitution: 'Selectstar',
+  role: 'Research on case-law ontology and KG construction, human evaluation, and Graph RAG precedent retrieval experiments',
+  externalLinkNames: ['Demo'],
+});
 const projectsEN_ = projects_.map((project, index) => {
   const { externalLinkNames, ...copy } = projectEnglishCopy[index] || {};
   return { ...project, ...copy, externalLinks: project.externalLinks.map((link, linkIndex) => ({ ...link, name: externalLinkNames?.[linkIndex] || link.name })) };
