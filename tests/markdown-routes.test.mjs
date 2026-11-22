@@ -6,11 +6,12 @@ import {fileURLToPath} from 'node:url';
 import {randomUUID} from 'node:crypto';
 import {Readable} from 'node:stream';
 import {markdownRoutes, THEMES} from '../server/markdown-routes.mjs';
+import {MARKDOWN_THEME_KEYS} from '../views/markdown-themes.mjs';
 import {createHandler} from '../server/app.mjs';
 
 const privateDir = fileURLToPath(new URL('../private/', import.meta.url));
 const editor = {mode:'local', role:'editor', userId:'localhost', token:''};
-async function fixture(t, {access = editor, authFetch, rootDir} = {}) {
+async function fixture(t, {access = editor, authFetch, rootDir, renderPdf} = {}) {
   if (!rootDir) {
     await mkdir(privateDir, {recursive:true});
     rootDir = await mkdtemp(path.join(privateDir, 'markdown-test-'));
@@ -22,7 +23,7 @@ async function fixture(t, {access = editor, authFetch, rootDir} = {}) {
   }
   const limits = [];
   const handler = markdownRoutes({
-    rootDir, environment:{}, authorize:async () => access,
+    rootDir, environment:{}, authorize:async () => access, renderPdf,
     authFetch:authFetch || (() => { throw Error('No network in local mode'); }),
     bearer:token => ({Authorization:'Bearer ' + token}),
     body:async (req, max) => {
@@ -31,7 +32,7 @@ async function fixture(t, {access = editor, authFetch, rootDir} = {}) {
       if (Buffer.byteLength(raw) > max) throw Object.assign(Error('too large'), {status:413});
       return raw;
     },
-    send:(res, status, value) => Object.assign(res, {status, value}),
+    send:(res, status, value, contentType, headers) => Object.assign(res, {status, value, contentType, headers}),
   });
   const call = async (url, method = 'GET', input, raw) => {
     const res = {};
@@ -49,6 +50,60 @@ async function seed(h) {
 }
 const docUrl = document => '/api/markdown/documents/' + document.id;
 const folderUrl = folder => '/api/markdown/folders/' + folder.id;
+
+test('Markdown PDF authorizes readers, downloads vector bytes, and never persists the requested theme', async t => {
+  const calls = [], pdf = Buffer.from('%PDF-1.7\nexample');
+  const h = await fixture(t, {renderPdf:async document => { calls.push(document); return pdf; }});
+  const {document} = await seed(h);
+  const saved = (await h.call(docUrl(document), 'PATCH', {revision:document.revision, title:'한글 "문서"', content:'# 실제 본문', theme:'night'})).value;
+  h.setAccess({...editor, role:'reader'});
+  const response = await h.call(docUrl(document) + '/pdf?theme=github-dark');
+  assert.equal(response.status, 200);
+  assert.equal(response.contentType, 'application/pdf');
+  assert.equal(response.headers['Cache-Control'], 'no-store');
+  assert.match(response.headers['Content-Disposition'], /^attachment; filename="document.pdf"; filename\*=UTF-8''/);
+  assert.ok(response.headers['Content-Disposition'].endsWith(encodeURIComponent(saved.title) + '.pdf'));
+  assert.deepEqual(response.value, pdf);
+  assert.deepEqual(calls, [{title:saved.title, content:saved.content, theme:'github-dark'}]);
+  assert.deepEqual((await h.call(docUrl(document))).value, saved);
+  await h.call(docUrl(document) + '/pdf');
+  assert.equal(calls[1].theme, 'night');
+  for (const theme of MARKDOWN_THEME_KEYS) assert.equal((await h.call(docUrl(document) + '/pdf?theme=' + theme)).status, 200);
+});
+
+test('Markdown PDF validates authentication, IDs, themes, missing documents, and methods before rendering', async t => {
+  let rendered = 0;
+  const h = await fixture(t, {renderPdf:async () => { rendered++; return Buffer.from('%PDF'); }});
+  const {document} = await seed(h), url = docUrl(document) + '/pdf';
+  h.setAccess(null);
+  assert.equal((await h.call(url)).status, 401);
+  h.setAccess({...editor, role:'reader'});
+  assert.equal((await h.call(url, 'POST')).status, 403);
+  h.setAccess(editor);
+  assert.equal((await h.call(url, 'POST')).status, 405);
+  assert.equal((await h.call('/api/markdown/documents/bad/pdf')).status, 400);
+  for (const theme of ['', 'unknown', 'IVORY', '%22%3E%3Cscript%3E']) assert.equal((await h.call(url + '?theme=' + theme)).status, 400);
+  assert.equal((await h.call('/api/markdown/documents/' + randomUUID() + '/pdf')).status, 404);
+  assert.equal(rendered, 0);
+});
+
+test('Markdown PDF remote reads use the member token and translate failures into JSON errors', async t => {
+  const id = randomUUID(), reads = [];
+  const h = await fixture(t, {
+    access:{mode:'supabase', role:'reader', token:'reader-token'},
+    authFetch:async (url, options) => { reads.push({url, options}); return {ok:true, json:async () => [{id, title:'원격 문서', content:'# 본문', theme:'ivory'}]}; },
+    renderPdf:async () => { throw Error('Browser internal details'); },
+  });
+  const response = await h.call('/api/markdown/documents/' + id + '/pdf?theme=chrome');
+  assert.equal(response.status, 503);
+  assert.deepEqual(response.value, {error:'PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'});
+  assert.equal(reads.length, 1);
+  assert.equal(reads[0].options.method, 'GET');
+  assert.equal(reads[0].options.headers.Authorization, 'Bearer reader-token');
+  assert.match(reads[0].url, new RegExp('id=eq\\.' + id));
+  const forbidden = await fixture(t, {access:{mode:'supabase', role:'reader', token:'inactive'}, authFetch:async () => ({ok:false, status:403})});
+  assert.equal((await forbidden.call('/api/markdown/documents/' + id + '/pdf')).status, 403);
+});
 
 test('Markdown local CRUD persists across handlers, moves documents and cascades folder deletion', async t => {
   const h = await fixture(t);
@@ -152,7 +207,7 @@ test('Markdown validates UUIDs, JSON objects, patch fields and required revision
 });
 
 test('Markdown accepts every fixed theme and rejects unsafe themes and invalid content', async t => {
-  assert.deepEqual(THEMES, ['ivory', 'github-dark', 'chrome', 'sprinkles']);
+  assert.deepEqual(THEMES, MARKDOWN_THEME_KEYS);
   const h = await fixture(t);
   let {document} = await seed(h);
   for (const theme of THEMES) {
