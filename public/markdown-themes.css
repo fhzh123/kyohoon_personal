@@ -1,0 +1,1266 @@
+/*
+ * Markdown document & PDF themes for /personal/markdown
+ * Scoped under .md-doc[data-md-theme="<key>"]
+ *
+ * ivory — 아이보리: 따뜻한 미색 바탕에 세리프 본문
+ * github-dark — 깃허브 다크: 어두운 무채색 바탕에 정돈된 표와 코드 블록
+ * chrome — 크롬: 흑연 바탕에 은빛 제목과 하늘색 포인트
+ * sprinkles — 스프링클스: 밝은 고정폭 글꼴에 제목 이모지와 컬러 링크
+ */
+
+/* ==========================================================================
+   Shared document structure (strictly scoped to .md-doc[data-md-theme])
+   ========================================================================== */
+
+.md-doc[data-md-theme] {
+  box-sizing: border-box;
+  padding: 2.25rem 2.5rem;
+  font-size: 16px;
+  line-height: 1.75;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.md-doc[data-md-theme] *,
+.md-doc[data-md-theme] *::before,
+.md-doc[data-md-theme] *::after {
+  box-sizing: border-box;
+}
+
+.md-doc[data-md-theme] > :first-child {
+  margin-top: 0;
+}
+
+.md-doc[data-md-theme] > :last-child {
+  margin-bottom: 0;
+}
+
+.md-doc[data-md-theme] h1,
+.md-doc[data-md-theme] h2,
+.md-doc[data-md-theme] h3,
+.md-doc[data-md-theme] h4,
+.md-doc[data-md-theme] h5,
+.md-doc[data-md-theme] h6 {
+  line-height: 1.32;
+  margin-top: 1.7em;
+  margin-bottom: 0.65em;
+  scroll-margin-top: 1.5rem;
+}
+
+.md-doc[data-md-theme] p {
+  margin-top: 0;
+  margin-bottom: 1.05em;
+}
+
+.md-doc[data-md-theme] a {
+  overflow-wrap: anywhere;
+  transition: color 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+}
+
+.md-doc[data-md-theme] strong,
+.md-doc[data-md-theme] b {
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme] em,
+.md-doc[data-md-theme] i {
+  font-style: italic;
+}
+
+.md-doc[data-md-theme] u {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1.25px;
+}
+
+.md-doc[data-md-theme] del,
+.md-doc[data-md-theme] s {
+  text-decoration: line-through;
+  opacity: 0.72;
+}
+
+.md-doc[data-md-theme] ul,
+.md-doc[data-md-theme] ol {
+  margin-top: 0;
+  margin-bottom: 1.05em;
+  padding-left: 1.75em;
+}
+
+.md-doc[data-md-theme] ul ul,
+.md-doc[data-md-theme] ul ol,
+.md-doc[data-md-theme] ol ul,
+.md-doc[data-md-theme] ol ol {
+  margin-top: 0.35em;
+  margin-bottom: 0.35em;
+}
+
+.md-doc[data-md-theme] li {
+  margin-bottom: 0.32em;
+}
+
+.md-doc[data-md-theme] li > p {
+  margin-bottom: 0.45em;
+}
+
+.md-doc[data-md-theme] li > p:last-child {
+  margin-bottom: 0;
+}
+
+.md-doc[data-md-theme] li.task-list-item {
+  list-style: none;
+}
+
+.md-doc[data-md-theme] li.task-list-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-grid;
+  place-content: center;
+  width: 1.02em;
+  height: 1.02em;
+  margin: 0 0.55em 0 -1.55em;
+  vertical-align: -0.16em;
+  border-radius: 3px;
+  opacity: 1;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+.md-doc[data-md-theme] li.task-list-item input[type="checkbox"]:checked::after {
+  content: "";
+  width: 0.34em;
+  height: 0.6em;
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-0.04em, -0.07em);
+}
+
+.md-doc[data-md-theme] blockquote {
+  margin: 1.25em 0;
+  padding: 0.75em 1.15em;
+}
+
+.md-doc[data-md-theme] blockquote > :first-child {
+  margin-top: 0;
+}
+
+.md-doc[data-md-theme] blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.md-doc[data-md-theme] code {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.md-doc[data-md-theme] pre {
+  margin: 1.25em 0;
+  overflow-x: auto;
+  line-height: 1.6;
+  tab-size: 2;
+  word-break: normal;
+}
+
+.md-doc[data-md-theme] pre > code {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  overflow-wrap: normal;
+  white-space: inherit;
+}
+
+.md-doc[data-md-theme] table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.35em 0;
+  font-size: 0.94em;
+  line-height: 1.55;
+}
+
+.md-doc[data-md-theme] th,
+.md-doc[data-md-theme] td {
+  padding: 0.62em 0.85em;
+  text-align: left;
+  vertical-align: top;
+}
+
+.md-doc[data-md-theme] hr {
+  border: 0;
+  height: 1px;
+  margin: 2em 0;
+}
+
+.md-doc[data-md-theme] img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.25em 0;
+}
+
+.md-doc[data-md-theme] figure {
+  margin: 1.35em 0;
+}
+
+.md-doc[data-md-theme] figcaption {
+  margin-top: 0.5em;
+  font-size: 0.88em;
+  opacity: 0.78;
+}
+
+/* ==========================================================================
+   Theme 1: ivory — 아이보리
+   Warm off-white editorial page, serif body, bold sans headings,
+   dark rule under h1, quiet grey blockquote with slate bar, crisp code chips.
+   ========================================================================== */
+
+.md-doc[data-md-theme="ivory"] {
+  --md-ivory-bg: #efeae5;
+  --md-ivory-surface: #e6dfd7;
+  --md-ivory-chip: #e2dad0;
+  --md-ivory-ink: #2c2926;
+  --md-ivory-heading: #1c1a18;
+  --md-ivory-muted: #5c5751;
+  --md-ivory-slate: #64707d;
+  --md-ivory-border: #d4cabf;
+  --md-ivory-link: #36526d;
+  --md-ivory-link-hover: #21374d;
+  --md-ivory-sans: "Inter", "Pretendard Variable", "Pretendard", "Noto Sans KR",
+    "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --md-ivory-serif: "Literata", "Iowan Old Style", Georgia, "Noto Serif KR",
+    "Source Han Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --md-ivory-mono: "JetBrains Mono", "D2Coding", "SFMono-Regular", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: light;
+  background-color: var(--md-ivory-bg);
+  color: var(--md-ivory-ink);
+  font-family: var(--md-ivory-serif);
+  font-size: 16px;
+  line-height: 1.84;
+}
+
+.md-doc[data-md-theme="ivory"] ::selection {
+  background-color: #d7cec3;
+  color: var(--md-ivory-heading);
+}
+
+.md-doc[data-md-theme="ivory"] h1,
+.md-doc[data-md-theme="ivory"] h2,
+.md-doc[data-md-theme="ivory"] h3,
+.md-doc[data-md-theme="ivory"] h4,
+.md-doc[data-md-theme="ivory"] h5,
+.md-doc[data-md-theme="ivory"] h6 {
+  font-family: var(--md-ivory-sans);
+  font-weight: 700;
+  color: var(--md-ivory-heading);
+  letter-spacing: -0.024em;
+}
+
+.md-doc[data-md-theme="ivory"] h1 {
+  font-size: 2.05em;
+  font-weight: 800;
+  padding-bottom: 0.32em;
+  margin-bottom: 0.85em;
+  border-bottom: 2px solid #2c2926;
+}
+
+.md-doc[data-md-theme="ivory"] h2 {
+  font-size: 1.48em;
+  padding-bottom: 0.24em;
+  border-bottom: 1px solid var(--md-ivory-border);
+}
+
+.md-doc[data-md-theme="ivory"] h3 {
+  font-size: 1.22em;
+}
+
+.md-doc[data-md-theme="ivory"] h4 {
+  font-size: 1.05em;
+}
+
+.md-doc[data-md-theme="ivory"] h5 {
+  font-size: 0.94em;
+  color: #3f3b37;
+}
+
+.md-doc[data-md-theme="ivory"] h6 {
+  font-size: 0.88em;
+  color: var(--md-ivory-muted);
+}
+
+.md-doc[data-md-theme="ivory"] p {
+  color: var(--md-ivory-ink);
+}
+
+.md-doc[data-md-theme="ivory"] a {
+  color: var(--md-ivory-link);
+  text-decoration: underline;
+  text-decoration-color: rgba(54, 82, 109, 0.38);
+  text-underline-offset: 0.2em;
+}
+
+.md-doc[data-md-theme="ivory"] a:hover {
+  color: var(--md-ivory-link-hover);
+  text-decoration-color: var(--md-ivory-link-hover);
+}
+
+.md-doc[data-md-theme="ivory"] strong {
+  color: var(--md-ivory-heading);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="ivory"] em {
+  color: #3a3531;
+}
+
+.md-doc[data-md-theme="ivory"] u {
+  text-decoration-color: var(--md-ivory-slate);
+}
+
+.md-doc[data-md-theme="ivory"] del {
+  color: var(--md-ivory-muted);
+}
+
+.md-doc[data-md-theme="ivory"] blockquote {
+  border-left: 3px solid var(--md-ivory-slate);
+  background-color: rgba(226, 218, 208, 0.45);
+  color: var(--md-ivory-muted);
+  border-radius: 0 4px 4px 0;
+}
+
+.md-doc[data-md-theme="ivory"] blockquote p {
+  color: inherit;
+}
+
+.md-doc[data-md-theme="ivory"] ul,
+.md-doc[data-md-theme="ivory"] ol {
+  color: var(--md-ivory-ink);
+}
+
+.md-doc[data-md-theme="ivory"] li::marker {
+  color: var(--md-ivory-slate);
+}
+
+.md-doc[data-md-theme="ivory"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-ivory-slate);
+  background-color: #f6f2ee;
+}
+
+.md-doc[data-md-theme="ivory"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-ivory-slate);
+  border-color: var(--md-ivory-slate);
+}
+
+.md-doc[data-md-theme="ivory"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #f7f4f0;
+}
+
+.md-doc[data-md-theme="ivory"] code {
+  font-family: var(--md-ivory-mono);
+  font-size: 0.84em;
+  background-color: var(--md-ivory-chip);
+  color: #46372e;
+  border: 1px solid #d5cabd;
+  border-radius: 4px;
+  padding: 0.12em 0.42em;
+}
+
+.md-doc[data-md-theme="ivory"] pre {
+  font-family: var(--md-ivory-mono);
+  font-size: 0.87em;
+  background-color: var(--md-ivory-surface);
+  color: #2a2623;
+  border: 1px solid var(--md-ivory-border);
+  border-radius: 6px;
+  padding: 1em 1.2em;
+}
+
+.md-doc[data-md-theme="ivory"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="ivory"] table {
+  border-top: 1.5px solid #2c2926;
+  border-bottom: 1.5px solid #2c2926;
+}
+
+.md-doc[data-md-theme="ivory"] th {
+  font-family: var(--md-ivory-sans);
+  font-weight: 700;
+  color: var(--md-ivory-heading);
+  background-color: var(--md-ivory-surface);
+  border-bottom: 1px solid #bdb2a6;
+}
+
+.md-doc[data-md-theme="ivory"] td {
+  border-bottom: 1px solid var(--md-ivory-border);
+  color: var(--md-ivory-ink);
+}
+
+.md-doc[data-md-theme="ivory"] tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.md-doc[data-md-theme="ivory"] hr {
+  background-color: var(--md-ivory-border);
+}
+
+.md-doc[data-md-theme="ivory"] img {
+  border-radius: 4px;
+  border: 1px solid var(--md-ivory-border);
+}
+
+/* ==========================================================================
+   Theme 2: github-dark — 깃허브 다크
+   Neutral desaturated dark GitHub aesthetic (#1e1e1e), crisp light grey text,
+   full bordered tables with distinct header row, bordered code blocks with
+   IDE line-number gutter feel.
+   ========================================================================== */
+
+.md-doc[data-md-theme="github-dark"] {
+  --md-gh-bg: #1e1e1e;
+  --md-gh-surface: #252526;
+  --md-gh-header: #2a2a2a;
+  --md-gh-code-bg: #161616;
+  --md-gh-gutter: #212121;
+  --md-gh-ink: #d4d4d4;
+  --md-gh-heading: #f2f2f2;
+  --md-gh-muted: #9a9a9a;
+  --md-gh-border: #383838;
+  --md-gh-border-soft: #2e2e2e;
+  --md-gh-accent: #ea7c85;
+  --md-gh-accent-hover: #f59da4;
+  --md-gh-sans: "IBM Plex Sans", "Pretendard Variable", "Pretendard", "Noto Sans KR",
+    "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --md-gh-mono: "IBM Plex Mono", "Fira Code", "JetBrains Mono", "D2Coding",
+    "Cascadia Mono", Consolas, "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-gh-bg);
+  color: var(--md-gh-ink);
+  font-family: var(--md-gh-sans);
+  font-size: 15.5px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="github-dark"] ::selection {
+  background-color: rgba(234, 124, 133, 0.28);
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="github-dark"] h1,
+.md-doc[data-md-theme="github-dark"] h2,
+.md-doc[data-md-theme="github-dark"] h3,
+.md-doc[data-md-theme="github-dark"] h4,
+.md-doc[data-md-theme="github-dark"] h5,
+.md-doc[data-md-theme="github-dark"] h6 {
+  font-family: var(--md-gh-sans);
+  font-weight: 700;
+  color: var(--md-gh-heading);
+  letter-spacing: -0.02em;
+}
+
+.md-doc[data-md-theme="github-dark"] h1 {
+  font-size: 2em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--md-gh-border);
+}
+
+.md-doc[data-md-theme="github-dark"] h2 {
+  font-size: 1.48em;
+  padding-bottom: 0.26em;
+  border-bottom: 1px solid var(--md-gh-border);
+}
+
+.md-doc[data-md-theme="github-dark"] h3 {
+  font-size: 1.24em;
+}
+
+.md-doc[data-md-theme="github-dark"] h4 {
+  font-size: 1.06em;
+}
+
+.md-doc[data-md-theme="github-dark"] h5 {
+  font-size: 0.94em;
+  color: #c2c2c2;
+}
+
+.md-doc[data-md-theme="github-dark"] h6 {
+  font-size: 0.88em;
+  color: var(--md-gh-muted);
+}
+
+.md-doc[data-md-theme="github-dark"] p {
+  color: var(--md-gh-ink);
+}
+
+.md-doc[data-md-theme="github-dark"] a {
+  color: var(--md-gh-accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(234, 124, 133, 0.38);
+}
+
+.md-doc[data-md-theme="github-dark"] a:hover {
+  color: var(--md-gh-accent-hover);
+  border-bottom-color: var(--md-gh-accent-hover);
+}
+
+.md-doc[data-md-theme="github-dark"] strong {
+  color: var(--md-gh-heading);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="github-dark"] em {
+  color: #e0e0e0;
+}
+
+.md-doc[data-md-theme="github-dark"] u {
+  text-decoration-color: var(--md-gh-accent);
+}
+
+.md-doc[data-md-theme="github-dark"] del {
+  color: var(--md-gh-muted);
+}
+
+.md-doc[data-md-theme="github-dark"] blockquote {
+  border-left: 3px solid #575757;
+  background-color: var(--md-gh-surface);
+  color: #a9a9a9;
+  border-radius: 0 5px 5px 0;
+}
+
+.md-doc[data-md-theme="github-dark"] blockquote p {
+  color: inherit;
+}
+
+.md-doc[data-md-theme="github-dark"] ul,
+.md-doc[data-md-theme="github-dark"] ol {
+  color: var(--md-gh-ink);
+}
+
+.md-doc[data-md-theme="github-dark"] li::marker {
+  color: #7c7c7c;
+}
+
+.md-doc[data-md-theme="github-dark"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid #666666;
+  background-color: #252526;
+}
+
+.md-doc[data-md-theme="github-dark"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-gh-accent);
+  border-color: var(--md-gh-accent);
+}
+
+.md-doc[data-md-theme="github-dark"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #161616;
+}
+
+.md-doc[data-md-theme="github-dark"] code {
+  font-family: var(--md-gh-mono);
+  font-size: 0.87em;
+  background-color: #2b2b2b;
+  color: #e8e8e8;
+  border: 1px solid #3c3c3c;
+  border-radius: 4px;
+  padding: 0.14em 0.42em;
+}
+
+.md-doc[data-md-theme="github-dark"] pre {
+  font-family: var(--md-gh-mono);
+  font-size: 0.88em;
+  color: #e2e2e2;
+  background-color: var(--md-gh-code-bg);
+  background-image: linear-gradient(
+    to right,
+    var(--md-gh-gutter) 0,
+    var(--md-gh-gutter) 2.35em,
+    #323232 2.35em,
+    #323232 calc(2.35em + 1px),
+    transparent calc(2.35em + 1px)
+  );
+  background-attachment: local;
+  border: 1px solid var(--md-gh-border);
+  border-radius: 6px;
+  padding: 1em 1.25em 1em 3.2em;
+}
+
+.md-doc[data-md-theme="github-dark"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="github-dark"] table {
+  border: 1px solid var(--md-gh-border);
+}
+
+.md-doc[data-md-theme="github-dark"] th,
+.md-doc[data-md-theme="github-dark"] td {
+  border: 1px solid var(--md-gh-border);
+}
+
+.md-doc[data-md-theme="github-dark"] th {
+  background-color: var(--md-gh-header);
+  color: var(--md-gh-heading);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="github-dark"] tbody tr:nth-child(even) {
+  background-color: #232323;
+}
+
+.md-doc[data-md-theme="github-dark"] hr {
+  height: 2px;
+  background-color: var(--md-gh-border);
+}
+
+.md-doc[data-md-theme="github-dark"] img {
+  border-radius: 6px;
+  border: 1px solid var(--md-gh-border);
+}
+
+/* ==========================================================================
+   Theme 3: chrome — 크롬
+   Graphite #0f1113 surfaces, uppercase letter-spaced polished-silver headings
+   with a fading metallic rule, soft silver text #c5cad2, single ice-blue
+   accent #8fd3ff for inline code/links/checkboxes, minimal uppercase tables.
+   ========================================================================== */
+
+.md-doc[data-md-theme="chrome"] {
+  --md-cr-bg: #0f1113;
+  --md-cr-surface: #15191d;
+  --md-cr-code-bg: #141a21;
+  --md-cr-ink: #c5cad2;
+  --md-cr-silver: #e6ebf2;
+  --md-cr-muted: #8a929e;
+  --md-cr-border: #262c34;
+  --md-cr-border-strong: #39424e;
+  --md-cr-ice: #8fd3ff;
+  --md-cr-ice-soft: rgba(143, 211, 255, 0.24);
+  --md-cr-sans: "Inter", "Pretendard Variable", "Pretendard", "Noto Sans KR",
+    "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, BlinkMacSystemFont, sans-serif;
+  --md-cr-mono: "JetBrains Mono", "D2Coding", "SFMono-Regular", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-cr-bg);
+  color: var(--md-cr-ink);
+  font-family: var(--md-cr-sans);
+  font-size: 15.5px;
+  line-height: 1.78;
+}
+
+.md-doc[data-md-theme="chrome"] ::selection {
+  background-color: rgba(143, 211, 255, 0.24);
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="chrome"] h1,
+.md-doc[data-md-theme="chrome"] h2,
+.md-doc[data-md-theme="chrome"] h3,
+.md-doc[data-md-theme="chrome"] h4,
+.md-doc[data-md-theme="chrome"] h5,
+.md-doc[data-md-theme="chrome"] h6 {
+  font-family: var(--md-cr-sans);
+  font-weight: 600;
+  color: var(--md-cr-silver);
+  text-transform: uppercase;
+}
+
+.md-doc[data-md-theme="chrome"] h1 {
+  font-size: 1.85em;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.9em;
+}
+
+.md-doc[data-md-theme="chrome"] h1::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 0.48em;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 235, 242, 0.65) 0%,
+    rgba(143, 211, 255, 0.42) 38%,
+    transparent 100%
+  );
+}
+
+.md-doc[data-md-theme="chrome"] h2 {
+  font-size: 1.32em;
+  letter-spacing: 0.11em;
+}
+
+.md-doc[data-md-theme="chrome"] h2::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 0.42em;
+  background: linear-gradient(
+    90deg,
+    rgba(197, 202, 210, 0.42) 0%,
+    rgba(143, 211, 255, 0.22) 35%,
+    transparent 92%
+  );
+}
+
+.md-doc[data-md-theme="chrome"] h3 {
+  font-size: 1.08em;
+  letter-spacing: 0.09em;
+}
+
+.md-doc[data-md-theme="chrome"] h4 {
+  font-size: 0.96em;
+  letter-spacing: 0.08em;
+  color: #d6dce5;
+}
+
+.md-doc[data-md-theme="chrome"] h5 {
+  font-size: 0.88em;
+  letter-spacing: 0.07em;
+  color: #b4bcc8;
+}
+
+.md-doc[data-md-theme="chrome"] h6 {
+  font-size: 0.82em;
+  letter-spacing: 0.07em;
+  color: var(--md-cr-muted);
+}
+
+.md-doc[data-md-theme="chrome"] p {
+  color: var(--md-cr-ink);
+}
+
+.md-doc[data-md-theme="chrome"] a {
+  color: var(--md-cr-ice);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(143, 211, 255, 0.36);
+}
+
+.md-doc[data-md-theme="chrome"] a:hover {
+  color: #c2e7ff;
+  border-bottom-color: #c2e7ff;
+}
+
+.md-doc[data-md-theme="chrome"] strong {
+  color: var(--md-cr-silver);
+  font-weight: 600;
+}
+
+.md-doc[data-md-theme="chrome"] em {
+  color: #d8dde6;
+}
+
+.md-doc[data-md-theme="chrome"] u {
+  text-decoration-color: var(--md-cr-ice);
+}
+
+.md-doc[data-md-theme="chrome"] del {
+  color: var(--md-cr-muted);
+}
+
+.md-doc[data-md-theme="chrome"] blockquote {
+  border-left: 2px solid var(--md-cr-ice);
+  background-color: var(--md-cr-surface);
+  color: #a3abb7;
+  border-radius: 0 3px 3px 0;
+}
+
+.md-doc[data-md-theme="chrome"] blockquote p {
+  color: inherit;
+}
+
+.md-doc[data-md-theme="chrome"] ul,
+.md-doc[data-md-theme="chrome"] ol {
+  color: var(--md-cr-ink);
+}
+
+.md-doc[data-md-theme="chrome"] li::marker {
+  color: var(--md-cr-muted);
+}
+
+.md-doc[data-md-theme="chrome"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid rgba(143, 211, 255, 0.65);
+  background-color: #141920;
+  accent-color: var(--md-cr-ice);
+}
+
+.md-doc[data-md-theme="chrome"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-cr-ice);
+  border-color: var(--md-cr-ice);
+}
+
+.md-doc[data-md-theme="chrome"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: var(--md-cr-bg);
+}
+
+.md-doc[data-md-theme="chrome"] code {
+  font-family: var(--md-cr-mono);
+  font-size: 0.86em;
+  color: var(--md-cr-ice);
+  background-color: #15202b;
+  border: 1px solid var(--md-cr-ice-soft);
+  border-radius: 3px;
+  padding: 0.13em 0.42em;
+}
+
+.md-doc[data-md-theme="chrome"] pre {
+  font-family: var(--md-cr-mono);
+  font-size: 0.87em;
+  background-color: var(--md-cr-surface);
+  color: #d4dae3;
+  border: 1px solid var(--md-cr-border);
+  border-radius: 4px;
+  padding: 1.05em 1.25em;
+}
+
+.md-doc[data-md-theme="chrome"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="chrome"] table {
+  border-collapse: collapse;
+}
+
+.md-doc[data-md-theme="chrome"] th {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.78em;
+  font-weight: 600;
+  color: var(--md-cr-muted);
+  background-color: transparent;
+  border-bottom: 1px solid var(--md-cr-border-strong);
+  padding-bottom: 0.7em;
+}
+
+.md-doc[data-md-theme="chrome"] td {
+  color: var(--md-cr-ink);
+  border-bottom: 1px solid #1d2229;
+}
+
+.md-doc[data-md-theme="chrome"] hr {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #3d4551 24%,
+    rgba(143, 211, 255, 0.45) 50%,
+    #3d4551 76%,
+    transparent 100%
+  );
+}
+
+.md-doc[data-md-theme="chrome"] img {
+  border-radius: 4px;
+  border: 1px solid var(--md-cr-border);
+}
+
+/* ==========================================================================
+   Theme 4: sprinkles — 스프링클스
+   Light, monospace-leaning document; each heading level carries its own emoji
+   prefix via ::before; links prefixed with 🌈 and shift color on hover;
+   thin rules under h1/h2; dark code blocks and rounded shadowed images.
+   ========================================================================== */
+
+.md-doc[data-md-theme="sprinkles"] {
+  --md-sp-bg: #ffffff;
+  --md-sp-surface: #f7f8fb;
+  --md-sp-ink: #26292e;
+  --md-sp-heading: #181b20;
+  --md-sp-muted: #5c6470;
+  --md-sp-rule: #e1e6ee;
+  --md-sp-link: #6c47ff;
+  --md-sp-link-hover: #e11d74;
+  --md-sp-accent: #7c3aed;
+  --md-sp-code-bg: #232634;
+  --md-sp-code-ink: #e8ecf5;
+  --md-sp-inline-bg: #282a36;
+  --md-sp-inline-ink: #5ef28c;
+  --md-sp-mono: "JetBrains Mono", "D2Coding", "Fira Code", "Cascadia Mono",
+    "SFMono-Regular", Consolas, "Pretendard Variable", "Pretendard",
+    "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: light;
+  background-color: var(--md-sp-bg);
+  color: var(--md-sp-ink);
+  font-family: var(--md-sp-mono);
+  font-size: 14.5px;
+  line-height: 1.8;
+}
+
+.md-doc[data-md-theme="sprinkles"] ::selection {
+  background-color: #e9d8fd;
+  color: var(--md-sp-heading);
+}
+
+.md-doc[data-md-theme="sprinkles"] h1,
+.md-doc[data-md-theme="sprinkles"] h2,
+.md-doc[data-md-theme="sprinkles"] h3,
+.md-doc[data-md-theme="sprinkles"] h4,
+.md-doc[data-md-theme="sprinkles"] h5,
+.md-doc[data-md-theme="sprinkles"] h6 {
+  font-family: var(--md-sp-mono);
+  font-weight: 700;
+  color: var(--md-sp-heading);
+  letter-spacing: -0.015em;
+}
+
+.md-doc[data-md-theme="sprinkles"] h1 {
+  font-size: 1.9em;
+  padding-bottom: 0.34em;
+  border-bottom: 1px solid var(--md-sp-rule);
+}
+
+.md-doc[data-md-theme="sprinkles"] h1::before {
+  content: "🔨 ";
+}
+
+.md-doc[data-md-theme="sprinkles"] h2 {
+  font-size: 1.44em;
+  padding-bottom: 0.28em;
+  border-bottom: 1px solid var(--md-sp-rule);
+}
+
+.md-doc[data-md-theme="sprinkles"] h2::before {
+  content: "✏️ ";
+}
+
+.md-doc[data-md-theme="sprinkles"] h3 {
+  font-size: 1.2em;
+}
+
+.md-doc[data-md-theme="sprinkles"] h3::before {
+  content: "🔪 ";
+}
+
+.md-doc[data-md-theme="sprinkles"] h4 {
+  font-size: 1.05em;
+}
+
+.md-doc[data-md-theme="sprinkles"] h4::before {
+  content: "📌 ";
+}
+
+.md-doc[data-md-theme="sprinkles"] h5 {
+  font-size: 0.96em;
+  color: #363c47;
+}
+
+.md-doc[data-md-theme="sprinkles"] h5::before {
+  content: "📎 ";
+}
+
+.md-doc[data-md-theme="sprinkles"] h6 {
+  font-size: 0.9em;
+  color: var(--md-sp-muted);
+}
+
+.md-doc[data-md-theme="sprinkles"] h6::before {
+  content: "🔖 ";
+}
+
+.md-doc[data-md-theme="sprinkles"] p {
+  color: var(--md-sp-ink);
+}
+
+.md-doc[data-md-theme="sprinkles"] a {
+  color: var(--md-sp-link);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1.5px;
+}
+
+.md-doc[data-md-theme="sprinkles"] a::before {
+  content: "🌈";
+  display: inline-block;
+  margin-right: 0.26em;
+  font-size: 0.92em;
+  text-decoration: none;
+}
+
+.md-doc[data-md-theme="sprinkles"] a:hover {
+  color: var(--md-sp-link-hover);
+  text-decoration-style: solid;
+}
+
+.md-doc[data-md-theme="sprinkles"] strong {
+  color: var(--md-sp-heading);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="sprinkles"] em {
+  color: #3d4350;
+}
+
+.md-doc[data-md-theme="sprinkles"] u {
+  text-decoration-color: var(--md-sp-accent);
+  text-decoration-thickness: 1.5px;
+}
+
+.md-doc[data-md-theme="sprinkles"] del {
+  color: var(--md-sp-muted);
+}
+
+.md-doc[data-md-theme="sprinkles"] blockquote {
+  border-left: 3px solid var(--md-sp-accent);
+  background-color: #f8f6fe;
+  color: #4b5263;
+  border-radius: 0 6px 6px 0;
+}
+
+.md-doc[data-md-theme="sprinkles"] blockquote p {
+  color: inherit;
+}
+
+.md-doc[data-md-theme="sprinkles"] ul,
+.md-doc[data-md-theme="sprinkles"] ol {
+  color: var(--md-sp-ink);
+}
+
+.md-doc[data-md-theme="sprinkles"] li::marker {
+  color: var(--md-sp-accent);
+}
+
+.md-doc[data-md-theme="sprinkles"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-sp-accent);
+  background-color: #ffffff;
+  accent-color: var(--md-sp-accent);
+}
+
+.md-doc[data-md-theme="sprinkles"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-sp-accent);
+  border-color: var(--md-sp-accent);
+}
+
+.md-doc[data-md-theme="sprinkles"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="sprinkles"] code {
+  font-family: var(--md-sp-mono);
+  font-size: 0.88em;
+  background-color: var(--md-sp-inline-bg);
+  color: var(--md-sp-inline-ink);
+  border-radius: 4px;
+  padding: 0.14em 0.46em;
+}
+
+.md-doc[data-md-theme="sprinkles"] pre {
+  position: relative;
+  font-family: var(--md-sp-mono);
+  font-size: 0.9em;
+  background-color: var(--md-sp-code-bg);
+  color: var(--md-sp-code-ink);
+  border-radius: 8px;
+  padding: 2.15em 1.25em 1.05em;
+  box-shadow: 0 6px 18px rgba(35, 38, 52, 0.14);
+}
+
+.md-doc[data-md-theme="sprinkles"] pre::before {
+  content: "";
+  position: absolute;
+  top: 0.78em;
+  left: 1em;
+  width: 0.62em;
+  height: 0.62em;
+  border-radius: 50%;
+  background-color: #ff5f56;
+  box-shadow: 1.05em 0 0 #ffbd2e, 2.1em 0 0 #27c93f;
+}
+
+.md-doc[data-md-theme="sprinkles"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="sprinkles"] table {
+  border: 1px solid var(--md-sp-rule);
+}
+
+.md-doc[data-md-theme="sprinkles"] th,
+.md-doc[data-md-theme="sprinkles"] td {
+  border: 1px solid var(--md-sp-rule);
+}
+
+.md-doc[data-md-theme="sprinkles"] th {
+  background-color: var(--md-sp-surface);
+  color: var(--md-sp-heading);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="sprinkles"] hr {
+  background-color: var(--md-sp-rule);
+}
+
+.md-doc[data-md-theme="sprinkles"] img {
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(30, 35, 50, 0.12);
+}
+
+/* ==========================================================================
+   Print / A4 PDF export rules
+   ========================================================================== */
+
+@page {
+  size: A4 portrait;
+  margin: 16mm 15mm 18mm 15mm;
+}
+
+@media print {
+  .md-doc[data-md-theme],
+  .md-doc[data-md-theme] * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .md-doc[data-md-theme] {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .md-doc[data-md-theme] h1,
+  .md-doc[data-md-theme] h2,
+  .md-doc[data-md-theme] h3,
+  .md-doc[data-md-theme] h4,
+  .md-doc[data-md-theme] h5,
+  .md-doc[data-md-theme] h6 {
+    break-after: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .md-doc[data-md-theme] pre,
+  .md-doc[data-md-theme] blockquote,
+  .md-doc[data-md-theme] tr,
+  .md-doc[data-md-theme] img,
+  .md-doc[data-md-theme] figure {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .md-doc[data-md-theme] thead {
+    display: table-header-group;
+  }
+
+  .md-doc[data-md-theme] tfoot {
+    display: table-footer-group;
+  }
+
+  .md-doc[data-md-theme] p,
+  .md-doc[data-md-theme] li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .md-doc[data-md-theme] pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow: visible;
+  }
+
+  .md-doc[data-md-theme] a {
+    transition: none;
+  }
+
+  /* Per-theme print surface & color preservation */
+
+  html:has(.md-doc[data-md-theme="ivory"]),
+  body:has(.md-doc[data-md-theme="ivory"]) {
+    background-color: #efeae5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .md-doc[data-md-theme="ivory"] {
+    background-color: #efeae5;
+    color: #2c2926;
+    font-size: 10.5pt;
+    line-height: 1.75;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="github-dark"]),
+  body:has(.md-doc[data-md-theme="github-dark"]) {
+    background-color: #1e1e1e;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .md-doc[data-md-theme="github-dark"] {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    font-size: 10pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="chrome"]),
+  body:has(.md-doc[data-md-theme="chrome"]) {
+    background-color: #0f1113;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .md-doc[data-md-theme="chrome"] {
+    background-color: #0f1113;
+    color: #c5cad2;
+    font-size: 10pt;
+    line-height: 1.72;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="sprinkles"]),
+  body:has(.md-doc[data-md-theme="sprinkles"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .md-doc[data-md-theme="sprinkles"] {
+    background-color: #ffffff;
+    color: #26292e;
+    font-size: 9.5pt;
+    line-height: 1.72;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .md-doc[data-md-theme="sprinkles"] pre {
+    box-shadow: none;
+  }
+
+  .md-doc[data-md-theme="sprinkles"] img {
+    box-shadow: none;
+    border: 1px solid #e1e6ee;
+  }
+}
