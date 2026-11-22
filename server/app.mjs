@@ -11,6 +11,7 @@ import { expenseRoutes } from './expense-routes.mjs';
 import { paperRoutes } from './paper-routes.mjs';
 import { appearanceRoutes } from './appearance-routes.mjs';
 import {travelRoutes} from './travel-routes.mjs';
+import {markdownRoutes} from './markdown-routes.mjs';
 import {travelPage} from '../views/travel.mjs';
 import {galleryPage} from '../views/gallery.mjs';
 import {IDLE_MS,SESSION_COOKIE_AGE,sealIdle,readIdle} from './idle-session.mjs';
@@ -153,12 +154,14 @@ export function createHandler({localPreview = false, rootDir = root, environment
   const handlePaper=paperRoutes({authorize,authFetch,bearer,send,body,rootDir,environment,fetcher});
   const handleAppearance=appearanceRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
   const handleTravel=travelRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
+  const handleMarkdown=markdownRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
   return async function handler(req,res) {
     try {
       const requestUrl = new URL(req.url,'http://local.invalid');
       const pathname = requestUrl.pathname;
-      if (!['GET','HEAD','POST','PUT'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
-      if (['POST','PUT'].includes(req.method) && !sameOrigin(req,environment)) return send(res,403,{error:'다른 출처의 요청은 허용되지 않습니다.'});
+      const markdownApi=pathname==='/api/markdown'||pathname.startsWith('/api/markdown/');
+      if (!['GET','HEAD','POST','PUT'].includes(req.method) && !(markdownApi&&['PATCH','DELETE'].includes(req.method))) return send(res,405,{error:'허용되지 않은 요청입니다.'});
+      if (['POST','PUT','PATCH','DELETE'].includes(req.method) && !sameOrigin(req,environment)) return send(res,403,{error:'다른 출처의 요청은 허용되지 않습니다.'});
       if(pathname==='/api/auth/idle-logout'&&req.method==='POST'){
         const cookies=cookiesOf(req),idle=readIdle(cookies.kh_idle,cookies.kh_refresh||cookies.kh_access,clock());
         if(idle&&clock()<idle.expiresAt)return send(res,409,{lastActive:idle.lastActive,expiresAt:idle.expiresAt,serverNow:clock()});
@@ -174,6 +177,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
         return send(res,200,{lastActive:res.siteSession.lastActive,expiresAt:res.siteSession.expiresAt,serverNow:clock()});
       }
       if(await handleTravel(req,res,requestUrl))return;
+      if(await handleMarkdown(req,res,requestUrl))return;
       if(await handleDemos(req,res,requestUrl))return;
       if(await handleExpenses(req,res,requestUrl))return;
       if(await handleAppearance(req,res,requestUrl))return;

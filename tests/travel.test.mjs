@@ -138,7 +138,7 @@ test('Personal retains three requested spaces and travel navigation returns to P
  assert.deepEqual([...d.querySelectorAll('.personal-tools h2')].map(n=>n.textContent),['여행의 흔적','갤러리','마크다운 에디터']);
  assert.equal(d.querySelector('a.space-card[href="/personal/markdown"] img').getAttribute('src'),'/mascot/markdown-editor.webp');
  const m=new JSDOM(markdownPage(null)).window.document;
- assert.equal(m.querySelector('h1').textContent,'마크다운 에디터');assert.match(m.querySelector('.space-construction').textContent,/공사 중/);
+ assert.equal(m.querySelector('h1').textContent,'마크다운 에디터');assert.ok(m.querySelector('.md-gate a[href="/login?next=%2Fpersonal%2Fmarkdown"]'));assert.doesNotMatch(m.body.textContent,/공사 중/);
  const t=new JSDOM(travelPage({role:'editor'})).window.document;
  assert.equal(t.querySelector('.hub-header-actions a[href="/personal"]').getAttribute('aria-label'),'Personal 홈');
 });

@@ -1,5 +1,6 @@
 import {spaceNavigation} from './navigation.mjs';
 import {workSidebar, workTopbar, WORK_SHELL_ASSETS, WORK_SECTIONS} from './work-shell.mjs';
+import {markdownHead, markdownEditorMain, markdownTail, markdownGate} from './markdown-editor.mjs';
 const uiIcon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="18" height="18" alt="" aria-hidden="true">`;
 const themeButton = () => `<a class="theme-toggle theme-toggle--icon space-nav-button" href="/settings" data-global-settings aria-label="설정" title="설정">${uiIcon('settings')}</a>`;
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
@@ -140,7 +141,7 @@ export function personalPage(access) {
   const cards = [
     {kicker:'기록', title:'여행의 흔적', image:'travel-globe.webp', description:'다녀온 곳의 사진과 이야기를<br>지구본 위에 남깁니다.', meta:'지구본 · 여행 기록', href:'/personal/travel', action:'여행 기록 보기'},
     {kicker:'컬렉션', title:'갤러리', image:'gallery.png', description:'마스코트의 다양한 모습을<br>둘러보고 내려받습니다.', meta:'모아보기 · 8방향 · 걷는 모습', href:'/personal/gallery', action:'갤러리 보기'},
-    {kicker:'글쓰기', title:'마크다운 에디터', image:'markdown-editor.webp', description:'마크다운으로 글을 쓰고<br>모양을 바로 확인합니다.', meta:'<span class="pending-label">공사 중</span>', href:'/personal/markdown', action:'마크다운 에디터 열기'},
+    {kicker:'글쓰기', title:'마크다운 에디터', image:'markdown-editor.webp', description:'마크다운으로 글을 쓰고<br>모양을 바로 확인합니다.', meta:'폴더 · 나란히 보기 · PDF 내보내기', href:'/personal/markdown', action:'마크다운 에디터 열기'},
   ];
   return shell('Personal', spaceHub({
     header, eyebrow: '여행과 일상을 위한 공간', title: 'Personal',
@@ -149,10 +150,14 @@ export function personalPage(access) {
   }), 'personal');
 }
 
-// 마크다운 에디터: 아직 만드는 중입니다. 어떻게 만들지 정해지면 이 화면을 채웁니다.
+// 마크다운 에디터: 폴더와 문서 목록, 편집기와 미리보기, PDF 내보내기.
+// 로그인하지 않은 방문자에게는 로그인 안내만 보여 줍니다.
 export function markdownPage(access) {
-  const header = access ? privateHeader('/personal') : publicHeader('personal').replace('</div></header>', '<a class="btn" href="/login?next=%2Fpersonal%2Fmarkdown">로그인</a></div></header>');
-  return shell('마크다운 에디터', `${SPACE_HUB_CSS}<div class="hub-shell space-shell">${header}<main id="main" class="space-main"><section class="space-construction" aria-labelledby="space-construction-title"><img src="/mascot/personal-coming-one.webp" alt="안전모를 쓰고 블록을 나르는 공사 중 마스코트" width="240" height="240"><p class="space-eyebrow">Personal / 글쓰기</p><h1 id="space-construction-title">마크다운 에디터</h1><p>지금 공사 중입니다.<br>어떻게 만들지 정해지면 이곳에 열립니다.</p><a class="btn" href="/personal">← Personal로 돌아가기</a></section></main>${footer()}</div>`, 'personal');
+  if (!access) {
+    const header = publicHeader('personal').replace('</div></header>', '<a class="btn" href="/login?next=%2Fpersonal%2Fmarkdown">로그인</a></div></header>');
+    return shell('마크다운 에디터', `${markdownHead()}<div class="hub-shell md-shell md-shell--gate">${header}${markdownGate()}${footer()}</div>`, 'personal');
+  }
+  return shell('마크다운 에디터', `${markdownHead()}<div class="hub-shell md-shell">${privateHeader('/personal')}${markdownEditorMain(access)}${footer()}</div>${markdownTail(access)}`, 'personal');
 }
 
 export function demosPage({authenticated = true} = {}) {
