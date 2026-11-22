@@ -110,18 +110,24 @@ function spaceHub({header, eyebrow, title, description, hero, heroAlt, note = ''
   return `${SPACE_HUB_CSS}<div class="hub-shell space-shell">${header}<main id="main" class="space-main"><section class="space-hero"><div><p class="space-eyebrow">${eyebrow}</p><h1>${title}</h1><p class="space-lede">${description}</p>${note}</div><img src="/mascot/${hero}" alt="${heroAlt}" width="220" height="220"></section><nav class="space-cards${extraClass ? ' ' + extraClass : ''}" aria-label="${label}">${cards.map(card).join('')}</nav></main>${footer()}</div>`;
 }
 
+// Connection line shown above a space's tools. Logged-out visitors (access is null) see nothing.
+export function spaceStatus(access) {
+  if (!access) return '';
+  const text = access.mode === 'local' ? '로컬 개발 미리보기 · localhost 전용' : access.role === 'reader' ? '연결됨 · 읽기 전용' : '연결됨 · 편집 가능';
+  return `<p class="space-status"><span aria-hidden="true"></span>${text}</p>`;
+}
+
 const subMenu = key => (WORK_SECTIONS.find(section => section.key === key)?.items || []).map(item => item[1]).join(' · ');
 
-export function workPage({mode, role}) {
-  const local = mode === 'local';
+export function workPage(access) {
+  const local = access.mode === 'local';
   const cards = [
     {kicker:'연구 관리', title:'연구일지', image:'journal.webp', description:'연구 로드맵과 L3 연구축을 세우고<br>연구 노트를 함께 남깁니다.', meta:subMenu('research'), href:'/work/app/index.html', action:'연구일지 열기'},
     {kicker:'팀 운영', title:'팀 리소스', image:'team-resources.png', description:'주간 기록으로 팀원별 과업 배분과<br>월별 변화를 봅니다.', meta:subMenu('team'), href:'/work/team-resources', action:'과업 배분 보기'},
     {kicker:'시연', title:'데모', image:'demo.webp', description:'연구 결과를 바로 보여 줄 수 있는<br>데모를 새 창에서 엽니다.', meta:subMenu('demos'), href:'/work/demos', action:'데모 선택하기'},
     {kicker:'예산', title:'품의 사용내역', image:'expenses.webp', description:'월별 카드 내역과 품의별 예산을<br>한눈에 확인합니다.', meta:subMenu('expenses'), href:'/work/expenses/', action:'품의 분석 열기'},
   ];
-  const status = local ? '로컬 개발 미리보기 · localhost 전용' : role === 'reader' ? '연결됨 · 읽기 전용' : '연결됨 · 편집 가능';
-  const note = `<p class="space-status"><span aria-hidden="true"></span>${status}</p>${local ? '<p class="space-notice">개발 미리보기입니다. 연구일지 변경은 이 프로젝트 사본에 저장되며 Supabase와 동기화되지 않습니다.</p>' : ''}`;
+  const note = `${spaceStatus(access)}${local ? '<p class="space-notice">개발 미리보기입니다. 연구일지 변경은 이 프로젝트 사본에 저장되며 Supabase와 동기화되지 않습니다.</p>' : ''}`;
   return shell('Selectstar', spaceHub({
     header: privateHeader('/work'), eyebrow: 'AI 1팀 · Vertical 업무 공간', title: 'Selectstar',
     description: '연구와 팀 업무에 쓰는 도구를<br>한곳에서 엽니다.', hero: 'selectstar-idle.webp', heroAlt: 'Selectstar 로고를 든 마스코트',
@@ -139,7 +145,7 @@ export function personalPage(access) {
   return shell('Personal', spaceHub({
     header, eyebrow: '여행과 일상을 위한 공간', title: 'Personal',
     description: '여행과 일상의 기록을<br>모아두는 공간입니다.', hero: 'personal-idle.webp', heroAlt: '소파에 앉아 쉬는 마스코트',
-    label: 'Personal 도구', cards, extraClass: 'personal-tools',
+    note: spaceStatus(access), label: 'Personal 도구', cards, extraClass: 'personal-tools',
   }), 'personal');
 }
 

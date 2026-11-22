@@ -40,3 +40,25 @@ test('Resume does not receive the shared navigation code or stylesheet',async()=
  const html=await source('public/resume/index.html');assert.equal(html.includes('space-navigation'),false);
  const login=new JSDOM(loginPage({configured:false,next:'/'})).window.document;const nav=login.querySelector('[data-space-navigation]');assert.ok(nav);assert.equal(nav.querySelectorAll('a').length,1);
 });
+const statusText=html=>{const d=new JSDOM(html).window.document;return [...d.querySelectorAll('.space-status')].map(n=>n.textContent.trim());};
+const paperLanding=async access=>{
+ const w=new JSDOM(paperPage(access),{url:'https://fixture.invalid/paper',runScripts:'outside-only'}).window;
+ w.PAPER_PREVIEW={projects:[],settings:{provider:'openai',models:{openai:'x'},keys:{openai:{configured:false}}},defaults:{}};
+ w.scrollTo=()=>{};w.eval(await source('public/paper.js'));await new Promise(r=>setTimeout(r,25));
+ const d=w.document,out={status:[...d.querySelectorAll('#paper-app .space-status')].map(n=>n.textContent.trim()),text:d.getElementById('paper-app').textContent,inHero:!!d.querySelector('.paper-welcome > div > .space-status')};w.close();return out;
+};
+test('Personal and Paper hubs show the same connection status as Selectstar',async()=>{
+ const cases=[[{mode:'supabase',role:'editor'},'연결됨 · 편집 가능'],[{mode:'supabase',role:'reader'},'연결됨 · 읽기 전용'],[{mode:'local',role:'editor'},'로컬 개발 미리보기 · localhost 전용']];
+ for(const [access,text] of cases){
+  assert.deepEqual(statusText(workPage(access)),[text]);
+  assert.deepEqual(statusText(personalPage(access)),[text]);
+  const paper=await paperLanding(access);assert.deepEqual(paper.status,[text]);assert.ok(paper.inHero);
+ }
+ assert.deepEqual(statusText(personalPage(null)),[]);assert.deepEqual(statusText(personalPage()),[]);
+ assert.deepEqual((await paperLanding(null)).status,[]);
+});
+test('Paper choice screen no longer shows the navigation hint',async()=>{
+ const paper=await paperLanding({mode:'supabase',role:'editor'});
+ assert.ok(paper.text.includes('논문 리뷰 준비'));assert.equal(paper.text.includes('작업을 선택하면 해당 화면으로 이동합니다.'),false);
+ assert.equal((await source('public/paper.js')).includes('작업을 선택하면'),false);
+});

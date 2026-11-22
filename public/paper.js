@@ -35,12 +35,12 @@
 
   function renderLanding(){
     view='landing';workspace=null;current=null;query='';filter='all';
-    app.innerHTML='<section class="paper-welcome"><div><p class="paper-eyebrow">논문을 위한 작업 공간</p><h1>Paper</h1><p>리뷰탈, 논문 리뷰, 학회 마감을<br>나누어 관리합니다.</p></div><img src="/mascot/paper.png" alt="논문과 펜을 든 마스코트" width="210" height="210"></section>'+
+    app.innerHTML='<section class="paper-welcome"><div><p class="paper-eyebrow">논문을 위한 작업 공간</p><h1>Paper</h1><p>리뷰탈, 논문 리뷰, 학회 마감을<br>나누어 관리합니다.</p>'+(document.getElementById('paper-space-status')?.innerHTML||'')+'</div><img src="/mascot/paper.png" alt="논문과 펜을 든 마스코트" width="210" height="210"></section>'+
       (preview?'<p class="paper-preview-note">가상 논문으로 구성한 미리보기입니다. 편집 내용은 이 화면에서만 유지됩니다.</p>':'')+
       '<nav class="paper-choices" aria-label="논문 작업 선택">'+['rebuttal','review'].map(type=>{
         const count=data.projects.filter(x=>x.data.type===type&&x.data.status==='active').length;
         return '<button type="button" class="paper-choice" data-action="choose-'+type+'"><img src="/mascot/'+(type==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"><span class="paper-choice-role">'+(type==='rebuttal'?'저자로서':'리뷰어로서')+'</span><span class="paper-choice-title">'+workspaceName(type)+'<span aria-hidden="true">→</span></span><span class="paper-choice-description">'+(type==='rebuttal'?'리뷰어별 쟁점을 정리하고<br>근거를 담은 답변을 준비합니다.':'네 항목에 평가 메모를 적고<br>영문 리뷰를 작성합니다.')+'</span><span class="paper-choice-count">진행 중인 논문 '+count+'편</span></button>';
-      }).join('')+'<button type="button" class="paper-choice paper-choice-soon" data-action="choose-deadlines"><img src="/mascot/personal-coming-one.webp" alt="" width="168" height="168"><span class="paper-choice-role">투고 일정</span><span class="paper-choice-title">AI 컨퍼런스 데드라인<span aria-hidden="true">→</span></span><span class="paper-choice-description">AI 학회 마감일을<br>한곳에 모아 봅니다.</span><span class="paper-choice-count">준비 중</span></button></nav><div class="paper-help"><p>작업을 선택하면 해당 화면으로 이동합니다.</p>'+'</div>';
+      }).join('')+'<button type="button" class="paper-choice paper-choice-soon" data-action="choose-deadlines"><img src="/mascot/personal-coming-one.webp" alt="" width="168" height="168"><span class="paper-choice-role">투고 일정</span><span class="paper-choice-title">AI 컨퍼런스 데드라인<span aria-hidden="true">→</span></span><span class="paper-choice-description">AI 학회 마감일을<br>한곳에 모아 봅니다.</span><span class="paper-choice-count">준비 중</span></button></nav>';
     app.setAttribute('aria-busy','false');
   }
   function renderList(){
