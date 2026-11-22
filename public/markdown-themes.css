@@ -3,9 +3,31 @@
  * Scoped under .md-doc[data-md-theme="<key>"]
  *
  * ivory — 아이보리: 따뜻한 미색 바탕에 세리프 본문
+ * github-light — 깃허브 라이트: 밝은 흰 바탕에 익숙한 깃허브 문서 서식
  * github-dark — 깃허브 다크: 어두운 무채색 바탕에 정돈된 표와 코드 블록
  * chrome — 크롬: 흑연 바탕에 은빛 제목과 하늘색 포인트
  * sprinkles — 스프링클스: 밝은 고정폭 글꼴에 제목 이모지와 컬러 링크
+ * print — 프린트: 인쇄에 맞춘 촘촘한 흑백 문서 서식
+ * gothic — 고딕: 가운데 정렬 제목과 검붉은 링크의 기하학 산세리프
+ * newsprint — 뉴스프린트: 신문지 톤 미색 바탕에 고전 세리프 본문
+ * night — 나이트: 차분한 슬레이트 회색 바탕의 야간 문서 테마
+ * pixyll — 픽실: 시원한 세리프 본문과 굵은 산세리프 제목
+ * whitey — 화이티 라이트: 여백이 넉넉한 흰 바탕에 가운데 정렬 세리프 제목
+ * whitey-dark — 화이티 다크: 깊은 남색 바탕에 가운데 정렬 세리프 제목
+ * monospace-light — 모노스페이스 라이트: 마크다운 기호를 살린 밝은 고정폭 코딩 서식
+ * monospace-dark — 모노스페이스 다크: 마크다운 기호를 살린 어두운 고정폭 코딩 서식
+ * ursine-polar — 어사인 폴라: 밝은 바탕에 빨간 포인트와 세리프 제목
+ * ursine-umbra — 어사인 엄브라: 어두운 흑연 바탕에 하늘색 포인트와 세리프 제목
+ * xylight — 자이라이트: 고정폭 본문과 산세리프 제목의 간결한 밝은 문서
+ * xydark — 자이다크: 깊은 남색 바탕에 차분한 회청색 고정폭 문서
+ * vue-light — 뷰 라이트: 깔끔한 흰 바탕에 에메랄드 초록 포인트의 기술 문서
+ * vue-dark — 뷰 다크: 어두운 차콜 바탕에 에메랄드 초록 포인트의 기술 문서
+ * lapis-light — 라피스 라이트: 청금석 블루 배지 제목과 세리프 조판의 밝은 문서
+ * lapis-dark — 라피스 다크: 어두운 슬레이트 바탕에 청회색 배지 제목의 문서
+ * everforest-light — 에버포레스트 라이트: 따뜻한 양피지 바탕에 부드러운 이끼 초록 팔레트
+ * everforest-dark — 에버포레스트 다크: 어두운 숲빛 슬레이트 바탕에 편안한 올리브 팔레트
+ * notion-light — 노션 라이트: 단정한 흰 바탕에 산호색 인라인 코드의 노트 서식
+ * notion-dark — 노션 다크: 부드러운 짙은 회색 바탕에 산호색 코드의 노트 서식
  */
 
 /* ==========================================================================
@@ -216,6 +238,7 @@
 
 /* ==========================================================================
    Theme 1: ivory — 아이보리
+   Inspired by Ivory Flow (https://github.com/case-j/typora-theme-ivory-flow, MIT License).
    Warm off-white editorial page, serif body, bold sans headings,
    dark rule under h1, quiet grey blockquote with slate bar, crisp code chips.
    ========================================================================== */
@@ -277,56 +300,26 @@
   border-bottom: 1px solid var(--md-ivory-border);
 }
 
-.md-doc[data-md-theme="ivory"] h3 {
-  font-size: 1.22em;
-}
+.md-doc[data-md-theme="ivory"] h3 { font-size: 1.22em; }
+.md-doc[data-md-theme="ivory"] h4 { font-size: 1.05em; }
+.md-doc[data-md-theme="ivory"] h5 { font-size: 0.94em; color: #3f3b37; }
+.md-doc[data-md-theme="ivory"] h6 { font-size: 0.88em; color: var(--md-ivory-muted); }
 
-.md-doc[data-md-theme="ivory"] h4 {
-  font-size: 1.05em;
-}
-
-.md-doc[data-md-theme="ivory"] h5 {
-  font-size: 0.94em;
-  color: #3f3b37;
-}
-
-.md-doc[data-md-theme="ivory"] h6 {
-  font-size: 0.88em;
-  color: var(--md-ivory-muted);
-}
-
-.md-doc[data-md-theme="ivory"] p {
-  color: var(--md-ivory-ink);
-}
-
+.md-doc[data-md-theme="ivory"] p { color: var(--md-ivory-ink); }
 .md-doc[data-md-theme="ivory"] a {
   color: var(--md-ivory-link);
   text-decoration: underline;
   text-decoration-color: rgba(54, 82, 109, 0.38);
   text-underline-offset: 0.2em;
 }
-
 .md-doc[data-md-theme="ivory"] a:hover {
   color: var(--md-ivory-link-hover);
   text-decoration-color: var(--md-ivory-link-hover);
 }
-
-.md-doc[data-md-theme="ivory"] strong {
-  color: var(--md-ivory-heading);
-  font-weight: 700;
-}
-
-.md-doc[data-md-theme="ivory"] em {
-  color: #3a3531;
-}
-
-.md-doc[data-md-theme="ivory"] u {
-  text-decoration-color: var(--md-ivory-slate);
-}
-
-.md-doc[data-md-theme="ivory"] del {
-  color: var(--md-ivory-muted);
-}
+.md-doc[data-md-theme="ivory"] strong { color: var(--md-ivory-heading); font-weight: 700; }
+.md-doc[data-md-theme="ivory"] em { color: #3a3531; }
+.md-doc[data-md-theme="ivory"] u { text-decoration-color: var(--md-ivory-slate); }
+.md-doc[data-md-theme="ivory"] del { color: var(--md-ivory-muted); }
 
 .md-doc[data-md-theme="ivory"] blockquote {
   border-left: 3px solid var(--md-ivory-slate);
@@ -334,30 +327,20 @@
   color: var(--md-ivory-muted);
   border-radius: 0 4px 4px 0;
 }
-
-.md-doc[data-md-theme="ivory"] blockquote p {
-  color: inherit;
-}
-
+.md-doc[data-md-theme="ivory"] blockquote p { color: inherit; }
 .md-doc[data-md-theme="ivory"] ul,
-.md-doc[data-md-theme="ivory"] ol {
-  color: var(--md-ivory-ink);
-}
-
-.md-doc[data-md-theme="ivory"] li::marker {
-  color: var(--md-ivory-slate);
-}
+.md-doc[data-md-theme="ivory"] ol { color: var(--md-ivory-ink); }
+.md-doc[data-md-theme="ivory"] li { color: inherit; }
+.md-doc[data-md-theme="ivory"] li::marker { color: var(--md-ivory-slate); }
 
 .md-doc[data-md-theme="ivory"] li.task-list-item input[type="checkbox"] {
   border: 1.5px solid var(--md-ivory-slate);
   background-color: #f6f2ee;
 }
-
 .md-doc[data-md-theme="ivory"] li.task-list-item input[type="checkbox"]:checked {
   background-color: var(--md-ivory-slate);
   border-color: var(--md-ivory-slate);
 }
-
 .md-doc[data-md-theme="ivory"] li.task-list-item input[type="checkbox"]:checked::after {
   border-color: #f7f4f0;
 }
@@ -371,7 +354,6 @@
   border-radius: 4px;
   padding: 0.12em 0.42em;
 }
-
 .md-doc[data-md-theme="ivory"] pre {
   font-family: var(--md-ivory-mono);
   font-size: 0.87em;
@@ -381,7 +363,6 @@
   border-radius: 6px;
   padding: 1em 1.2em;
 }
-
 .md-doc[data-md-theme="ivory"] pre > code {
   background-color: transparent;
   color: inherit;
@@ -394,7 +375,6 @@
   border-top: 1.5px solid #2c2926;
   border-bottom: 1.5px solid #2c2926;
 }
-
 .md-doc[data-md-theme="ivory"] th {
   font-family: var(--md-ivory-sans);
   font-weight: 700;
@@ -402,27 +382,172 @@
   background-color: var(--md-ivory-surface);
   border-bottom: 1px solid #bdb2a6;
 }
-
 .md-doc[data-md-theme="ivory"] td {
   border-bottom: 1px solid var(--md-ivory-border);
   color: var(--md-ivory-ink);
 }
-
-.md-doc[data-md-theme="ivory"] tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.md-doc[data-md-theme="ivory"] hr {
-  background-color: var(--md-ivory-border);
-}
-
+.md-doc[data-md-theme="ivory"] tbody tr:last-child td { border-bottom: 0; }
+.md-doc[data-md-theme="ivory"] hr { background-color: var(--md-ivory-border); }
 .md-doc[data-md-theme="ivory"] img {
   border-radius: 4px;
   border: 1px solid var(--md-ivory-border);
 }
 
 /* ==========================================================================
-   Theme 2: github-dark — 깃허브 다크
+   Theme 2: github-light — 깃허브 라이트
+   Original CSS inspired by Typora's GitHub theme
+   (https://github.com/typora/typora-default-themes, no repository license).
+   Clean white document, crisp Open Sans / system sans typography, #4183c4
+   links, subtle grey rules under h1/h2, bordered zebra tables, light fences.
+   ========================================================================== */
+
+.md-doc[data-md-theme="github-light"] {
+  --md-ghl-bg: #ffffff;
+  --md-ghl-surface: #f8f8f8;
+  --md-ghl-chip: #f3f4f4;
+  --md-ghl-ink: #333333;
+  --md-ghl-heading: #1f2328;
+  --md-ghl-muted: #777777;
+  --md-ghl-border: #dfe2e5;
+  --md-ghl-rule: #eeeeee;
+  --md-ghl-link: #4183c4;
+  --md-ghl-link-hover: #245f9b;
+  --md-ghl-sans: "Open Sans", "Pretendard Variable", "Pretendard", "Noto Sans KR",
+    "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --md-ghl-mono: "SFMono-Regular", Consolas, "D2Coding", "Liberation Mono", Menlo,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-ghl-bg);
+  color: var(--md-ghl-ink);
+  font-family: var(--md-ghl-sans);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.md-doc[data-md-theme="github-light"] ::selection {
+  background-color: #d6e9ff;
+  color: var(--md-ghl-heading);
+}
+
+.md-doc[data-md-theme="github-light"] h1,
+.md-doc[data-md-theme="github-light"] h2,
+.md-doc[data-md-theme="github-light"] h3,
+.md-doc[data-md-theme="github-light"] h4,
+.md-doc[data-md-theme="github-light"] h5,
+.md-doc[data-md-theme="github-light"] h6 {
+  font-family: var(--md-ghl-sans);
+  font-weight: 700;
+  color: var(--md-ghl-heading);
+}
+
+.md-doc[data-md-theme="github-light"] h1 {
+  font-size: 2.15em;
+  padding-bottom: 0.28em;
+  border-bottom: 1px solid var(--md-ghl-rule);
+}
+.md-doc[data-md-theme="github-light"] h2 {
+  font-size: 1.65em;
+  padding-bottom: 0.24em;
+  border-bottom: 1px solid var(--md-ghl-rule);
+}
+.md-doc[data-md-theme="github-light"] h3 { font-size: 1.38em; }
+.md-doc[data-md-theme="github-light"] h4 { font-size: 1.15em; }
+.md-doc[data-md-theme="github-light"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="github-light"] h6 { font-size: 0.96em; color: var(--md-ghl-muted); }
+
+.md-doc[data-md-theme="github-light"] p { color: var(--md-ghl-ink); }
+.md-doc[data-md-theme="github-light"] a {
+  color: var(--md-ghl-link);
+  text-decoration: none;
+}
+.md-doc[data-md-theme="github-light"] a:hover {
+  color: var(--md-ghl-link-hover);
+  text-decoration: underline;
+}
+.md-doc[data-md-theme="github-light"] strong { color: var(--md-ghl-heading); }
+.md-doc[data-md-theme="github-light"] em { color: inherit; }
+.md-doc[data-md-theme="github-light"] u { text-decoration-color: var(--md-ghl-link); }
+.md-doc[data-md-theme="github-light"] del { color: var(--md-ghl-muted); }
+
+.md-doc[data-md-theme="github-light"] blockquote {
+  border-left: 4px solid var(--md-ghl-border);
+  background-color: transparent;
+  color: var(--md-ghl-muted);
+  padding: 0.35em 1em;
+}
+.md-doc[data-md-theme="github-light"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="github-light"] ul,
+.md-doc[data-md-theme="github-light"] ol { color: var(--md-ghl-ink); }
+.md-doc[data-md-theme="github-light"] li { color: inherit; }
+.md-doc[data-md-theme="github-light"] li::marker { color: var(--md-ghl-muted); }
+
+.md-doc[data-md-theme="github-light"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid #b8bec5;
+  background-color: #ffffff;
+}
+.md-doc[data-md-theme="github-light"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-ghl-link);
+  border-color: var(--md-ghl-link);
+}
+.md-doc[data-md-theme="github-light"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="github-light"] code {
+  font-family: var(--md-ghl-mono);
+  font-size: 0.88em;
+  background-color: var(--md-ghl-chip);
+  color: #24292f;
+  border: 1px solid #e7eaed;
+  border-radius: 3px;
+  padding: 0.1em 0.36em;
+}
+.md-doc[data-md-theme="github-light"] pre {
+  font-family: var(--md-ghl-mono);
+  font-size: 0.88em;
+  background-color: var(--md-ghl-surface);
+  color: #24292f;
+  border: 1px solid #e7eaed;
+  border-radius: 4px;
+  padding: 0.9em 1.15em;
+}
+.md-doc[data-md-theme="github-light"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="github-light"] table {
+  border: 1px solid var(--md-ghl-border);
+}
+.md-doc[data-md-theme="github-light"] th,
+.md-doc[data-md-theme="github-light"] td {
+  border: 1px solid var(--md-ghl-border);
+}
+.md-doc[data-md-theme="github-light"] th {
+  background-color: var(--md-ghl-surface);
+  color: var(--md-ghl-heading);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="github-light"] tbody tr:nth-child(even) {
+  background-color: var(--md-ghl-surface);
+}
+.md-doc[data-md-theme="github-light"] hr {
+  height: 2px;
+  background-color: #e7e7e7;
+}
+.md-doc[data-md-theme="github-light"] img {
+  border-radius: 4px;
+  border: 1px solid #e7eaed;
+}
+
+/* ==========================================================================
+   Theme 3: github-dark — 깃허브 다크
+   Original CSS inspired by D42ker GitHub
+   (https://l3ony2k.github.io/Typora-D42ker-Github-theme/, no repository license).
    Neutral desaturated dark GitHub aesthetic (#1e1e1e), crisp light grey text,
    full bordered tables with distinct header row, bordered code blocks with
    IDE line-number gutter feel.
@@ -476,62 +601,30 @@
   padding-bottom: 0.3em;
   border-bottom: 1px solid var(--md-gh-border);
 }
-
 .md-doc[data-md-theme="github-dark"] h2 {
   font-size: 1.48em;
   padding-bottom: 0.26em;
   border-bottom: 1px solid var(--md-gh-border);
 }
+.md-doc[data-md-theme="github-dark"] h3 { font-size: 1.24em; }
+.md-doc[data-md-theme="github-dark"] h4 { font-size: 1.06em; }
+.md-doc[data-md-theme="github-dark"] h5 { font-size: 0.94em; color: #c2c2c2; }
+.md-doc[data-md-theme="github-dark"] h6 { font-size: 0.88em; color: var(--md-gh-muted); }
 
-.md-doc[data-md-theme="github-dark"] h3 {
-  font-size: 1.24em;
-}
-
-.md-doc[data-md-theme="github-dark"] h4 {
-  font-size: 1.06em;
-}
-
-.md-doc[data-md-theme="github-dark"] h5 {
-  font-size: 0.94em;
-  color: #c2c2c2;
-}
-
-.md-doc[data-md-theme="github-dark"] h6 {
-  font-size: 0.88em;
-  color: var(--md-gh-muted);
-}
-
-.md-doc[data-md-theme="github-dark"] p {
-  color: var(--md-gh-ink);
-}
-
+.md-doc[data-md-theme="github-dark"] p { color: var(--md-gh-ink); }
 .md-doc[data-md-theme="github-dark"] a {
   color: var(--md-gh-accent);
   text-decoration: none;
   border-bottom: 1px solid rgba(234, 124, 133, 0.38);
 }
-
 .md-doc[data-md-theme="github-dark"] a:hover {
   color: var(--md-gh-accent-hover);
   border-bottom-color: var(--md-gh-accent-hover);
 }
-
-.md-doc[data-md-theme="github-dark"] strong {
-  color: var(--md-gh-heading);
-  font-weight: 700;
-}
-
-.md-doc[data-md-theme="github-dark"] em {
-  color: #e0e0e0;
-}
-
-.md-doc[data-md-theme="github-dark"] u {
-  text-decoration-color: var(--md-gh-accent);
-}
-
-.md-doc[data-md-theme="github-dark"] del {
-  color: var(--md-gh-muted);
-}
+.md-doc[data-md-theme="github-dark"] strong { color: var(--md-gh-heading); font-weight: 700; }
+.md-doc[data-md-theme="github-dark"] em { color: #e0e0e0; }
+.md-doc[data-md-theme="github-dark"] u { text-decoration-color: var(--md-gh-accent); }
+.md-doc[data-md-theme="github-dark"] del { color: var(--md-gh-muted); }
 
 .md-doc[data-md-theme="github-dark"] blockquote {
   border-left: 3px solid #575757;
@@ -539,30 +632,20 @@
   color: #a9a9a9;
   border-radius: 0 5px 5px 0;
 }
-
-.md-doc[data-md-theme="github-dark"] blockquote p {
-  color: inherit;
-}
-
+.md-doc[data-md-theme="github-dark"] blockquote p { color: inherit; }
 .md-doc[data-md-theme="github-dark"] ul,
-.md-doc[data-md-theme="github-dark"] ol {
-  color: var(--md-gh-ink);
-}
-
-.md-doc[data-md-theme="github-dark"] li::marker {
-  color: #7c7c7c;
-}
+.md-doc[data-md-theme="github-dark"] ol { color: var(--md-gh-ink); }
+.md-doc[data-md-theme="github-dark"] li { color: inherit; }
+.md-doc[data-md-theme="github-dark"] li::marker { color: #7c7c7c; }
 
 .md-doc[data-md-theme="github-dark"] li.task-list-item input[type="checkbox"] {
   border: 1.5px solid #666666;
   background-color: #252526;
 }
-
 .md-doc[data-md-theme="github-dark"] li.task-list-item input[type="checkbox"]:checked {
   background-color: var(--md-gh-accent);
   border-color: var(--md-gh-accent);
 }
-
 .md-doc[data-md-theme="github-dark"] li.task-list-item input[type="checkbox"]:checked::after {
   border-color: #161616;
 }
@@ -576,7 +659,6 @@
   border-radius: 4px;
   padding: 0.14em 0.42em;
 }
-
 .md-doc[data-md-theme="github-dark"] pre {
   font-family: var(--md-gh-mono);
   font-size: 0.88em;
@@ -595,7 +677,6 @@
   border-radius: 6px;
   padding: 1em 1.25em 1em 3.2em;
 }
-
 .md-doc[data-md-theme="github-dark"] pre > code {
   background-color: transparent;
   color: inherit;
@@ -604,37 +685,24 @@
   font-size: 1em;
 }
 
-.md-doc[data-md-theme="github-dark"] table {
-  border: 1px solid var(--md-gh-border);
-}
-
+.md-doc[data-md-theme="github-dark"] table { border: 1px solid var(--md-gh-border); }
 .md-doc[data-md-theme="github-dark"] th,
-.md-doc[data-md-theme="github-dark"] td {
-  border: 1px solid var(--md-gh-border);
-}
-
+.md-doc[data-md-theme="github-dark"] td { border: 1px solid var(--md-gh-border); }
 .md-doc[data-md-theme="github-dark"] th {
   background-color: var(--md-gh-header);
   color: var(--md-gh-heading);
   font-weight: 700;
 }
-
-.md-doc[data-md-theme="github-dark"] tbody tr:nth-child(even) {
-  background-color: #232323;
-}
-
-.md-doc[data-md-theme="github-dark"] hr {
-  height: 2px;
-  background-color: var(--md-gh-border);
-}
-
+.md-doc[data-md-theme="github-dark"] tbody tr:nth-child(even) { background-color: #232323; }
+.md-doc[data-md-theme="github-dark"] hr { height: 2px; background-color: var(--md-gh-border); }
 .md-doc[data-md-theme="github-dark"] img {
   border-radius: 6px;
   border: 1px solid var(--md-gh-border);
 }
 
 /* ==========================================================================
-   Theme 3: chrome — 크롬
+   Theme 4: chrome — 크롬
+   Inspired by Cromo (https://github.com/kizei23/typora-theme-cromo, MIT License).
    Graphite #0f1113 surfaces, uppercase letter-spaced polished-silver headings
    with a fading metallic rule, soft silver text #c5cad2, single ice-blue
    accent #8fd3ff for inline code/links/checkboxes, minimal uppercase tables.
@@ -686,7 +754,6 @@
   letter-spacing: 0.14em;
   margin-bottom: 0.9em;
 }
-
 .md-doc[data-md-theme="chrome"] h1::after {
   content: "";
   display: block;
@@ -699,12 +766,10 @@
     transparent 100%
   );
 }
-
 .md-doc[data-md-theme="chrome"] h2 {
   font-size: 1.32em;
   letter-spacing: 0.11em;
 }
-
 .md-doc[data-md-theme="chrome"] h2::after {
   content: "";
   display: block;
@@ -717,61 +782,25 @@
     transparent 92%
   );
 }
+.md-doc[data-md-theme="chrome"] h3 { font-size: 1.08em; letter-spacing: 0.09em; }
+.md-doc[data-md-theme="chrome"] h4 { font-size: 0.96em; letter-spacing: 0.08em; color: #d6dce5; }
+.md-doc[data-md-theme="chrome"] h5 { font-size: 0.88em; letter-spacing: 0.07em; color: #b4bcc8; }
+.md-doc[data-md-theme="chrome"] h6 { font-size: 0.82em; letter-spacing: 0.07em; color: var(--md-cr-muted); }
 
-.md-doc[data-md-theme="chrome"] h3 {
-  font-size: 1.08em;
-  letter-spacing: 0.09em;
-}
-
-.md-doc[data-md-theme="chrome"] h4 {
-  font-size: 0.96em;
-  letter-spacing: 0.08em;
-  color: #d6dce5;
-}
-
-.md-doc[data-md-theme="chrome"] h5 {
-  font-size: 0.88em;
-  letter-spacing: 0.07em;
-  color: #b4bcc8;
-}
-
-.md-doc[data-md-theme="chrome"] h6 {
-  font-size: 0.82em;
-  letter-spacing: 0.07em;
-  color: var(--md-cr-muted);
-}
-
-.md-doc[data-md-theme="chrome"] p {
-  color: var(--md-cr-ink);
-}
-
+.md-doc[data-md-theme="chrome"] p { color: var(--md-cr-ink); }
 .md-doc[data-md-theme="chrome"] a {
   color: var(--md-cr-ice);
   text-decoration: none;
   border-bottom: 1px solid rgba(143, 211, 255, 0.36);
 }
-
 .md-doc[data-md-theme="chrome"] a:hover {
   color: #c2e7ff;
   border-bottom-color: #c2e7ff;
 }
-
-.md-doc[data-md-theme="chrome"] strong {
-  color: var(--md-cr-silver);
-  font-weight: 600;
-}
-
-.md-doc[data-md-theme="chrome"] em {
-  color: #d8dde6;
-}
-
-.md-doc[data-md-theme="chrome"] u {
-  text-decoration-color: var(--md-cr-ice);
-}
-
-.md-doc[data-md-theme="chrome"] del {
-  color: var(--md-cr-muted);
-}
+.md-doc[data-md-theme="chrome"] strong { color: var(--md-cr-silver); font-weight: 600; }
+.md-doc[data-md-theme="chrome"] em { color: #d8dde6; }
+.md-doc[data-md-theme="chrome"] u { text-decoration-color: var(--md-cr-ice); }
+.md-doc[data-md-theme="chrome"] del { color: var(--md-cr-muted); }
 
 .md-doc[data-md-theme="chrome"] blockquote {
   border-left: 2px solid var(--md-cr-ice);
@@ -779,31 +808,21 @@
   color: #a3abb7;
   border-radius: 0 3px 3px 0;
 }
-
-.md-doc[data-md-theme="chrome"] blockquote p {
-  color: inherit;
-}
-
+.md-doc[data-md-theme="chrome"] blockquote p { color: inherit; }
 .md-doc[data-md-theme="chrome"] ul,
-.md-doc[data-md-theme="chrome"] ol {
-  color: var(--md-cr-ink);
-}
-
-.md-doc[data-md-theme="chrome"] li::marker {
-  color: var(--md-cr-muted);
-}
+.md-doc[data-md-theme="chrome"] ol { color: var(--md-cr-ink); }
+.md-doc[data-md-theme="chrome"] li { color: inherit; }
+.md-doc[data-md-theme="chrome"] li::marker { color: var(--md-cr-muted); }
 
 .md-doc[data-md-theme="chrome"] li.task-list-item input[type="checkbox"] {
   border: 1.5px solid rgba(143, 211, 255, 0.65);
   background-color: #141920;
   accent-color: var(--md-cr-ice);
 }
-
 .md-doc[data-md-theme="chrome"] li.task-list-item input[type="checkbox"]:checked {
   background-color: var(--md-cr-ice);
   border-color: var(--md-cr-ice);
 }
-
 .md-doc[data-md-theme="chrome"] li.task-list-item input[type="checkbox"]:checked::after {
   border-color: var(--md-cr-bg);
 }
@@ -817,7 +836,6 @@
   border-radius: 3px;
   padding: 0.13em 0.42em;
 }
-
 .md-doc[data-md-theme="chrome"] pre {
   font-family: var(--md-cr-mono);
   font-size: 0.87em;
@@ -827,7 +845,6 @@
   border-radius: 4px;
   padding: 1.05em 1.25em;
 }
-
 .md-doc[data-md-theme="chrome"] pre > code {
   background-color: transparent;
   color: inherit;
@@ -836,10 +853,7 @@
   font-size: 1em;
 }
 
-.md-doc[data-md-theme="chrome"] table {
-  border-collapse: collapse;
-}
-
+.md-doc[data-md-theme="chrome"] table { border-collapse: collapse; }
 .md-doc[data-md-theme="chrome"] th {
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -850,12 +864,10 @@
   border-bottom: 1px solid var(--md-cr-border-strong);
   padding-bottom: 0.7em;
 }
-
 .md-doc[data-md-theme="chrome"] td {
   color: var(--md-cr-ink);
   border-bottom: 1px solid #1d2229;
 }
-
 .md-doc[data-md-theme="chrome"] hr {
   background: linear-gradient(
     90deg,
@@ -866,14 +878,14 @@
     transparent 100%
   );
 }
-
 .md-doc[data-md-theme="chrome"] img {
   border-radius: 4px;
   border: 1px solid var(--md-cr-border);
 }
 
 /* ==========================================================================
-   Theme 4: sprinkles — 스프링클스
+   Theme 5: sprinkles — 스프링클스
+   Original CSS inspired by Sprinkles (Typora Theme Gallery).
    Light, monospace-leaning document; each heading level carries its own emoji
    prefix via ::before; links prefixed with 🌈 and shift color on hover;
    thin rules under h1/h2; dark code blocks and rounded shadowed images.
@@ -927,59 +939,23 @@
   padding-bottom: 0.34em;
   border-bottom: 1px solid var(--md-sp-rule);
 }
-
-.md-doc[data-md-theme="sprinkles"] h1::before {
-  content: "🔨 ";
-}
-
+.md-doc[data-md-theme="sprinkles"] h1::before { content: "🔨 "; }
 .md-doc[data-md-theme="sprinkles"] h2 {
   font-size: 1.44em;
   padding-bottom: 0.28em;
   border-bottom: 1px solid var(--md-sp-rule);
 }
+.md-doc[data-md-theme="sprinkles"] h2::before { content: "✏️ "; }
+.md-doc[data-md-theme="sprinkles"] h3 { font-size: 1.2em; }
+.md-doc[data-md-theme="sprinkles"] h3::before { content: "🔪 "; }
+.md-doc[data-md-theme="sprinkles"] h4 { font-size: 1.05em; }
+.md-doc[data-md-theme="sprinkles"] h4::before { content: "📌 "; }
+.md-doc[data-md-theme="sprinkles"] h5 { font-size: 0.96em; color: #363c47; }
+.md-doc[data-md-theme="sprinkles"] h5::before { content: "📎 "; }
+.md-doc[data-md-theme="sprinkles"] h6 { font-size: 0.9em; color: var(--md-sp-muted); }
+.md-doc[data-md-theme="sprinkles"] h6::before { content: "🔖 "; }
 
-.md-doc[data-md-theme="sprinkles"] h2::before {
-  content: "✏️ ";
-}
-
-.md-doc[data-md-theme="sprinkles"] h3 {
-  font-size: 1.2em;
-}
-
-.md-doc[data-md-theme="sprinkles"] h3::before {
-  content: "🔪 ";
-}
-
-.md-doc[data-md-theme="sprinkles"] h4 {
-  font-size: 1.05em;
-}
-
-.md-doc[data-md-theme="sprinkles"] h4::before {
-  content: "📌 ";
-}
-
-.md-doc[data-md-theme="sprinkles"] h5 {
-  font-size: 0.96em;
-  color: #363c47;
-}
-
-.md-doc[data-md-theme="sprinkles"] h5::before {
-  content: "📎 ";
-}
-
-.md-doc[data-md-theme="sprinkles"] h6 {
-  font-size: 0.9em;
-  color: var(--md-sp-muted);
-}
-
-.md-doc[data-md-theme="sprinkles"] h6::before {
-  content: "🔖 ";
-}
-
-.md-doc[data-md-theme="sprinkles"] p {
-  color: var(--md-sp-ink);
-}
-
+.md-doc[data-md-theme="sprinkles"] p { color: var(--md-sp-ink); }
 .md-doc[data-md-theme="sprinkles"] a {
   color: var(--md-sp-link);
   text-decoration: underline;
@@ -987,7 +963,6 @@
   text-underline-offset: 0.22em;
   text-decoration-thickness: 1.5px;
 }
-
 .md-doc[data-md-theme="sprinkles"] a::before {
   content: "🌈";
   display: inline-block;
@@ -995,29 +970,17 @@
   font-size: 0.92em;
   text-decoration: none;
 }
-
 .md-doc[data-md-theme="sprinkles"] a:hover {
   color: var(--md-sp-link-hover);
   text-decoration-style: solid;
 }
-
-.md-doc[data-md-theme="sprinkles"] strong {
-  color: var(--md-sp-heading);
-  font-weight: 700;
-}
-
-.md-doc[data-md-theme="sprinkles"] em {
-  color: #3d4350;
-}
-
+.md-doc[data-md-theme="sprinkles"] strong { color: var(--md-sp-heading); font-weight: 700; }
+.md-doc[data-md-theme="sprinkles"] em { color: #3d4350; }
 .md-doc[data-md-theme="sprinkles"] u {
   text-decoration-color: var(--md-sp-accent);
   text-decoration-thickness: 1.5px;
 }
-
-.md-doc[data-md-theme="sprinkles"] del {
-  color: var(--md-sp-muted);
-}
+.md-doc[data-md-theme="sprinkles"] del { color: var(--md-sp-muted); }
 
 .md-doc[data-md-theme="sprinkles"] blockquote {
   border-left: 3px solid var(--md-sp-accent);
@@ -1025,31 +988,21 @@
   color: #4b5263;
   border-radius: 0 6px 6px 0;
 }
-
-.md-doc[data-md-theme="sprinkles"] blockquote p {
-  color: inherit;
-}
-
+.md-doc[data-md-theme="sprinkles"] blockquote p { color: inherit; }
 .md-doc[data-md-theme="sprinkles"] ul,
-.md-doc[data-md-theme="sprinkles"] ol {
-  color: var(--md-sp-ink);
-}
-
-.md-doc[data-md-theme="sprinkles"] li::marker {
-  color: var(--md-sp-accent);
-}
+.md-doc[data-md-theme="sprinkles"] ol { color: var(--md-sp-ink); }
+.md-doc[data-md-theme="sprinkles"] li { color: inherit; }
+.md-doc[data-md-theme="sprinkles"] li::marker { color: var(--md-sp-accent); }
 
 .md-doc[data-md-theme="sprinkles"] li.task-list-item input[type="checkbox"] {
   border: 1.5px solid var(--md-sp-accent);
   background-color: #ffffff;
   accent-color: var(--md-sp-accent);
 }
-
 .md-doc[data-md-theme="sprinkles"] li.task-list-item input[type="checkbox"]:checked {
   background-color: var(--md-sp-accent);
   border-color: var(--md-sp-accent);
 }
-
 .md-doc[data-md-theme="sprinkles"] li.task-list-item input[type="checkbox"]:checked::after {
   border-color: #ffffff;
 }
@@ -1062,7 +1015,6 @@
   border-radius: 4px;
   padding: 0.14em 0.46em;
 }
-
 .md-doc[data-md-theme="sprinkles"] pre {
   position: relative;
   font-family: var(--md-sp-mono);
@@ -1073,7 +1025,6 @@
   padding: 2.15em 1.25em 1.05em;
   box-shadow: 0 6px 18px rgba(35, 38, 52, 0.14);
 }
-
 .md-doc[data-md-theme="sprinkles"] pre::before {
   content: "";
   position: absolute;
@@ -1085,7 +1036,6 @@
   background-color: #ff5f56;
   box-shadow: 1.05em 0 0 #ffbd2e, 2.1em 0 0 #27c93f;
 }
-
 .md-doc[data-md-theme="sprinkles"] pre > code {
   background-color: transparent;
   color: inherit;
@@ -1094,29 +1044,2858 @@
   font-size: 1em;
 }
 
-.md-doc[data-md-theme="sprinkles"] table {
-  border: 1px solid var(--md-sp-rule);
-}
-
+.md-doc[data-md-theme="sprinkles"] table { border: 1px solid var(--md-sp-rule); }
 .md-doc[data-md-theme="sprinkles"] th,
-.md-doc[data-md-theme="sprinkles"] td {
-  border: 1px solid var(--md-sp-rule);
-}
-
+.md-doc[data-md-theme="sprinkles"] td { border: 1px solid var(--md-sp-rule); }
 .md-doc[data-md-theme="sprinkles"] th {
   background-color: var(--md-sp-surface);
   color: var(--md-sp-heading);
   font-weight: 700;
 }
-
-.md-doc[data-md-theme="sprinkles"] hr {
-  background-color: var(--md-sp-rule);
-}
-
+.md-doc[data-md-theme="sprinkles"] hr { background-color: var(--md-sp-rule); }
 .md-doc[data-md-theme="sprinkles"] img {
   border-radius: 10px;
   box-shadow: 0 6px 20px rgba(30, 35, 50, 0.12);
 }
+
+/* ==========================================================================
+   Theme 6: print — 프린트
+   Original CSS inspired by Typora Print Theme
+   (https://github.com/semi72/typora-print-theme, no repository license).
+   Compact DIN A4 print-first density, crisp black ink on white, minimal code
+   block chrome for wide diagrams, tight spacing and sturdy grey table rules.
+   ========================================================================== */
+
+.md-doc[data-md-theme="print"] {
+  --md-pr-bg: #ffffff;
+  --md-pr-ink: #1a1a1a;
+  --md-pr-heading: #000000;
+  --md-pr-muted: #555555;
+  --md-pr-link: #0066cc;
+  --md-pr-border: #cccccc;
+  --md-pr-surface: #f5f5f5;
+  --md-pr-stripe: #f8f8f8;
+  --md-pr-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard Variable",
+    "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Helvetica, Arial, sans-serif;
+  --md-pr-mono: "SFMono-Regular", Menlo, Consolas, "D2Coding", "Pretendard Variable",
+    "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-pr-bg);
+  color: var(--md-pr-ink);
+  font-family: var(--md-pr-sans);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.md-doc[data-md-theme="print"] ::selection {
+  background-color: #d9eaff;
+  color: var(--md-pr-heading);
+}
+
+.md-doc[data-md-theme="print"] h1,
+.md-doc[data-md-theme="print"] h2,
+.md-doc[data-md-theme="print"] h3,
+.md-doc[data-md-theme="print"] h4,
+.md-doc[data-md-theme="print"] h5,
+.md-doc[data-md-theme="print"] h6 {
+  font-family: var(--md-pr-sans);
+  color: var(--md-pr-heading);
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 1.15em;
+  margin-bottom: 0.42em;
+}
+
+.md-doc[data-md-theme="print"] h1 {
+  font-size: 1.7em;
+  font-weight: 700;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid var(--md-pr-border);
+}
+.md-doc[data-md-theme="print"] h2 {
+  font-size: 1.4em;
+  padding-bottom: 0.2em;
+  border-bottom: 1px solid #e5e5e5;
+}
+.md-doc[data-md-theme="print"] h3 { font-size: 1.2em; }
+.md-doc[data-md-theme="print"] h4 { font-size: 1.08em; }
+.md-doc[data-md-theme="print"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="print"] h6 { font-size: 0.94em; color: var(--md-pr-muted); }
+
+.md-doc[data-md-theme="print"] p {
+  color: var(--md-pr-ink);
+  margin-bottom: 0.55em;
+}
+.md-doc[data-md-theme="print"] a {
+  color: var(--md-pr-link);
+  text-decoration: none;
+}
+.md-doc[data-md-theme="print"] a:hover { text-decoration: underline; }
+.md-doc[data-md-theme="print"] strong { color: var(--md-pr-heading); font-weight: 600; }
+.md-doc[data-md-theme="print"] em { color: inherit; }
+.md-doc[data-md-theme="print"] u { text-decoration-color: var(--md-pr-ink); }
+.md-doc[data-md-theme="print"] del { color: var(--md-pr-muted); }
+
+.md-doc[data-md-theme="print"] blockquote {
+  margin: 0.6em 0;
+  padding: 0.28em 0 0.28em 0.9em;
+  border-left: 3px solid #999999;
+  color: var(--md-pr-muted);
+  font-style: italic;
+}
+.md-doc[data-md-theme="print"] blockquote p { color: inherit; margin-bottom: 0.3em; }
+.md-doc[data-md-theme="print"] ul,
+.md-doc[data-md-theme="print"] ol {
+  color: var(--md-pr-ink);
+  margin-bottom: 0.55em;
+  padding-left: 1.5em;
+}
+.md-doc[data-md-theme="print"] li { margin-bottom: 0.16em; }
+.md-doc[data-md-theme="print"] li::marker { color: #666666; }
+
+.md-doc[data-md-theme="print"] li.task-list-item input[type="checkbox"] {
+  border: 1.25px solid #777777;
+  background-color: #ffffff;
+}
+.md-doc[data-md-theme="print"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+.md-doc[data-md-theme="print"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="print"] code {
+  font-family: var(--md-pr-mono);
+  font-size: 0.86em;
+  background-color: var(--md-pr-surface);
+  color: var(--md-pr-ink);
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  padding: 0.08em 0.3em;
+}
+.md-doc[data-md-theme="print"] pre {
+  font-family: var(--md-pr-mono);
+  font-size: 0.78em;
+  line-height: 1.3;
+  background-color: transparent;
+  color: var(--md-pr-ink);
+  border: 0;
+  padding: 0.35em 0;
+  margin: 0.6em 0;
+}
+.md-doc[data-md-theme="print"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="print"] table {
+  border: 1px solid var(--md-pr-border);
+  margin: 0.65em 0;
+  font-size: 0.92em;
+}
+.md-doc[data-md-theme="print"] th,
+.md-doc[data-md-theme="print"] td {
+  border: 1px solid var(--md-pr-border);
+  padding: 0.3em 0.55em;
+}
+.md-doc[data-md-theme="print"] th {
+  background-color: #f0f0f0;
+  color: var(--md-pr-heading);
+  font-weight: 600;
+}
+.md-doc[data-md-theme="print"] tbody tr:nth-child(even) { background-color: var(--md-pr-stripe); }
+.md-doc[data-md-theme="print"] hr {
+  background-color: var(--md-pr-border);
+  margin: 1em 0;
+}
+.md-doc[data-md-theme="print"] img {
+  margin: 0.65em 0;
+  border: 1px solid #e0e0e0;
+}
+
+/* ==========================================================================
+   Theme 7: gothic — 고딕
+   Original CSS inspired by Typora's Gothic theme
+   (https://github.com/typora/typora-default-themes, no repository license).
+   Airy #fcfcfc paper, geometric sans-serif, centered uppercase h1/h2,
+   deep crimson #990000 links, understated grey rules and bordered code.
+   ========================================================================== */
+
+.md-doc[data-md-theme="gothic"] {
+  --md-go-bg: #fcfcfc;
+  --md-go-ink: #111111;
+  --md-go-muted: #6f6f6f;
+  --md-go-link: #990000;
+  --md-go-link-hover: #6b0000;
+  --md-go-border: #dddddd;
+  --md-go-code-border: #cccccc;
+  --md-go-sans: "Century Gothic", "Didact Gothic", "Avant Garde", "Pretendard Variable",
+    "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-go-mono: "SFMono-Regular", Consolas, Menlo, "D2Coding",
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-go-bg);
+  color: var(--md-go-ink);
+  font-family: var(--md-go-sans);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+.md-doc[data-md-theme="gothic"] ::selection {
+  background-color: #f2dede;
+  color: var(--md-go-ink);
+}
+
+.md-doc[data-md-theme="gothic"] h1,
+.md-doc[data-md-theme="gothic"] h2,
+.md-doc[data-md-theme="gothic"] h3,
+.md-doc[data-md-theme="gothic"] h4,
+.md-doc[data-md-theme="gothic"] h5,
+.md-doc[data-md-theme="gothic"] h6 {
+  font-family: var(--md-go-sans);
+  color: var(--md-go-ink);
+  font-weight: 400;
+}
+
+.md-doc[data-md-theme="gothic"] h1 {
+  font-size: 2.3em;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.45em 0.6em;
+}
+.md-doc[data-md-theme="gothic"] h2 {
+  font-size: 1.7em;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.md-doc[data-md-theme="gothic"] h3 { font-size: 1.32em; }
+.md-doc[data-md-theme="gothic"] h4 { font-size: 1.15em; }
+.md-doc[data-md-theme="gothic"] h5 { font-size: 1.04em; }
+.md-doc[data-md-theme="gothic"] h6 { font-size: 0.96em; font-weight: 700; }
+
+.md-doc[data-md-theme="gothic"] p { color: var(--md-go-ink); }
+.md-doc[data-md-theme="gothic"] a {
+  color: var(--md-go-link);
+  text-decoration: none;
+}
+.md-doc[data-md-theme="gothic"] a:hover {
+  color: var(--md-go-link-hover);
+  text-decoration: underline;
+}
+.md-doc[data-md-theme="gothic"] strong { color: var(--md-go-ink); font-weight: 700; }
+.md-doc[data-md-theme="gothic"] em { color: inherit; }
+.md-doc[data-md-theme="gothic"] u { text-decoration-color: var(--md-go-link); }
+.md-doc[data-md-theme="gothic"] del { color: var(--md-go-muted); }
+
+.md-doc[data-md-theme="gothic"] blockquote {
+  border-left: 1px solid #808080;
+  color: var(--md-go-muted);
+  padding: 0.45em 1.1em;
+}
+.md-doc[data-md-theme="gothic"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="gothic"] ul,
+.md-doc[data-md-theme="gothic"] ol { color: var(--md-go-ink); }
+.md-doc[data-md-theme="gothic"] li { color: inherit; }
+.md-doc[data-md-theme="gothic"] li::marker { color: var(--md-go-muted); }
+
+.md-doc[data-md-theme="gothic"] li.task-list-item input[type="checkbox"] {
+  border: 1px solid #808080;
+  background-color: #fdfdfd;
+  border-radius: 0;
+}
+.md-doc[data-md-theme="gothic"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-go-ink);
+  border-color: var(--md-go-ink);
+}
+.md-doc[data-md-theme="gothic"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #fcfcfc;
+}
+
+.md-doc[data-md-theme="gothic"] code {
+  font-family: var(--md-go-mono);
+  font-size: 0.88em;
+  border: 1px solid var(--md-go-code-border);
+  background-color: #f6f6f6;
+  color: var(--md-go-ink);
+  padding: 0.08em 0.32em;
+}
+.md-doc[data-md-theme="gothic"] pre {
+  font-family: var(--md-go-mono);
+  font-size: 0.88em;
+  border: 1px solid var(--md-go-code-border);
+  background-color: #f8f8f8;
+  color: var(--md-go-ink);
+  padding: 0.85em 1.1em;
+}
+.md-doc[data-md-theme="gothic"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="gothic"] table { border-collapse: collapse; }
+.md-doc[data-md-theme="gothic"] th,
+.md-doc[data-md-theme="gothic"] td {
+  border-top: 1px solid var(--md-go-border);
+}
+.md-doc[data-md-theme="gothic"] th {
+  font-weight: 700;
+  color: var(--md-go-ink);
+  border-top: 0;
+  border-bottom: 1.5px solid #bbbbbb;
+}
+.md-doc[data-md-theme="gothic"] hr { background-color: var(--md-go-border); }
+.md-doc[data-md-theme="gothic"] img { border: 1px solid var(--md-go-border); }
+
+/* ==========================================================================
+   Theme 8: newsprint — 뉴스프린트
+   Original CSS inspired by Typora's Newsprint theme
+   (https://github.com/typora/typora-default-themes, no repository license).
+   Warm newsprint paper #f3f2ee, dark espresso-ink serif #1f0909, deep ink-blue
+   links #065588, italic 5px left-rule blockquotes, uppercase table headers.
+   ========================================================================== */
+
+.md-doc[data-md-theme="newsprint"] {
+  --md-np-bg: #f3f2ee;
+  --md-np-surface: #dadada;
+  --md-np-stripe: #e8e7e7;
+  --md-np-ink: #1f0909;
+  --md-np-muted: #656565;
+  --md-np-border: #c5c5c5;
+  --md-np-quote-bar: #bababa;
+  --md-np-link: #065588;
+  --md-np-link-hover: #043b5e;
+  --md-np-serif: "PT Serif", "Times New Roman", Times, Georgia, "Noto Serif KR",
+    "Source Han Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --md-np-mono: Menlo, "Ubuntu Mono", Consolas, "D2Coding", "Courier New",
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-np-bg);
+  color: var(--md-np-ink);
+  font-family: var(--md-np-serif);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="newsprint"] ::selection {
+  background-color: rgba(32, 43, 51, 0.63);
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="newsprint"] h1,
+.md-doc[data-md-theme="newsprint"] h2,
+.md-doc[data-md-theme="newsprint"] h3,
+.md-doc[data-md-theme="newsprint"] h4,
+.md-doc[data-md-theme="newsprint"] h5,
+.md-doc[data-md-theme="newsprint"] h6 {
+  font-family: var(--md-np-serif);
+  color: var(--md-np-ink);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="newsprint"] h1 {
+  font-size: 1.9em;
+  font-weight: 400;
+  padding-bottom: 0.45em;
+  border-bottom: 1px solid var(--md-np-border);
+}
+.md-doc[data-md-theme="newsprint"] h2 { font-size: 1.35em; }
+.md-doc[data-md-theme="newsprint"] h3 { font-size: 1.25em; font-weight: 400; }
+.md-doc[data-md-theme="newsprint"] h4 { font-size: 1.12em; }
+.md-doc[data-md-theme="newsprint"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="newsprint"] h6 { font-size: 0.94em; color: var(--md-np-muted); }
+
+.md-doc[data-md-theme="newsprint"] p { color: var(--md-np-ink); }
+.md-doc[data-md-theme="newsprint"] a {
+  color: var(--md-np-link);
+  text-decoration: none;
+}
+.md-doc[data-md-theme="newsprint"] a:hover {
+  color: var(--md-np-link-hover);
+  text-decoration: underline;
+}
+.md-doc[data-md-theme="newsprint"] strong { color: var(--md-np-ink); font-weight: 700; }
+.md-doc[data-md-theme="newsprint"] em { color: inherit; }
+.md-doc[data-md-theme="newsprint"] u { text-decoration-color: var(--md-np-ink); }
+.md-doc[data-md-theme="newsprint"] del { color: var(--md-np-muted); }
+
+.md-doc[data-md-theme="newsprint"] blockquote {
+  font-style: italic;
+  border-left: 5px solid var(--md-np-quote-bar);
+  color: var(--md-np-muted);
+  padding: 0.35em 1.1em;
+}
+.md-doc[data-md-theme="newsprint"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="newsprint"] ul,
+.md-doc[data-md-theme="newsprint"] ol { color: var(--md-np-ink); }
+.md-doc[data-md-theme="newsprint"] li { color: inherit; }
+.md-doc[data-md-theme="newsprint"] li::marker { color: var(--md-np-muted); }
+
+.md-doc[data-md-theme="newsprint"] li.task-list-item input[type="checkbox"] {
+  border: 1px solid #999999;
+  background-color: var(--md-np-bg);
+}
+.md-doc[data-md-theme="newsprint"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-np-ink);
+  border-color: var(--md-np-ink);
+}
+.md-doc[data-md-theme="newsprint"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: var(--md-np-bg);
+}
+
+.md-doc[data-md-theme="newsprint"] code {
+  font-family: var(--md-np-mono);
+  font-size: 0.87em;
+  background-color: var(--md-np-surface);
+  color: var(--md-np-ink);
+  padding: 0.1em 0.34em;
+  border-radius: 2px;
+}
+.md-doc[data-md-theme="newsprint"] pre {
+  font-family: var(--md-np-mono);
+  font-size: 0.87em;
+  background-color: var(--md-np-surface);
+  color: var(--md-np-ink);
+  padding: 0.9em 1.1em;
+  border-radius: 2px;
+}
+.md-doc[data-md-theme="newsprint"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="newsprint"] table {
+  border-top: 1px solid var(--md-np-border);
+  border-bottom: 1px solid var(--md-np-border);
+}
+.md-doc[data-md-theme="newsprint"] th {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.88em;
+  background-color: var(--md-np-surface);
+  color: var(--md-np-ink);
+  border-bottom: 1px solid var(--md-np-border);
+}
+.md-doc[data-md-theme="newsprint"] td {
+  color: var(--md-np-ink);
+  border-bottom: 1px solid #d5d4d0;
+}
+.md-doc[data-md-theme="newsprint"] tbody tr:nth-child(even) { background-color: var(--md-np-stripe); }
+.md-doc[data-md-theme="newsprint"] hr { background-color: var(--md-np-border); }
+.md-doc[data-md-theme="newsprint"] img { border: 1px solid var(--md-np-border); }
+
+/* ==========================================================================
+   Theme 9: night — 나이트
+   Original CSS inspired by Typora's Night theme
+   (https://github.com/typora/typora-default-themes, no repository license).
+   Slate-charcoal #363b40 canvas, soft cool grey #b8bfc6 body, #dedede
+   headings, square bullets, solid #474d54 borders, deep #2c3035 code blocks.
+   ========================================================================== */
+
+.md-doc[data-md-theme="night"] {
+  --md-ni-bg: #363b40;
+  --md-ni-surface: #2e3236;
+  --md-ni-code-bg: #2a2d30;
+  --md-ni-ink: #b8bfc6;
+  --md-ni-heading: #dedede;
+  --md-ni-muted: #9da2a6;
+  --md-ni-border: #474d54;
+  --md-ni-link: #e0e0e0;
+  --md-ni-accent: #6dc1e7;
+  --md-ni-sans: "Helvetica Neue", Helvetica, Arial, "Pretendard Variable",
+    "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-ni-heading-font: "Lucida Grande", "Corbel", "Pretendard Variable",
+    "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-ni-mono: Monaco, Consolas, "D2Coding", "DejaVu Sans Mono",
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-ni-bg);
+  color: var(--md-ni-ink);
+  font-family: var(--md-ni-sans);
+  font-size: 16px;
+  line-height: 1.68;
+}
+
+.md-doc[data-md-theme="night"] ::selection {
+  background-color: #4a89dc;
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="night"] h1,
+.md-doc[data-md-theme="night"] h2,
+.md-doc[data-md-theme="night"] h3,
+.md-doc[data-md-theme="night"] h4,
+.md-doc[data-md-theme="night"] h5,
+.md-doc[data-md-theme="night"] h6 {
+  font-family: var(--md-ni-heading-font);
+  color: var(--md-ni-heading);
+  font-weight: 400;
+}
+
+.md-doc[data-md-theme="night"] h1 { font-size: 2.25em; letter-spacing: -0.03em; }
+.md-doc[data-md-theme="night"] h2 { font-size: 1.6em; font-weight: 700; letter-spacing: -0.02em; }
+.md-doc[data-md-theme="night"] h3 { font-size: 1.2em; font-weight: 700; }
+.md-doc[data-md-theme="night"] h4 { font-size: 1.1em; color: #ffffff; }
+.md-doc[data-md-theme="night"] h5 { font-size: 0.98em; font-weight: 700; }
+.md-doc[data-md-theme="night"] h6 { font-size: 0.92em; color: #ffffff; }
+
+.md-doc[data-md-theme="night"] p { color: var(--md-ni-ink); }
+.md-doc[data-md-theme="night"] a {
+  color: var(--md-ni-link);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+.md-doc[data-md-theme="night"] a:hover { color: #ffffff; }
+.md-doc[data-md-theme="night"] strong { color: var(--md-ni-heading); font-weight: 700; }
+.md-doc[data-md-theme="night"] em { color: #cfd5dc; }
+.md-doc[data-md-theme="night"] u { text-decoration-color: var(--md-ni-accent); }
+.md-doc[data-md-theme="night"] del { color: var(--md-ni-muted); }
+
+.md-doc[data-md-theme="night"] blockquote {
+  border-left: 2px solid var(--md-ni-border);
+  color: var(--md-ni-muted);
+  padding: 0.35em 1.25em;
+}
+.md-doc[data-md-theme="night"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="night"] ul { list-style-type: square; color: var(--md-ni-ink); }
+.md-doc[data-md-theme="night"] ol { color: var(--md-ni-ink); }
+.md-doc[data-md-theme="night"] li { color: inherit; }
+.md-doc[data-md-theme="night"] li::marker { color: var(--md-ni-muted); }
+
+.md-doc[data-md-theme="night"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-ni-ink);
+  background-color: var(--md-ni-bg);
+}
+.md-doc[data-md-theme="night"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-ni-accent);
+  border-color: var(--md-ni-accent);
+}
+.md-doc[data-md-theme="night"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #1e2226;
+}
+
+.md-doc[data-md-theme="night"] code {
+  font-family: var(--md-ni-mono);
+  font-size: 0.88em;
+  background-color: rgba(0, 0, 0, 0.22);
+  color: #e4e8ec;
+  padding: 0.12em 0.38em;
+  border-radius: 3px;
+}
+.md-doc[data-md-theme="night"] pre {
+  font-family: var(--md-ni-mono);
+  font-size: 0.88em;
+  background-color: var(--md-ni-code-bg);
+  color: #d7dce2;
+  border: 1px solid var(--md-ni-border);
+  border-radius: 4px;
+  padding: 0.9em 1.2em;
+}
+.md-doc[data-md-theme="night"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="night"] table { border: 1px solid var(--md-ni-border); }
+.md-doc[data-md-theme="night"] th,
+.md-doc[data-md-theme="night"] td { border: 1px solid var(--md-ni-border); }
+.md-doc[data-md-theme="night"] th {
+  color: var(--md-ni-heading);
+  background-color: var(--md-ni-surface);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="night"] hr { height: 2px; background-color: var(--md-ni-border); }
+.md-doc[data-md-theme="night"] img { border: 1px solid var(--md-ni-border); border-radius: 3px; }
+
+/* ==========================================================================
+   Theme 10: pixyll — 픽실
+   Adapted from Pixyll by John Otander (pixyll.com /
+   https://github.com/typora/typora-default-themes, MIT License).
+   Generous editorial serif body paired with bold sans headings, muted plum
+   #463f5c links, italic left-bar blockquotes, bold charcoal table dividers.
+   ========================================================================== */
+
+.md-doc[data-md-theme="pixyll"] {
+  --md-px-bg: #ffffff;
+  --md-px-ink: #333333;
+  --md-px-muted: #555555;
+  --md-px-code-ink: #666666;
+  --md-px-border: #7a7a7a;
+  --md-px-link: #463f5c;
+  --md-px-link-hover: #241f33;
+  --md-px-serif: "Merriweather", "PT Serif", Georgia, "Times New Roman", "Noto Serif KR",
+    "Source Han Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --md-px-sans: "Lato", "Helvetica Neue", Helvetica, "Pretendard Variable",
+    "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-px-mono: Menlo, Monaco, "D2Coding", "Courier New",
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-px-bg);
+  color: var(--md-px-ink);
+  font-family: var(--md-px-serif);
+  font-size: 16.5px;
+  font-weight: 300;
+  line-height: 1.78;
+}
+
+.md-doc[data-md-theme="pixyll"] ::selection {
+  background-color: #e4dfee;
+  color: var(--md-px-ink);
+}
+
+.md-doc[data-md-theme="pixyll"] h1,
+.md-doc[data-md-theme="pixyll"] h2,
+.md-doc[data-md-theme="pixyll"] h3,
+.md-doc[data-md-theme="pixyll"] h4,
+.md-doc[data-md-theme="pixyll"] h5,
+.md-doc[data-md-theme="pixyll"] h6 {
+  font-family: var(--md-px-sans);
+  font-weight: 700;
+  color: var(--md-px-ink);
+  line-height: 1.24;
+}
+
+.md-doc[data-md-theme="pixyll"] h1 { font-size: 2.35em; }
+.md-doc[data-md-theme="pixyll"] h2 { font-size: 1.72em; }
+.md-doc[data-md-theme="pixyll"] h3 { font-size: 1.38em; }
+.md-doc[data-md-theme="pixyll"] h4 { font-size: 1.15em; }
+.md-doc[data-md-theme="pixyll"] h5 { font-size: 1.02em; }
+.md-doc[data-md-theme="pixyll"] h6 { font-size: 0.94em; color: var(--md-px-muted); }
+
+.md-doc[data-md-theme="pixyll"] p { color: var(--md-px-ink); }
+.md-doc[data-md-theme="pixyll"] a {
+  color: var(--md-px-link);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.md-doc[data-md-theme="pixyll"] a:hover { color: var(--md-px-link-hover); }
+.md-doc[data-md-theme="pixyll"] strong { color: #1f1f1f; font-weight: 700; }
+.md-doc[data-md-theme="pixyll"] em { color: #222222; }
+.md-doc[data-md-theme="pixyll"] u { text-decoration-color: var(--md-px-link); }
+.md-doc[data-md-theme="pixyll"] del { color: var(--md-px-border); }
+
+.md-doc[data-md-theme="pixyll"] blockquote {
+  font-style: italic;
+  border-left: 5px solid var(--md-px-border);
+  color: var(--md-px-muted);
+  padding: 0.7em 1.2em;
+}
+.md-doc[data-md-theme="pixyll"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="pixyll"] ul,
+.md-doc[data-md-theme="pixyll"] ol { color: var(--md-px-ink); }
+.md-doc[data-md-theme="pixyll"] li { color: inherit; }
+.md-doc[data-md-theme="pixyll"] li::marker { color: var(--md-px-border); }
+
+.md-doc[data-md-theme="pixyll"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid #555555;
+  background-color: #ffffff;
+  border-radius: 50%;
+}
+.md-doc[data-md-theme="pixyll"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-px-ink);
+  border-color: var(--md-px-ink);
+}
+.md-doc[data-md-theme="pixyll"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="pixyll"] code {
+  font-family: var(--md-px-mono);
+  font-size: 0.86em;
+  color: var(--md-px-code-ink);
+  background-color: #f7f7f7;
+  padding: 0.1em 0.36em;
+  border-radius: 3px;
+}
+.md-doc[data-md-theme="pixyll"] pre {
+  font-family: var(--md-px-mono);
+  font-size: 0.86em;
+  color: #4f4f4f;
+  background-color: #fafafa;
+  border: 1px solid var(--md-px-border);
+  padding: 0.85em 1.15em;
+}
+.md-doc[data-md-theme="pixyll"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="pixyll"] table { border-collapse: collapse; }
+.md-doc[data-md-theme="pixyll"] th {
+  font-family: var(--md-px-sans);
+  font-weight: 700;
+  color: var(--md-px-ink);
+  border-bottom: 2px solid var(--md-px-ink);
+}
+.md-doc[data-md-theme="pixyll"] td {
+  color: var(--md-px-ink);
+  border-top: 1px solid var(--md-px-ink);
+}
+.md-doc[data-md-theme="pixyll"] hr { background-color: #d4d4d4; }
+.md-doc[data-md-theme="pixyll"] img { border: 1px solid #e2e2e2; }
+
+/* ==========================================================================
+   Theme 11: whitey — 화이티 라이트
+   Original CSS inspired by Typora's Whitey theme
+   (https://github.com/typora/typora-default-themes, no repository license).
+   Airy #fefefe page, literary serif body, centered h1–h3 with a 100px rule
+   under h2, italic h3, #2484c1 cerulean links, square bullets.
+   ========================================================================== */
+
+.md-doc[data-md-theme="whitey"] {
+  --md-wh-bg: #fefefe;
+  --md-wh-ink: #333333;
+  --md-wh-muted: #666666;
+  --md-wh-border: #dddddd;
+  --md-wh-link: #2484c1;
+  --md-wh-link-hover: #175c89;
+  --md-wh-serif: "Vollkorn", Palatino, "Palatino Linotype", "Book Antiqua", Georgia,
+    "Noto Serif KR", "Source Han Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --md-wh-mono: Consolas, Menlo, Monaco, "D2Coding",
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-wh-bg);
+  color: var(--md-wh-ink);
+  font-family: var(--md-wh-serif);
+  font-size: 16.5px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="whitey"] ::selection {
+  background-color: #d6eaf8;
+  color: var(--md-wh-ink);
+}
+
+.md-doc[data-md-theme="whitey"] h1,
+.md-doc[data-md-theme="whitey"] h2,
+.md-doc[data-md-theme="whitey"] h3,
+.md-doc[data-md-theme="whitey"] h4,
+.md-doc[data-md-theme="whitey"] h5,
+.md-doc[data-md-theme="whitey"] h6 {
+  font-family: var(--md-wh-serif);
+  color: var(--md-wh-ink);
+  font-weight: 400;
+}
+
+.md-doc[data-md-theme="whitey"] h1 { font-size: 2.35em; text-align: center; }
+.md-doc[data-md-theme="whitey"] h2 { font-size: 1.65em; text-align: center; }
+.md-doc[data-md-theme="whitey"] h2::after {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 1px;
+  margin: 0.42em auto 0;
+  border-bottom: 1px solid #2f2f2f;
+}
+.md-doc[data-md-theme="whitey"] h3 { font-size: 1.28em; font-style: italic; text-align: center; }
+.md-doc[data-md-theme="whitey"] h4 { font-size: 1.12em; font-weight: 700; }
+.md-doc[data-md-theme="whitey"] h5 { font-size: 1em; font-weight: 700; }
+.md-doc[data-md-theme="whitey"] h6 { font-size: 0.94em; color: var(--md-wh-muted); }
+
+.md-doc[data-md-theme="whitey"] p { color: var(--md-wh-ink); }
+.md-doc[data-md-theme="whitey"] a { color: var(--md-wh-link); text-decoration: none; }
+.md-doc[data-md-theme="whitey"] a:hover { color: var(--md-wh-link-hover); text-decoration: underline; }
+.md-doc[data-md-theme="whitey"] strong { color: #1d1d1d; font-weight: 700; }
+.md-doc[data-md-theme="whitey"] em { color: inherit; }
+.md-doc[data-md-theme="whitey"] u { text-decoration-color: var(--md-wh-link); }
+.md-doc[data-md-theme="whitey"] del { color: var(--md-wh-muted); }
+
+.md-doc[data-md-theme="whitey"] blockquote {
+  border-left: 1px solid var(--md-wh-border);
+  color: var(--md-wh-muted);
+  padding: 0.35em 1.1em;
+}
+.md-doc[data-md-theme="whitey"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="whitey"] ul { list-style-type: square; color: var(--md-wh-ink); }
+.md-doc[data-md-theme="whitey"] ol { color: var(--md-wh-ink); }
+.md-doc[data-md-theme="whitey"] li { color: inherit; }
+.md-doc[data-md-theme="whitey"] li::marker { color: var(--md-wh-muted); }
+
+.md-doc[data-md-theme="whitey"] li.task-list-item input[type="checkbox"] {
+  border: 1.25px solid #999999;
+  background-color: var(--md-wh-bg);
+}
+.md-doc[data-md-theme="whitey"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-wh-ink);
+  border-color: var(--md-wh-ink);
+}
+.md-doc[data-md-theme="whitey"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="whitey"] code {
+  font-family: var(--md-wh-mono);
+  font-size: 0.86em;
+  background-color: #f6f6f6;
+  color: var(--md-wh-ink);
+  border: 1px solid #e5e5e5;
+  border-radius: 3px;
+  padding: 0.08em 0.34em;
+}
+.md-doc[data-md-theme="whitey"] pre {
+  font-family: var(--md-wh-mono);
+  font-size: 0.86em;
+  background-color: #ffffff;
+  color: var(--md-wh-ink);
+  border: 1px solid var(--md-wh-border);
+  padding: 0.85em 1.1em;
+}
+.md-doc[data-md-theme="whitey"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="whitey"] table { border-collapse: collapse; }
+.md-doc[data-md-theme="whitey"] th,
+.md-doc[data-md-theme="whitey"] td { border-top: 1px solid var(--md-wh-border); }
+.md-doc[data-md-theme="whitey"] th {
+  font-weight: 700;
+  color: var(--md-wh-ink);
+  border-top: 0;
+  border-bottom: 1.5px solid #bbbbbb;
+}
+.md-doc[data-md-theme="whitey"] hr { background-color: var(--md-wh-border); }
+.md-doc[data-md-theme="whitey"] img { border: 1px solid #eaeaea; }
+
+/* ==========================================================================
+   Theme 12: whitey-dark — 화이티 다크
+   Original CSS inspired by Typora's Whitey Deep theme (whitey-deep.css in
+   https://github.com/typora/typora-default-themes, no repository license).
+   Deep navy-slate #1e222a canvas, #cecfcf literary serif typography, centered
+   h1–h3 with centered 100px h2 rule, #4fb3ff links, #011f4b navy code blocks.
+   ========================================================================== */
+
+.md-doc[data-md-theme="whitey-dark"] {
+  --md-wd-bg: #1e222a;
+  --md-wd-code-bg: #0f2544;
+  --md-wd-ink: #cecfcf;
+  --md-wd-heading: #e4e6e8;
+  --md-wd-muted: #98a0ac;
+  --md-wd-border: #3d4654;
+  --md-wd-link: #4fb3ff;
+  --md-wd-link-hover: #87ccff;
+  --md-wd-serif: "Vollkorn", Palatino, "Palatino Linotype", "Book Antiqua", Georgia,
+    "Noto Serif KR", "Source Han Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --md-wd-mono: Consolas, Menlo, Monaco, "D2Coding",
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-wd-bg);
+  color: var(--md-wd-ink);
+  font-family: var(--md-wd-serif);
+  font-size: 16.5px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="whitey-dark"] ::selection {
+  background-color: rgba(79, 179, 255, 0.28);
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="whitey-dark"] h1,
+.md-doc[data-md-theme="whitey-dark"] h2,
+.md-doc[data-md-theme="whitey-dark"] h3,
+.md-doc[data-md-theme="whitey-dark"] h4,
+.md-doc[data-md-theme="whitey-dark"] h5,
+.md-doc[data-md-theme="whitey-dark"] h6 {
+  font-family: var(--md-wd-serif);
+  color: var(--md-wd-heading);
+  font-weight: 400;
+}
+
+.md-doc[data-md-theme="whitey-dark"] h1 { font-size: 2.35em; text-align: center; }
+.md-doc[data-md-theme="whitey-dark"] h2 { font-size: 1.65em; text-align: center; }
+.md-doc[data-md-theme="whitey-dark"] h2::after {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 1px;
+  margin: 0.42em auto 0;
+  border-bottom: 1px solid var(--md-wd-ink);
+}
+.md-doc[data-md-theme="whitey-dark"] h3 { font-size: 1.28em; font-style: italic; text-align: center; }
+.md-doc[data-md-theme="whitey-dark"] h4 { font-size: 1.12em; font-weight: 700; }
+.md-doc[data-md-theme="whitey-dark"] h5 { font-size: 1em; font-weight: 700; }
+.md-doc[data-md-theme="whitey-dark"] h6 { font-size: 0.94em; color: var(--md-wd-muted); }
+
+.md-doc[data-md-theme="whitey-dark"] p { color: var(--md-wd-ink); }
+.md-doc[data-md-theme="whitey-dark"] a { color: var(--md-wd-link); text-decoration: none; }
+.md-doc[data-md-theme="whitey-dark"] a:hover { color: var(--md-wd-link-hover); text-decoration: underline; }
+.md-doc[data-md-theme="whitey-dark"] strong { color: #f0f2f4; font-weight: 700; }
+.md-doc[data-md-theme="whitey-dark"] em { color: #dce0e4; }
+.md-doc[data-md-theme="whitey-dark"] u { text-decoration-color: var(--md-wd-link); }
+.md-doc[data-md-theme="whitey-dark"] del { color: var(--md-wd-muted); }
+
+.md-doc[data-md-theme="whitey-dark"] blockquote {
+  border-left: 1px solid #7e8999;
+  color: #b4bcc7;
+  padding: 0.35em 1.1em;
+}
+.md-doc[data-md-theme="whitey-dark"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="whitey-dark"] ul { list-style-type: square; color: var(--md-wd-ink); }
+.md-doc[data-md-theme="whitey-dark"] ol { color: var(--md-wd-ink); }
+.md-doc[data-md-theme="whitey-dark"] li { color: inherit; }
+.md-doc[data-md-theme="whitey-dark"] li::marker { color: var(--md-wd-muted); }
+
+.md-doc[data-md-theme="whitey-dark"] li.task-list-item input[type="checkbox"] {
+  border: 1.25px solid #8c96a5;
+  background-color: var(--md-wd-code-bg);
+}
+.md-doc[data-md-theme="whitey-dark"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-wd-link);
+  border-color: var(--md-wd-link);
+}
+.md-doc[data-md-theme="whitey-dark"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: var(--md-wd-bg);
+}
+
+.md-doc[data-md-theme="whitey-dark"] code {
+  font-family: var(--md-wd-mono);
+  font-size: 0.86em;
+  background-color: var(--md-wd-code-bg);
+  color: var(--md-wd-ink);
+  border: 1px solid #2b456d;
+  border-radius: 3px;
+  padding: 0.08em 0.36em;
+}
+.md-doc[data-md-theme="whitey-dark"] pre {
+  font-family: var(--md-wd-mono);
+  font-size: 0.86em;
+  background-color: var(--md-wd-code-bg);
+  color: var(--md-wd-ink);
+  border: 1px solid #485d7c;
+  padding: 0.85em 1.1em;
+}
+.md-doc[data-md-theme="whitey-dark"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="whitey-dark"] table { border-collapse: collapse; }
+.md-doc[data-md-theme="whitey-dark"] th,
+.md-doc[data-md-theme="whitey-dark"] td {
+  border-top: 1px solid var(--md-wd-border);
+  color: var(--md-wd-ink);
+}
+.md-doc[data-md-theme="whitey-dark"] th {
+  font-weight: 700;
+  color: var(--md-wd-heading);
+  border-top: 0;
+  border-bottom: 1.5px solid #596578;
+}
+.md-doc[data-md-theme="whitey-dark"] hr { background-color: var(--md-wd-border); }
+.md-doc[data-md-theme="whitey-dark"] img { border: 1px solid var(--md-wd-border); }
+
+/* ==========================================================================
+   Theme 13: monospace-light — 모노스페이스 라이트
+   Adapted from Monospace Theme by Typora
+   (https://github.com/typora/typora-monospace-theme, Copyright (c) 2016 typora, MIT License).
+   Source-like monospace page: indigo #6363ac & blue #0e5796 headings with
+   leading # markers, red bold, plum italic, olive inline code, dark #263238
+   code blocks, green list markers, dashed horizontal rule.
+   ========================================================================== */
+
+.md-doc[data-md-theme="monospace-light"] {
+  --md-ml-bg: #ffffff;
+  --md-ml-ink: #333333;
+  --md-ml-h1: #6363ac;
+  --md-ml-h4: #0e5796;
+  --md-ml-strong: #b5302e;
+  --md-ml-em: #400469;
+  --md-ml-link: #005dad;
+  --md-ml-marker: #438600;
+  --md-ml-code-ink: #80800f;
+  --md-ml-fence-bg: #263238;
+  --md-ml-fence-ink: #e9eded;
+  --md-ml-border: #cbcbcb;
+  --md-ml-mono: "Inconsolata", "PT Mono", "D2Coding", "SFMono-Regular", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: light;
+  background-color: var(--md-ml-bg);
+  color: var(--md-ml-ink);
+  font-family: var(--md-ml-mono);
+  font-size: 15.5px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="monospace-light"] ::selection {
+  background-color: rgba(7, 145, 253, 0.25);
+  color: #111111;
+}
+
+.md-doc[data-md-theme="monospace-light"] h1,
+.md-doc[data-md-theme="monospace-light"] h2,
+.md-doc[data-md-theme="monospace-light"] h3,
+.md-doc[data-md-theme="monospace-light"] h4,
+.md-doc[data-md-theme="monospace-light"] h5,
+.md-doc[data-md-theme="monospace-light"] h6 {
+  font-family: var(--md-ml-mono);
+  font-weight: 700;
+  color: var(--md-ml-h1);
+}
+
+.md-doc[data-md-theme="monospace-light"] h1 { font-size: 1.9em; }
+.md-doc[data-md-theme="monospace-light"] h1::before { content: "# "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-light"] h2 { font-size: 1.55em; }
+.md-doc[data-md-theme="monospace-light"] h2::before { content: "## "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-light"] h3 { font-size: 1.28em; }
+.md-doc[data-md-theme="monospace-light"] h3::before { content: "### "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-light"] h4 { font-size: 1.15em; color: var(--md-ml-h4); }
+.md-doc[data-md-theme="monospace-light"] h4::before { content: "#### "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-light"] h5 { font-size: 1.05em; color: var(--md-ml-h4); }
+.md-doc[data-md-theme="monospace-light"] h5::before { content: "##### "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-light"] h6 { font-size: 0.98em; color: var(--md-ml-h4); }
+.md-doc[data-md-theme="monospace-light"] h6::before { content: "###### "; opacity: 0.72; }
+
+.md-doc[data-md-theme="monospace-light"] p { color: var(--md-ml-ink); }
+.md-doc[data-md-theme="monospace-light"] a { color: var(--md-ml-link); text-decoration: underline; }
+.md-doc[data-md-theme="monospace-light"] a:hover {
+  background-color: #2a6496;
+  color: #ffffff;
+  text-decoration: none;
+}
+.md-doc[data-md-theme="monospace-light"] strong { color: var(--md-ml-strong); }
+.md-doc[data-md-theme="monospace-light"] em { color: var(--md-ml-em); }
+.md-doc[data-md-theme="monospace-light"] u { text-decoration-color: var(--md-ml-h1); }
+.md-doc[data-md-theme="monospace-light"] del { color: #777777; }
+
+.md-doc[data-md-theme="monospace-light"] blockquote {
+  background-color: rgba(128, 128, 128, 0.06);
+  border-left: 6px solid #979797;
+  border-radius: 0 5px 5px 0;
+  color: #4f4f4f;
+}
+.md-doc[data-md-theme="monospace-light"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="monospace-light"] ul,
+.md-doc[data-md-theme="monospace-light"] ol { color: var(--md-ml-ink); }
+.md-doc[data-md-theme="monospace-light"] li { color: inherit; }
+.md-doc[data-md-theme="monospace-light"] li::marker { color: var(--md-ml-marker); }
+
+.md-doc[data-md-theme="monospace-light"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-ml-marker);
+  background-color: #ffffff;
+}
+.md-doc[data-md-theme="monospace-light"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-ml-marker);
+  border-color: var(--md-ml-marker);
+}
+.md-doc[data-md-theme="monospace-light"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="monospace-light"] code {
+  font-family: var(--md-ml-mono);
+  font-size: 0.92em;
+  color: var(--md-ml-code-ink);
+  background-color: #f6f6ee;
+  padding: 0.08em 0.36em;
+  border-radius: 3px;
+}
+.md-doc[data-md-theme="monospace-light"] pre {
+  font-family: var(--md-ml-mono);
+  font-size: 0.9em;
+  background-color: var(--md-ml-fence-bg);
+  color: var(--md-ml-fence-ink);
+  border-radius: 4px;
+  padding: 0.95em 1.15em;
+}
+.md-doc[data-md-theme="monospace-light"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="monospace-light"] table { border: 1px solid var(--md-ml-border); }
+.md-doc[data-md-theme="monospace-light"] th,
+.md-doc[data-md-theme="monospace-light"] td { border: 1px solid var(--md-ml-border); }
+.md-doc[data-md-theme="monospace-light"] th {
+  background-color: #e0e0e0;
+  color: #000000;
+  font-weight: 700;
+}
+.md-doc[data-md-theme="monospace-light"] hr {
+  height: 0;
+  background-color: transparent;
+  border-top: 2px dashed #9a9a9a;
+}
+.md-doc[data-md-theme="monospace-light"] img { border: 1px solid var(--md-ml-border); border-radius: 3px; }
+
+/* ==========================================================================
+   Theme 14: monospace-dark — 모노스페이스 다크
+   Adapted from Monospace Dark Theme by Typora
+   (https://github.com/typora/typora-monospace-theme, Copyright (c) 2016 typora, MIT License).
+   Charcoal #222222 source-style page: periwinkle #dbdbfd & sky #549ad8 headings
+   with # markers, cream #ffffc5 bold, orchid #c885f5 italic, yellow inline code.
+   ========================================================================== */
+
+.md-doc[data-md-theme="monospace-dark"] {
+  --md-md-bg: #222222;
+  --md-md-ink: #ebebeb;
+  --md-md-h1: #dbdbfd;
+  --md-md-h4: #549ad8;
+  --md-md-strong: #ffffc5;
+  --md-md-em: #c885f5;
+  --md-md-link: #8ac9ff;
+  --md-md-marker: #4fac4f;
+  --md-md-code-ink: #caca16;
+  --md-md-fence-bg: #263238;
+  --md-md-fence-ink: #e9eded;
+  --md-md-border: #5a5a5a;
+  --md-md-mono: "Inconsolata", "PT Mono", "D2Coding", "SFMono-Regular", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-md-bg);
+  color: var(--md-md-ink);
+  font-family: var(--md-md-mono);
+  font-size: 15.5px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="monospace-dark"] ::selection {
+  background-color: rgba(219, 219, 253, 0.35);
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="monospace-dark"] h1,
+.md-doc[data-md-theme="monospace-dark"] h2,
+.md-doc[data-md-theme="monospace-dark"] h3,
+.md-doc[data-md-theme="monospace-dark"] h4,
+.md-doc[data-md-theme="monospace-dark"] h5,
+.md-doc[data-md-theme="monospace-dark"] h6 {
+  font-family: var(--md-md-mono);
+  font-weight: 700;
+  color: var(--md-md-h1);
+}
+
+.md-doc[data-md-theme="monospace-dark"] h1 { font-size: 1.9em; }
+.md-doc[data-md-theme="monospace-dark"] h1::before { content: "# "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-dark"] h2 { font-size: 1.55em; }
+.md-doc[data-md-theme="monospace-dark"] h2::before { content: "## "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-dark"] h3 { font-size: 1.28em; }
+.md-doc[data-md-theme="monospace-dark"] h3::before { content: "### "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-dark"] h4 { font-size: 1.15em; color: var(--md-md-h4); }
+.md-doc[data-md-theme="monospace-dark"] h4::before { content: "#### "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-dark"] h5 { font-size: 1.05em; color: var(--md-md-h4); }
+.md-doc[data-md-theme="monospace-dark"] h5::before { content: "##### "; opacity: 0.72; }
+.md-doc[data-md-theme="monospace-dark"] h6 { font-size: 0.98em; color: var(--md-md-h4); }
+.md-doc[data-md-theme="monospace-dark"] h6::before { content: "###### "; opacity: 0.72; }
+
+.md-doc[data-md-theme="monospace-dark"] p { color: var(--md-md-ink); }
+.md-doc[data-md-theme="monospace-dark"] a { color: var(--md-md-link); text-decoration: underline; }
+.md-doc[data-md-theme="monospace-dark"] a:hover {
+  background-color: #2a6496;
+  color: #ffffff;
+  text-decoration: none;
+}
+.md-doc[data-md-theme="monospace-dark"] strong { color: var(--md-md-strong); }
+.md-doc[data-md-theme="monospace-dark"] em { color: var(--md-md-em); }
+.md-doc[data-md-theme="monospace-dark"] u { text-decoration-color: var(--md-md-h1); }
+.md-doc[data-md-theme="monospace-dark"] del { color: #9c9c9c; }
+
+.md-doc[data-md-theme="monospace-dark"] blockquote {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-left: 6px solid #8a8a8a;
+  border-radius: 0 5px 5px 0;
+  color: #c7c7c7;
+}
+.md-doc[data-md-theme="monospace-dark"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="monospace-dark"] ul,
+.md-doc[data-md-theme="monospace-dark"] ol { color: var(--md-md-ink); }
+.md-doc[data-md-theme="monospace-dark"] li { color: inherit; }
+.md-doc[data-md-theme="monospace-dark"] li::marker { color: var(--md-md-marker); }
+
+.md-doc[data-md-theme="monospace-dark"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-md-marker);
+  background-color: var(--md-md-bg);
+}
+.md-doc[data-md-theme="monospace-dark"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-md-marker);
+  border-color: var(--md-md-marker);
+}
+.md-doc[data-md-theme="monospace-dark"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #161616;
+}
+
+.md-doc[data-md-theme="monospace-dark"] code {
+  font-family: var(--md-md-mono);
+  font-size: 0.92em;
+  color: var(--md-md-code-ink);
+  background-color: #2c2c2c;
+  padding: 0.08em 0.36em;
+  border-radius: 3px;
+}
+.md-doc[data-md-theme="monospace-dark"] pre {
+  font-family: var(--md-md-mono);
+  font-size: 0.9em;
+  background-color: var(--md-md-fence-bg);
+  color: var(--md-md-fence-ink);
+  border-radius: 4px;
+  padding: 0.95em 1.15em;
+}
+.md-doc[data-md-theme="monospace-dark"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="monospace-dark"] table { border: 1px solid var(--md-md-border); }
+.md-doc[data-md-theme="monospace-dark"] th,
+.md-doc[data-md-theme="monospace-dark"] td { border: 1px solid var(--md-md-border); }
+.md-doc[data-md-theme="monospace-dark"] th {
+  background-color: var(--md-md-fence-bg);
+  color: #f5f5f5;
+  font-weight: 700;
+}
+.md-doc[data-md-theme="monospace-dark"] hr {
+  height: 0;
+  background-color: transparent;
+  border-top: 2px dashed #777777;
+}
+.md-doc[data-md-theme="monospace-dark"] img { border: 1px solid var(--md-md-border); border-radius: 3px; }
+
+/* ==========================================================================
+   Theme 15: ursine-polar — 어사인 폴라
+   Adapted from Ursine Polar by Daniel Hernandez
+   (https://github.com/noatpad/typora-theme-ursine, Copyright (c) 2019 Daniel Hernandez, MIT License).
+   Bear Red Graphite palette: #fbfbfb canvas, clean sans body paired with slab/
+   serif headings, #db4d52 crimson links, list markers and blockquote bar.
+   ========================================================================== */
+
+.md-doc[data-md-theme="ursine-polar"] {
+  --md-up-bg: #fbfbfb;
+  --md-up-surface: #fafafa;
+  --md-up-ink: #333333;
+  --md-up-muted: #757575;
+  --md-up-quote: #827676;
+  --md-up-primary: #db4d52;
+  --md-up-primary-dark: #be2f34;
+  --md-up-border: #b4b4b4;
+  --md-up-table-head: #dddddd;
+  --md-up-table-stripe: #e6e6e6;
+  --md-up-sans: "Avenir Next", "Lato", "Pretendard Variable", "Pretendard",
+    "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-up-serif: "Roboto Slab", "Rockwell", Georgia, "Times New Roman", "Noto Serif KR",
+    "Source Han Serif KR", "Nanum Myeongjo", "AppleMyungjo", serif;
+  --md-up-mono: "Fira Mono", "Cousine", Consolas, "D2Coding",
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-up-bg);
+  color: var(--md-up-ink);
+  font-family: var(--md-up-sans);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="ursine-polar"] ::selection {
+  background-color: #fbb6b7;
+  color: #222222;
+}
+
+.md-doc[data-md-theme="ursine-polar"] h1,
+.md-doc[data-md-theme="ursine-polar"] h2,
+.md-doc[data-md-theme="ursine-polar"] h3,
+.md-doc[data-md-theme="ursine-polar"] h4,
+.md-doc[data-md-theme="ursine-polar"] h5,
+.md-doc[data-md-theme="ursine-polar"] h6 {
+  font-family: var(--md-up-serif);
+  color: #222222;
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="ursine-polar"] h1 { font-size: 1.9em; }
+.md-doc[data-md-theme="ursine-polar"] h2 { font-size: 1.48em; }
+.md-doc[data-md-theme="ursine-polar"] h3 { font-size: 1.24em; }
+.md-doc[data-md-theme="ursine-polar"] h4 { font-size: 1.1em; }
+.md-doc[data-md-theme="ursine-polar"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="ursine-polar"] h6 { font-size: 0.94em; color: var(--md-up-muted); }
+
+.md-doc[data-md-theme="ursine-polar"] p { color: var(--md-up-ink); }
+.md-doc[data-md-theme="ursine-polar"] a {
+  color: var(--md-up-primary);
+  text-decoration: underline;
+  text-decoration-color: rgba(219, 77, 82, 0.4);
+  text-underline-offset: 0.18em;
+}
+.md-doc[data-md-theme="ursine-polar"] a:hover {
+  color: var(--md-up-primary-dark);
+  text-decoration-color: var(--md-up-primary-dark);
+}
+.md-doc[data-md-theme="ursine-polar"] strong { color: #1f1f1f; }
+.md-doc[data-md-theme="ursine-polar"] em { color: inherit; }
+.md-doc[data-md-theme="ursine-polar"] u { text-decoration-color: var(--md-up-primary); }
+.md-doc[data-md-theme="ursine-polar"] del { color: var(--md-up-border); }
+
+.md-doc[data-md-theme="ursine-polar"] blockquote {
+  border-left: 4px solid var(--md-up-primary);
+  font-family: var(--md-up-serif);
+  color: var(--md-up-quote);
+  background-color: rgba(219, 77, 82, 0.04);
+  padding: 0.55em 1.15em;
+}
+.md-doc[data-md-theme="ursine-polar"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="ursine-polar"] ul,
+.md-doc[data-md-theme="ursine-polar"] ol { color: var(--md-up-ink); }
+.md-doc[data-md-theme="ursine-polar"] li { color: inherit; }
+.md-doc[data-md-theme="ursine-polar"] li::marker { color: var(--md-up-primary); font-weight: 700; }
+
+.md-doc[data-md-theme="ursine-polar"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-up-border);
+  background-color: #ffffff;
+  border-radius: 4px;
+}
+.md-doc[data-md-theme="ursine-polar"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-up-primary);
+  border-color: var(--md-up-primary);
+}
+.md-doc[data-md-theme="ursine-polar"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="ursine-polar"] code {
+  font-family: var(--md-up-mono);
+  font-size: 0.88em;
+  background-color: var(--md-up-surface);
+  color: #3a3434;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  padding: 0.1em 0.34em;
+}
+.md-doc[data-md-theme="ursine-polar"] pre {
+  font-family: var(--md-up-mono);
+  font-size: 0.88em;
+  background-color: #f5f5f5;
+  color: #2f2f2f;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  padding: 0.9em 1.15em;
+}
+.md-doc[data-md-theme="ursine-polar"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="ursine-polar"] table { border: 1px solid var(--md-up-border); }
+.md-doc[data-md-theme="ursine-polar"] th,
+.md-doc[data-md-theme="ursine-polar"] td { border: 1px solid var(--md-up-border); }
+.md-doc[data-md-theme="ursine-polar"] th {
+  background-color: var(--md-up-table-head);
+  color: #222222;
+  font-weight: 700;
+}
+.md-doc[data-md-theme="ursine-polar"] tbody tr:nth-child(even) { background-color: var(--md-up-table-stripe); }
+.md-doc[data-md-theme="ursine-polar"] hr { background-color: var(--md-up-border); }
+.md-doc[data-md-theme="ursine-polar"] img { border-radius: 4px; border: 1px solid #dddddd; }
+
+/* ==========================================================================
+   Theme 16: ursine-umbra — 어사인 엄브라
+   Adapted from Ursine Umbra by Daniel Hernandez
+   (https://github.com/noatpad/typora-theme-ursine, Copyright (c) 2019 Daniel Hernandez, MIT License).
+   Bear Dark Graphite palette: #1e2022 surface, #dddddd body, serif headings,
+   #6bcafb sky-blue links, #428bca accent bar, #282a36 Dracula code blocks.
+   ========================================================================== */
+
+.md-doc[data-md-theme="ursine-umbra"] {
+  --md-uu-bg: #1e2022;
+  --md-uu-code-bg: #282a36;
+  --md-uu-ink: #dddddd;
+  --md-uu-heading: #f2f2f2;
+  --md-uu-quote: #888e9c;
+  --md-uu-link: #6bcafb;
+  --md-uu-primary: #428bca;
+  --md-uu-border: #5b5b5b;
+  --md-uu-table-head: #4d4d4d;
+  --md-uu-table-stripe: #2b2e31;
+  --md-uu-sans: "Avenir Next", "Lato", "Pretendard Variable", "Pretendard",
+    "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-uu-serif: "Roboto Slab", "Rockwell", Georgia, "Times New Roman", "Noto Serif KR",
+    "Source Han Serif KR", "Nanum Myeongjo", "AppleMyungjo", serif;
+  --md-uu-mono: "Fira Mono", "Cousine", Consolas, "D2Coding",
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-uu-bg);
+  color: var(--md-uu-ink);
+  font-family: var(--md-uu-sans);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="ursine-umbra"] ::selection {
+  background-color: #285194;
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="ursine-umbra"] h1,
+.md-doc[data-md-theme="ursine-umbra"] h2,
+.md-doc[data-md-theme="ursine-umbra"] h3,
+.md-doc[data-md-theme="ursine-umbra"] h4,
+.md-doc[data-md-theme="ursine-umbra"] h5,
+.md-doc[data-md-theme="ursine-umbra"] h6 {
+  font-family: var(--md-uu-serif);
+  color: var(--md-uu-heading);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="ursine-umbra"] h1 { font-size: 1.9em; }
+.md-doc[data-md-theme="ursine-umbra"] h2 { font-size: 1.48em; }
+.md-doc[data-md-theme="ursine-umbra"] h3 { font-size: 1.24em; }
+.md-doc[data-md-theme="ursine-umbra"] h4 { font-size: 1.1em; }
+.md-doc[data-md-theme="ursine-umbra"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="ursine-umbra"] h6 { font-size: 0.94em; color: var(--md-uu-quote); }
+
+.md-doc[data-md-theme="ursine-umbra"] p { color: var(--md-uu-ink); }
+.md-doc[data-md-theme="ursine-umbra"] a {
+  color: var(--md-uu-link);
+  text-decoration: underline;
+  text-decoration-color: rgba(107, 202, 251, 0.38);
+  text-underline-offset: 0.18em;
+}
+.md-doc[data-md-theme="ursine-umbra"] a:hover {
+  color: #9dddfd;
+  text-decoration-color: #9dddfd;
+}
+.md-doc[data-md-theme="ursine-umbra"] strong { color: #ffffff; }
+.md-doc[data-md-theme="ursine-umbra"] em { color: #e8e8e8; }
+.md-doc[data-md-theme="ursine-umbra"] u { text-decoration-color: var(--md-uu-link); }
+.md-doc[data-md-theme="ursine-umbra"] del { color: #8c8c8c; }
+
+.md-doc[data-md-theme="ursine-umbra"] blockquote {
+  border-left: 4px solid var(--md-uu-primary);
+  font-family: var(--md-uu-serif);
+  color: var(--md-uu-quote);
+  background-color: rgba(66, 139, 202, 0.08);
+  padding: 0.55em 1.15em;
+}
+.md-doc[data-md-theme="ursine-umbra"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="ursine-umbra"] ul,
+.md-doc[data-md-theme="ursine-umbra"] ol { color: var(--md-uu-ink); }
+.md-doc[data-md-theme="ursine-umbra"] li { color: inherit; }
+.md-doc[data-md-theme="ursine-umbra"] li::marker { color: var(--md-uu-primary); font-weight: 700; }
+
+.md-doc[data-md-theme="ursine-umbra"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-uu-border);
+  background-color: #26292c;
+  border-radius: 4px;
+}
+.md-doc[data-md-theme="ursine-umbra"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-uu-primary);
+  border-color: var(--md-uu-primary);
+}
+.md-doc[data-md-theme="ursine-umbra"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="ursine-umbra"] code {
+  font-family: var(--md-uu-mono);
+  font-size: 0.88em;
+  background-color: var(--md-uu-code-bg);
+  color: #f8f8f2;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  padding: 0.1em 0.34em;
+}
+.md-doc[data-md-theme="ursine-umbra"] pre {
+  font-family: var(--md-uu-mono);
+  font-size: 0.88em;
+  background-color: var(--md-uu-code-bg);
+  color: #f8f8f2;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 5px;
+  padding: 0.9em 1.15em;
+}
+.md-doc[data-md-theme="ursine-umbra"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="ursine-umbra"] table { border: 1px solid var(--md-uu-border); }
+.md-doc[data-md-theme="ursine-umbra"] th,
+.md-doc[data-md-theme="ursine-umbra"] td { border: 1px solid var(--md-uu-border); }
+.md-doc[data-md-theme="ursine-umbra"] th {
+  background-color: var(--md-uu-table-head);
+  color: var(--md-uu-heading);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="ursine-umbra"] tbody tr:nth-child(even) { background-color: var(--md-uu-table-stripe); }
+.md-doc[data-md-theme="ursine-umbra"] hr { background-color: var(--md-uu-border); }
+.md-doc[data-md-theme="ursine-umbra"] img { border-radius: 4px; border: 1px solid #3c3c3c; }
+
+/* ==========================================================================
+   Theme 17: xylight — 자이라이트
+   Adapted from XyDark (xylight.css) by xypnox
+   (https://github.com/xypnox/xydark-typora, Copyright (c) 2020 xypnox, MIT License).
+   Minimalist monospace body (#42464c on #ffffff) with bold sans headings
+   (#222324), #2077b2 links, clean bordered tables and subtle #f8f8f8 code.
+   ========================================================================== */
+
+.md-doc[data-md-theme="xylight"] {
+  --md-xl-bg: #ffffff;
+  --md-xl-surface: #fafafa;
+  --md-xl-code-bg: #f8f8f8;
+  --md-xl-ink: #42464c;
+  --md-xl-heading: #222324;
+  --md-xl-muted: #667176;
+  --md-xl-accent: #aeb1b5;
+  --md-xl-border: #dddddd;
+  --md-xl-link: #2077b2;
+  --md-xl-link-hover: #14537d;
+  --md-xl-sans: "Fira Sans", "Roboto", "Pretendard Variable", "Pretendard",
+    "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-xl-mono: "Iosevka", "Fira Mono", "Source Code Pro", "D2Coding", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: light;
+  background-color: var(--md-xl-bg);
+  color: var(--md-xl-ink);
+  font-family: var(--md-xl-mono);
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
+.md-doc[data-md-theme="xylight"] ::selection {
+  background-color: #d6eaf8;
+  color: var(--md-xl-heading);
+}
+
+.md-doc[data-md-theme="xylight"] h1,
+.md-doc[data-md-theme="xylight"] h2,
+.md-doc[data-md-theme="xylight"] h3,
+.md-doc[data-md-theme="xylight"] h4,
+.md-doc[data-md-theme="xylight"] h5,
+.md-doc[data-md-theme="xylight"] h6 {
+  font-family: var(--md-xl-sans);
+  font-weight: 700;
+  color: var(--md-xl-heading);
+}
+
+.md-doc[data-md-theme="xylight"] h1 { font-size: 2em; }
+.md-doc[data-md-theme="xylight"] h2 { font-size: 1.42em; }
+.md-doc[data-md-theme="xylight"] h3 { font-size: 1.24em; }
+.md-doc[data-md-theme="xylight"] h4 { font-size: 1.1em; }
+.md-doc[data-md-theme="xylight"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="xylight"] h6 { font-size: 0.94em; color: var(--md-xl-muted); }
+
+.md-doc[data-md-theme="xylight"] p { color: var(--md-xl-ink); }
+.md-doc[data-md-theme="xylight"] a { color: var(--md-xl-link); text-decoration: none; }
+.md-doc[data-md-theme="xylight"] a:hover { color: var(--md-xl-link-hover); text-decoration: underline; }
+.md-doc[data-md-theme="xylight"] strong { color: var(--md-xl-heading); }
+.md-doc[data-md-theme="xylight"] em { color: inherit; }
+.md-doc[data-md-theme="xylight"] u { text-decoration-color: var(--md-xl-link); }
+.md-doc[data-md-theme="xylight"] del { color: var(--md-xl-accent); }
+
+.md-doc[data-md-theme="xylight"] blockquote {
+  border-left: 2px solid var(--md-xl-border);
+  color: var(--md-xl-muted);
+  padding: 0.35em 1.1em;
+}
+.md-doc[data-md-theme="xylight"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="xylight"] ul,
+.md-doc[data-md-theme="xylight"] ol { color: var(--md-xl-ink); }
+.md-doc[data-md-theme="xylight"] li { color: inherit; }
+.md-doc[data-md-theme="xylight"] li::marker { color: var(--md-xl-muted); }
+
+.md-doc[data-md-theme="xylight"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-xl-muted);
+  background-color: #ffffff;
+}
+.md-doc[data-md-theme="xylight"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-xl-link);
+  border-color: var(--md-xl-link);
+}
+.md-doc[data-md-theme="xylight"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="xylight"] code {
+  font-family: var(--md-xl-mono);
+  font-size: 0.92em;
+  background-color: var(--md-xl-code-bg);
+  color: var(--md-xl-heading);
+  border: 1px solid var(--md-xl-border);
+  border-radius: 3px;
+  padding: 0.08em 0.34em;
+}
+.md-doc[data-md-theme="xylight"] pre {
+  font-family: var(--md-xl-mono);
+  font-size: 0.9em;
+  background-color: var(--md-xl-code-bg);
+  color: var(--md-xl-ink);
+  border: 1px solid var(--md-xl-border);
+  border-radius: 3px;
+  padding: 0.85em 1.1em;
+}
+.md-doc[data-md-theme="xylight"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="xylight"] table { border: 1px solid var(--md-xl-border); }
+.md-doc[data-md-theme="xylight"] th,
+.md-doc[data-md-theme="xylight"] td { border: 1px solid var(--md-xl-border); }
+.md-doc[data-md-theme="xylight"] th {
+  background-color: var(--md-xl-surface);
+  color: var(--md-xl-heading);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="xylight"] tbody tr:nth-child(even) { background-color: var(--md-xl-surface); }
+.md-doc[data-md-theme="xylight"] hr { height: 2px; background-color: var(--md-xl-border); }
+.md-doc[data-md-theme="xylight"] img { border: 1px solid var(--md-xl-border); border-radius: 2px; }
+
+/* ==========================================================================
+   Theme 18: xydark — 자이다크
+   Adapted from XyDark (xydark.css) by xypnox
+   (https://github.com/xypnox/xydark-typora, Copyright (c) 2020 xypnox, MIT License).
+   Deep midnight #0f111a canvas, muted cool-grey monospace body #8f93a2,
+   periwinkle #a5a7bd sans headings, #6699cc links, #181c2d table headers.
+   ========================================================================== */
+
+.md-doc[data-md-theme="xydark"] {
+  --md-xd-bg: #0f111a;
+  --md-xd-surface: #181c2d;
+  --md-xd-code-bg: #131622;
+  --md-xd-ink: #9ca1b3;
+  --md-xd-heading: #a5a7bd;
+  --md-xd-bright: #eeffff;
+  --md-xd-muted: #787c88;
+  --md-xd-border: #232629;
+  --md-xd-link: #6699cc;
+  --md-xd-link-hover: #8cb7e2;
+  --md-xd-sans: "Fira Sans", "Roboto", "Pretendard Variable", "Pretendard",
+    "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-xd-mono: "Iosevka", "Fira Mono", "Source Code Pro", "D2Coding", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-xd-bg);
+  color: var(--md-xd-ink);
+  font-family: var(--md-xd-mono);
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
+.md-doc[data-md-theme="xydark"] ::selection {
+  background-color: #295080;
+  color: #eeffff;
+}
+
+.md-doc[data-md-theme="xydark"] h1,
+.md-doc[data-md-theme="xydark"] h2,
+.md-doc[data-md-theme="xydark"] h3,
+.md-doc[data-md-theme="xydark"] h4,
+.md-doc[data-md-theme="xydark"] h5,
+.md-doc[data-md-theme="xydark"] h6 {
+  font-family: var(--md-xd-sans);
+  font-weight: 700;
+  color: var(--md-xd-heading);
+}
+
+.md-doc[data-md-theme="xydark"] h1 { font-size: 2em; color: var(--md-xd-bright); }
+.md-doc[data-md-theme="xydark"] h2 { font-size: 1.42em; }
+.md-doc[data-md-theme="xydark"] h3 { font-size: 1.24em; }
+.md-doc[data-md-theme="xydark"] h4 { font-size: 1.1em; color: var(--md-xd-bright); }
+.md-doc[data-md-theme="xydark"] h5 { font-size: 1em; color: var(--md-xd-heading); }
+.md-doc[data-md-theme="xydark"] h6 { font-size: 0.94em; color: var(--md-xd-muted); }
+
+.md-doc[data-md-theme="xydark"] p { color: var(--md-xd-ink); }
+.md-doc[data-md-theme="xydark"] a { color: var(--md-xd-link); text-decoration: none; }
+.md-doc[data-md-theme="xydark"] a:hover { color: var(--md-xd-link-hover); text-decoration: underline; }
+.md-doc[data-md-theme="xydark"] strong { color: var(--md-xd-bright); }
+.md-doc[data-md-theme="xydark"] em { color: #c594c5; }
+.md-doc[data-md-theme="xydark"] u { text-decoration-color: var(--md-xd-link); }
+.md-doc[data-md-theme="xydark"] del { color: var(--md-xd-muted); }
+
+.md-doc[data-md-theme="xydark"] blockquote {
+  border-left: 2px solid #464b5d;
+  color: var(--md-xd-muted);
+  background-color: rgba(24, 28, 45, 0.45);
+  padding: 0.45em 1.1em;
+}
+.md-doc[data-md-theme="xydark"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="xydark"] ul,
+.md-doc[data-md-theme="xydark"] ol { color: var(--md-xd-ink); }
+.md-doc[data-md-theme="xydark"] li { color: inherit; }
+.md-doc[data-md-theme="xydark"] li::marker { color: #464b5d; }
+
+.md-doc[data-md-theme="xydark"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid #464b5d;
+  background-color: var(--md-xd-code-bg);
+}
+.md-doc[data-md-theme="xydark"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-xd-link);
+  border-color: var(--md-xd-link);
+}
+.md-doc[data-md-theme="xydark"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: var(--md-xd-bg);
+}
+
+.md-doc[data-md-theme="xydark"] code {
+  font-family: var(--md-xd-mono);
+  font-size: 0.92em;
+  background-color: #161a27;
+  color: #c7d0e6;
+  border-radius: 3px;
+  padding: 0.12em 0.42em;
+}
+.md-doc[data-md-theme="xydark"] pre {
+  font-family: var(--md-xd-mono);
+  font-size: 0.9em;
+  background-color: var(--md-xd-code-bg);
+  color: #c7d0e6;
+  border: 1px solid #222638;
+  border-radius: 4px;
+  padding: 0.9em 1.15em;
+}
+.md-doc[data-md-theme="xydark"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="xydark"] table { border: 1px solid var(--md-xd-border); }
+.md-doc[data-md-theme="xydark"] th,
+.md-doc[data-md-theme="xydark"] td { border: 1px solid var(--md-xd-border); }
+.md-doc[data-md-theme="xydark"] th {
+  background-color: var(--md-xd-surface);
+  color: var(--md-xd-bright);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="xydark"] tbody tr:nth-child(even) { background-color: var(--md-xd-surface); }
+.md-doc[data-md-theme="xydark"] hr { height: 2px; background-color: var(--md-xd-border); }
+.md-doc[data-md-theme="xydark"] img { border: 1px solid var(--md-xd-border); border-radius: 3px; }
+
+/* ==========================================================================
+   Theme 19: vue-light — 뷰 라이트
+   Adapted from Typora Vue Theme by blinkfox
+   (https://github.com/blinkfox/typora-vue-theme, Apache-2.0 License).
+   Vue.js documentation style: #ffffff canvas, #34495e slate-navy text,
+   #42b983 emerald links & tinted blockquotes, #e96900 orange inline code.
+   ========================================================================== */
+
+.md-doc[data-md-theme="vue-light"] {
+  --md-vl-bg: #ffffff;
+  --md-vl-surface: #f8f8f8;
+  --md-vl-ink: #34495e;
+  --md-vl-muted: #777777;
+  --md-vl-accent: #42b983;
+  --md-vl-accent-dark: #2f9667;
+  --md-vl-code: #e96900;
+  --md-vl-border: #dfe2e5;
+  --md-vl-sans: "Source Sans Pro", "Ubuntu", "Pretendard Variable", "Pretendard",
+    "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, BlinkMacSystemFont, sans-serif;
+  --md-vl-mono: "Fira Code", "Roboto Mono", "D2Coding", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-vl-bg);
+  color: var(--md-vl-ink);
+  font-family: var(--md-vl-sans);
+  font-size: 16px;
+  line-height: 1.68;
+}
+
+.md-doc[data-md-theme="vue-light"] ::selection {
+  background-color: rgba(66, 185, 131, 0.24);
+  color: #1f2d3d;
+}
+
+.md-doc[data-md-theme="vue-light"] h1,
+.md-doc[data-md-theme="vue-light"] h2,
+.md-doc[data-md-theme="vue-light"] h3,
+.md-doc[data-md-theme="vue-light"] h4,
+.md-doc[data-md-theme="vue-light"] h5,
+.md-doc[data-md-theme="vue-light"] h6 {
+  font-family: var(--md-vl-sans);
+  font-weight: 700;
+  color: var(--md-vl-ink);
+}
+
+.md-doc[data-md-theme="vue-light"] h1 { font-size: 2.1em; }
+.md-doc[data-md-theme="vue-light"] h2 {
+  font-size: 1.65em;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid #dddddd;
+}
+.md-doc[data-md-theme="vue-light"] h3 { font-size: 1.35em; }
+.md-doc[data-md-theme="vue-light"] h4 { font-size: 1.15em; }
+.md-doc[data-md-theme="vue-light"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="vue-light"] h6 { font-size: 0.96em; color: var(--md-vl-muted); }
+
+.md-doc[data-md-theme="vue-light"] p { color: var(--md-vl-ink); }
+.md-doc[data-md-theme="vue-light"] a {
+  color: var(--md-vl-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.md-doc[data-md-theme="vue-light"] a:hover {
+  color: var(--md-vl-accent-dark);
+  text-decoration: underline;
+}
+.md-doc[data-md-theme="vue-light"] strong { color: #22303e; }
+.md-doc[data-md-theme="vue-light"] em { color: inherit; }
+.md-doc[data-md-theme="vue-light"] u { text-decoration-color: var(--md-vl-accent); }
+.md-doc[data-md-theme="vue-light"] del { color: var(--md-vl-muted); }
+
+.md-doc[data-md-theme="vue-light"] blockquote {
+  border-left: 4px solid var(--md-vl-accent);
+  background-color: rgba(66, 185, 131, 0.1);
+  color: #5d6c7a;
+  border-radius: 0 4px 4px 0;
+}
+.md-doc[data-md-theme="vue-light"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="vue-light"] ul,
+.md-doc[data-md-theme="vue-light"] ol { color: var(--md-vl-ink); }
+.md-doc[data-md-theme="vue-light"] li { color: inherit; }
+.md-doc[data-md-theme="vue-light"] li::marker { color: var(--md-vl-accent); }
+
+.md-doc[data-md-theme="vue-light"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-vl-accent);
+  background-color: #ffffff;
+}
+.md-doc[data-md-theme="vue-light"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-vl-accent);
+  border-color: var(--md-vl-accent);
+}
+.md-doc[data-md-theme="vue-light"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="vue-light"] code {
+  font-family: var(--md-vl-mono);
+  font-size: 0.88em;
+  color: var(--md-vl-code);
+  background-color: var(--md-vl-surface);
+  border-radius: 3px;
+  padding: 0.12em 0.36em;
+}
+.md-doc[data-md-theme="vue-light"] pre {
+  font-family: var(--md-vl-mono);
+  font-size: 0.87em;
+  background-color: var(--md-vl-surface);
+  color: #2f3e4e;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  padding: 0.9em 1.15em;
+}
+.md-doc[data-md-theme="vue-light"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="vue-light"] table { border: 1px solid var(--md-vl-border); }
+.md-doc[data-md-theme="vue-light"] th,
+.md-doc[data-md-theme="vue-light"] td { border: 1px solid var(--md-vl-border); }
+.md-doc[data-md-theme="vue-light"] th {
+  background-color: #f2f2f2;
+  color: var(--md-vl-ink);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="vue-light"] tbody tr:nth-child(even) { background-color: #fafafa; }
+.md-doc[data-md-theme="vue-light"] hr { height: 2px; background-color: #e7e7e7; }
+.md-doc[data-md-theme="vue-light"] img { border-radius: 4px; border: 1px solid #eaecef; }
+
+/* ==========================================================================
+   Theme 20: vue-dark — 뷰 다크
+   Adapted from Typora Vue Dark Theme by blinkfox
+   (https://github.com/blinkfox/typora-vue-theme, Apache-2.0 License).
+   Charcoal #1f1f1f canvas, #eeeeee body, #42b983 emerald links & blockquotes,
+   #f3b37f warm-amber inline code, deep #181818 code blocks & tables.
+   ========================================================================== */
+
+.md-doc[data-md-theme="vue-dark"] {
+  --md-vd-bg: #1f1f1f;
+  --md-vd-surface: #181818;
+  --md-vd-ink: #eeeeee;
+  --md-vd-muted: #999999;
+  --md-vd-accent: #42b983;
+  --md-vd-accent-bright: #64d29f;
+  --md-vd-code: #f3b37f;
+  --md-vd-border: #333333;
+  --md-vd-sans: "Source Sans Pro", "Ubuntu", "Pretendard Variable", "Pretendard",
+    "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, BlinkMacSystemFont, sans-serif;
+  --md-vd-mono: "Fira Code", "Roboto Mono", "D2Coding", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-vd-bg);
+  color: var(--md-vd-ink);
+  font-family: var(--md-vd-sans);
+  font-size: 16px;
+  line-height: 1.68;
+}
+
+.md-doc[data-md-theme="vue-dark"] ::selection {
+  background-color: rgba(66, 185, 131, 0.38);
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="vue-dark"] h1,
+.md-doc[data-md-theme="vue-dark"] h2,
+.md-doc[data-md-theme="vue-dark"] h3,
+.md-doc[data-md-theme="vue-dark"] h4,
+.md-doc[data-md-theme="vue-dark"] h5,
+.md-doc[data-md-theme="vue-dark"] h6 {
+  font-family: var(--md-vd-sans);
+  font-weight: 700;
+  color: #f5f5f5;
+}
+
+.md-doc[data-md-theme="vue-dark"] h1 { font-size: 2.1em; }
+.md-doc[data-md-theme="vue-dark"] h2 {
+  font-size: 1.65em;
+  padding-bottom: 0.35em;
+  border-bottom: 2px solid var(--md-vd-border);
+}
+.md-doc[data-md-theme="vue-dark"] h3 { font-size: 1.35em; }
+.md-doc[data-md-theme="vue-dark"] h4 { font-size: 1.15em; }
+.md-doc[data-md-theme="vue-dark"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="vue-dark"] h6 { font-size: 0.96em; color: var(--md-vd-muted); }
+
+.md-doc[data-md-theme="vue-dark"] p { color: var(--md-vd-ink); }
+.md-doc[data-md-theme="vue-dark"] a {
+  color: var(--md-vd-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.md-doc[data-md-theme="vue-dark"] a:hover {
+  color: var(--md-vd-accent-bright);
+  text-decoration: underline;
+}
+.md-doc[data-md-theme="vue-dark"] strong { color: #ffffff; }
+.md-doc[data-md-theme="vue-dark"] em { color: #e2e2e2; }
+.md-doc[data-md-theme="vue-dark"] u { text-decoration-color: var(--md-vd-accent); }
+.md-doc[data-md-theme="vue-dark"] del { color: var(--md-vd-muted); }
+
+.md-doc[data-md-theme="vue-dark"] blockquote {
+  border-left: 4px solid var(--md-vd-accent);
+  background-color: rgba(66, 185, 131, 0.1);
+  color: var(--md-vd-ink);
+  border-radius: 0 4px 4px 0;
+}
+.md-doc[data-md-theme="vue-dark"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="vue-dark"] ul,
+.md-doc[data-md-theme="vue-dark"] ol { color: var(--md-vd-ink); }
+.md-doc[data-md-theme="vue-dark"] li { color: inherit; }
+.md-doc[data-md-theme="vue-dark"] li::marker { color: var(--md-vd-accent); }
+
+.md-doc[data-md-theme="vue-dark"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-vd-accent);
+  background-color: var(--md-vd-surface);
+}
+.md-doc[data-md-theme="vue-dark"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-vd-accent);
+  border-color: var(--md-vd-accent);
+}
+.md-doc[data-md-theme="vue-dark"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #141414;
+}
+
+.md-doc[data-md-theme="vue-dark"] code {
+  font-family: var(--md-vd-mono);
+  font-size: 0.87em;
+  color: var(--md-vd-code);
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  padding: 0.12em 0.38em;
+}
+.md-doc[data-md-theme="vue-dark"] pre {
+  font-family: var(--md-vd-mono);
+  font-size: 0.87em;
+  background-color: var(--md-vd-surface);
+  color: #c8c8c8;
+  border: 1px solid #2b2b2b;
+  border-radius: 4px;
+  padding: 0.9em 1.15em;
+}
+.md-doc[data-md-theme="vue-dark"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="vue-dark"] table { border: 1px solid var(--md-vd-border); }
+.md-doc[data-md-theme="vue-dark"] th,
+.md-doc[data-md-theme="vue-dark"] td { border: 1px solid var(--md-vd-border); }
+.md-doc[data-md-theme="vue-dark"] th {
+  background-color: #161616;
+  color: #f5f5f5;
+  font-weight: 700;
+}
+.md-doc[data-md-theme="vue-dark"] tbody tr:nth-child(even) { background-color: #1a1a1a; }
+.md-doc[data-md-theme="vue-dark"] hr { height: 2px; background-color: #2e2e2e; }
+.md-doc[data-md-theme="vue-dark"] img { border-radius: 4px; border: 1px solid var(--md-vd-border); }
+
+/* ==========================================================================
+   Theme 21: lapis-light — 라피스 라이트
+   Adapted from Typora Theme Lapis by YiNN
+   (https://github.com/YiNNx/typora-theme-lapis, MIT License).
+   Crisp white editorial page with #4870ac lapis-blue accents, centered h1,
+   filled pill-badge h2, serif headings, #f6f8fa callout quotes and code.
+   ========================================================================== */
+
+.md-doc[data-md-theme="lapis-light"] {
+  --md-ll-bg: #ffffff;
+  --md-ll-surface: #f6f8fa;
+  --md-ll-ink: #40464f;
+  --md-ll-primary: #4870ac;
+  --md-ll-primary-dark: #335487;
+  --md-ll-marker: #a2b6d4;
+  --md-ll-border: #d9dfe4;
+  --md-ll-serif: "Noto Serif KR", "Source Han Serif KR", "Nanum Myeongjo",
+    "AppleMyungjo", Georgia, serif;
+  --md-ll-sans: "Cantarell", "Pretendard Variable", "Pretendard", "Noto Sans KR",
+    "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-ll-mono: "JetBrains Mono", "D2Coding", "SFMono-Regular", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-ll-bg);
+  color: var(--md-ll-ink);
+  font-family: var(--md-ll-sans);
+  font-size: 16px;
+  line-height: 1.74;
+}
+
+.md-doc[data-md-theme="lapis-light"] ::selection {
+  background-color: #dbe6f5;
+  color: #1f2b3d;
+}
+
+.md-doc[data-md-theme="lapis-light"] h1,
+.md-doc[data-md-theme="lapis-light"] h2,
+.md-doc[data-md-theme="lapis-light"] h3,
+.md-doc[data-md-theme="lapis-light"] h4,
+.md-doc[data-md-theme="lapis-light"] h5,
+.md-doc[data-md-theme="lapis-light"] h6 {
+  font-family: var(--md-ll-serif);
+  color: var(--md-ll-primary);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="lapis-light"] h1 { font-size: 1.95em; text-align: center; }
+.md-doc[data-md-theme="lapis-light"] h2 {
+  display: inline-block;
+  font-size: 1.38em;
+  padding: 0.14em 0.7em;
+  border-radius: 4px;
+  background-color: var(--md-ll-primary);
+  color: #ffffff;
+}
+.md-doc[data-md-theme="lapis-light"] h3 { font-size: 1.28em; }
+.md-doc[data-md-theme="lapis-light"] h4 { font-size: 1.12em; font-weight: 500; }
+.md-doc[data-md-theme="lapis-light"] h5 { font-size: 1.02em; font-weight: 500; }
+.md-doc[data-md-theme="lapis-light"] h6 { font-size: 0.96em; font-weight: 500; color: #6c7d96; }
+
+.md-doc[data-md-theme="lapis-light"] p { color: var(--md-ll-ink); }
+.md-doc[data-md-theme="lapis-light"] a {
+  color: var(--md-ll-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+.md-doc[data-md-theme="lapis-light"] a:hover { color: var(--md-ll-primary-dark); }
+.md-doc[data-md-theme="lapis-light"] strong { color: var(--md-ll-primary); }
+.md-doc[data-md-theme="lapis-light"] em { color: inherit; }
+.md-doc[data-md-theme="lapis-light"] u { text-decoration-color: var(--md-ll-primary); }
+.md-doc[data-md-theme="lapis-light"] del { color: #8c95a3; }
+
+.md-doc[data-md-theme="lapis-light"] blockquote {
+  border-left: 3px solid var(--md-ll-primary);
+  background-color: var(--md-ll-surface);
+  color: var(--md-ll-ink);
+  border-radius: 0 4px 4px 0;
+}
+.md-doc[data-md-theme="lapis-light"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="lapis-light"] ul,
+.md-doc[data-md-theme="lapis-light"] ol { color: var(--md-ll-ink); }
+.md-doc[data-md-theme="lapis-light"] li { color: inherit; }
+.md-doc[data-md-theme="lapis-light"] li::marker { color: var(--md-ll-marker); font-weight: 700; }
+
+.md-doc[data-md-theme="lapis-light"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-ll-marker);
+  background-color: #fdfdfd;
+  border-radius: 50%;
+}
+.md-doc[data-md-theme="lapis-light"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-ll-primary);
+  border-color: var(--md-ll-primary);
+}
+.md-doc[data-md-theme="lapis-light"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="lapis-light"] code {
+  font-family: var(--md-ll-mono);
+  font-size: 0.88em;
+  color: var(--md-ll-primary);
+  background-color: var(--md-ll-surface);
+  border-radius: 3px;
+  padding: 0.12em 0.36em;
+}
+.md-doc[data-md-theme="lapis-light"] pre {
+  font-family: var(--md-ll-mono);
+  font-size: 0.87em;
+  background-color: var(--md-ll-surface);
+  color: #2f3844;
+  border: 1px solid #e6ebf0;
+  border-radius: 6px;
+  padding: 0.95em 1.2em;
+}
+.md-doc[data-md-theme="lapis-light"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="lapis-light"] table { border: 1px solid var(--md-ll-border); }
+.md-doc[data-md-theme="lapis-light"] th,
+.md-doc[data-md-theme="lapis-light"] td { border: 1px solid var(--md-ll-border); }
+.md-doc[data-md-theme="lapis-light"] th {
+  font-family: var(--md-ll-serif);
+  color: var(--md-ll-primary);
+  background-color: var(--md-ll-surface);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="lapis-light"] hr { height: 2px; background-color: #eef2f5; }
+.md-doc[data-md-theme="lapis-light"] img {
+  border-radius: 4px;
+  border: 1px solid #e3e8f0;
+}
+
+/* ==========================================================================
+   Theme 22: lapis-dark — 라피스 다크
+   Adapted from Typora Theme Lapis Dark by YiNN
+   (https://github.com/YiNNx/typora-theme-lapis, MIT License).
+   Deep #1e222a slate canvas, #e4e4e4 text, #8393ad steel-blue accents,
+   #47556d filled pill h2, #2a2f3b quote cards, midnight #080e1d code blocks.
+   ========================================================================== */
+
+.md-doc[data-md-theme="lapis-dark"] {
+  --md-ld-bg: #1e222a;
+  --md-ld-quote-bg: #2a2f3b;
+  --md-ld-code-bg: #0f1626;
+  --md-ld-ink: #e2e4e8;
+  --md-ld-primary: #8ba0bf;
+  --md-ld-pill: #47556d;
+  --md-ld-code-ink: #abbad4;
+  --md-ld-marker: #7d8a9f;
+  --md-ld-serif: "Noto Serif KR", "Source Han Serif KR", "Nanum Myeongjo",
+    "AppleMyungjo", Georgia, serif;
+  --md-ld-sans: "Cantarell", "Pretendard Variable", "Pretendard", "Noto Sans KR",
+    "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --md-ld-mono: "JetBrains Mono", "D2Coding", "SFMono-Regular", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-ld-bg);
+  color: var(--md-ld-ink);
+  font-family: var(--md-ld-sans);
+  font-size: 16px;
+  line-height: 1.74;
+}
+
+.md-doc[data-md-theme="lapis-dark"] ::selection {
+  background-color: rgba(139, 160, 191, 0.3);
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="lapis-dark"] h1,
+.md-doc[data-md-theme="lapis-dark"] h2,
+.md-doc[data-md-theme="lapis-dark"] h3,
+.md-doc[data-md-theme="lapis-dark"] h4,
+.md-doc[data-md-theme="lapis-dark"] h5,
+.md-doc[data-md-theme="lapis-dark"] h6 {
+  font-family: var(--md-ld-serif);
+  color: var(--md-ld-primary);
+  font-weight: 700;
+}
+
+.md-doc[data-md-theme="lapis-dark"] h1 { font-size: 1.95em; text-align: center; }
+.md-doc[data-md-theme="lapis-dark"] h2 {
+  display: inline-block;
+  font-size: 1.38em;
+  padding: 0.14em 0.7em;
+  border-radius: 4px;
+  background-color: var(--md-ld-pill);
+  color: var(--md-ld-ink);
+}
+.md-doc[data-md-theme="lapis-dark"] h3 { font-size: 1.28em; }
+.md-doc[data-md-theme="lapis-dark"] h4 { font-size: 1.12em; font-weight: 500; }
+.md-doc[data-md-theme="lapis-dark"] h5 { font-size: 1.02em; font-weight: 500; }
+.md-doc[data-md-theme="lapis-dark"] h6 { font-size: 0.96em; font-weight: 500; color: var(--md-ld-marker); }
+
+.md-doc[data-md-theme="lapis-dark"] p { color: var(--md-ld-ink); }
+.md-doc[data-md-theme="lapis-dark"] a {
+  color: #9cb4d6;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+.md-doc[data-md-theme="lapis-dark"] a:hover { color: #c4d7f2; }
+.md-doc[data-md-theme="lapis-dark"] strong { color: #a7bce0; }
+.md-doc[data-md-theme="lapis-dark"] em { color: #edf0f5; }
+.md-doc[data-md-theme="lapis-dark"] u { text-decoration-color: var(--md-ld-primary); }
+.md-doc[data-md-theme="lapis-dark"] del { color: var(--md-ld-marker); }
+
+.md-doc[data-md-theme="lapis-dark"] blockquote {
+  border-left: 3px solid var(--md-ld-primary);
+  background-color: var(--md-ld-quote-bg);
+  color: var(--md-ld-ink);
+  border-radius: 0 4px 4px 0;
+}
+.md-doc[data-md-theme="lapis-dark"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="lapis-dark"] ul,
+.md-doc[data-md-theme="lapis-dark"] ol { color: var(--md-ld-ink); }
+.md-doc[data-md-theme="lapis-dark"] li { color: inherit; }
+.md-doc[data-md-theme="lapis-dark"] li::marker { color: var(--md-ld-marker); font-weight: 700; }
+
+.md-doc[data-md-theme="lapis-dark"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-ld-marker);
+  background-color: var(--md-ld-bg);
+  border-radius: 50%;
+}
+.md-doc[data-md-theme="lapis-dark"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-ld-primary);
+  border-color: var(--md-ld-primary);
+}
+.md-doc[data-md-theme="lapis-dark"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: var(--md-ld-bg);
+}
+
+.md-doc[data-md-theme="lapis-dark"] code {
+  font-family: var(--md-ld-mono);
+  font-size: 0.88em;
+  color: var(--md-ld-code-ink);
+  background-color: var(--md-ld-code-bg);
+  border-radius: 3px;
+  padding: 0.12em 0.36em;
+}
+.md-doc[data-md-theme="lapis-dark"] pre {
+  font-family: var(--md-ld-mono);
+  font-size: 0.87em;
+  background-color: var(--md-ld-code-bg);
+  color: var(--md-ld-code-ink);
+  border: 1px solid #28334a;
+  border-radius: 6px;
+  padding: 0.95em 1.2em;
+}
+.md-doc[data-md-theme="lapis-dark"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="lapis-dark"] table { border: 1px solid var(--md-ld-pill); }
+.md-doc[data-md-theme="lapis-dark"] th,
+.md-doc[data-md-theme="lapis-dark"] td { border: 1px solid var(--md-ld-pill); }
+.md-doc[data-md-theme="lapis-dark"] th {
+  font-family: var(--md-ld-serif);
+  color: var(--md-ld-ink);
+  background-color: var(--md-ld-quote-bg);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="lapis-dark"] hr { height: 1px; background-color: var(--md-ld-pill); }
+.md-doc[data-md-theme="lapis-dark"] img {
+  border-radius: 4px;
+  border: 1px solid var(--md-ld-pill);
+}
+
+/* ==========================================================================
+   Theme 23: everforest-light — 에버포레스트 라이트
+   Adapted from Everforest Theme for Typora by Ethan Bao / YuxBao
+   (https://github.com/YuxBao/everforest-typora, Apache-2.0 License).
+   Warm parchment #fffbef canvas, #5c6a72 slate-moss text, #8da101 green links,
+   #35a77c aqua quote accent, #df69ba orchid italics, dashed h3 divider.
+   ========================================================================== */
+
+.md-doc[data-md-theme="everforest-light"] {
+  --md-efl-bg: #fffbef;
+  --md-efl-panel: #f8f5e4;
+  --md-efl-soft: #f2efdf;
+  --md-efl-muted-bg: #edeada;
+  --md-efl-ink: #5c6a72;
+  --md-efl-muted: #829181;
+  --md-efl-border: #d7d3c4;
+  --md-efl-green: #8da101;
+  --md-efl-aqua: #35a77c;
+  --md-efl-purple: #df69ba;
+  --md-efl-serif: "Iowan Old Style", Georgia, "Noto Serif KR", "Source Han Serif KR",
+    "Nanum Myeongjo", "AppleMyungjo", "Pretendard Variable", "Malgun Gothic", serif;
+  --md-efl-mono: "JetBrains Mono", "D2Coding", "SFMono-Regular", Menlo, Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: light;
+  background-color: var(--md-efl-bg);
+  color: var(--md-efl-ink);
+  font-family: var(--md-efl-serif);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="everforest-light"] ::selection {
+  background-color: #e0e6c9;
+  color: var(--md-efl-ink);
+}
+
+.md-doc[data-md-theme="everforest-light"] h1,
+.md-doc[data-md-theme="everforest-light"] h2,
+.md-doc[data-md-theme="everforest-light"] h3,
+.md-doc[data-md-theme="everforest-light"] h4,
+.md-doc[data-md-theme="everforest-light"] h5,
+.md-doc[data-md-theme="everforest-light"] h6 {
+  font-family: var(--md-efl-serif);
+  font-weight: 700;
+  color: #46535b;
+}
+
+.md-doc[data-md-theme="everforest-light"] h1 { font-size: 2.05em; }
+.md-doc[data-md-theme="everforest-light"] h2 {
+  font-size: 1.65em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--md-efl-border);
+}
+.md-doc[data-md-theme="everforest-light"] h3 {
+  font-size: 1.38em;
+  padding-bottom: 0.22em;
+  border-bottom: 1px dashed #bec5b2;
+}
+.md-doc[data-md-theme="everforest-light"] h4 { font-size: 1.18em; }
+.md-doc[data-md-theme="everforest-light"] h5 { font-size: 1.05em; }
+.md-doc[data-md-theme="everforest-light"] h6 { font-size: 0.96em; color: var(--md-efl-muted); }
+
+.md-doc[data-md-theme="everforest-light"] p { color: var(--md-efl-ink); }
+.md-doc[data-md-theme="everforest-light"] a {
+  color: var(--md-efl-green);
+  text-decoration: none;
+}
+.md-doc[data-md-theme="everforest-light"] a:hover { text-decoration: underline; }
+.md-doc[data-md-theme="everforest-light"] strong { color: #3e4a52; }
+.md-doc[data-md-theme="everforest-light"] em { color: var(--md-efl-purple); }
+.md-doc[data-md-theme="everforest-light"] u { text-decoration-color: var(--md-efl-aqua); }
+.md-doc[data-md-theme="everforest-light"] del { color: var(--md-efl-muted); }
+
+.md-doc[data-md-theme="everforest-light"] blockquote {
+  border-left: 4px solid var(--md-efl-aqua);
+  background-color: rgba(53, 167, 124, 0.08);
+  color: var(--md-efl-ink);
+  border-radius: 0 8px 8px 0;
+}
+.md-doc[data-md-theme="everforest-light"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="everforest-light"] ul,
+.md-doc[data-md-theme="everforest-light"] ol { color: var(--md-efl-ink); }
+.md-doc[data-md-theme="everforest-light"] li { color: inherit; }
+.md-doc[data-md-theme="everforest-light"] li::marker { color: var(--md-efl-green); }
+
+.md-doc[data-md-theme="everforest-light"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-efl-aqua);
+  background-color: var(--md-efl-bg);
+}
+.md-doc[data-md-theme="everforest-light"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-efl-aqua);
+  border-color: var(--md-efl-aqua);
+}
+.md-doc[data-md-theme="everforest-light"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #fffbef;
+}
+
+.md-doc[data-md-theme="everforest-light"] code {
+  font-family: var(--md-efl-mono);
+  font-size: 0.88em;
+  background-color: rgba(58, 148, 197, 0.08);
+  color: #1e4b59;
+  border: 1px solid #d7ebe3;
+  border-radius: 6px;
+  padding: 0.12em 0.36em;
+}
+.md-doc[data-md-theme="everforest-light"] pre {
+  font-family: var(--md-efl-mono);
+  font-size: 0.87em;
+  background-color: var(--md-efl-panel);
+  color: var(--md-efl-ink);
+  border: 1px solid var(--md-efl-border);
+  border-radius: 8px;
+  padding: 0.95em 1.15em;
+}
+.md-doc[data-md-theme="everforest-light"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="everforest-light"] table {
+  border: 1px solid var(--md-efl-border);
+  background-color: var(--md-efl-panel);
+}
+.md-doc[data-md-theme="everforest-light"] th,
+.md-doc[data-md-theme="everforest-light"] td {
+  border-bottom: 1px solid #e8e5d5;
+  color: var(--md-efl-ink);
+}
+.md-doc[data-md-theme="everforest-light"] th {
+  background-color: var(--md-efl-muted-bg);
+  color: #46535b;
+  font-weight: 700;
+}
+.md-doc[data-md-theme="everforest-light"] hr { background-color: var(--md-efl-border); }
+.md-doc[data-md-theme="everforest-light"] img {
+  border-radius: 8px;
+  border: 1px solid var(--md-efl-border);
+}
+
+/* ==========================================================================
+   Theme 24: everforest-dark — 에버포레스트 다크
+   Adapted from Everforest Dark Theme for Typora by Ethan Bao / YuxBao
+   (https://github.com/YuxBao/everforest-typora, Apache-2.0 License).
+   Deep forest-slate #2e353a canvas, warm cream #d3c6aa ink, #a7c080 olive
+   links & bold, #83c092 aqua blockquote bar, #d699b6 dusty-rose italics.
+   ========================================================================== */
+
+.md-doc[data-md-theme="everforest-dark"] {
+  --md-efd-bg: #2e353a;
+  --md-efd-panel: #363f44;
+  --md-efd-soft: #3f484d;
+  --md-efd-ink: #d3c6aa;
+  --md-efd-muted: #9da9a0;
+  --md-efd-border: #495156;
+  --md-efd-green: #a7c080;
+  --md-efd-aqua: #83c092;
+  --md-efd-purple: #d699b6;
+  --md-efd-serif: "Iowan Old Style", Georgia, "Noto Serif KR", "Source Han Serif KR",
+    "Nanum Myeongjo", "AppleMyungjo", "Pretendard Variable", "Malgun Gothic", serif;
+  --md-efd-mono: "JetBrains Mono", "D2Coding", "SFMono-Regular", Menlo, Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", ui-monospace, monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-efd-bg);
+  color: var(--md-efd-ink);
+  font-family: var(--md-efd-serif);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.md-doc[data-md-theme="everforest-dark"] ::selection {
+  background-color: #445047;
+  color: #e6dac0;
+}
+
+.md-doc[data-md-theme="everforest-dark"] h1,
+.md-doc[data-md-theme="everforest-dark"] h2,
+.md-doc[data-md-theme="everforest-dark"] h3,
+.md-doc[data-md-theme="everforest-dark"] h4,
+.md-doc[data-md-theme="everforest-dark"] h5,
+.md-doc[data-md-theme="everforest-dark"] h6 {
+  font-family: var(--md-efd-serif);
+  font-weight: 700;
+  color: #e2d6bc;
+}
+
+.md-doc[data-md-theme="everforest-dark"] h1 { font-size: 2.05em; }
+.md-doc[data-md-theme="everforest-dark"] h2 {
+  font-size: 1.65em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--md-efd-border);
+}
+.md-doc[data-md-theme="everforest-dark"] h3 {
+  font-size: 1.38em;
+  padding-bottom: 0.22em;
+  border-bottom: 1px dashed #52595f;
+}
+.md-doc[data-md-theme="everforest-dark"] h4 { font-size: 1.18em; }
+.md-doc[data-md-theme="everforest-dark"] h5 { font-size: 1.05em; }
+.md-doc[data-md-theme="everforest-dark"] h6 { font-size: 0.96em; color: var(--md-efd-muted); }
+
+.md-doc[data-md-theme="everforest-dark"] p { color: var(--md-efd-ink); }
+.md-doc[data-md-theme="everforest-dark"] a {
+  color: var(--md-efd-green);
+  text-decoration: none;
+}
+.md-doc[data-md-theme="everforest-dark"] a:hover { text-decoration: underline; }
+.md-doc[data-md-theme="everforest-dark"] strong { color: var(--md-efd-green); font-weight: 600; }
+.md-doc[data-md-theme="everforest-dark"] em { color: var(--md-efd-purple); }
+.md-doc[data-md-theme="everforest-dark"] u { text-decoration-color: var(--md-efd-aqua); }
+.md-doc[data-md-theme="everforest-dark"] del { color: var(--md-efd-muted); }
+
+.md-doc[data-md-theme="everforest-dark"] blockquote {
+  border-left: 4px solid var(--md-efd-aqua);
+  background-color: var(--md-efd-soft);
+  color: var(--md-efd-ink);
+  border-radius: 0 8px 8px 0;
+}
+.md-doc[data-md-theme="everforest-dark"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="everforest-dark"] ul,
+.md-doc[data-md-theme="everforest-dark"] ol { color: var(--md-efd-ink); }
+.md-doc[data-md-theme="everforest-dark"] li { color: inherit; }
+.md-doc[data-md-theme="everforest-dark"] li::marker { color: var(--md-efd-green); }
+
+.md-doc[data-md-theme="everforest-dark"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-efd-aqua);
+  background-color: var(--md-efd-panel);
+}
+.md-doc[data-md-theme="everforest-dark"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-efd-aqua);
+  border-color: var(--md-efd-aqua);
+}
+.md-doc[data-md-theme="everforest-dark"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #22282b;
+}
+
+.md-doc[data-md-theme="everforest-dark"] code {
+  font-family: var(--md-efd-mono);
+  font-size: 0.88em;
+  background-color: var(--md-efd-panel);
+  color: #d8edea;
+  border: 1px solid var(--md-efd-border);
+  border-radius: 6px;
+  padding: 0.12em 0.36em;
+}
+.md-doc[data-md-theme="everforest-dark"] pre {
+  font-family: var(--md-efd-mono);
+  font-size: 0.87em;
+  background-color: var(--md-efd-panel);
+  color: var(--md-efd-ink);
+  border: 1px solid var(--md-efd-border);
+  border-radius: 8px;
+  padding: 0.95em 1.15em;
+}
+.md-doc[data-md-theme="everforest-dark"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="everforest-dark"] table {
+  border: 1px solid var(--md-efd-border);
+  background-color: var(--md-efd-panel);
+}
+.md-doc[data-md-theme="everforest-dark"] th,
+.md-doc[data-md-theme="everforest-dark"] td {
+  border-bottom: 1px solid var(--md-efd-border);
+  color: var(--md-efd-ink);
+}
+.md-doc[data-md-theme="everforest-dark"] th {
+  background-color: var(--md-efd-soft);
+  color: #e2d6bc;
+  font-weight: 700;
+}
+.md-doc[data-md-theme="everforest-dark"] hr { background-color: var(--md-efd-border); }
+.md-doc[data-md-theme="everforest-dark"] img {
+  border-radius: 8px;
+  border: 1px solid var(--md-efd-border);
+}
+
+/* ==========================================================================
+   Theme 25: notion-light — 노션 라이트
+   Adapted from Typora Notion Theme by Adrian Fuertes
+   (https://github.com/adrian-fuertes/typora-notion-theme, MIT License).
+   Clean Notion document canvas (#ffffff / #37352f), warm stone #f7f6f3 code
+   blocks, coral #ec5757 inline code chips, #2eaadc sky-blue checkboxes.
+   ========================================================================== */
+
+.md-doc[data-md-theme="notion-light"] {
+  --md-nl-bg: #ffffff;
+  --md-nl-surface: #f7f6f3;
+  --md-nl-ink: #37352f;
+  --md-nl-muted: #73726e;
+  --md-nl-border: #e9e9e7;
+  --md-nl-code: #ec5757;
+  --md-nl-todo: #2eaadc;
+  --md-nl-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard Variable",
+    "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Helvetica, Arial, sans-serif;
+  --md-nl-mono: "SFMono-Regular", "Fira Code", "D2Coding", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: light;
+  background-color: var(--md-nl-bg);
+  color: var(--md-nl-ink);
+  font-family: var(--md-nl-sans);
+  font-size: 16px;
+  line-height: 1.66;
+}
+
+.md-doc[data-md-theme="notion-light"] ::selection {
+  background-color: #c0e5f4;
+  color: var(--md-nl-ink);
+}
+
+.md-doc[data-md-theme="notion-light"] h1,
+.md-doc[data-md-theme="notion-light"] h2,
+.md-doc[data-md-theme="notion-light"] h3,
+.md-doc[data-md-theme="notion-light"] h4,
+.md-doc[data-md-theme="notion-light"] h5,
+.md-doc[data-md-theme="notion-light"] h6 {
+  font-family: var(--md-nl-sans);
+  font-weight: 700;
+  color: var(--md-nl-ink);
+  letter-spacing: -0.015em;
+}
+
+.md-doc[data-md-theme="notion-light"] h1 { font-size: 2.15em; }
+.md-doc[data-md-theme="notion-light"] h2 { font-size: 1.68em; }
+.md-doc[data-md-theme="notion-light"] h3 { font-size: 1.35em; }
+.md-doc[data-md-theme="notion-light"] h4 { font-size: 1.15em; }
+.md-doc[data-md-theme="notion-light"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="notion-light"] h6 { font-size: 0.94em; color: var(--md-nl-muted); }
+
+.md-doc[data-md-theme="notion-light"] p { color: var(--md-nl-ink); }
+.md-doc[data-md-theme="notion-light"] a {
+  color: var(--md-nl-ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(55, 53, 47, 0.42);
+}
+.md-doc[data-md-theme="notion-light"] a:hover {
+  border-bottom-color: var(--md-nl-ink);
+}
+.md-doc[data-md-theme="notion-light"] strong { color: var(--md-nl-ink); }
+.md-doc[data-md-theme="notion-light"] em { color: inherit; }
+.md-doc[data-md-theme="notion-light"] u { text-decoration-color: var(--md-nl-ink); }
+.md-doc[data-md-theme="notion-light"] del { color: var(--md-nl-muted); }
+
+.md-doc[data-md-theme="notion-light"] blockquote {
+  border-left: 4px solid var(--md-nl-ink);
+  background-color: transparent;
+  color: var(--md-nl-ink);
+  padding: 0.45em 1.2em;
+}
+.md-doc[data-md-theme="notion-light"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="notion-light"] ul,
+.md-doc[data-md-theme="notion-light"] ol { color: var(--md-nl-ink); }
+.md-doc[data-md-theme="notion-light"] li { color: inherit; }
+.md-doc[data-md-theme="notion-light"] li::marker { color: var(--md-nl-muted); }
+
+.md-doc[data-md-theme="notion-light"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-nl-ink);
+  background-color: #ffffff;
+  border-radius: 2px;
+}
+.md-doc[data-md-theme="notion-light"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-nl-todo);
+  border-color: var(--md-nl-todo);
+}
+.md-doc[data-md-theme="notion-light"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="notion-light"] code {
+  font-family: var(--md-nl-mono);
+  font-size: 0.87em;
+  color: var(--md-nl-code);
+  background-color: var(--md-nl-surface);
+  border-radius: 4px;
+  padding: 0.14em 0.38em;
+}
+.md-doc[data-md-theme="notion-light"] pre {
+  font-family: var(--md-nl-mono);
+  font-size: 0.87em;
+  background-color: var(--md-nl-surface);
+  color: var(--md-nl-ink);
+  border-radius: 4px;
+  padding: 1em 1.2em;
+}
+.md-doc[data-md-theme="notion-light"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="notion-light"] table { border: 1px solid var(--md-nl-border); }
+.md-doc[data-md-theme="notion-light"] th,
+.md-doc[data-md-theme="notion-light"] td { border: 1px solid var(--md-nl-border); }
+.md-doc[data-md-theme="notion-light"] th {
+  background-color: var(--md-nl-surface);
+  color: var(--md-nl-ink);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="notion-light"] hr { background-color: var(--md-nl-border); }
+.md-doc[data-md-theme="notion-light"] img { border-radius: 4px; border: 1px solid var(--md-nl-border); }
+
+/* ==========================================================================
+   Theme 26: notion-dark — 노션 다크
+   Adapted from Typora Notion Dark Theme by Adrian Fuertes
+   (https://github.com/adrian-fuertes/typora-notion-theme, MIT License).
+   Soft slate-charcoal #2f3437 canvas, #ebebeb ink, #3f4447 code blocks,
+   #ec5757 coral inline code, #2eaadc sky-blue checkboxes, subtle #393c3f rules.
+   ========================================================================== */
+
+.md-doc[data-md-theme="notion-dark"] {
+  --md-nd-bg: #2f3437;
+  --md-nd-surface: #3f4447;
+  --md-nd-ink: #ebebeb;
+  --md-nd-muted: #afb1b2;
+  --md-nd-border: #464b4e;
+  --md-nd-code: #ec5757;
+  --md-nd-todo: #2eaadc;
+  --md-nd-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard Variable",
+    "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Helvetica, Arial, sans-serif;
+  --md-nd-mono: "SFMono-Regular", "Fira Code", "D2Coding", Consolas,
+    "Pretendard Variable", "Noto Sans KR", "Malgun Gothic", monospace;
+
+  color-scheme: dark;
+  background-color: var(--md-nd-bg);
+  color: var(--md-nd-ink);
+  font-family: var(--md-nd-sans);
+  font-size: 16px;
+  line-height: 1.66;
+}
+
+.md-doc[data-md-theme="notion-dark"] ::selection {
+  background-color: #2e5767;
+  color: #ffffff;
+}
+
+.md-doc[data-md-theme="notion-dark"] h1,
+.md-doc[data-md-theme="notion-dark"] h2,
+.md-doc[data-md-theme="notion-dark"] h3,
+.md-doc[data-md-theme="notion-dark"] h4,
+.md-doc[data-md-theme="notion-dark"] h5,
+.md-doc[data-md-theme="notion-dark"] h6 {
+  font-family: var(--md-nd-sans);
+  font-weight: 700;
+  color: var(--md-nd-ink);
+  letter-spacing: -0.015em;
+}
+
+.md-doc[data-md-theme="notion-dark"] h1 { font-size: 2.15em; }
+.md-doc[data-md-theme="notion-dark"] h2 { font-size: 1.68em; }
+.md-doc[data-md-theme="notion-dark"] h3 { font-size: 1.35em; }
+.md-doc[data-md-theme="notion-dark"] h4 { font-size: 1.15em; }
+.md-doc[data-md-theme="notion-dark"] h5 { font-size: 1em; }
+.md-doc[data-md-theme="notion-dark"] h6 { font-size: 0.94em; color: var(--md-nd-muted); }
+
+.md-doc[data-md-theme="notion-dark"] p { color: var(--md-nd-ink); }
+.md-doc[data-md-theme="notion-dark"] a {
+  color: var(--md-nd-ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(235, 235, 235, 0.45);
+}
+.md-doc[data-md-theme="notion-dark"] a:hover {
+  border-bottom-color: var(--md-nd-ink);
+}
+.md-doc[data-md-theme="notion-dark"] strong { color: #ffffff; }
+.md-doc[data-md-theme="notion-dark"] em { color: inherit; }
+.md-doc[data-md-theme="notion-dark"] u { text-decoration-color: var(--md-nd-ink); }
+.md-doc[data-md-theme="notion-dark"] del { color: var(--md-nd-muted); }
+
+.md-doc[data-md-theme="notion-dark"] blockquote {
+  border-left: 4px solid var(--md-nd-ink);
+  background-color: transparent;
+  color: var(--md-nd-ink);
+  padding: 0.45em 1.2em;
+}
+.md-doc[data-md-theme="notion-dark"] blockquote p { color: inherit; }
+.md-doc[data-md-theme="notion-dark"] ul,
+.md-doc[data-md-theme="notion-dark"] ol { color: var(--md-nd-ink); }
+.md-doc[data-md-theme="notion-dark"] li { color: inherit; }
+.md-doc[data-md-theme="notion-dark"] li::marker { color: var(--md-nd-muted); }
+
+.md-doc[data-md-theme="notion-dark"] li.task-list-item input[type="checkbox"] {
+  border: 1.5px solid var(--md-nd-ink);
+  background-color: transparent;
+  border-radius: 2px;
+}
+.md-doc[data-md-theme="notion-dark"] li.task-list-item input[type="checkbox"]:checked {
+  background-color: var(--md-nd-todo);
+  border-color: var(--md-nd-todo);
+}
+.md-doc[data-md-theme="notion-dark"] li.task-list-item input[type="checkbox"]:checked::after {
+  border-color: #ffffff;
+}
+
+.md-doc[data-md-theme="notion-dark"] code {
+  font-family: var(--md-nd-mono);
+  font-size: 0.87em;
+  color: var(--md-nd-code);
+  background-color: var(--md-nd-surface);
+  border-radius: 4px;
+  padding: 0.14em 0.38em;
+}
+.md-doc[data-md-theme="notion-dark"] pre {
+  font-family: var(--md-nd-mono);
+  font-size: 0.87em;
+  background-color: var(--md-nd-surface);
+  color: var(--md-nd-ink);
+  border-radius: 4px;
+  padding: 1em 1.2em;
+}
+.md-doc[data-md-theme="notion-dark"] pre > code {
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  font-size: 1em;
+}
+
+.md-doc[data-md-theme="notion-dark"] table { border: 1px solid var(--md-nd-border); }
+.md-doc[data-md-theme="notion-dark"] th,
+.md-doc[data-md-theme="notion-dark"] td { border: 1px solid var(--md-nd-border); }
+.md-doc[data-md-theme="notion-dark"] th {
+  background-color: var(--md-nd-surface);
+  color: var(--md-nd-ink);
+  font-weight: 700;
+}
+.md-doc[data-md-theme="notion-dark"] hr { background-color: var(--md-nd-border); }
+.md-doc[data-md-theme="notion-dark"] img { border-radius: 4px; border: 1px solid var(--md-nd-border); }
 
 /* ==========================================================================
    Print / A4 PDF export rules
@@ -1197,12 +3976,26 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-
   .md-doc[data-md-theme="ivory"] {
     background-color: #efeae5;
     color: #2c2926;
     font-size: 10.5pt;
     line-height: 1.75;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="github-light"]),
+  body:has(.md-doc[data-md-theme="github-light"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="github-light"] {
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 10pt;
+    line-height: 1.62;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -1213,7 +4006,6 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-
   .md-doc[data-md-theme="github-dark"] {
     background-color: #1e1e1e;
     color: #d4d4d4;
@@ -1229,7 +4021,6 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-
   .md-doc[data-md-theme="chrome"] {
     background-color: #0f1113;
     color: #c5cad2;
@@ -1245,7 +4036,6 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-
   .md-doc[data-md-theme="sprinkles"] {
     background-color: #ffffff;
     color: #26292e;
@@ -1254,13 +4044,322 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+  .md-doc[data-md-theme="sprinkles"] pre { box-shadow: none; }
+  .md-doc[data-md-theme="sprinkles"] img { box-shadow: none; border: 1px solid #e1e6ee; }
 
-  .md-doc[data-md-theme="sprinkles"] pre {
-    box-shadow: none;
+  html:has(.md-doc[data-md-theme="print"]),
+  body:has(.md-doc[data-md-theme="print"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="print"] {
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 9pt;
+    line-height: 1.45;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="print"] pre { font-size: 7pt; line-height: 1.25; }
+
+  html:has(.md-doc[data-md-theme="gothic"]),
+  body:has(.md-doc[data-md-theme="gothic"]) {
+    background-color: #fcfcfc;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="gothic"] {
+    background-color: #fcfcfc;
+    color: #111111;
+    font-size: 10pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
-  .md-doc[data-md-theme="sprinkles"] img {
-    box-shadow: none;
-    border: 1px solid #e1e6ee;
+  html:has(.md-doc[data-md-theme="newsprint"]),
+  body:has(.md-doc[data-md-theme="newsprint"]) {
+    background-color: #f3f2ee;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="newsprint"] {
+    background-color: #f3f2ee;
+    color: #1f0909;
+    font-size: 10.5pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="night"]),
+  body:has(.md-doc[data-md-theme="night"]) {
+    background-color: #363b40;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="night"] {
+    background-color: #363b40;
+    color: #b8bfc6;
+    font-size: 10pt;
+    line-height: 1.66;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="pixyll"]),
+  body:has(.md-doc[data-md-theme="pixyll"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="pixyll"] {
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 10.5pt;
+    line-height: 1.72;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="whitey"]),
+  body:has(.md-doc[data-md-theme="whitey"]) {
+    background-color: #fefefe;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="whitey"] {
+    background-color: #fefefe;
+    color: #333333;
+    font-size: 10.5pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="whitey-dark"]),
+  body:has(.md-doc[data-md-theme="whitey-dark"]) {
+    background-color: #1e222a;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="whitey-dark"] {
+    background-color: #1e222a;
+    color: #cecfcf;
+    font-size: 10.5pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="monospace-light"]),
+  body:has(.md-doc[data-md-theme="monospace-light"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="monospace-light"] {
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 9.5pt;
+    line-height: 1.66;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="monospace-dark"]),
+  body:has(.md-doc[data-md-theme="monospace-dark"]) {
+    background-color: #222222;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="monospace-dark"] {
+    background-color: #222222;
+    color: #ebebeb;
+    font-size: 9.5pt;
+    line-height: 1.66;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="ursine-polar"]),
+  body:has(.md-doc[data-md-theme="ursine-polar"]) {
+    background-color: #fbfbfb;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="ursine-polar"] {
+    background-color: #fbfbfb;
+    color: #333333;
+    font-size: 10pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="ursine-umbra"]),
+  body:has(.md-doc[data-md-theme="ursine-umbra"]) {
+    background-color: #1e2022;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="ursine-umbra"] {
+    background-color: #1e2022;
+    color: #dddddd;
+    font-size: 10pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="xylight"]),
+  body:has(.md-doc[data-md-theme="xylight"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="xylight"] {
+    background-color: #ffffff;
+    color: #42464c;
+    font-size: 9.5pt;
+    line-height: 1.62;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="xydark"]),
+  body:has(.md-doc[data-md-theme="xydark"]) {
+    background-color: #0f111a;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="xydark"] {
+    background-color: #0f111a;
+    color: #9ca1b3;
+    font-size: 9.5pt;
+    line-height: 1.62;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="vue-light"]),
+  body:has(.md-doc[data-md-theme="vue-light"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="vue-light"] {
+    background-color: #ffffff;
+    color: #34495e;
+    font-size: 10pt;
+    line-height: 1.64;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="vue-dark"]),
+  body:has(.md-doc[data-md-theme="vue-dark"]) {
+    background-color: #1f1f1f;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="vue-dark"] {
+    background-color: #1f1f1f;
+    color: #eeeeee;
+    font-size: 10pt;
+    line-height: 1.64;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="lapis-light"]),
+  body:has(.md-doc[data-md-theme="lapis-light"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="lapis-light"] {
+    background-color: #ffffff;
+    color: #40464f;
+    font-size: 10pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="lapis-dark"]),
+  body:has(.md-doc[data-md-theme="lapis-dark"]) {
+    background-color: #1e222a;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="lapis-dark"] {
+    background-color: #1e222a;
+    color: #e2e4e8;
+    font-size: 10pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="everforest-light"]),
+  body:has(.md-doc[data-md-theme="everforest-light"]) {
+    background-color: #fffbef;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="everforest-light"] {
+    background-color: #fffbef;
+    color: #5c6a72;
+    font-size: 10pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="everforest-dark"]),
+  body:has(.md-doc[data-md-theme="everforest-dark"]) {
+    background-color: #2e353a;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="everforest-dark"] {
+    background-color: #2e353a;
+    color: #d3c6aa;
+    font-size: 10pt;
+    line-height: 1.68;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="notion-light"]),
+  body:has(.md-doc[data-md-theme="notion-light"]) {
+    background-color: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="notion-light"] {
+    background-color: #ffffff;
+    color: #37352f;
+    font-size: 10pt;
+    line-height: 1.64;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html:has(.md-doc[data-md-theme="notion-dark"]),
+  body:has(.md-doc[data-md-theme="notion-dark"]) {
+    background-color: #2f3437;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .md-doc[data-md-theme="notion-dark"] {
+    background-color: #2f3437;
+    color: #ebebeb;
+    font-size: 10pt;
+    line-height: 1.64;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
