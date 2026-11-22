@@ -1,10 +1,12 @@
-// Run: node scripts/markdown-pdf-samples.mjs
+// Run: node scripts/markdown-pdf-samples.mjs [theme ...]
 // Uses CHROME_PATH or a locally installed Chrome/Edge; never starts a web server.
 import {mkdir, writeFile} from 'node:fs/promises';
 import {renderMarkdownPdf, closeMarkdownPdfBrowser} from '../server/markdown-pdf.mjs';
 import {MARKDOWN_THEME_KEYS} from '../views/markdown-themes.mjs';
 
 const output = new URL('../artifacts/pdf-samples/', import.meta.url);
+const themes = process.argv.slice(2);
+for (const theme of themes) if (!MARKDOWN_THEME_KEYS.includes(theme)) throw new Error(`Unknown Markdown theme: ${theme}`);
 const image = 'data:image/svg+xml;base64,' + Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="420" height="100" viewBox="0 0 420 100"><rect width="420" height="100" fill="#4a8072"/><circle cx="60" cy="50" r="28" fill="#e7cc8f"/><path d="M115 70L185 24L250 70L320 32L390 70" fill="none" stroke="#fff" stroke-width="4"/></svg>').toString('base64');
 const section = index => `
 ## ${index}. 한글과 English — 문서 확인
@@ -45,9 +47,15 @@ const content = '# 마크다운 PDF 확인\n\nA4 · 전체 배경 · 페이지�
 
 await mkdir(output, {recursive:true});
 try {
-  for (const theme of MARKDOWN_THEME_KEYS) {
+  for (const theme of themes.length ? themes : MARKDOWN_THEME_KEYS) {
     const pdf = await renderMarkdownPdf({title:`마크다운 PDF — ${theme}`, content, theme});
     await writeFile(new URL(`${theme}.pdf`, output), pdf);
     console.log(`${theme}: ${pdf.length} bytes`);
   }
+  const emojiContent = '# Typed emoji\n\n😀 🎉 ✅ 🇰🇷 👍🏽\n\n한글과 English alongside colour emoji.\n\n' +
+    '## Sequences\n\n✏️ 👩🏽‍💻 1️⃣ #️⃣\n\n`😀`\n\n[Rainbow prefix](https://kyohoon.app/)';
+  const emojiPdf = await renderMarkdownPdf({title:'Typed emoji', content:emojiContent, theme:'sprinkles'});
+  await writeFile(new URL('typed-emoji.md', output), emojiContent + '\n');
+  await writeFile(new URL('typed-emoji.pdf', output), emojiPdf);
+  console.log(`typed-emoji: ${emojiPdf.length} bytes`);
 } finally { await closeMarkdownPdfBrowser(); }
