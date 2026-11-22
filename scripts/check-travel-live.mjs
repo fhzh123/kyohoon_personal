@@ -3,8 +3,15 @@ import {gunzipSync} from 'node:zlib';
 const origin='https://www.kyohoon.app';
 const expected=process.env.EXPECT_TRAVEL_VERSION;
 const checks=[];
+// A push to main starts this check while Vercel may still be switching production
+// to the new deployment, so retry server errors for up to ~3 minutes before failing.
 async function get(path){
- const response=await fetch(new URL(path,origin),{redirect:'manual',signal:AbortSignal.timeout(20000)});
+ let response;
+ for(let attempt=0;attempt<18;attempt++){
+  response=await fetch(new URL(path,origin),{redirect:'manual',signal:AbortSignal.timeout(20000)});
+  if(response.status<500)break;
+  await new Promise(resolve=>setTimeout(resolve,10000));
+ }
  assert.equal(response.status,200,path+' must return 200');
  checks.push(path);
  return response;
@@ -12,9 +19,9 @@ async function get(path){
 const personal=await(await get('/personal')).text();
 assert.match(personal,/여행의 흔적/);
 assert.match(personal,/href="\/personal\/gallery"/);
-// Exactly one "coming soon" card. Match the two class names, not the full class
-// string, so a layout class change (card -> space-card in #24) does not break it.
-assert.equal((personal.match(/class="tool-card\b[^"]*\bis-pending\b[^"]*"/g)||[]).length,1,'/personal must show exactly one pending card');
+// The Personal hub links each finished tool. Check the links, not a count of
+// "coming soon" cards, which changes every time a tool ships.
+for(const tool of ['travel','gallery','markdown'])assert.match(personal,new RegExp('href="/personal/'+tool+'"'),'/personal must link /personal/'+tool);
 let travel;
 for(let attempt=0;attempt<18;attempt++){
  travel=await(await get('/personal/travel')).text();
