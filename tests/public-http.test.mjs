@@ -32,22 +32,24 @@ test('public direct routes return independent HTML documents', async () => {
   }
 });
 
-test('home has three keyboard-native whole-card links with image above title and text', async () => {
+test('home has four keyboard-native whole-card links with image above title and text', async () => {
   const { text } = await get('/');
   const portals = [...text.matchAll(/<a\s+class="portal[^\"]*"[^>]*>([\s\S]*?)<\/a>/g)];
-  assert.equal(portals.length, 3);
+  assert.equal(portals.length, 4);
   assert.match(portals[0][0], /href="\/resume"/);
   assert.match(portals[1][0], /href="\/work"/);
+  assert.match(portals[2][0], /href="\/paper"/);
+  assert.match(portals[3][0], /href="\/personal"/);
   for (const [index, portal] of portals.entries()) {
     assert.ok(portal[1].indexOf('<img') < portal[1].indexOf('<h2'));
     assert.match(portal[1], /<img[^>]+alt="[^"]+"[^>]+width="\d+"[^>]+height="\d+"/);
     assert.match(portal[1], /<p>[^<]+<\/p>/);
-    const label = ['resume-label','work-label','personal-label'][index];
+    const label = ['resume-label','work-label','paper-label','personal-label'][index];
     assert.ok(portal[0].includes(`aria-labelledby="${label}"`) && portal[1].includes(`id="${label}"`));
   }
   assert.match(text, /<html lang="ko" data-theme="dark"[^>]*>/);
   assert.match(text, /<main id="main"[^>]*>/);
-  assert.match(text, /<script src="\/theme\.js\?v=20261113-1"><\/script>/, 'small appearance script is shared by public and protected pages');
+  assert.match(text, /<script src="\/theme\.js\?v=20261116-2"><\/script>/, 'small appearance script is shared by public and protected pages');
 });
 
 test('all local home and login images/styles/font references resolve over actual HTTP', async () => {

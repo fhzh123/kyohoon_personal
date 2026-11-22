@@ -77,7 +77,7 @@ test('Resume static archived assets retain their recorded SHA-256 values', async
 test('Resume document uses its isolated styles plus the shared typography', async () => {
   const dom = new JSDOM(html, { url: 'http://localhost:3000/resume' });
   const document = dom.window.document;
-  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261113-review-2']);
+  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261115-2', '/resume-details.css?v=20261114-2']);
   assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261116-2', '/resume/resume.js']);
   assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/mascot/face.png');
   assert.equal(document.querySelectorAll('iframe').length, 0);
@@ -96,7 +96,7 @@ test('Resume mounts original identity, intro, six navigation tabs and profile as
   const window = await mount(t);
   const { document } = window;
   assert.match(document.body.textContent, /저는 셀렉트스타에서 AI Research Engineer로 근무/);
-  for (const label of ['Experience', 'Education', 'Projects', 'Publications', 'Lecture & Honors', 'Patent']) exact(document, 'button.resume-tab', label);
+  for (const label of ['Experience', 'Education', 'Projects', 'Publications', 'Honors & Lecture', 'Patent']) exact(document, 'button.resume-tab', label);
   assert.ok(exact(document, 'button.resume-tab', 'Experience').classList.contains('is-active'));
   assert.match(document.querySelector('img[alt="Profile Front"]').getAttribute('src'), /^https:\/\/raw\.githubusercontent\.com\//);
   assert.match(document.querySelector('img[alt="Profile Back"]').getAttribute('src'), /^https:\/\/github\.com\//);
@@ -122,13 +122,18 @@ test('Resume tab navigation and publication/lecture sub-tabs update actual conte
   domestic.click();
   await waitFor(() => document.body.textContent !== internationalText, 'Domestic publication content appears');
   assert.ok(domestic.classList.contains('bg-blue-600'));
-  assert.ok([...document.querySelectorAll('a[target=_blank]')].some(node => node.textContent.trim() === '자세히 보기'));
-  await selectTab(window, 'Lecture & Honors');
-  assert.match(document.body.textContent, /장소:/);
+  assert.ok([...document.querySelectorAll('a.resume-paper-link[target=_blank]')].some(node => node.textContent.trim() === '논문↗'));
+  await selectTab(window, 'Honors & Lecture');
+  assert.match(document.body.textContent, /우수 논문상/);
+  assert.ok(!document.body.textContent.includes('장소:'));
   const honors = [...document.querySelectorAll('button')].find(node => !node.classList.contains('resume-tab') && node.textContent.includes('Honors'));
   assert.ok(honors);
-  honors.click();
-  await waitFor(() => document.body.textContent.includes('우수 논문상'), 'Honors content appears');
+  assert.ok(honors.classList.contains('bg-blue-600'));
+  const lecture = [...document.querySelectorAll('button')].find(node => !node.classList.contains('resume-tab') && node.textContent.includes('Lecture'));
+  assert.ok(lecture);
+  lecture.click();
+  await waitFor(() => document.body.textContent.includes('장소:'), 'Lecture content appears');
+  assert.ok(lecture.classList.contains('bg-blue-600'));
   await selectTab(window, 'Patent');
   assert.match(document.body.textContent, /출원번호:/);
   assert.match(document.body.textContent, /등록번호:/);
@@ -164,13 +169,15 @@ test('English names apply to patents while Domestic Paper keeps Korean authors',
   assert.ok(document.body.textContent.includes('김영빈'));
 });
 
-test('Exactly six copied projects are pending and Samsung keeps its detail and image', async t => {
+test('Exactly two projects are pending and Samsung keeps its detail and image', async t => {
   const window = await mount(t);
   const {document} = window;
   await selectTab(window, 'Projects');
-  assert.equal((document.body.textContent.match(/\(수정예정\)/g) || []).length, 6);
+  assert.equal((document.body.textContent.match(/\(수정예정\)/g) || []).length, 2);
+  assert.match(document.body.textContent, /\(수정예정\) 전문가의 워크플로우가 포함된 온톨로지 구축/);
+  assert.match(document.body.textContent, /\(수정예정\) DATUMO 플랫폼 내 모니터링 대시보드 개발/);
   const buttons = [...document.querySelectorAll('button')].filter(node => node.textContent.trim() === '자세히 보기');
-  buttons[6].click();
+  buttons[5].click();
   await waitFor(() => document.querySelector('h2')?.textContent.includes('[삼성생명 C-Lab]'), 'Original Samsung detail opens');
   assert.match(document.querySelector('h2').parentElement.textContent, /삼성생명은 독자적으로/);
   assert.ok(document.querySelector('h2').parentElement.querySelector('img[src*="Project_ATA.png"]'));
@@ -195,10 +202,15 @@ test('Resume project detail modal opens, shows pending details, and closes by bu
   await selectTab(window, 'Projects');
   const open = () => exact(document, 'button', '자세히 보기').click();
   open();
-  await waitFor(() => document.querySelector('h2')?.textContent.includes('(수정예정) DATUMO'), 'Project detail heading appears');
-  assert.match(document.querySelector('h2').parentElement.textContent, /수정 예정입니다/);
-  assert.equal(document.querySelector('h2').parentElement.querySelector('img'),null);
-  assert.ok(!document.querySelector('h2').parentElement.textContent.includes('삼성생명'));
+  await waitFor(() => document.querySelector('h2')?.textContent === '(수정예정) 전문가의 워크플로우가 포함된 온톨로지 구축', 'Project detail heading appears');
+  const detail = document.querySelector('h2').parentElement;
+  assert.match(detail.textContent, /프로젝트 기한: Aug 2026 -/);
+  assert.equal(detail.querySelector('img'),null);
+  assert.ok(!detail.textContent.includes('삼성생명'));
+  assert.match(detail.textContent, /추가 정보/);
+  const demo = [...detail.querySelectorAll('a[target=_blank]')].find(node => node.textContent.trim() === '데모');
+  assert.ok(demo, 'Pending ontology project links its demo under 추가 정보');
+  assert.equal(demo.getAttribute('href'), '/work/demos/ontology/');
   exact(document, 'button', '×').click();
   await waitFor(() => !document.querySelector('h2'), 'Close button closes project detail');
   open();

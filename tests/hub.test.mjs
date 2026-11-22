@@ -108,11 +108,13 @@ test('production refuses preview despite local flag and does not show authentica
   for (const demo of demos) assert.ok(!result.text.includes(demo));
 });
 
-test('main retains three image-before-text whole-card links after adding Work hub', async () => {
+test('main retains four image-before-text whole-card links including Work and Paper', async () => {
   const { text } = await request(production, '/');
   const cards = [...text.matchAll(/<a class="portal[^\"]*"[^>]*>([\s\S]*?)<\/a>/g)];
-  assert.equal(cards.length, 3);
+  assert.equal(cards.length, 4);
   assert.match(cards[0][0], /href="\/resume"/);
   assert.match(cards[1][0], /href="\/work"/);
+  assert.match(cards[2][0], /href="\/paper"/);
+  assert.match(cards[3][0], /href="\/personal"/);
   for (const card of cards) assert.ok(card[1].indexOf('<img') < card[1].indexOf('<h2'));
 });
