@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import {JSDOM} from 'jsdom';
 import {workPage,demosPage,personalPage,loginPage} from '../views/pages.mjs';
 import {paperPage} from '../views/paper.mjs';
@@ -29,7 +30,7 @@ test('Settings inherits only a safe same-origin space and includes one overall-h
  }
 });
 test('demos are served as built, without the site navigation bar',async()=>{
- const route=demoRoutes({authorize:async()=>null,rootDir:new URL('..',import.meta.url).pathname,send:(res,status,body)=>{res.status=status;res.body=String(body);}});
+ const route=demoRoutes({authorize:async()=>null,rootDir:fileURLToPath(new URL('..',import.meta.url)),send:(res,status,body)=>{res.status=status;res.body=String(body);}});
  for(const name of ['ontology','document-parsing']){
   const res={};await route({method:'GET',headers:{}},res,new URL('https://fixture.invalid/work/demos/'+name+'/'));
   assert.equal(res.status,200);assert.equal(res.body,await source('work-demos/'+name+'/index.html'));assert.doesNotMatch(res.body,/space-navigation|demo-spacebar/);
