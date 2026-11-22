@@ -2,7 +2,10 @@ import {readFile, writeFile, mkdir, rename} from 'node:fs/promises';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {MARKDOWN_THEME_KEYS} from '../views/markdown-themes.mjs';
-import {renderMarkdownPdf, pdfDisposition} from './markdown-pdf.mjs';
+// The PDF stack (Chromium, sanitizer) loads only when a PDF is requested, so a
+// problem there can never stop the rest of the site from starting.
+const loadPdf = () => import('./markdown-pdf.mjs');
+const renderMarkdownPdf = async options => (await loadPdf()).renderMarkdownPdf(options);
 
 export const THEMES = MARKDOWN_THEME_KEYS;
 const DOCUMENT_FIELDS = 'id,folder_id,title,content,theme,revision,updated_at';
@@ -89,7 +92,7 @@ export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDi
         let pdf;
         try { pdf = await renderPdf({title:document.title, content:document.content, theme}); }
         catch { throw fail('PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.', 503); }
-        send(res, 200, pdf, 'application/pdf', {'Content-Disposition':pdfDisposition(document.title), 'Cache-Control':'no-store'});
+        send(res, 200, pdf, 'application/pdf', {'Content-Disposition':(await loadPdf()).pdfDisposition(document.title), 'Cache-Control':'no-store'});
         return true;
       }
       if (pathname === '/api/markdown/tree' && req.method === 'GET') {
