@@ -32,6 +32,10 @@
     "webpack": "5.100.2"
   },
   "dependencies": {
+    "@sparticuz/chromium": "153.0.0",
+    "markdown-it": "14.3.3",
+    "puppeteer-core": "25.11.0",
+    "sanitize-html": "2.18.2",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   }
 }

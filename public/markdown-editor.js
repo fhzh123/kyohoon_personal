@@ -5,9 +5,9 @@
 // Task lists come from the small plugin in markdown-editor-core.js.
 // Icons: Lucide (lucide-static 1.66.0, ISC), inlined by views/markdown-icons.mjs.
 import {
-  COMMANDS, applyToText, continueList, shortcutFor, taskLists,
+  COMMANDS, applyToText, continueList, shortcutFor,
   readViewMode, writeViewMode, applyViewMode, pdfTitle,
-} from './markdown-editor-core.js?v=20261122-1';
+} from './markdown-editor-core.js?v=20261122-2';
 
 const API = '/api/markdown';
 const SAVE_DELAY = 900;
@@ -15,10 +15,16 @@ const EXPANDED_KEY = 'kyohoon-markdown-folders';
 const SIDEBAR_KEY = 'kyohoon-markdown-sidebar';
 const NARROW = '(max-width: 760px)';
 const DRAWER = '(max-width: 1023px)';
+const PREVIEW_THEME_KEY = 'kyohoon-markdown-preview-theme';
+// Not a theme key (keys never start with "_"): the site's own reading style,
+// defined in markdown-editor.css, light or dark with the site.
+const SITE_STYLE = '_site';
+const REVOKE_DELAY = 1500;
+
+import {createMarkdownEngine} from './markdown-renderer.js';
 
 export function createRenderer(markdownit, DOMPurify, doc) {
-  const md = markdownit({html: true, linkify: true, typographer: false, breaks: false});
-  md.use(taskLists);
+  const md = createMarkdownEngine(markdownit);
   const purify = DOMPurify;
   purify.addHook('afterSanitizeAttributes', node => {
     if (node.nodeName === 'A' && node.hasAttribute('href')) { node.setAttribute('target', '_blank'); node.setAttribute('rel', 'noopener noreferrer'); }
@@ -60,12 +66,15 @@ export function mountMarkdownEditor(root, options = {}) {
     panes: $('[data-panes]'), source: $('[data-source]'), preview: $('[data-preview]'),
     empty: $('[data-empty]'), emptyTitle: $('[data-empty-title]'), emptyText: $('[data-empty-text]'), emptyAction: $('[data-empty-action]'),
     nameDialog: doc.querySelector('[data-name-dialog]'), confirmDialog: doc.querySelector('[data-confirm-dialog]'),
-    exportDialog: doc.querySelector('[data-export-dialog]'), printRoot: doc.querySelector('[data-print-root]'),
+    exportDialog: doc.querySelector('[data-export-dialog]'),
+    themeTrigger: $('[data-theme-trigger]'), themePanel: $('[data-theme-panel]'), themeCurrent: $('[data-theme-current]'),
+    themeChip: $('[data-theme-chip]'), themeToggle: $('[data-preview-theme-toggle]'),
   };
 
   const state = {
     folders: [], documents: [], current: null, revision: null, pending: {}, timer: 0, saving: null,
     conflict: null, failed: false, expanded: loadExpanded(), lastFolder: null, mode: 'split', sidebarOpen: true,
+    theme: 'ivory', themed: loadThemed(),
   };
 
   // ---------- helpers ----------
@@ -82,6 +91,7 @@ export function mountMarkdownEditor(root, options = {}) {
   function loadExpanded() {
     try { const v = JSON.parse(storage?.getItem(EXPANDED_KEY) || 'null'); return v && typeof v === 'object' ? v : {}; } catch { return {}; }
   }
+  function loadThemed() { try { return storage?.getItem(PREVIEW_THEME_KEY) !== 'off'; } catch { return true; } }
   function saveExpanded() { try { storage?.setItem(EXPANDED_KEY, JSON.stringify(state.expanded)); } catch {} }
   const isExpanded = id => state.expanded[id] !== false;
   const folderOf = id => state.folders.find(f => f.id === id);
@@ -230,7 +240,7 @@ export function mountMarkdownEditor(root, options = {}) {
     state.revision = document.revision;
     state.lastFolder = document.folder_id;
     if (el.source) { el.source.value = document.content || ''; el.source.readOnly = false; }
-    el.preview.dataset.mdTheme = document.theme || 'ivory';
+    setPreviewTheme(document.theme || 'ivory');
     renderTitle();
     renderPreview();
     renderTree();
@@ -471,69 +481,115 @@ export function mountMarkdownEditor(root, options = {}) {
     }});
   }
 
-  // ---------- PDF export ----------
-  let themeBefore = null;
-  function fillThemeSamples(on) {
-    for (const sample of el.exportDialog.querySelectorAll('[data-theme-sample]')) {
-      // Samples carry .md-doc only while the dialog is open: the print rules
-      // pick the page colour from html:has(.md-doc[data-md-theme]).
-      sample.innerHTML = on ? `<div class="md-doc" data-md-theme="${sample.dataset.themeSample}"><h3>가 Aa</h3><p>본문 글씨</p></div>` : '';
-    }
+  // ---------- theme ----------
+  // state.theme is the theme the preview shows (and the PDF dialog starts on):
+  // the document's theme, or a reader's local pick. With "미리보기에 테마 적용"
+  // off the preview uses the site's own reading style instead.
+  const themeInputs = name => [...doc.querySelectorAll(`input[type=radio][name="${name}"]`)];
+  const themeLabel = key => themeInputs('preview-theme').find(i => i.value === key)?.dataset.themeName || key;
+  function setPreviewTheme(key) {
+    state.theme = key;
+    el.preview.dataset.mdTheme = state.themed ? key : SITE_STYLE;
+    for (const input of themeInputs('preview-theme')) input.checked = input.value === key;
+    if (el.themeCurrent) el.themeCurrent.textContent = themeLabel(key);
+    if (el.themeChip) el.themeChip.dataset.mdTheme = key;
+  }
+  function setThemed(on, persist = true) {
+    state.themed = on;
+    if (persist) { try { storage?.setItem(PREVIEW_THEME_KEY, on ? 'on' : 'off'); } catch {} }
+    if (el.themeToggle) el.themeToggle.checked = on;
+    root.dataset.previewThemed = String(on);
+    setPreviewTheme(state.theme);
+  }
+  function chooseTheme(key) {
+    setPreviewTheme(key);
+    if (!state.current || !editor || key === state.current.theme) return;
+    state.current.theme = key;
+    queuePatch({theme: key}, 0);
+  }
+
+  // ---------- PDF download ----------
+  // The server renders the stored document, so unsaved edits are saved first.
+  const exportForm = el.exportDialog?.querySelector('[data-export-form]');
+  const exportPart = sel => el.exportDialog?.querySelector(sel);
+  let exportAbort = null;
+  function exportChoice() { return exportForm.querySelector('input[name=theme]:checked')?.value || state.theme; }
+  function syncExportChoice() {
+    const input = exportForm.querySelector('input[name=theme]:checked');
+    exportPart('[data-export-selected]').textContent = input ? `${input.dataset.themeName}${input.dataset.themeDescription ? ` · ${input.dataset.themeDescription}` : ''}` : '';
+    const row = exportPart('[data-export-save-row]');
+    if (row) row.hidden = !state.current || exportChoice() === state.current.theme;
+  }
+  function setExportBusy(busy) {
+    const button = exportPart('[data-export-submit]');
+    if (!button) return;
+    button.disabled = busy;
+    button.setAttribute('aria-busy', String(busy));
+    exportPart('[data-export-label]').textContent = busy ? 'PDF 만드는 중…' : 'PDF 내려받기';
   }
   function openExport() {
-    if (!state.current) return;
-    themeBefore = el.preview.dataset.mdTheme;
-    const form = el.exportDialog.querySelector('[data-export-form]');
-    for (const radio of form.querySelectorAll('input[name=theme]')) radio.checked = radio.value === themeBefore;
-    fillThemeSamples(true);
+    if (!state.current || !el.exportDialog) return;
+    try { if (el.themePanel?.matches(':popover-open')) el.themePanel.hidePopover(); } catch {}
+    for (const radio of themeInputs('theme')) radio.checked = radio.value === state.theme;
+    const save = exportForm.elements['save-theme'];
+    if (save) save.checked = true;
+    exportPart('[data-export-error]').textContent = '';
+    setExportBusy(false);
+    syncExportChoice();
     el.exportDialog.returnValue = '';
     openModal(el.exportDialog);
+    (exportForm.querySelector('input[name=theme]:checked') || exportPart('[data-export-submit]'))?.focus();
   }
-  function exportClosed() {
-    fillThemeSamples(false);
-    const value = el.exportDialog.returnValue; el.exportDialog.returnValue = '';
-    const chosen = el.exportDialog.querySelector('input[name=theme]:checked')?.value || themeBefore;
-    if (value !== 'print') { if (themeBefore) el.preview.dataset.mdTheme = themeBefore; return; }
-    el.preview.dataset.mdTheme = chosen;
-    if (state.current && chosen !== state.current.theme) {
-      state.current.theme = chosen;
-      if (editor) queuePatch({theme: chosen}, 0);
+  function downloadBlob(blob, filename) {
+    const url = win.URL.createObjectURL(blob);
+    const a = doc.createElement('a');
+    a.href = url; a.download = filename; a.hidden = true;
+    doc.body.append(a);
+    a.click();
+    a.remove();
+    win.setTimeout(() => win.URL.revokeObjectURL(url), REVOKE_DELAY);
+  }
+  async function downloadPdf(event) {
+    event.preventDefault();
+    if (!state.current || exportAbort) return;
+    const error = exportPart('[data-export-error]');
+    const fail = message => { error.textContent = message; setExportBusy(false); exportAbort = null; };
+    const theme = exportChoice();
+    const keep = editor && theme !== state.current.theme && exportForm.elements['save-theme']?.checked;
+    error.textContent = '';
+    setExportBusy(true);
+    const abort = exportAbort = new win.AbortController();
+    if (editor) {
+      if (keep) Object.assign(state.pending, {theme});
+      await flush();
+      if (abort.signal.aborted) return;
+      if (state.conflict) return fail('다른 곳에서 먼저 수정되었습니다. 충돌을 먼저 정리한 뒤 다시 시도해 주세요.');
+      if (state.failed || Object.keys(state.pending).length) return fail('저장하지 못한 내용이 있어 PDF를 만들 수 없습니다. 저장을 다시 시도해 주세요.');
+      if (keep) { state.current.theme = theme; setPreviewTheme(theme); }
     }
-    printDocument(chosen);
+    let response;
+    try {
+      response = await fetcher(`${API}/documents/${encodeURIComponent(state.current.id)}/pdf?theme=${encodeURIComponent(theme)}`, {
+        credentials: 'same-origin', headers: {'Accept': 'application/pdf'}, signal: abort.signal,
+      });
+    } catch {
+      if (abort.signal.aborted) return;
+      return fail('PDF를 내려받지 못했습니다. 연결을 확인하고 다시 시도해 주세요.');
+    }
+    if (abort.signal.aborted) return;
+    if (!response.ok || !/pdf/i.test(response.headers.get('content-type') || '')) {
+      let data = null;
+      try { data = await response.json(); } catch {}
+      return fail(data?.error || (response.status === 401 ? '로그인이 끝났습니다. 다시 로그인해 주세요.' : 'PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'));
+    }
+    let blob;
+    try { blob = await response.blob(); } catch { return fail('PDF를 내려받지 못했습니다. 다시 시도해 주세요.'); }
+    if (abort.signal.aborted) return;
+    downloadBlob(blob, `${pdfTitle(state.current.title)}.pdf`);
+    exportAbort = null;
+    closeModal(el.exportDialog, 'done');
+    announce('PDF를 내려받았습니다');
   }
-  // Fills the print-only root with the themed document and hides the app
-  // chrome (see the print rules in markdown-editor.css). Returns a restore
-  // function; it also runs on afterprint.
-  function preparePrint(theme) {
-    const printRoot = el.printRoot;
-    const article = doc.createElement('article');
-    article.className = 'md-doc';
-    article.dataset.mdTheme = theme;
-    article.append(render(el.source ? el.source.value : state.current.content));
-    printRoot.replaceChildren(article);
-    const before = doc.title;
-    doc.title = pdfTitle(state.current.title);
-    doc.documentElement.classList.add('md-printing');
-    let restored = false;
-    const restore = () => {
-      if (restored) return; restored = true;
-      doc.title = before;
-      doc.documentElement.classList.remove('md-printing');
-      printRoot.replaceChildren();
-    };
-    win.addEventListener('afterprint', restore, {once: true});
-    return restore;
-  }
-  function printDocument(theme) {
-    const restore = preparePrint(theme);
-    const raf = win.requestAnimationFrame?.bind(win) || (fn => win.setTimeout(fn, 16));
-    raf(() => { try { win.print(); } finally { win.setTimeout(restore, 1000); } });
-  }
-  // Ctrl+P / the browser menu: print the open document in its current theme too.
-  win.addEventListener('beforeprint', () => {
-    if (!state.current || doc.documentElement.classList.contains('md-printing')) return;
-    preparePrint(el.preview.dataset.mdTheme || state.current.theme || 'ivory');
-  });
 
   // ---------- events ----------
   root.addEventListener('click', event => {
@@ -568,6 +624,18 @@ export function mountMarkdownEditor(root, options = {}) {
       case 'export': return openExport();
     }
   });
+  root.addEventListener('change', event => {
+    const target = event.target;
+    if (target.name === 'preview-theme' && target.checked) chooseTheme(target.value);
+    else if (target.matches('[data-preview-theme-toggle]')) setThemed(target.checked);
+  });
+  // The picker opens on the current theme, so arrow keys start from there.
+  el.themePanel?.addEventListener('toggle', event => {
+    if (event.newState !== 'open') return;
+    const checked = el.themePanel.querySelector('input[name="preview-theme"]:checked');
+    checked?.focus({preventScroll: true});
+    checked?.closest('.md-theme-family')?.scrollIntoView?.({block: 'nearest'});
+  });
   // Toolbar buttons keep the caret and selection in the textarea.
   el.toolbar?.addEventListener('pointerdown', event => { if (event.target.closest('button')) event.preventDefault(); });
   el.scrim.addEventListener('click', closeDrawer);
@@ -575,6 +643,11 @@ export function mountMarkdownEditor(root, options = {}) {
     if (event.key === 'Escape' && drawerQuery.matches && root.dataset.sidebar === 'open' && !doc.querySelector('dialog[open]')) { event.preventDefault(); closeDrawer(); }
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && String(event.key).toLowerCase() === 's' && state.current) {
       event.preventDefault(); if (editor) flush();
+    }
+    // Ctrl+P: the browser's print would reproduce the page, not the document.
+    // Open the PDF dialog instead; the server makes the real file.
+    if ((event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && String(event.key).toLowerCase() === 'p' && state.current && !doc.querySelector('dialog[open]')) {
+      event.preventDefault(); openExport();
     }
   });
 
@@ -627,12 +700,10 @@ export function mountMarkdownEditor(root, options = {}) {
   }
   if (el.exportDialog) {
     el.exportDialog.querySelector('[data-dialog-cancel]').addEventListener('click', () => closeModal(el.exportDialog));
-    el.exportDialog.addEventListener('change', event => { if (event.target.name === 'theme') el.preview.dataset.mdTheme = event.target.value; });
-    el.exportDialog.addEventListener('close', exportClosed);
-    // A form without a method=dialog close in old engines: close it ourselves.
-    el.exportDialog.querySelector('[data-export-form]').addEventListener('submit', event => {
-      if (typeof el.exportDialog.close !== 'function') { event.preventDefault(); closeModal(el.exportDialog, 'print'); }
-    });
+    el.exportDialog.addEventListener('change', event => { if (event.target.name === 'theme') syncExportChoice(); });
+    // Closing mid-download (Escape, 취소, a click outside) drops the request.
+    el.exportDialog.addEventListener('close', () => { exportAbort?.abort(); exportAbort = null; setExportBusy(false); });
+    exportForm.addEventListener('submit', downloadPdf);
   }
   if (el.confirmDialog && typeof el.confirmDialog.close !== 'function') {
     el.confirmDialog.querySelector('form').addEventListener('submit', event => { event.preventDefault(); closeModal(el.confirmDialog, event.submitter?.value || ''); });
@@ -676,6 +747,7 @@ export function mountMarkdownEditor(root, options = {}) {
 
   // ---------- start ----------
   try { state.sidebarOpen = storage?.getItem(SIDEBAR_KEY) !== 'closed'; } catch {}
+  setThemed(state.themed, false);
   root.dataset.sidebar = drawerQuery.matches ? 'closed' : (state.sidebarOpen ? 'open' : 'closed');
   onLayout();
 
@@ -695,7 +767,7 @@ export function mountMarkdownEditor(root, options = {}) {
     }
   })();
 
-  return {state, ready, flush, setMode, runCommand, openDocument};
+  return {state, ready, flush, setMode, runCommand, openDocument, openExport};
 }
 
 if (typeof document !== 'undefined') {

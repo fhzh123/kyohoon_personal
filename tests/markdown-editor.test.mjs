@@ -4,6 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import {JSDOM} from 'jsdom';
 import {markdownPage} from '../views/pages.mjs';
+import {groupThemes, themeChoices} from '../views/markdown-editor.mjs';
 import {MARKDOWN_THEMES} from '../views/markdown-themes.mjs';
 import * as core from '../public/markdown-editor-core.js';
 import {mountMarkdownEditor, createRenderer} from '../public/markdown-editor.js';
@@ -32,15 +33,29 @@ test('markdown page: editor sees the full editor, reader reads only, visitors ge
   assert.deepEqual([...toolbar.querySelectorAll('[data-cmd]')].map(b => b.dataset.cmd),
     ['bold', 'italic', 'underline', 'strike', 'heading', 'quote', 'code', 'bullet', 'ordered', 'task', 'link', 'image', 'table', 'rule']);
   for (const b of toolbar.querySelectorAll('button')) { assert.ok(b.getAttribute('aria-label'), 'icon buttons are named'); assert.equal(b.type, 'button'); }
-  assert.deepEqual([...d.querySelectorAll('[data-view-mode]')].map(b => [b.dataset.viewMode, b.textContent]), [['edit', '편집만'], ['split', '나란히'], ['preview', '미리보기만']]);
+  const viewButtons = [...d.querySelectorAll('[data-view-mode]')];
+  assert.deepEqual(viewButtons.map(b => [b.dataset.viewMode, b.getAttribute('aria-label'), b.dataset.tip]), [['edit', '편집만', '편집만'], ['split', '나란히', '나란히'], ['preview', '미리보기만', '미리보기만']]);
+  for (const b of viewButtons) {
+    assert.equal(b.textContent.trim(), '', 'view buttons are icon-only');
+    assert.ok(b.querySelector('svg.md-icon[aria-hidden=true] use'), 'with a sprite icon');
+  }
+  assert.deepEqual(viewButtons.map(b => b.querySelector('use').getAttribute('href')), ['#mdi-pen-line', '#mdi-columns-2', '#mdi-eye']);
+  for (const id of ['pen-line', 'columns-2', 'eye', 'palette', 'download', 'sun', 'moon']) assert.ok(d.querySelector(`symbol#mdi-${id}`), id);
   assert.equal(d.querySelector('[data-view-mode=split]').getAttribute('aria-pressed'), 'true');
   assert.ok(d.querySelector('article.md-doc[data-md-theme="ivory"][data-preview]'));
   const themes = [...d.querySelectorAll('#md-export-dialog input[name=theme]')];
-  assert.deepEqual(themes.map(t => t.value), MARKDOWN_THEMES.map(t => t.key));
+  assert.deepEqual(new Set(themes.map(t => t.value)), new Set(MARKDOWN_THEMES.map(t => t.key)));
   for (const t of MARKDOWN_THEMES) assert.match(d.querySelector('#md-export-dialog').textContent, new RegExp(t.name));
   assert.ok(d.querySelector('dialog#md-name-dialog label[for="md-name-input"]'), 'name field has a visible label');
   assert.ok(d.querySelector('dialog#md-confirm-dialog [autofocus][value=cancel]'), 'delete confirmation focuses the safe action');
-  assert.ok(d.querySelector('.md-print[data-print-root]'));
+  assert.equal(d.querySelector('[data-print-root]'), null, 'no print-to-PDF machinery');
+  assert.match(d.querySelector('[data-export-submit]').textContent, /PDF 내려받기/);
+  assert.ok(d.querySelector('[data-export-save-row] input[name=save-theme][type=checkbox]'));
+  const picker = d.querySelector('#md-theme-panel[popover][data-theme-panel]');
+  assert.ok(picker && d.querySelector('[data-theme-trigger][popovertarget=md-theme-panel]'));
+  assert.deepEqual(new Set([...picker.querySelectorAll('input[name=preview-theme]')].map(t => t.value)), new Set(MARKDOWN_THEMES.map(t => t.key)));
+  assert.equal(picker.querySelectorAll('input[name=preview-theme]').length, MARKDOWN_THEMES.length);
+  assert.ok(picker.querySelector('input[type=checkbox][role=switch][data-preview-theme-toggle]:checked'));
   const scripts = [...d.querySelectorAll('script[src]')].map(s => s.getAttribute('src'));
   assert.ok(scripts.includes('/vendor/markdown-it-14.3.3.min.js') && scripts.includes('/vendor/purify-3.4.17.min.js'));
   assert.ok(scripts.some(s => /^\/markdown-editor\.js\?v=\d{8}-\d+$/.test(s)));
@@ -52,7 +67,9 @@ test('markdown page: editor sees the full editor, reader reads only, visitors ge
   const r = new JSDOM(markdownPage({mode: 'supabase', role: 'reader'})).window.document;
   assert.equal(r.querySelector('[data-md-app]').dataset.role, 'reader');
   for (const selector of ['textarea', '[data-toolbar]', '[data-view-mode]', '[data-action=new-folder]', '#md-name-dialog', '#md-confirm-dialog']) assert.equal(r.querySelector(selector), null, selector);
-  assert.ok(r.querySelector('[data-action=export]'), 'readers can still print');
+  assert.ok(r.querySelector('[data-action=export]'), 'readers can still download a PDF');
+  assert.ok(r.querySelector('[data-theme-trigger]'), 'readers can switch the preview theme');
+  assert.equal(r.querySelector('[data-export-save-row]'), null, 'readers cannot save a theme');
   assert.match(r.querySelector('.md-readonly-note').textContent, /읽기 전용/);
 
   const a = new JSDOM(markdownPage(null)).window.document;
@@ -298,42 +315,192 @@ test('phones start in one pane even when split was stored', async () => {
   try { assert.equal(root.dataset.view, 'edit'); } finally { w.close(); }
 });
 
-test('PDF export saves the chosen theme, prints only the themed document under the document title', async () => {
-  const {w, d, requests, until, getDoc} = await editorFixture();
+// Stubs the parts of the browser jsdom lacks for the download: object URLs,
+// showModal and the anchor click (recorded instead of navigating).
+function downloadHarness(w, d) {
+  const urls = {created: [], revoked: []};
+  w.URL.createObjectURL = blob => { urls.created.push(blob); return `blob:fixture/${urls.created.length}`; };
+  w.URL.revokeObjectURL = url => { urls.revoked.push(url); };
+  w.HTMLDialogElement.prototype.showModal ??= function () { this.setAttribute('open', ''); };
+  w.HTMLDialogElement.prototype.close ??= function (value = '') { this.removeAttribute('open'); this.returnValue = value; this.dispatchEvent(new w.Event('close')); };
+  const downloads = [];
+  d.addEventListener('click', event => {
+    const a = event.target.closest?.('a[download]');
+    if (a) { event.preventDefault(); downloads.push({href: a.getAttribute('href'), name: a.download, attached: d.body.contains(a)}); }
+  }, true);
+  return {urls, downloads};
+}
+const pdfResponse = () => new Response(new Blob(['%PDF-1.7 fixture'], {type: 'application/pdf'}), {headers: {'Content-Type': 'application/pdf', 'Content-Disposition': 'attachment; filename="document.pdf"'}});
+
+test('PDF download saves pending edits, keeps the chosen theme, then downloads the server file', async () => {
+  let pdfSeen = null;
+  const {w, d, app, requests, until, getDoc} = await editorFixture({handler: (url, method, body, {doc}) => {
+    if (/\/pdf\?/.test(url)) { pdfSeen = {content: doc.content, theme: doc.theme}; return pdfResponse(); }
+  }});
   try {
-    let printed = null;
-    w.print = () => {
-      printed = {
-        title: d.title,
-        printing: d.documentElement.classList.contains('md-printing'),
-        article: d.querySelector('[data-print-root] > article.md-doc')?.dataset.mdTheme,
-        heading: d.querySelector('[data-print-root] h1')?.textContent,
-      };
-    };
-    w.HTMLDialogElement.prototype.showModal ??= function () { this.setAttribute('open', ''); };
+    const {urls, downloads} = downloadHarness(w, d);
+    // An edit still waiting for the autosave timer.
+    app.state.pending = {};
+    const ta = d.querySelector('#md-source');
+    ta.value = '# 제목\n\n고친 본문';
+    app.state.current.content = ta.value;
+    app.state.pending = {content: ta.value};
+
     d.querySelector('[data-action=export]').click();
     const dialog = d.querySelector('#md-export-dialog');
-    assert.equal(dialog.querySelector('input[name=theme]:checked').value, 'ivory');
+    assert.ok(dialog.hasAttribute('open'));
+    assert.equal(dialog.querySelector('input[name=theme]:checked').value, 'ivory', 'starts on the document theme');
+    const saveRow = dialog.querySelector('[data-export-save-row]');
+    assert.equal(saveRow.hidden, true, 'nothing to save while the theme is unchanged');
     const dark = dialog.querySelector('input[name=theme][value="github-dark"]');
     dark.checked = true; dark.dispatchEvent(new w.Event('change', {bubbles: true}));
-    assert.equal(d.querySelector('[data-preview]').dataset.mdTheme, 'github-dark', 'the preview follows the choice');
-    dialog.removeAttribute('open'); dialog.returnValue = 'print'; dialog.dispatchEvent(new w.Event('close'));
-    await until(() => printed);
-    assert.deepEqual(printed, {title: '회의 메모', printing: true, article: 'github-dark', heading: '제목'});
-    await until(() => requests.some(r => r.method === 'PATCH' && r.body.theme === 'github-dark'));
-    assert.equal(getDoc().theme, 'github-dark');
-    w.dispatchEvent(new w.Event('afterprint'));
-    assert.equal(d.documentElement.classList.contains('md-printing'), false);
-    assert.equal(d.querySelector('[data-print-root]').children.length, 0);
-    assert.match(d.title, /회의 메모 \| 마크다운 에디터/);
+    assert.equal(saveRow.hidden, false);
+    assert.equal(saveRow.querySelector('input').checked, true, '"이 테마를 문서에 저장" is on by default');
+    assert.match(dialog.querySelector('[data-export-selected]').textContent, /깃허브 다크/);
 
-    // Ctrl+P without the dialog prints the same way, in the current theme.
-    w.dispatchEvent(new w.Event('beforeprint'));
-    assert.equal(d.querySelector('[data-print-root] > article').dataset.mdTheme, 'github-dark');
-    assert.equal(d.title, '회의 메모');
-    w.dispatchEvent(new w.Event('afterprint'));
-    assert.equal(d.querySelector('[data-print-root]').children.length, 0);
+    const submit = dialog.querySelector('[data-export-submit]');
+    dialog.querySelector('[data-export-form]').requestSubmit(submit);
+    assert.equal(submit.disabled, true);
+    assert.equal(submit.getAttribute('aria-busy'), 'true');
+    assert.equal(submit.textContent.trim(), 'PDF 만드는 중…');
+    await until(() => downloads.length === 1);
+
+    const order = requests.filter(r => r.method === 'PATCH' || /\/pdf/.test(r.url)).map(r => r.method === 'PATCH' ? `PATCH ${Object.keys(r.body).sort().join(',')}` : `GET ${r.url}`);
+    assert.deepEqual(order, ['PATCH content,revision,theme', `GET /api/markdown/documents/${getDoc().id}/pdf?theme=github-dark`]);
+    assert.deepEqual(pdfSeen, {content: '# 제목\n\n고친 본문', theme: 'github-dark'}, 'the server had the edit and the theme before the PDF request');
+    assert.deepEqual(downloads, [{href: 'blob:fixture/1', name: '회의 메모.pdf', attached: true}]);
+    assert.equal(d.querySelector('a[download]'), null, 'the temporary link is removed');
+    assert.equal(urls.created[0].type, 'application/pdf');
+    assert.equal(dialog.hasAttribute('open'), false, 'the dialog closes after the download');
+    assert.equal(d.querySelector('[data-preview]').dataset.mdTheme, 'github-dark');
+    assert.equal(d.querySelector('[data-theme-current]').textContent, '깃허브 다크');
+    await until(() => urls.revoked.includes('blob:fixture/1'), 3000);
   } finally { w.close(); }
+});
+
+test('PDF download without saving the theme, error messages from the server, and Ctrl+P', async () => {
+  let fail = true;
+  const {w, d, requests, until, getDoc} = await editorFixture({handler: url => {
+    if (/\/pdf\?/.test(url)) return fail ? Response.json({error: 'PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'}, {status: 503}) : pdfResponse();
+  }});
+  try {
+    const {downloads} = downloadHarness(w, d);
+    d.dispatchEvent(new w.KeyboardEvent('keydown', {key: 'p', ctrlKey: true, bubbles: true, cancelable: true}));
+    const dialog = d.querySelector('#md-export-dialog');
+    assert.ok(dialog.hasAttribute('open'), 'Ctrl+P opens the PDF dialog');
+    const chrome = dialog.querySelector('input[name=theme][value=chrome]');
+    chrome.checked = true; chrome.dispatchEvent(new w.Event('change', {bubbles: true}));
+    dialog.querySelector('input[name=save-theme]').checked = false;
+    const submit = dialog.querySelector('[data-export-submit]');
+    dialog.querySelector('[data-export-form]').requestSubmit(submit);
+    await until(() => dialog.querySelector('[data-export-error]').textContent);
+    assert.equal(dialog.querySelector('[data-export-error]').textContent, 'PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    assert.ok(dialog.hasAttribute('open'), 'the dialog stays open on an error');
+    assert.equal(submit.disabled, false);
+    assert.equal(submit.getAttribute('aria-busy'), 'false');
+    assert.equal(submit.textContent.trim(), 'PDF 내려받기');
+    assert.equal(downloads.length, 0);
+
+    fail = false;
+    dialog.querySelector('[data-export-form]').requestSubmit(submit);
+    await until(() => downloads.length === 1);
+    assert.equal(dialog.querySelector('[data-export-error]').textContent, '');
+    assert.ok(requests.some(r => r.url.endsWith('/pdf?theme=chrome')));
+    assert.equal(requests.filter(r => r.method === 'PATCH').length, 0, 'theme not saved when unticked');
+    assert.equal(getDoc().theme, 'ivory');
+    assert.equal(d.querySelector('[data-preview]').dataset.mdTheme, 'ivory');
+  } finally { w.close(); }
+});
+
+test('readers download a PDF in their local theme without any write', async () => {
+  const {w, d, requests, until} = await editorFixture({role: 'reader', handler: url => { if (/\/pdf\?/.test(url)) return pdfResponse(); }});
+  try {
+    const {downloads} = downloadHarness(w, d);
+    const pick = d.querySelector('input[name=preview-theme][value=sprinkles]');
+    pick.checked = true; pick.dispatchEvent(new w.Event('change', {bubbles: true}));
+    assert.equal(d.querySelector('[data-preview]').dataset.mdTheme, 'sprinkles', 'readers switch the preview locally');
+    d.querySelector('[data-action=export]').click();
+    const dialog = d.querySelector('#md-export-dialog');
+    assert.equal(dialog.querySelector('input[name=theme]:checked').value, 'sprinkles');
+    dialog.querySelector('[data-export-form]').requestSubmit(dialog.querySelector('[data-export-submit]'));
+    await until(() => downloads.length === 1);
+    assert.ok(requests.some(r => /\/pdf\?theme=sprinkles$/.test(r.url)));
+    assert.equal(requests.filter(r => r.method !== 'GET').length, 0);
+  } finally { w.close(); }
+});
+
+test('theme picker groups by family with light and dark variants; ungrouped themes stand alone', () => {
+  const fake = [
+    {key: 'night-light', name: '나이트 라이트', description: '밝은 나이트', family: 'Night', variant: 'light'},
+    {key: 'paper', name: '종이', description: '메타데이터 없는 테마'},
+    {key: 'night-dark', name: '나이트 다크', description: '어두운 나이트', family: 'Night', variant: 'dark'},
+    {key: 'flow-dark', name: '플로우 다크', description: '', family: '아이보리 플로우', variant: 'dark'},
+    {key: 'flow', name: '플로우', description: '', family: '아이보리 플로우', variant: 'light'},
+  ];
+  assert.deepEqual(groupThemes(fake).map(g => [g.family, g.themes.map(t => t.key)]), [
+    ['Night', ['night-light', 'night-dark']], ['종이', ['paper']], ['아이보리 플로우', ['flow', 'flow-dark']],
+  ]);
+  const d = new JSDOM(`<form>${themeChoices(fake, {name: 'theme', checked: 'night-dark'})}</form>`).window.document;
+  const groups = [...d.querySelectorAll('.md-theme-family[role=group]')];
+  assert.deepEqual(groups.map(g => g.getAttribute('aria-label')), ['Night', '종이', '아이보리 플로우']);
+  const night = groups[0];
+  assert.deepEqual([...night.querySelectorAll('.md-theme-tile')].map(t => [t.dataset.variant, t.querySelector('input').value, t.querySelector('.md-theme-variant').textContent]), [['light', 'night-light', '라이트'], ['dark', 'night-dark', '다크']]);
+  assert.deepEqual([...night.querySelectorAll('use')].map(u => u.getAttribute('href')), ['#mdi-sun', '#mdi-moon']);
+  assert.equal(d.querySelector('input:checked').value, 'night-dark');
+  assert.equal(d.querySelectorAll('input[type=radio][name=theme]').length, 5, 'one radio group: arrow keys move through every theme');
+  const paper = groups[1].querySelector('.md-theme-tile');
+  assert.equal(paper.dataset.variant, 'single');
+  assert.equal(paper.querySelector('.md-theme-variant'), null);
+  for (const label of d.querySelectorAll('label.md-theme-tile')) {
+    const input = label.querySelector('input');
+    assert.equal(label.querySelector('.sr-only').textContent, input.dataset.themeName, 'each radio is named by its theme');
+    assert.equal(label.querySelector(`.md-theme-sample[aria-hidden=true] > .md-doc[data-md-theme="${input.value}"]`) !== null, true, 'live sample per theme');
+  }
+});
+
+test('theme picker applies the theme to the preview and saves it; the preview-theme preference is remembered', async () => {
+  const {w, d, root, app, requests, storage, until, getDoc} = await editorFixture();
+  try {
+    const preview = d.querySelector('[data-preview]');
+    assert.equal(preview.dataset.mdTheme, 'ivory');
+    assert.equal(d.querySelector('input[name=preview-theme]:checked').value, 'ivory');
+    const before = getDoc().revision;
+    const dark = d.querySelector('input[name=preview-theme][value="github-dark"]');
+    dark.checked = true; dark.dispatchEvent(new w.Event('change', {bubbles: true}));
+    assert.equal(preview.dataset.mdTheme, 'github-dark');
+    assert.equal(d.querySelector('[data-theme-current]').textContent, '깃허브 다크');
+    await until(() => requests.some(r => r.method === 'PATCH'));
+    assert.deepEqual(requests.find(r => r.method === 'PATCH').body, {theme: 'github-dark', revision: before});
+    await until(() => getDoc().theme === 'github-dark' && app.state.revision === getDoc().revision);
+
+    const toggle = d.querySelector('[data-preview-theme-toggle]');
+    toggle.checked = false; toggle.dispatchEvent(new w.Event('change', {bubbles: true}));
+    assert.equal(preview.dataset.mdTheme, '_site', 'neutral site style');
+    assert.equal(root.dataset.previewThemed, 'false');
+    assert.equal(storage.get('kyohoon-markdown-preview-theme'), 'off');
+    const chrome = d.querySelector('input[name=preview-theme][value=chrome]');
+    chrome.checked = true; chrome.dispatchEvent(new w.Event('change', {bubbles: true}));
+    assert.equal(preview.dataset.mdTheme, '_site', 'still neutral while the preference is off');
+    await until(() => getDoc().theme === 'chrome', 2000);
+    toggle.checked = true; toggle.dispatchEvent(new w.Event('change', {bubbles: true}));
+    assert.equal(preview.dataset.mdTheme, 'chrome');
+    assert.equal(storage.get('kyohoon-markdown-preview-theme'), 'on');
+  } finally { w.close(); }
+
+  const off = await editorFixture({stored: {'kyohoon-markdown-preview-theme': 'off'}});
+  try {
+    assert.equal(off.d.querySelector('[data-preview]').dataset.mdTheme, '_site');
+    assert.equal(off.d.querySelector('[data-preview-theme-toggle]').checked, false);
+  } finally { off.w.close(); }
+
+  // Blocked storage: the preference falls back to on and nothing throws.
+  const blocked = {getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); }};
+  const dom = new JSDOM(markdownPage({mode: 'local', role: 'editor'}), {url: 'https://fixture.invalid/personal/markdown', runScripts: 'outside-only'});
+  dom.window.eval(markdownitSource); dom.window.eval(purifySource);
+  const app2 = mountMarkdownEditor(dom.window.document.querySelector('[data-md-app]'), {window: dom.window, storage: blocked, fetch: async () => Response.json({folders: [], documents: [], role: 'editor'})});
+  await app2.ready;
+  assert.equal(app2.state.themed, true);
+  dom.window.close();
 });
 
 test('the phone drawer makes the rest of the page inert and Escape closes it', async () => {
