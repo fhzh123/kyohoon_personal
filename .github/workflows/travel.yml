@@ -29,6 +29,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Verify the server starts the way Vercel loads it (no require of ES modules)
+        run: node --test tests/cold-start.test.mjs
+
       - name: Verify research planning and resource calculations
         run: node --test tests/research-features.test.mjs tests/work-dom.test.mjs
 
