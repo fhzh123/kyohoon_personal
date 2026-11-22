@@ -22,12 +22,13 @@ function assets() {
   return assetsPromise ||= Promise.all([
     readFile(new URL('../public/markdown-themes.css', import.meta.url), 'utf8'),
     readFile(new URL('../public/fonts/WantedSans-Medium.ttf', import.meta.url)),
-  ]).then(([css, font]) => ({css, font:font.toString('base64')})).catch(error => { assetsPromise = undefined; throw error; });
+    readFile(new URL('../public/fonts/Noto-COLRv1.ttf', import.meta.url)),
+  ]).then(([css, font, emoji]) => ({css, font:font.toString('base64'), emoji:emoji.toString('base64')})).catch(error => { assetsPromise = undefined; throw error; });
 }
 
 export async function buildMarkdownPdfHtml({title = '', content = '', theme = DEFAULT_MARKDOWN_THEME}) {
   if (!MARKDOWN_THEME_KEYS.includes(theme)) throw new Error('Unknown Markdown theme');
-  const {css, font} = await assets();
+  const {css, font, emoji} = await assets();
   // Match the preview's safe formatting subset. In particular, user CSS and
   // document-level tags must never override the trusted page layout or CSP.
   const html = sanitizeHtml(engine.render(content || ''), {
@@ -45,14 +46,21 @@ export async function buildMarkdownPdfHtml({title = '', content = '', theme = DE
   // These names cover all Korean fallbacks in markdown-themes.css. A single
   // bundled face is reused; Latin serif/mono choices remain available locally.
   const families = /"(?:Pretendard Variable|Pretendard|Noto Sans KR|Noto Serif KR|Source Han Serif KR|Nanum Myeongjo|AppleMyungjo|Batang|D2Coding|Apple SD Gothic Neo|Malgun Gothic)"/g;
-  const fonts = `@font-face{font-family:"PDF Korean";src:url(data:font/ttf;base64,${font}) format("truetype");font-weight:400;font-style:normal;font-display:block;}`;
+  // Include sequence components: keycap bases, ZWJ, selectors and flag tags.
+  // Keep this face AFTER text fonts so plain digits/#/* retain their glyphs.
+  const emojiRange = 'U+0023,U+002A,U+0030-0039,U+00A9,U+00AE,U+200D,U+203C,U+2049,U+20E3,U+2122,U+2139,U+2194-2199,U+21A9-21AA,U+2300-23FF,U+24C2,U+25AA-25AB,U+25B6,U+25C0,U+25FB-27BF,U+2934-2935,U+2B00-2BFF,U+3030,U+303D,U+3297,U+3299,U+FE0E-FE0F,U+1F000-1FAFF,U+E0020-E007F';
+  const fonts = `@font-face{font-family:"PDF Korean";src:url(data:font/ttf;base64,${font}) format("truetype");font-weight:400;font-style:normal;font-display:block;}
+@font-face{font-family:"PDF Emoji";src:url(data:font/ttf;base64,${emoji}) format("truetype");font-weight:400;font-style:normal;font-display:block;unicode-range:${emojiRange};}`;
+  // Every theme stack has a Korean fallback. Pair it with emoji before the
+  // generic/system fallback, including stacks inherited by ::before/::after.
+  const themeCss = css.replace(families, '"PDF Korean","PDF Emoji"');
   // Chromium clones this block's padding onto every page fragment; the
   // theme's html/body print backgrounds fill the entire page canvas, including
   // the empty space below the final fragment. Override browser-print margins.
-  const styles = `${fonts}\n${css.replace(families, '"PDF Korean"')}
+  const styles = `${fonts}\n${themeCss}
 @page { size:A4 portrait; margin:0; }
 html, body { margin:0 !important; padding:0 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-body { font-family:"PDF Korean",sans-serif; }
+body { font-family:"PDF Korean","PDF Emoji",sans-serif; }
 .md-doc[data-md-theme] { width:100%; max-width:none; margin:0; padding:20mm; box-decoration-break:clone; -webkit-box-decoration-break:clone; border:0; border-radius:0; box-shadow:none; }
 .md-doc[data-md-theme] img { max-width:100%; max-height:240mm; object-fit:contain; }
 .md-doc[data-md-theme] table { max-width:100%; overflow-wrap:anywhere; }

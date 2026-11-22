@@ -216,7 +216,7 @@ test('Project 추가 정보 links papers and DATUMO docs as new-tab links', asyn
       const links = [...detail.querySelectorAll('a[target=_blank]')].map(node => [node.textContent.trim(), node.getAttribute('href')]);
       assert.deepEqual(links, expected[title]);
       if (title.startsWith('DATUMO')) {
-        assert.equal(detail.querySelector('img'), null);
+        assert.equal(detail.querySelector('img')?.getAttribute('src'), '/resume/projects/datumo-observability.png');
         assert.match(detail.textContent, /GIFT/);
         assert.match(detail.textContent, /프로젝트 기한: Feb 2026 - Aug 2026/);
       }

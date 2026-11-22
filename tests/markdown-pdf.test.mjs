@@ -1,8 +1,34 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 import {JSDOM} from 'jsdom';
 import {buildMarkdownPdfHtml, pdfDisposition, allowPdfRequest, createMarkdownPdfRenderer, localChromePath} from '../server/markdown-pdf.mjs';
 import {MARKDOWN_THEME_KEYS} from '../views/markdown-themes.mjs';
+
+test('PDF embeds the bundled colour emoji font in body and every theme font stack', async () => {
+  const font = await readFile(new URL('../public/fonts/Noto-COLRv1.ttf', import.meta.url));
+  assert.equal(createHash('sha256').update(font).digest('hex'), 'b8e25ea68db82f9e4d0aee921f4420be2be39887bd5c893a2ad98710531f9d0c');
+  const html = await buildMarkdownPdfHtml({theme:'sprinkles', content:'# Emoji\n\n😀 🎉 ✅ 🇰🇷 👍🏽'});
+  const styles = html.match(/<style>([\s\S]*?)<\/style>/)[1];
+  const face = styles.match(/@font-face\{font-family:"PDF Emoji";src:url\(data:font\/ttf;base64,([^)]+)\)[^}]+\}/);
+  assert.ok(face, 'The emoji webfont is embedded as a CSP-permitted data URL');
+  assert.deepEqual(Buffer.from(face[1], 'base64'), font);
+  assert.match(face[0], /unicode-range:.*U\+200D.*U\+FE0E-FE0F.*U\+1F000-1FAFF.*U\+E0020-E007F/);
+  assert.match(styles, /body \{ font-family:"PDF Korean","PDF Emoji",sans-serif; \}/);
+  const stacks = [...styles.matchAll(/--md-[\w-]+-(?:sans|serif|mono|heading-font):([^;]+);/g)];
+  assert.ok(stacks.length > MARKDOWN_THEME_KEYS.length);
+  for (const [declaration, stack] of stacks) assert.ok(stack.includes('"PDF Korean","PDF Emoji"'), declaration);
+  assert.match(styles, /h1::before \{ content: "🔨 "; \}/);
+  assert.match(styles, /h2::before \{ content: "✏️ "; \}/);
+  assert.match(styles, /font-family: var\(--md-sp-mono\)/);
+  assert.match(styles, /Georgia/);
+  assert.match(styles, /Consolas/);
+  const styleHash = createHash('sha256').update(styles).digest('base64');
+  assert.ok(html.includes(`style-src 'sha256-${styleHash}'`));
+  const vercel = JSON.parse(await readFile(new URL('../vercel.json', import.meta.url), 'utf8'));
+  assert.ok(vercel.functions['api/index.mjs'].includeFiles.includes('public'));
+});
 
 test('PDF HTML embeds theme styles and Korean font, escapes the title and preserves safe Markdown', async () => {
   const html = await buildMarkdownPdfHtml({title:'한글 </title><script>alert("x")</script>', theme:'github-dark', content:'# 제목\n\n<u>밑줄</u> **강조**\n\n- [x] 완료\n- [ ] 대기\n\nhttps://example.com\n\n| 한글 | English |\n| --- | --- |\n| 값 | text |\n\n![그림](data:image/png;base64,AAAA)'});
