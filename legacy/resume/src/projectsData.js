@@ -13,7 +13,7 @@ const projects_ = [
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
-      imageUrl: '', // Image for project detail
+      imageUrl: '/resume/projects/datumo-observability.png', // Image for project detail
       subtitle: '챗봇 대화 로그 모니터링 대시보드 개발',
       fullDescription: 'DATUMO 플랫폼의 Observability 기능으로, 챗봇 대화 로그를 모니터링하는 대시보드를 팀과 함께 개발했습니다. 챗봇 세션은 길이가 매우 길어 분석 전에 주제별로 나누는 과정이 필요하여, 이를 위해 Global·Local 관점의 점검과 필터링으로 대화 주제 경계를 찾는 GIFT 방법론을 연구했습니다(ARR 10월 사이클 제출, 심사 중). 대화를 한눈에 볼 수 있도록 임베딩이 뭉치지 않고 잘 분리되어 보이게 하는 시각화용 임베딩 KG-Neighbor를 연구하여 WSDM에 게재가 확정되었습니다. 또한 사용자가 의도한 카테고리 안에서 대화하는지, 어떤 비율로 대화하는지를 파악하기 위해 자동 프롬프트 튜닝 기반의 Generalized Category Discovery 방법론 CALM을 연구했습니다(AAAI 제출, 심사 중). 이와 함께 Observability MVP를 위한 프롬프팅과 서비스 연동 작업도 진행했습니다.',
       companyOrInstitution: 'Selectstar (DATUMO)',
