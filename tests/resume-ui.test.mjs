@@ -169,13 +169,12 @@ test('English names apply to patents while Domestic Paper keeps Korean authors',
   assert.ok(document.body.textContent.includes('김영빈'));
 });
 
-test('Exactly one project is pending and Samsung keeps its detail and image', async t => {
+test('No project is pending and Samsung keeps its detail and image', async t => {
   const window = await mount(t);
   const {document} = window;
   await selectTab(window, 'Projects');
-  assert.equal((document.body.textContent.match(/\(수정예정\)/g) || []).length, 1);
-  assert.match(document.body.textContent, /\(수정예정\) 전문가의 워크플로우가 포함된 온톨로지 구축/);
-  assert.doesNotMatch(document.body.textContent, /\(수정예정\) DATUMO/);
+  assert.equal((document.body.textContent.match(/\(수정예정\)/g) || []).length, 0);
+  assert.match(document.body.textContent, /전문가의 워크플로우가 포함된 온톨로지 구축/);
   const buttons = [...document.querySelectorAll('button')].filter(node => node.textContent.trim() === '자세히 보기');
   buttons[5].click();
   await waitFor(() => document.querySelector('h2')?.textContent.includes('[삼성생명 C-Lab]'), 'Original Samsung detail opens');
@@ -240,20 +239,21 @@ test('Resume opens global settings and preserves theme preferences without playb
   assert.equal(d.querySelector('[data-ambient-toggle]'), null);
 });
 
-test('Resume project detail modal opens, shows pending details, and closes by button/backdrop', async t => {
+test('Resume project detail modal opens, shows ontology details, and closes by button/backdrop', async t => {
   const window = await mount(t);
   const { document } = window;
   await selectTab(window, 'Projects');
   const open = () => exact(document, 'button', '자세히 보기').click();
   open();
-  await waitFor(() => document.querySelector('h2')?.textContent === '(수정예정) 전문가의 워크플로우가 포함된 온톨로지 구축', 'Project detail heading appears');
+  await waitFor(() => document.querySelector('h2')?.textContent === '전문가의 워크플로우가 포함된 온톨로지 구축', 'Project detail heading appears');
   const detail = document.querySelector('h2').parentElement;
   assert.match(detail.textContent, /프로젝트 기한: Aug 2026 -/);
-  assert.equal(detail.querySelector('img'),null);
+  assert.equal(detail.querySelector('img')?.getAttribute('src'), '/resume/projects/ontology-expert-workflow.png');
+  assert.match(detail.textContent, /판례 기반 온톨로지·지식그래프 구축과 판례 검색/);
   assert.ok(!detail.textContent.includes('삼성생명'));
   assert.match(detail.textContent, /추가 정보/);
   const demo = [...detail.querySelectorAll('a[target=_blank]')].find(node => node.textContent.trim() === '데모');
-  assert.ok(demo, 'Pending ontology project links its demo under 추가 정보');
+  assert.ok(demo, 'Ontology project links its demo under 추가 정보');
   assert.equal(demo.getAttribute('href'), '/work/demos/ontology/');
   exact(document, 'button', '×').click();
   await waitFor(() => !document.querySelector('h2'), 'Close button closes project detail');
