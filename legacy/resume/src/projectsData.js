@@ -9,16 +9,19 @@ const projects_ = [
     {
       title: 'DATUMO 플랫폼 내 모니터링 대시보드 개발',
       period: 'Feb 2026 - Aug 2026',
-      description: '',
+      description: '- 챗봇 대화 로그 모니터링을 위한 DATUMO Observability 기능 개발 <br /> - 대화 주제 분할, 대화 시각화, 카테고리 탐색 연구와 MVP 엔지니어링',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       // Detailed fields for modal
       imageUrl: '', // Image for project detail
-      subtitle: '',
-      fullDescription: '',
-      companyOrInstitution: '',
-      role: '',
-      externalLinks: [],
+      subtitle: '챗봇 대화 로그 모니터링 대시보드 개발',
+      fullDescription: 'DATUMO 플랫폼의 Observability 기능으로, 챗봇 대화 로그를 모니터링하는 대시보드를 팀과 함께 개발했습니다. 챗봇 세션은 길이가 매우 길어 분석 전에 주제별로 나누는 과정이 필요하여, 이를 위해 Global·Local 관점의 점검과 필터링으로 대화 주제 경계를 찾는 GIFT 방법론을 연구했습니다(ARR 10월 사이클 제출, 심사 중). 대화를 한눈에 볼 수 있도록 임베딩이 뭉치지 않고 잘 분리되어 보이게 하는 시각화용 임베딩 KG-Neighbor를 연구하여 WSDM에 게재가 확정되었습니다. 또한 사용자가 의도한 카테고리 안에서 대화하는지, 어떤 비율로 대화하는지를 파악하기 위해 자동 프롬프트 튜닝 기반의 Generalized Category Discovery 방법론 CALM을 연구했습니다(AAAI 제출, 심사 중). 이와 함께 Observability MVP를 위한 프롬프팅과 서비스 연동 작업도 진행했습니다.',
+      companyOrInstitution: 'Selectstar (DATUMO)',
+      role: '대화 주제 분할(GIFT), 대화 시각화(KG-Neighbor), 카테고리 탐색(CALM) 연구 참여 및 Observability MVP 프롬프팅·연동 개발',
+      externalLinks: [
+        { name: '서비스 문서 · DATUMO Observability', url: 'https://docs.datumo.com/en/docs/observability/core-concept' },
+        { name: '논문 · KG-Neighbor (WSDM)', url: 'https://arxiv.org/html/2611.07246v1' },
+      ],
     },
 
 
@@ -112,7 +115,10 @@ const projects_ = [
       fullDescription: 'RAG 시스템의 성능 평가를 위한 원천문서 기반 질의응답 데이터셋 합성 기술을 연구했습니다. 이를 통해 EMNLP 2025에 두 편의 논문을 투고하였습니다.',
       companyOrInstitution: '한화생명',
       role: 'RAG 시스템 성능 평가 데이터셋 합성 기술 연구 및 논문 작성',
-      externalLinks: [],
+      externalLinks: [
+        { name: '논문 · GRADE (EMNLP 2025 Findings)', url: 'https://aclanthology.org/2025.findings-emnlp.236/' },
+        { name: '논문 · MHTS (LREC 2026)', url: 'https://arxiv.org/abs/2504.08756' },
+      ],
     },
     {
       title: 'RAG 기반의 AI 대화형 질의응답 시스템 ',
@@ -143,7 +149,9 @@ const projects_ = [
       fullDescription: '정보 과잉 시대속에서 필요한 정보를 효율적으로 제공하는 것은 중요한 과제입니다. 이 프로젝트에서는 사용자 맞춤형 뉴스 요약 시스템을 개발하여, 사용자가 원하는 정보만을 빠르게 제공할 수 있는 시스템을 구축했습니다. HCI 시스템을 고려하여 사용자 경험을 개선하는 것을 목표로 하고 있습니다.',
       companyOrInstitution: '한국연구재단 & 보스턴 대학교 (Derry Tanti Wijaya 교수님 연구실)',
       role: 'PLM(T5-base) 및 LLM(GPT-API)을 활용한 Controllable Text Summarization 모델 개발',
-      externalLinks: [],
+      externalLinks: [
+        { name: '논문 · PRISM (IEEE Access 2024)', url: 'https://ieeexplore.ieee.org/document/10766499' },
+      ],
     },
     {
       title: '[디지털치료교육 플랫폼 개발 연구 사업] 소통약자의 소통능력 및 사회성 증진을 위한 음악활동 기반의 기능성 콘텐츠 플랫폼 개발',
@@ -189,7 +197,10 @@ const projects_ = [
       fullDescription: '건설 현장의 위험 판별을 위해서는 개별 객체에 대한 식별 정확도도 중요하지만, 식별 대상의 주변의 작업환경 및 설치물 등에 대한 추가 정보를 통해 위험 상황 판별을 고도화 할 수 있습니다. 이 프로젝트에서는 영상/사진으로 식별된 제한된 객체정보를 기반으로 위험상황 판별 및 대응방안 등 건설안전 도메인 지식을 자동으로 서술하여 제공할 수 있는 기술 개발을 목표로 하고 있습니다.',
       companyOrInstitution: '과학기술정보통신부, 한국지능정보사회진흥원(NIA), 중앙대학교 박찬식 교수님 연구실',
       role: '건설현장 내 Object Detection 알고리즘 고도화를 위한 데이터 정제 및 증강 & 탐지된 객체를 기반으로 하는 Image Captioning 모델 개발',
-      externalLinks: [],
+      externalLinks: [
+        { name: '논문 · Robust Detector (ESWA 2023)', url: 'https://www.sciencedirect.com/science/article/abs/pii/S0957417423014860' },
+        { name: '논문 · Instance Segmentation (Automation in Construction 2022)', url: 'https://www.sciencedirect.com/science/article/abs/pii/S0926580521004854' },
+      ],
     },
     {
       title: '[서울시 산학연 실증지원 사업] 전시 관람객 예측 플랫폼',
@@ -277,7 +288,16 @@ Object.assign(projects_[1], {
 });
 const projectEnglishCopy = [
   {
-    "title": "Monitoring Dashboard Development for the DATUMO Platform"
+    "title": "Monitoring Dashboard Development for the DATUMO Platform",
+    "description": "- Developed the DATUMO Observability feature for monitoring chatbot conversation logs <br /> - Research on dialogue topic segmentation, conversation visualization and category discovery, plus MVP engineering",
+    "subtitle": "Monitoring Dashboard for Chatbot Conversation Logs",
+    "fullDescription": "As a team, we built a monitoring dashboard for chatbot conversation logs as part of the DATUMO Observability feature. Chatbot sessions can be very long, so conversations must be split by topic before analysis; we studied GIFT, a method that finds topic boundaries through global and local inspection and filtering (submitted to the ARR October cycle, under review). To make conversations easy to browse, we studied KG-Neighbor, an embedding designed for well-separated visualization, which was accepted at WSDM. To help developers see whether users talk within the intended categories and in what proportions, we studied CALM, a Generalized Category Discovery method based on automatic prompt tuning (submitted to AAAI, under review). We also worked on prompting and service integrations for the Observability MVP.",
+    "companyOrInstitution": "Selectstar (DATUMO)",
+    "role": "Research on dialogue topic segmentation (GIFT), conversation visualization (KG-Neighbor) and category discovery (CALM), and prompting and integrations for the Observability MVP",
+    "externalLinkNames": [
+      "Service docs · DATUMO Observability",
+      "Paper · KG-Neighbor (WSDM)"
+    ]
   },
   {
     "title": "Core OCR and Document Layout Analysis Technology for Extracting Text, Images and Tables from Enterprise Documents"
@@ -328,7 +348,11 @@ const projectEnglishCopy = [
     "subtitle": "Synthetic Dataset Generation for RAG Evaluation",
     "fullDescription": "We researched source-document-based question-answer dataset synthesis for evaluating RAG systems and submitted two papers to EMNLP 2025.",
     "companyOrInstitution": "Hanwha Life Insurance",
-    "role": "Research on synthetic datasets for RAG evaluation and paper writing"
+    "role": "Research on synthetic datasets for RAG evaluation and paper writing",
+    "externalLinkNames": [
+      "Paper · GRADE (EMNLP 2025 Findings)",
+      "Paper · MHTS (LREC 2026)"
+    ]
   },
   {
     "title": "RAG-Based Conversational Question Answering",
@@ -344,7 +368,10 @@ const projectEnglishCopy = [
     "subtitle": "Personalized News Summarization",
     "fullDescription": "The project addressed the need to deliver relevant information efficiently in an era of information overload. We developed a personalized news summarization system that helps users access the information they need, with an emphasis on improving the user experience through HCI principles.",
     "companyOrInstitution": "National Research Foundation of Korea and Boston University (Prof. Derry Tanti Wijaya’s Lab)",
-    "role": "Development of controllable text summarization models using a pretrained language model (T5-base) and an LLM (GPT API)"
+    "role": "Development of controllable text summarization models using a pretrained language model (T5-base) and an LLM (GPT API)",
+    "externalLinkNames": [
+      "Paper · PRISM (IEEE Access 2024)"
+    ]
   },
   {
     "title": "Music-Based Functional Content Platform for Communication and Social Skills",
@@ -371,7 +398,11 @@ const projectEnglishCopy = [
     "subtitle": "Hazard Recognition Algorithms for Construction Sites",
     "fullDescription": "Identifying hazards at construction sites requires both accurate object recognition and contextual information about the surrounding work environment and installations. This project aims to develop technology that uses objects identified in images and video to describe construction-safety knowledge about hazards and possible responses.",
     "companyOrInstitution": "Ministry of Science and ICT, National Information Society Agency (NIA), and Prof. Chansik Park’s Lab at Chung-Ang University",
-    "role": "Data cleaning and augmentation for construction-site object detection, and development of image captioning models based on detected objects"
+    "role": "Data cleaning and augmentation for construction-site object detection, and development of image captioning models based on detected objects",
+    "externalLinkNames": [
+      "Paper · Robust Detector (ESWA 2023)",
+      "Paper · Instance Segmentation (Automation in Construction 2022)"
+    ]
   },
   {
     "title": "[Seoul Industry-Academia Collaboration] Exhibition Visitor Prediction Platform",

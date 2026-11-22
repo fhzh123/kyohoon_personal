@@ -169,18 +169,62 @@ test('English names apply to patents while Domestic Paper keeps Korean authors',
   assert.ok(document.body.textContent.includes('김영빈'));
 });
 
-test('Exactly two projects are pending and Samsung keeps its detail and image', async t => {
+test('Exactly one project is pending and Samsung keeps its detail and image', async t => {
   const window = await mount(t);
   const {document} = window;
   await selectTab(window, 'Projects');
-  assert.equal((document.body.textContent.match(/\(수정예정\)/g) || []).length, 2);
+  assert.equal((document.body.textContent.match(/\(수정예정\)/g) || []).length, 1);
   assert.match(document.body.textContent, /\(수정예정\) 전문가의 워크플로우가 포함된 온톨로지 구축/);
-  assert.match(document.body.textContent, /\(수정예정\) DATUMO 플랫폼 내 모니터링 대시보드 개발/);
+  assert.doesNotMatch(document.body.textContent, /\(수정예정\) DATUMO/);
   const buttons = [...document.querySelectorAll('button')].filter(node => node.textContent.trim() === '자세히 보기');
   buttons[5].click();
   await waitFor(() => document.querySelector('h2')?.textContent.includes('[삼성생명 C-Lab]'), 'Original Samsung detail opens');
   assert.match(document.querySelector('h2').parentElement.textContent, /삼성생명은 독자적으로/);
   assert.ok(document.querySelector('h2').parentElement.querySelector('img[src*="Project_ATA.png"]'));
+});
+
+test('Project 추가 정보 links papers and DATUMO docs as new-tab links', async t => {
+  const window = await mount(t);
+  const {document} = window;
+  await selectTab(window, 'Projects');
+  const expected = {
+    'DATUMO 플랫폼 내 모니터링 대시보드 개발': [
+      ['서비스 문서 · DATUMO Observability', 'https://docs.datumo.com/en/docs/observability/core-concept'],
+      ['논문 · KG-Neighbor (WSDM)', 'https://arxiv.org/html/2611.07246v1']
+    ],
+    'RAG 평가용 데이터셋 합성 기술 연구': [
+      ['논문 · GRADE (EMNLP 2025 Findings)', 'https://aclanthology.org/2025.findings-emnlp.236/'],
+      ['논문 · MHTS (LREC 2026)', 'https://arxiv.org/abs/2504.08756']
+    ],
+    'Neural Journalism: 빅데이터와 딥러닝 기반 차세대 저널리즘 연구': [
+      ['논문 · PRISM (IEEE Access 2024)', 'https://ieeexplore.ieee.org/document/10766499']
+    ],
+    '[인공지능 학습용 데이터 구축 사업] 작업현장 안전 데이터 사업': [
+      ['논문 · Robust Detector (ESWA 2023)', 'https://www.sciencedirect.com/science/article/abs/pii/S0957417423014860'],
+      ['논문 · Instance Segmentation (Automation in Construction 2022)', 'https://www.sciencedirect.com/science/article/abs/pii/S0926580521004854']
+    ]
+  };
+  const seen = new Set();
+  const count = [...document.querySelectorAll('button')].filter(node => node.textContent.trim() === '자세히 보기').length;
+  for (let i = 0; i < count; i++) {
+    [...document.querySelectorAll('button')].filter(node => node.textContent.trim() === '자세히 보기')[i].click();
+    await waitFor(() => document.querySelector('h2'), 'Project detail opens');
+    const detail = document.querySelector('h2').parentElement;
+    const title = document.querySelector('h2').textContent;
+    if (expected[title]) {
+      seen.add(title);
+      const links = [...detail.querySelectorAll('a[target=_blank]')].map(node => [node.textContent.trim(), node.getAttribute('href')]);
+      assert.deepEqual(links, expected[title]);
+      if (title.startsWith('DATUMO')) {
+        assert.equal(detail.querySelector('img'), null);
+        assert.match(detail.textContent, /GIFT/);
+        assert.match(detail.textContent, /프로젝트 기한: Feb 2026 - Aug 2026/);
+      }
+    }
+    exact(document, 'button', '×').click();
+    await waitFor(() => !document.querySelector('h2'), 'Project detail closes');
+  }
+  assert.equal(seen.size, Object.keys(expected).length);
 });
 
 test('Resume opens global settings and preserves theme preferences without playback controls', async t => {
