@@ -323,7 +323,7 @@ export function applyViewMode(root, mode) {
   return mode;
 }
 
-// A file name for the printed PDF: no characters an OS refuses in file names.
+// A file name for the downloaded PDF: no characters an OS refuses in file names.
 export function pdfTitle(title) {
   const clean = String(title || '').replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim();
   return clean || '마크다운 문서';

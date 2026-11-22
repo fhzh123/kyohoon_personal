@@ -5,7 +5,7 @@
 import {MARKDOWN_THEMES, DEFAULT_MARKDOWN_THEME} from './markdown-themes.mjs';
 import {MARKDOWN_ICONS} from './markdown-icons.mjs';
 
-export const MARKDOWN_ASSET_VERSION = '20261122-1';
+export const MARKDOWN_ASSET_VERSION = '20261122-2';
 const V = MARKDOWN_ASSET_VERSION;
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
@@ -28,10 +28,51 @@ function toolbar() {
   return `<div class="md-toolbar" role="toolbar" aria-label="서식 도구" aria-controls="md-source" focusgroup="toolbar wrap" data-toolbar>${groups.join('<span class="md-tool-sep" role="separator" aria-orientation="vertical"></span>')}</div>`;
 }
 
-const VIEW_BUTTONS = [['edit', '편집만'], ['split', '나란히'], ['preview', '미리보기만']];
+const VIEW_BUTTONS = [['edit', '편집만', 'pen-line'], ['split', '나란히', 'columns-2'], ['preview', '미리보기만', 'eye']];
+
+// Themes grouped by family, in the order the families first appear. Light comes
+// before dark; a theme without family/variant metadata is its own family.
+const VARIANT_ORDER = {light: 0, dark: 1};
+export function groupThemes(themes) {
+  const families = new Map();
+  for (const theme of themes) {
+    const family = theme.family || theme.name || theme.key;
+    if (!families.has(family)) families.set(family, []);
+    families.get(family).push(theme);
+  }
+  return [...families].map(([family, list]) => ({
+    family,
+    themes: list.map((theme, i) => ({theme, i})).sort((a, b) => ((VARIANT_ORDER[a.theme.variant] ?? 2) - (VARIANT_ORDER[b.theme.variant] ?? 2)) || a.i - b.i).map(x => x.theme),
+  }));
+}
+
+const VARIANT_LABEL = {light: ['sun', '라이트'], dark: ['moon', '다크']};
+// One radio per theme, laid out as a family row with its light and dark tiles.
+// Shared by the toolbar theme picker and the PDF dialog; `name` keeps the two
+// radio groups apart.
+export function themeChoices(themes, {name, checked = DEFAULT_MARKDOWN_THEME, legend = '테마'} = {}) {
+  const rows = groupThemes(themes).map(({family, themes: list}) => {
+    const tiles = list.map(t => {
+      const variant = VARIANT_LABEL[t.variant];
+      const caption = variant ? `<span class="md-theme-variant" aria-hidden="true">${mdIcon(variant[0])}${variant[1]}</span>` : '';
+      return `<label class="md-theme-tile" data-variant="${variant ? t.variant : 'single'}"><input type="radio" name="${esc(name)}" value="${esc(t.key)}" data-theme-name="${esc(t.name)}" data-theme-description="${esc(t.description || '')}"${t.key === checked ? ' checked' : ''}><span class="md-theme-sample" aria-hidden="true"><span class="md-doc" data-md-theme="${esc(t.key)}"><h3>가 Aa</h3><p>본문 글씨</p></span></span><span class="sr-only">${esc(t.name)}</span>${caption}</label>`;
+    }).join('');
+    return `<div class="md-theme-family" role="group" aria-label="${esc(family)}"><span class="md-theme-family-name" aria-hidden="true">${esc(family)}</span>${tiles}</div>`;
+  }).join('');
+  return `<fieldset class="md-theme-list" data-theme-list="${esc(name)}"><legend class="sr-only">${esc(legend)}</legend>${rows}</fieldset>`;
+}
+
+function themePicker(editor) {
+  const current = MARKDOWN_THEMES.find(t => t.key === DEFAULT_MARKDOWN_THEME) || MARKDOWN_THEMES[0];
+  return `<button type="button" class="md-theme-trigger" popovertarget="md-theme-panel" data-theme-trigger><span class="md-theme-chip" aria-hidden="true"><span class="md-doc" data-md-theme="${esc(current.key)}" data-theme-chip></span></span><span class="sr-only">미리보기 테마: </span><span class="md-theme-trigger-name" data-theme-current>${esc(current.name)}</span>${mdIcon('chevron-down')}</button>
+<div class="md-theme-panel" id="md-theme-panel" popover role="dialog" aria-labelledby="md-theme-panel-title" data-theme-panel>
+<div class="md-theme-panel-head"><h2 id="md-theme-panel-title">테마</h2><label class="md-switch"><input type="checkbox" role="switch" data-preview-theme-toggle checked><span>미리보기에 테마 적용</span></label></div>
+<p class="md-theme-panel-note" data-theme-note>${editor ? '고른 테마는 문서에 저장되고 PDF에도 쓰입니다.' : '읽기 전용이라 이 화면의 미리보기만 바뀝니다.'}</p>
+${themeChoices(MARKDOWN_THEMES, {name: 'preview-theme', legend: '미리보기 테마'})}
+</div>`;
+}
 
 function dialogs(editor) {
-  const themes = MARKDOWN_THEMES.map(t => `<label class="md-theme-option"><input type="radio" name="theme" value="${esc(t.key)}"${t.key === DEFAULT_MARKDOWN_THEME ? ' checked' : ''}><span class="md-theme-sample" data-theme-sample="${esc(t.key)}" aria-hidden="true"></span><span class="md-theme-copy"><strong>${esc(t.name)}</strong><span>${esc(t.description)}</span></span></label>`).join('');
   return `${editor ? `<dialog class="md-dialog" id="md-name-dialog" aria-labelledby="md-name-title" closedby="any" data-name-dialog>
 <form method="dialog" class="md-dialog-body" data-name-form novalidate>
 <h2 id="md-name-title" data-name-title>새 폴더</h2>
@@ -49,9 +90,13 @@ function dialogs(editor) {
 <dialog class="md-dialog md-dialog--export" id="md-export-dialog" aria-labelledby="md-export-title" aria-describedby="md-export-text" closedby="any" data-export-dialog>
 <form method="dialog" class="md-dialog-body" data-export-form>
 <h2 id="md-export-title">PDF로 내보내기</h2>
-<p class="md-dialog-text" id="md-export-text">테마를 고르면 미리보기에 바로 보입니다. 인쇄 창이 열리면 대상에서 ‘PDF로 저장’을 고르세요.</p>
-<fieldset class="md-themes"><legend class="md-field-label">테마</legend>${themes}</fieldset>
-<div class="md-dialog-actions"><button type="button" class="btn btn--secondary" data-dialog-cancel>취소</button><button type="submit" value="print" class="btn btn--primary">${mdIcon('printer')}<span>인쇄 창 열기</span></button></div>
+<p class="md-dialog-text" id="md-export-text">고른 테마로 A4 PDF 파일을 만들어 내려받습니다.</p>
+<p class="md-field-label" aria-hidden="true">테마</p>
+${themeChoices(MARKDOWN_THEMES, {name: 'theme', legend: 'PDF 테마'})}
+<p class="md-theme-selected" data-export-selected></p>
+${editor ? '<label class="md-check" data-export-save-row hidden><input type="checkbox" name="save-theme" checked><span>이 테마를 문서에 저장</span></label>' : ''}
+<p class="md-field-error" role="alert" data-export-error></p>
+<div class="md-dialog-actions"><button type="button" class="btn btn--secondary" data-dialog-cancel>취소</button><button type="submit" class="btn btn--primary" data-export-submit>${mdIcon('download')}<span data-export-label>PDF 내려받기</span></button></div>
 </form></dialog>`;
 }
 
@@ -71,8 +116,9 @@ ${editor ? '' : '<p class="md-readonly-note">읽기 전용 계정입니다. 문�
 <div class="md-heading"><p class="md-crumb" data-crumb><a class="md-crumb-home" href="/personal">Personal</a></p><h1 id="md-doc-title" data-doc-title>마크다운 에디터</h1></div>
 <div class="md-title-actions">
 <p class="md-save" role="status" data-save data-save-state="idle"><span class="md-save-dot" aria-hidden="true"></span><span data-save-text></span></p>${editor ? '<button type="button" class="md-text-btn" data-action="retry-save" hidden>다시 시도</button>' : ''}
-${editor ? `<div class="md-views" role="group" aria-label="보기 방식">${VIEW_BUTTONS.map(([mode, label]) => `<button type="button" class="md-view-btn" data-view-mode="${mode}" aria-pressed="${mode === 'split'}">${label}</button>`).join('')}</div>` : ''}
-<button type="button" class="btn btn--primary md-export" data-action="export" disabled>${mdIcon('printer')}<span>PDF로 내보내기</span></button>
+<div class="md-theme-control">${themePicker(editor)}</div>
+${editor ? `<div class="md-views" role="group" aria-label="보기 방식">${VIEW_BUTTONS.map(([mode, label, icon]) => `<button type="button" class="md-view-btn" data-view-mode="${mode}" aria-pressed="${mode === 'split'}" aria-label="${label}" data-tip="${label}">${mdIcon(icon)}</button>`).join('')}</div>` : ''}
+<button type="button" class="btn btn--primary md-export" data-action="export" disabled>${mdIcon('download')}<span>PDF로 내보내기</span></button>
 </div>
 </div>
 ${editor ? toolbar() : ''}
@@ -86,6 +132,6 @@ ${editor ? `<div class="md-pane md-pane--editor" data-pane="editor"><label class
 </main>`;
 }
 
-export const markdownTail = access => `${dialogs(access.role === 'editor')}<div class="md-print" data-print-root aria-hidden="true"></div><script src="/vendor/markdown-it-14.3.3.min.js" defer></script><script src="/vendor/purify-3.4.17.min.js" defer></script><script type="module" src="/markdown-editor.js?v=${V}"></script>`;
+export const markdownTail = access => `${dialogs(access.role === 'editor')}<script src="/vendor/markdown-it-14.3.3.min.js" defer></script><script src="/vendor/purify-3.4.17.min.js" defer></script><script type="module" src="/markdown-editor.js?v=${V}"></script>`;
 
 export const markdownGate = () => `<main id="main" class="md-gate" aria-labelledby="md-gate-title"><img src="/mascot/markdown-editor.webp" alt="연필로 공책에 글을 쓰는 마스코트" width="220" height="220" decoding="async"><p class="space-eyebrow">Personal / 글쓰기</p><h1 id="md-gate-title">마크다운 에디터</h1><p>폴더를 만들고 마크다운 문서를 씁니다.<br>로그인하면 문서를 열고 고칠 수 있습니다.</p><div class="md-gate-actions"><a class="btn btn--primary" href="/login?next=%2Fpersonal%2Fmarkdown">로그인하고 열기</a><a class="btn btn--secondary" href="/personal">Personal로 돌아가기</a></div></main>`;
