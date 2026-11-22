@@ -1,8 +1,10 @@
 import {readFile, writeFile, mkdir, rename} from 'node:fs/promises';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
+import {MARKDOWN_THEME_KEYS} from '../views/markdown-themes.mjs';
+import {renderMarkdownPdf, pdfDisposition} from './markdown-pdf.mjs';
 
-export const THEMES = ['ivory', 'github-dark', 'chrome', 'sprinkles'];
+export const THEMES = MARKDOWN_THEME_KEYS;
 const DOCUMENT_FIELDS = 'id,folder_id,title,content,theme,revision,updated_at';
 const TREE_FIELDS = 'id,folder_id,title,theme,updated_at';
 const FOLDER_FIELDS = 'id,name,position';
@@ -22,7 +24,7 @@ const folderOut = row => pick(row, FOLDER_FIELDS);
 const documentOut = row => pick(row, DOCUMENT_FIELDS);
 const conflict = document => fail('다른 곳에서 먼저 수정되었습니다.', 409, {document:documentOut(document)});
 
-export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDir, environment = {}}) {
+export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDir, environment = {}, renderPdf = renderMarkdownPdf}) {
   const statePath = path.join(rootDir, 'private/markdown/state.json');
   let queue = Promise.resolve();
   const read = async () => {
@@ -74,6 +76,22 @@ export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDi
         return document;
       };
       let result;
+      const pdfMatch = pathname.match(/^\/api\/markdown\/documents\/([^/]+)\/pdf$/);
+      if (pdfMatch) {
+        if (req.method !== 'GET') throw fail('허용하지 않는 요청입니다.', 405);
+        const id = uuid(pdfMatch[1]);
+        const requestedTheme = url.searchParams.get('theme');
+        if (requestedTheme !== null && !THEMES.includes(requestedTheme)) throw fail('테마를 확인해 주세요.');
+        const document = local ? (await read()).documents[id] : await getDocument(id);
+        if (!document) throw fail('문서를 찾을 수 없습니다.', 404);
+        const theme = requestedTheme ?? document.theme;
+        if (!THEMES.includes(theme)) throw fail('테마를 확인해 주세요.');
+        let pdf;
+        try { pdf = await renderPdf({title:document.title, content:document.content, theme}); }
+        catch { throw fail('PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.', 503); }
+        send(res, 200, pdf, 'application/pdf', {'Content-Disposition':pdfDisposition(document.title), 'Cache-Control':'no-store'});
+        return true;
+      }
       if (pathname === '/api/markdown/tree' && req.method === 'GET') {
         let folders, documents;
         if (local) {

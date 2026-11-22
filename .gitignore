@@ -1,5 +1,6 @@
 node_modules/
 .cache/
+.npm-cache/
 .env*
 !.env.example
 private/

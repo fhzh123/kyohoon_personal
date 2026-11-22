@@ -4,7 +4,8 @@
   "functions": {
     "api/index.mjs": {
       "maxDuration": 180,
-      "includeFiles": "{server,views,work-app,work-expenses,public,work-demos}/**/*",
+      "memory": 1769,
+      "includeFiles": "{server,views,work-app,work-expenses,public,work-demos,node_modules/@sparticuz/chromium/bin}/**/*",
       "excludeFiles": "{private,Assets,assets-extracted,assets-generated,artifacts}/**"
     }
   },

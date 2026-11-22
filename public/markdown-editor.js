@@ -5,7 +5,7 @@
 // Task lists come from the small plugin in markdown-editor-core.js.
 // Icons: Lucide (lucide-static 1.66.0, ISC), inlined by views/markdown-icons.mjs.
 import {
-  COMMANDS, applyToText, continueList, shortcutFor, taskLists,
+  COMMANDS, applyToText, continueList, shortcutFor,
   readViewMode, writeViewMode, applyViewMode, pdfTitle,
 } from './markdown-editor-core.js?v=20261122-1';
 
@@ -16,9 +16,10 @@ const SIDEBAR_KEY = 'kyohoon-markdown-sidebar';
 const NARROW = '(max-width: 760px)';
 const DRAWER = '(max-width: 1023px)';
 
+import {createMarkdownEngine} from './markdown-renderer.js';
+
 export function createRenderer(markdownit, DOMPurify, doc) {
-  const md = markdownit({html: true, linkify: true, typographer: false, breaks: false});
-  md.use(taskLists);
+  const md = createMarkdownEngine(markdownit);
   const purify = DOMPurify;
   purify.addHook('afterSanitizeAttributes', node => {
     if (node.nodeName === 'A' && node.hasAttribute('href')) { node.setAttribute('target', '_blank'); node.setAttribute('rel', 'noopener noreferrer'); }
