@@ -18,7 +18,7 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
     if(['/settings','/settings/'].includes(url.pathname)&&['GET','HEAD'].includes(req.method)){send(res,200,req.method==='HEAD'?'':settingsPage({authenticated:!!access}),'text/html; charset=utf-8');return true;}
     if(!access){send(res,['GET','HEAD'].includes(req.method)&&url.pathname.startsWith('/paper')?303:401,{error:'로그인 후 이용해 주세요.'},'application/json; charset=utf-8',url.pathname.startsWith('/paper')?{Location:'/login?next=%2Fpaper'}:{});return true;}
     try{
-      if(url.pathname==='/paper'||url.pathname==='/paper/'){if(!['GET','HEAD'].includes(req.method))throw fail('허용되지 않은 요청입니다.',405);send(res,200,req.method==='HEAD'?'':paperPage(),'text/html; charset=utf-8');return true;}
+      if(url.pathname==='/paper'||url.pathname==='/paper/'){if(!['GET','HEAD'].includes(req.method))throw fail('허용되지 않은 요청입니다.',405);send(res,200,req.method==='HEAD'?'':paperPage(access),'text/html; charset=utf-8');return true;}
       const uid=access.userId;
       const upstream=async(p,options={})=>{const r=await authFetch(p,{...options,headers:{...bearer(access.token),...options.headers}});if(!r.ok)throw fail('Paper 저장소에 연결하지 못했습니다. 서버 설정과 데이터베이스 준비 상태를 확인해 주세요.',503);return r;};
       const getSettings=async()=>access.mode==='local'?(await readLocal()).settings:(await(await upstream('/rest/v1/paper_settings?user_id=eq.'+encodeURIComponent(uid)+'&select=config,encrypted_keys,revision')).json())[0]||null;
