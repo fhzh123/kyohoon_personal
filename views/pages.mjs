@@ -20,40 +20,36 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/home-motion.css?v=20261118-1"><link rel="stylesheet" href="/home-refinement.css?v=20261116-3">' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/kh-system.css?v=20261123-1"><link rel="stylesheet" href="/home.css?v=20261123-1"><script src="/home.js?v=20261123-1" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
 </head><body data-surface="${surface}"${surface === 'demos' ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
-function artwork(idle, hover, alt) {
-  return `<div class="portal-art ${hover && hover !== idle ? 'has-swap' : ''}"><img class="pose-idle" src="/mascot/${idle}" alt="${alt}" width="768" height="768" decoding="async">${hover && hover !== idle ? `<img class="pose-active" src="/mascot/${hover}" alt="" aria-hidden="true" width="768" height="768" decoding="async">` : ''}</div>`;
-}
+// Home: one large mascot on a cobalt stage. Pointing at or focusing a space
+// swaps the mascot into that space's pose; the four spaces sit on one ruled line.
+const HOME_SPACES = [
+  {id:'resume', href:'/resume', title:'Resume', text:'경력, 논문, 프로젝트', locked:false, pose:'resume-hover.webp'},
+  {id:'work', href:'/work', title:'Selectstar', text:'연구일지, 팀 리소스, 업무 도구', locked:true, pose:'selectstar-hover.webp'},
+  {id:'paper', href:'/paper', title:'Paper', text:'리뷰탈 준비와 논문 리뷰', locked:true, pose:'paper-pose.webp'},
+  {id:'personal', href:'/personal', title:'Personal', text:'여행 기록, 갤러리, 마크다운 에디터', locked:false, pose:'personal-pose.webp'},
+];
 
 export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
-<div class="home-shell">
-  <header class="site-header">${brand()}<nav class="header-actions" aria-label="빠른 이동">${themeButton()}${authenticated ? logoutButton() : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
-  <main id="main" class="home-main hero hero--split" data-enter="off" aria-labelledby="intro-title">
-    <section class="intro hero-text">
-      <p class="home-role">AI Research Engineer</p>
-      <h1 id="intro-title">진교훈 <span class="name-en" lang="en">Kyohoon Jin</span></h1>
-      <p class="home-about">Selectstar에서 데이터 생성과<br>AI 모델 평가를 연구합니다.</p>
-      <a class="home-resume-link link" href="/resume">경력과 연구 보기 <span aria-hidden="true">→</span></a>
+<div class="home">
+  <header class="site-header home-header">${brand()}<nav class="header-actions" aria-label="빠른 이동">${themeButton()}${authenticated ? logoutButton() : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
+  <main id="main" class="home-main" aria-labelledby="intro-title">
+    <section class="home-intro">
+      <h1 id="intro-title"><span class="home-name">진교훈</span> <span class="home-name-en" lang="en">Kyohoon Jin</span></h1>
+      <p class="home-lead">Selectstar의 AI Research Engineer입니다. 모델이 배울 데이터를 만들고, 그 모델을 어떻게 평가할지 연구합니다.</p>
     </section>
-    <nav class="portal-grid three-worlds" aria-label="홈페이지 공간">
-      <a class="portal card resume-portal" href="/resume" aria-labelledby="resume-label">
-        ${artwork('resume.png', 'resume-hover.webp', '포트폴리오를 든 마스코트')}
-        <div class="portal-copy"><div class="portal-title"><h2 id="resume-label">Resume</h2><span class="arrow" aria-hidden="true">↗</span></div><p>경력, 논문, 프로젝트</p><span class="portal-detail">공개</span></div>
-      </a>
-      <a class="portal card selectstar-portal work-portal" href="/work" aria-labelledby="work-label">
-        ${artwork('selectstar-idle.webp', 'selectstar-hover.webp', 'Selectstar 마스코트')}
-        <div class="portal-copy"><div class="portal-title"><h2 id="work-label">Selectstar</h2><span class="arrow" aria-hidden="true">→</span></div><p>연구일지, 팀 리소스와 업무 도구</p><span class="portal-detail">로그인 필요</span></div>
-      </a>
-      <a class="portal card paper-portal" href="/paper" aria-labelledby="paper-label">
-        ${artwork('paper.png', 'paper-hover.png', '논문과 펜을 든 마스코트')}
-        <div class="portal-copy"><div class="portal-title"><h2 id="paper-label">Paper</h2><span class="arrow" aria-hidden="true">→</span></div><p>리뷰탈 준비, 논문 리뷰</p><span class="portal-detail">로그인 필요</span></div>
-      </a>
-      <a class="portal card personal-portal" href="/personal" aria-labelledby="personal-label">
-        ${artwork('personal-idle.webp', 'personal-t1.png', '머그잔을 든 마스코트')}
-        <div class="portal-copy"><div class="portal-title"><h2 id="personal-label">Personal</h2><span class="arrow" aria-hidden="true">→</span></div><p>개인 공간</p><span class="portal-detail">공개</span></div>
-      </a>
+    <figure class="home-stage" aria-hidden="true" data-home-stage>
+      <img class="home-pose is-shown" src="/mascot/original.png" alt="" width="512" height="512" fetchpriority="high" data-default-pose>
+      <img class="home-pose" alt="" width="768" height="768" decoding="async" data-next-pose>
+    </figure>
+    <nav class="home-spaces" aria-label="홈페이지 공간">
+      ${HOME_SPACES.map(space => `<a class="portal home-space" href="${space.href}" aria-labelledby="${space.id}-label" data-pose="/mascot/${space.pose}">
+        <h2 id="${space.id}-label">${space.title}</h2>
+        <p>${space.text}</p>
+        <span class="home-access${space.locked ? ' is-locked' : ''}">${space.locked ? '로그인 후 이용' : '누구나 볼 수 있음'}</span>
+      </a>`).join('')}
     </nav>
   </main>${footer()}
 </div>`, 'home');

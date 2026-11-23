@@ -16,8 +16,8 @@ test('Personal stays public even when header authentication is unavailable',asyn
   await handler(req,res);assert.equal(res.status,200);if(method==='HEAD')assert.equal(res.body,'');else{assert.match(res.body,/Personal/);assert.doesNotMatch(res.body,/api\/auth\/logout/);}
  }assert.ok(authCalls>0);
  const d=new JSDOM(homePage()).window.document;
- assert.equal(d.querySelector('.personal-portal .portal-detail').textContent,'공개');
- assert.ok(d.querySelector('.paper-portal .has-swap'));assert.notEqual(d.querySelector('.paper-portal .pose-idle').src,d.querySelector('.paper-portal .pose-active').src);
+ assert.equal(d.querySelector('a.portal[href="/personal"] .home-access').textContent,'누구나 볼 수 있음');
+ assert.ok(d.querySelector('a.portal[href="/paper"] .home-access.is-locked'));assert.notEqual(d.querySelector('a.portal[href="/paper"]').dataset.pose,d.querySelector('[data-default-pose]').getAttribute('src'));
 });
 async function creation(withFile,failUpload=false){
  const fixture={projects:[],settings:publicSettings(null,{}),defaults:DEFAULT_PROMPTS},calls=[];
