@@ -1,0 +1,50 @@
+/* Kyohoon Jin site system (2026-11 redesign trial: home and research journal).
+   Cool paper ground, blue-black ink and the mascot's cobalt. One family, Wanted Sans,
+   the face the original Resume was set in. Pages opt in by loading this file. */
+@import url("https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css");
+
+:root {
+  --k-paper-light: #eef1f4;
+  --k-sheet-light: #ffffff;
+  --k-sunk-light: #e4e8ee;
+  --k-ink-light: #151b26;
+  --k-graphite-light: #535e70;
+  --k-line-light: #d3d9e1;
+  --k-cobalt-light: #2350d8;
+  --k-cobalt-text-light: #1d44bd;
+
+  --k-paper-dark: #0e131b;
+  --k-sheet-dark: #151c27;
+  --k-sunk-dark: #0a0e14;
+  --k-ink-dark: #e6ebf2;
+  --k-graphite-dark: #9aa5b6;
+  --k-line-dark: #263142;
+  --k-cobalt-dark: #2b55d6;
+  --k-cobalt-text-dark: #94acff;
+
+  --k-paper: var(--k-paper-light);
+  --k-sheet: var(--k-sheet-light);
+  --k-sunk: var(--k-sunk-light);
+  --k-ink: var(--k-ink-light);
+  --k-graphite: var(--k-graphite-light);
+  --k-line: var(--k-line-light);
+  --k-cobalt: var(--k-cobalt-light);
+  --k-cobalt-text: var(--k-cobalt-text-light);
+
+  --k-font: "Wanted Sans Variable", "Wanted Sans", -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --k-ease: cubic-bezier(.16, 1, .3, 1);
+  --k-radius: 14px;
+}
+
+/* The site's own theme switch (theme.js) writes data-theme on <html>. */
+html[data-theme="dark"] {
+  --k-paper: var(--k-paper-dark);
+  --k-sheet: var(--k-sheet-dark);
+  --k-sunk: var(--k-sunk-dark);
+  --k-ink: var(--k-ink-dark);
+  --k-graphite: var(--k-graphite-dark);
+  --k-line: var(--k-line-dark);
+  --k-cobalt: var(--k-cobalt-dark);
+  --k-cobalt-text: var(--k-cobalt-text-dark);
+}

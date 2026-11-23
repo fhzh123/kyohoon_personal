@@ -1,0 +1,99 @@
+/* kh design system: travel page polish. Loaded after /kh-site.css. */
+/* Note: this file loads before /personal.css and /travel/travel.css (those links sit in the
+   page body), so every rule here wins on specificity, not on order. */
+
+/* Title: one heading and one sentence; the colour settings read as a plain link. */
+html[data-theme] .travel-shell .travel-main { padding: 40px 0 48px; }
+html[data-theme] .travel-shell .travel-title { align-items: end; margin-bottom: 24px; }
+html[data-theme] .travel-shell .travel-title h1 { font-size: clamp(2rem, 1.5rem + 1.4vw, 2.75rem); font-weight: 700; letter-spacing: -.025em; line-height: 1.15; margin: 0 0 10px; color: var(--k-ink); }
+html[data-theme] .travel-shell .travel-title p { font-size: 1rem; line-height: 1.65; color: var(--k-graphite); }
+html[data-theme] .travel-shell .travel-back { display: inline-block; margin-bottom: 18px; font-size: .875rem; color: var(--k-graphite); text-decoration: none; }
+html[data-theme] .travel-shell .travel-back:hover { color: var(--k-ink); }
+html[data-theme] .travel-shell .travel-colors-open { font-size: .9375rem; font-weight: 600; color: var(--k-cobalt-text); white-space: nowrap; }
+html[data-theme] .travel-shell .travel-colors-open:hover { text-decoration: underline; }
+
+/* The globe panel: one sheet with one hairline. The map keeps its own land, ocean and
+   visit colours; only the surfaces and text around it move to kh tokens. */
+html[data-theme] #travel-app {
+  --tg-bg: var(--k-sheet); --tg-panel: var(--k-sheet); --tg-ink: var(--k-ink); --tg-muted: var(--k-graphite); --tg-line: var(--k-line);
+  --tg-shadow: color-mix(in srgb, var(--k-ink) 14%, transparent);
+  border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); color: var(--k-ink); font-family: var(--k-font);
+}
+html[data-theme] #travel-app button { border-color: var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); }
+html[data-theme] #travel-app button:hover:not(:disabled) { border-color: var(--k-ink); }
+html[data-theme] #travel-app :is(button[aria-pressed=true], .tg-primary) { background: var(--k-cobalt); border-color: var(--k-cobalt); color: #fff; }
+
+html[data-theme] #travel-app .tg-nav { padding: 14px 18px; border-bottom: 1px solid var(--k-line); }
+html[data-theme] #travel-app .tg-presets { gap: 6px; }
+html[data-theme] #travel-app .tg-presets button { min-height: 40px; padding: 6px 16px; border-radius: 999px; font-size: .875rem; font-weight: 550; }
+html[data-theme] #travel-app .tg-region-search { font-size: .875rem; color: var(--k-graphite); white-space: nowrap; }
+html[data-theme] #travel-app .tg-region-search select { min-height: 40px; border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); font-family: var(--k-font); font-size: .875rem; }
+html[data-theme] #travel-app .tg-region-search select:hover { border-color: var(--k-ink); }
+
+/* Calm ground for the globe: the paper tone, not space. */
+html[data-theme] #travel-app .tg-stage { background: color-mix(in srgb, var(--k-paper) 60%, var(--k-sheet)); border-bottom: 1px solid var(--k-line); }
+html[data-theme] #travel-app .tg-loading { color: var(--k-graphite); }
+html[data-theme] #travel-app .tg-region-label { border: 1px solid var(--k-line); border-radius: 8px; background: var(--k-sheet); box-shadow: none; font-size: .8125rem; font-weight: 600; color: var(--k-ink); }
+html[data-theme] #travel-app .tg-zoom button { width: 40px; min-height: 40px; font-size: 18px; }
+html[data-theme] #travel-app .tg-legend { gap: 14px; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--k-sheet) 85%, transparent); font-size: .8125rem; color: var(--k-graphite); }
+
+/* Records: a label and a row of small chips. */
+html[data-theme] #travel-app .tg-records { padding: 16px 18px 6px; gap: 6px; }
+html[data-theme] #travel-app .tg-records > span { font-size: .875rem; font-weight: 600; color: var(--k-ink); margin-right: 8px; }
+html[data-theme] #travel-app .tg-records button { min-height: 36px; padding: 5px 12px; border-radius: 999px; font-size: .8125rem; }
+html[data-theme] #travel-app .tg-empty-records { font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] #travel-app .tg-page-status { padding: 0 18px; font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] #travel-app .tg-foot { padding: 10px 18px 16px; font-size: .8125rem; color: var(--k-graphite); }
+
+/* Place card over the globe: a plain scrim, one sheet with one shadow. */
+html[data-theme] #travel-app .tg-overlay { background: color-mix(in srgb, var(--k-paper) 62%, transparent); backdrop-filter: none; -webkit-backdrop-filter: none; }
+html[data-theme] #travel-app .tg-modal { border-radius: var(--k-radius); background: var(--k-sheet); box-shadow: 0 18px 48px color-mix(in srgb, var(--k-ink) 18%, transparent); }
+html[data-theme] #travel-app .tg-modal-close { border-radius: 10px; }
+html[data-theme] #travel-app .tg-photo-side { background: var(--k-sunk); }
+html[data-theme] #travel-app .tg-photo-empty { color: var(--k-graphite); font-size: .875rem; }
+html[data-theme] #travel-app .tg-photo-credit { border-radius: 6px; background: var(--k-sheet); color: var(--k-graphite); font-size: .75rem; }
+/* The country line moves under the place name, as plain secondary text. */
+html[data-theme] #travel-app .tg-modal-content { display: flex; flex-direction: column; padding: 28px 26px 24px; }
+html[data-theme] #travel-app .tg-modal-content h3 { order: -1; margin: 0 48px 4px 0; font-family: var(--k-font); font-size: 1.625rem; font-weight: 700; letter-spacing: -.025em; color: var(--k-ink); }
+html[data-theme] #travel-app .tg-eyebrow { margin: 0 0 4px; font-size: .875rem; letter-spacing: 0; color: var(--k-graphite); }
+html[data-theme] #travel-app .tg-country { margin: 0 0 18px; font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] #travel-app .tg-entry-title { font-size: 1rem; font-weight: 650; letter-spacing: -.01em; }
+html[data-theme] #travel-app .tg-entry-description { font-size: .9375rem; line-height: 1.7; color: var(--k-graphite); }
+html[data-theme] #travel-app .tg-purpose { font-size: .875rem; color: var(--k-ink); }
+html[data-theme] #travel-app .tg-modal-actions button { min-height: 40px; font-size: .875rem; }
+html[data-theme] #travel-app .tg-editor label { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] #travel-app .tg-editor :is(input, textarea, select) { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); font-family: var(--k-font); }
+html[data-theme] #travel-app .tg-editor :is(input, textarea, select):hover { border-color: color-mix(in srgb, var(--k-line) 50%, var(--k-ink)); }
+html[data-theme] #travel-app .tg-editor-note { font-size: .8125rem; color: var(--k-graphite); }
+
+@container travel-globe (max-width: 650px) {
+  html[data-theme] #travel-app .tg-nav { padding: 12px 14px; }
+  html[data-theme] #travel-app .tg-presets { flex-wrap: wrap; }
+  html[data-theme] #travel-app .tg-presets button { padding: 6px 14px; }
+  html[data-theme] #travel-app .tg-region-search { width: 100%; min-width: 0; }
+  html[data-theme] #travel-app .tg-region-search select { flex: 1 1 auto; min-width: 0; max-width: none; }
+  html[data-theme] #travel-app .tg-legend { left: 12px; bottom: 12px; right: 64px; gap: 10px; }
+  html[data-theme] #travel-app .tg-zoom { right: 12px; bottom: 12px; }
+  html[data-theme] #travel-app .tg-records, html[data-theme] #travel-app .tg-foot { padding-inline: 14px; }
+  html[data-theme] #travel-app .tg-page-status { padding-inline: 14px; }
+  html[data-theme] #travel-app .tg-modal-content { padding: 20px 18px; }
+}
+@media (max-width: 640px) {
+  html[data-theme] .travel-shell .travel-main { padding-top: 24px; }
+  html[data-theme] .travel-shell .travel-title { align-items: start; gap: 12px; }
+}
+
+/* Globe colour dialog: a sheet, plain scrim, the shared button pair. */
+html[data-theme] .travel-colors-dialog { border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); color: var(--k-ink); box-shadow: 0 18px 48px rgb(10 20 40 / .18); }
+html[data-theme] .travel-colors-dialog::backdrop { background: rgb(10 14 20 / .45); backdrop-filter: none; }
+html[data-theme] .travel-colors-head h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] .travel-colors-close { border: 1px solid var(--k-line); border-radius: 10px; color: var(--k-ink); }
+html[data-theme] .travel-colors-close:hover { border-color: var(--k-ink); }
+html[data-theme] :is(.travel-colors-intro, .travel-colors-dialog .paper-subtle) { color: var(--k-graphite); font-size: .875rem; }
+html[data-theme] .travel-colors-dialog .travel-color-fields label { border-bottom-color: var(--k-line); }
+html[data-theme] .travel-colors-dialog .travel-color-fields input { border-color: var(--k-line); border-radius: 8px; background: var(--k-sheet); }
+html[data-theme] .travel-colors-dialog .travel-color-fields output { color: var(--k-graphite); }
+html[data-theme] .travel-colors-dialog .paper-btn { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); font-weight: 600; }
+html[data-theme] .travel-colors-dialog .paper-btn:hover:not(:disabled) { border-color: var(--k-ink); }
+html[data-theme] .travel-colors-dialog .paper-btn.primary { border-color: var(--k-cobalt); background: var(--k-cobalt); color: #fff; }
+html[data-theme] .travel-colors-dialog .paper-btn.primary:hover:not(:disabled) { background: color-mix(in srgb, var(--k-cobalt) 88%, #000); }

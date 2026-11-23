@@ -77,7 +77,7 @@ test('Resume static archived assets retain their recorded SHA-256 values', async
 test('Resume document uses its isolated styles plus the shared typography', async () => {
   const dom = new JSDOM(html, { url: 'http://localhost:3000/resume' });
   const document = dom.window.document;
-  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261115-2', '/resume-details.css?v=20261114-2']);
+  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261115-2', '/resume-details.css?v=20261114-2', '/kh-system.css?v=20261124-1', '/kh-site.css?v=20261124-1', '/kh/resume.css?v=20261124-1']);
   assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261116-2', '/resume/resume.js']);
   assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/mascot/face.png');
   assert.equal(document.querySelectorAll('iframe').length, 0);

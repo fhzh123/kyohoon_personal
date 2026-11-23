@@ -108,7 +108,7 @@ test('production refuses preview despite local flag and does not show authentica
   for (const demo of demos) assert.ok(!result.text.includes(demo));
 });
 
-test('main retains four image-before-text whole-card links including Work and Paper', async () => {
+test('main retains four space links including Work and Paper, each with a mascot pose', async () => {
   const { text } = await request(production, '/');
   const cards = [...text.matchAll(/<a class="portal[^\"]*"[^>]*>([\s\S]*?)<\/a>/g)];
   assert.equal(cards.length, 4);
@@ -116,5 +116,5 @@ test('main retains four image-before-text whole-card links including Work and Pa
   assert.match(cards[1][0], /href="\/work"/);
   assert.match(cards[2][0], /href="\/paper"/);
   assert.match(cards[3][0], /href="\/personal"/);
-  for (const card of cards) assert.ok(card[1].indexOf('<img') < card[1].indexOf('<h2'));
+  for (const card of cards) assert.match(card[0], /data-pose="\/mascot\//);
 });

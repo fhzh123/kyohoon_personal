@@ -1,0 +1,253 @@
+/* Research journal (2026-11 redesign trial). Loaded last, after refine.css.
+   Uses the site system in /kh-system.css: cool paper, blue-black ink, the mascot's cobalt
+   and Wanted Sans. The earlier layers win with id-weighted selectors (#ws-tone, #rj #rk),
+   so every rule here is prefixed with three :not(#id) to outrank them without !important.
+
+   What changes for the reader:
+   - L3 is a ruled band, L4 a white row with a solid coloured bar, L5 a recessed indented
+     row with a thin tinted bar: three levels you can tell apart at a glance.
+   - The four stat tiles become one quiet summary line; the people strip becomes one
+     panel of columns instead of five floating cards.
+   - Drag handles and reorder arrows appear on hover or keyboard focus, not all the time. */
+
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) {
+  --ws-bg: var(--k-paper); --ws-side: var(--k-sheet); --ws-surface: var(--k-sheet); --ws-raised: var(--k-sunk);
+  --ws-line: var(--k-line); --ws-line-strong: color-mix(in srgb, var(--k-line) 70%, var(--k-ink)); --ws-ink: var(--k-ink);
+  --ws-muted: var(--k-graphite); --ws-faint: color-mix(in srgb, var(--k-graphite) 75%, var(--k-paper));
+  --ws-accent: var(--k-cobalt-text); --ws-accent-ink: #fff;
+  --ws-topbar: color-mix(in srgb, var(--k-paper) 88%, transparent);
+  --rj-surface: var(--k-sheet); --rj-raised: var(--k-sunk); --rj-line: var(--k-line); --rj-hair: var(--k-line);
+  --rj-ink: var(--k-ink); --rj-muted: var(--k-graphite); --rj-faint: var(--k-graphite); --rj-accent: var(--k-cobalt-text);
+  --bg: var(--k-paper); --surface: var(--k-sheet); --surface-alt: var(--k-sunk); --ink: var(--k-ink);
+  --muted: var(--k-graphite); --line: var(--k-line); --blue: var(--k-cobalt-text); --accent: var(--k-cobalt);
+  --planning-line: var(--k-line); --planning-muted: var(--k-graphite); --planning-shadow: none;
+  --hierarchy-line: color-mix(in srgb, var(--k-line) 60%, var(--k-graphite));
+  background: var(--k-paper);
+  color: var(--k-ink);
+  font-family: var(--k-font);
+  accent-color: var(--k-cobalt);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :is(button, input, select, textarea) { font-family: var(--k-font); }
+html[data-theme]:not([data-bg-image="true"]) body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .ambient-sky { display: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) ::selection { background: var(--k-cobalt); color: #fff; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :focus-visible { outline: 2px solid var(--k-cobalt); outline-offset: 2px; }
+
+/* Shell: sidebar and top bar on the paper, one hairline each. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .ws-sidebar { background: var(--k-sheet); border-right: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .ws-topbar { background: var(--ws-topbar); border-bottom: 1px solid var(--k-line); backdrop-filter: saturate(1.2) blur(8px); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .ws-nav-item[aria-current="page"],
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .ws-nav-item.is-active { background: var(--k-sunk); color: var(--k-ink); }
+
+/* Page heading: the title and one sentence. The label above the title goes. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .page-heading::before { content: none; display: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .page-heading { align-items: end; margin-bottom: 20px; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .page-heading h1 { font-size: clamp(1.875rem, 1.5rem + 1vw, 2.5rem); font-weight: 700; letter-spacing: -.025em; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .page-description { margin-top: 8px; font-size: .9375rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .page-actions :is(.search-box, .icon-button, .secondary-button) { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); box-shadow: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :is(.primary-button, #add-task.primary-button) { border: 1px solid var(--k-cobalt); border-radius: 10px; background: var(--k-cobalt); color: #fff; box-shadow: none; font-weight: 600; transition: transform .18s var(--k-ease), background .18s var(--k-ease); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :is(.primary-button, #add-task.primary-button):hover { background: color-mix(in srgb, var(--k-cobalt) 88%, #000); transform: translateY(-1px); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :is(.primary-button, #add-task.primary-button):active { transform: translateY(0) scale(.98); }
+html[data-theme="dark"] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .primary-button .ui-icon { filter: none; }
+
+/* Summary: four counts on one line, no tiles, no icons. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stats-row {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
+  margin: 0 0 28px; padding: 0; border: 0; border-top: 1px solid var(--k-line); border-bottom: 1px solid var(--k-line);
+  background: none; box-shadow: none;
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-card {
+  display: grid; grid-template-columns: auto 1fr; grid-template-areas: "value label" "value meta"; column-gap: 12px; align-items: center;
+  min-height: 0; padding: 14px 18px; border: 0; border-radius: 0; background: none; box-shadow: none;
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-card + .stat-card { border-left: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-card::before,
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-card::after,
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-icon { display: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-value { grid-area: value; margin: 0; font-size: 1.75rem; font-weight: 700; line-height: 1; letter-spacing: -.02em; color: var(--k-ink); font-variant-numeric: tabular-nums; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-value small { display: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-label { grid-area: label; margin: 0; font-size: .875rem; font-weight: 600; color: var(--k-ink); letter-spacing: 0; text-transform: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .stat-meta { grid-area: meta; margin: 2px 0 0; font-size: .78rem; line-height: 1.4; color: var(--k-graphite); }
+
+/* Planning panel: a white sheet, one border, no glow. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .planning-panel {
+  border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); box-shadow: none; overflow: clip;
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .planning-panel::before { display: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .planning-toolbar h2 { font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .planning-panel :is(.secondary-button, .planning-jump input, .task-filter > summary) {
+  border: 1px solid var(--k-line); border-radius: 9px; background: var(--k-sheet); color: var(--k-ink); box-shadow: none;
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .segmented-control { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sunk); padding: 3px; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .segmented-control button { border-radius: 7px; color: var(--k-graphite); background: none; box-shadow: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .segmented-control button.active,
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .segmented-control button[aria-pressed="true"] { background: var(--k-sheet); color: var(--k-ink); box-shadow: 0 1px 2px rgb(10 20 40 / .12); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .planning-caption { color: var(--k-graphite); background: none; border-color: var(--k-line); }
+
+/* People: one panel split into columns. Order controls show on hover or focus. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-summary { background: none; border: 0; box-shadow: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-summary-heading h3 { font-size: 1rem; font-weight: 650; letter-spacing: -.01em; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-owner-count { background: none; border: 0; padding: 0 0 0 4px; color: var(--k-graphite); font-weight: 500; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-people {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0;
+  border: 1px solid var(--k-line); border-radius: 12px; background: var(--k-sheet); overflow: hidden;
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-person {
+  position: relative; display: grid; gap: 8px; align-content: start;
+  min-height: 0; padding: 14px 16px 16px; border: 0; border-radius: 0; background: none;
+  box-shadow: -1px 0 0 var(--k-line), 0 -1px 0 var(--k-line);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-person:hover { background: color-mix(in srgb, var(--k-sunk) 55%, var(--k-sheet)); transform: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-order-controls {
+  position: absolute; top: 8px; right: 8px; opacity: 0; transition: opacity .15s var(--k-ease);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-person:is(:hover, :focus-within) .resource-order-controls { opacity: 1; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-person-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0; padding-right: 0; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-person-heading strong { font-size: .9375rem; font-weight: 650; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-percent { font-size: 1.5rem; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-meter { height: 4px; border-radius: 2px; background: var(--k-sunk); overflow: visible; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-meter i { border-radius: 2px; background: var(--k-cobalt); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-person-detail { font-size: .78rem; color: var(--k-graphite); font-variant-numeric: tabular-nums; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .resource-person-detail + * { font-size: .78rem; color: var(--k-graphite); }
+
+/* Timeline frame and axis. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .research-timeline { --timeline-label-width: 340px; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-scroll { border-top: 1px solid var(--k-line); background: var(--k-sheet); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-header { background: var(--k-sheet); border-bottom: 1px solid var(--k-ink); box-shadow: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-corner { background: var(--k-sheet); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-corner strong { font-size: .875rem; font-weight: 650; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-corner small { color: var(--k-graphite); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-period-group { font-size: .8125rem; font-weight: 650; color: var(--k-ink); background: none; border-color: var(--k-line); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-column { background: none; border-color: var(--k-line); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-column strong { font-size: .75rem; font-weight: 600; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-column :is(small, .timeline-week-code) { color: var(--k-graphite); font-variant-numeric: tabular-nums; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-column.is-current { background: color-mix(in srgb, var(--k-cobalt) 9%, var(--k-sheet)); box-shadow: inset 0 -2px 0 var(--k-cobalt); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-column.is-current :is(strong, small, .timeline-week-code) { color: var(--k-cobalt-text); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-cell { border-color: color-mix(in srgb, var(--k-line) 65%, transparent); background: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-cell.is-current { background: color-mix(in srgb, var(--k-cobalt) 6%, transparent); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-cell:hover { background: color-mix(in srgb, var(--k-cobalt) 10%, transparent); }
+
+/* L3: a ruled band across the full width. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-goal-heading {
+  min-height: 0; padding: 22px 20px 10px; gap: 14px; align-items: baseline; justify-content: flex-start;
+  border-top: 2px solid var(--k-ink); border-bottom: 1px solid var(--k-line);
+  background: var(--k-sheet); color: var(--k-ink);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-goal-heading:first-of-type { border-top: 0; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-goal-heading :is(.timeline-l3-title, .timeline-l3-select, .timeline-l3-drag) strong { font-size: 1.0625rem; font-weight: 700; letter-spacing: -.015em; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-goal-heading > small { padding: 0; background: none; font-size: .8125rem; font-weight: 500; color: var(--k-graphite); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-goal-heading .timeline-level-badge { border: 0; background: none; padding: 0; font-size: .8125rem; font-weight: 700; color: var(--k-graphite); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-l3-grip { opacity: 0; transition: opacity .15s; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-goal-heading:is(:hover, :focus-within) .timeline-l3-grip { opacity: 1; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-l3-drag-hint { display: none; }
+
+/* Rows: shared reset. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row > .timeline-task-label { box-shadow: none; border-color: var(--k-line); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row > .timeline-lane { border-color: var(--k-line); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-drag-handle { opacity: 0; transition: opacity .15s; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row:is(:hover, :focus-within) .timeline-drag-handle { opacity: 1; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-task-open :is(strong, small) { word-break: keep-all; }
+
+/* L4: white row, strong title, a solid tag. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l4 { min-height: 84px; border-top: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l4 > .timeline-task-label { padding: 16px 14px 14px 12px; background: var(--k-sheet); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l4 > .timeline-lane { min-height: 84px; background: var(--k-sheet); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l4 .timeline-task-open strong { font-size: .9375rem; font-weight: 700; line-height: 1.4; letter-spacing: -.01em; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l4 .timeline-task-open small { color: var(--k-graphite); font-size: .75rem; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l4 .timeline-level-badge {
+  margin-right: 4px; padding: 1px 6px; border: 0; border-radius: 4px; background: var(--k-ink); color: var(--k-sheet); font-size: .6875rem; font-weight: 700;
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l4 .timeline-child-progress { color: var(--k-graphite); font-size: .75rem; }
+
+/* L5: recessed row, indented under its L4, lighter title, outlined tag. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 { min-height: 56px; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 > .timeline-task-label {
+  padding: 9px 14px 9px calc(28px + clamp(0px, calc((var(--task-depth, 1) - 1) * 14px), 28px));
+  background: var(--k-paper); border-top: 1px dashed color-mix(in srgb, var(--k-line) 80%, transparent);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 > .timeline-lane {
+  min-height: 56px; background: color-mix(in srgb, var(--k-paper) 55%, var(--k-sheet));
+  border-top: 1px dashed color-mix(in srgb, var(--k-line) 80%, transparent);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 > .timeline-task-label::before {
+  left: calc(16px + clamp(0px, calc((var(--task-depth, 1) - 1) * 14px), 28px)); width: 1px; background: var(--hierarchy-line);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 > .timeline-task-label::after {
+  left: calc(16px + clamp(0px, calc((var(--task-depth, 1) - 1) * 14px), 28px)); top: 21px; width: 8px; background: var(--hierarchy-line);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 .timeline-task-open strong { font-size: .8125rem; font-weight: 500; line-height: 1.4; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 .timeline-task-open small { display: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 .timeline-cell.is-current { background: color-mix(in srgb, var(--k-cobalt) 5%, transparent); }
+
+/* Allocation under each title: name, short meter, percent, all in graphite. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .task-allocation-name { color: var(--k-ink); font-weight: 600; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 .task-allocation-name { font-weight: 500; color: var(--k-graphite); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .task-allocation-track { height: 3px; border-radius: 2px; background: var(--k-sunk); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .task-allocation-track i { border-radius: 2px; background: var(--k-cobalt); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .task-allocation-percent { color: var(--k-graphite); font-variant-numeric: tabular-nums; }
+
+/* Bars. A bar is its own size container so a short one drops its label. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar { container-type: inline-size; box-shadow: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar::before,
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar::after { display: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar-level { display: none; }
+
+/* L4 bar: the full period, solid in the research type's colour. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.is-summary {
+  top: 18px; height: 48px; padding: 0 12px;
+  border: 0; border-radius: 9px;
+  background: color-mix(in srgb, var(--event-color) 80%, #0b1220); color: #fff;
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.is-summary .timeline-bar-title { font-size: .8125rem; font-weight: 650; color: #fff; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.is-summary .timeline-bar-meta { margin-top: 2px; font-size: .6875rem; color: rgb(255 255 255 / .86); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.is-summary .timeline-bar-owner { color: inherit; }
+
+/* L5 bar: a thin tinted strip, title only. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 .timeline-bar.is-subtask:not(.is-summary) {
+  top: 14px; height: 28px; padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--event-color) 55%, transparent); border-radius: 6px;
+  background: color-mix(in srgb, var(--event-color) 15%, var(--k-sheet)); color: var(--k-ink);
+}
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.is-subtask:not(.is-summary) .timeline-bar-copy { justify-content: center; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.is-subtask:not(.is-summary) .timeline-bar-title { font-size: .75rem; font-weight: 550; color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.is-subtask:not(.is-summary) .timeline-bar-meta { display: none; }
+/* An L5 that is itself a parent (L5 with children) keeps a solid but lighter bar. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-row.level-l5 .timeline-bar.is-summary.is-subtask { top: 12px; height: 32px; background: color-mix(in srgb, var(--event-color) 70%, var(--k-sheet)); }
+
+/* Status: done fades, paused is an outline, backlog is a lighter tint. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.status-done { opacity: .5; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.status-paused { background: var(--k-sheet); border: 1.5px dashed var(--event-color); color: var(--k-ink); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.status-paused :is(.timeline-bar-title, .timeline-bar-meta) { color: var(--k-ink); }
+
+/* A bar too short for its title still shows it: the title starts at the bar's own left
+   edge and simply runs past its end onto the lane, so every bar says what it is. Near the
+   right edge of the chart the title sits before the bar instead. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar { overflow: visible; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-lane { overflow: visible; }
+@container (width < 140px) {
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar-copy {
+    position: absolute; left: 10px; top: 50%; translate: 0 -50%; z-index: 1;
+    display: block; width: max-content; max-width: 320px; pointer-events: none;
+  }
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar-copy :is(.timeline-bar-title, .timeline-bar-owner) {
+    color: var(--k-ink); overflow: visible; text-overflow: clip; white-space: nowrap;
+  }
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar-copy .timeline-bar-meta { display: none; }
+  /* On a solid L4 bar the ink title needs a light backing to stay readable. */
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.is-summary .timeline-bar-copy { padding: 1px 6px; border-radius: 5px; background: color-mix(in srgb, var(--k-sheet) 90%, transparent); }
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.label-before .timeline-bar-copy {
+    left: auto; right: calc(100% + 8px); padding: 2px 6px; border-radius: 5px;
+    background: color-mix(in srgb, var(--k-sheet) 88%, transparent);
+  }
+}
+
+/* Legend and help under the chart. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :is(.timeline-color-legend, .timeline-help) { color: var(--k-graphite); background: none; border-color: var(--k-line); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .hierarchy-view-controls { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sunk); padding: 3px; box-shadow: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .hierarchy-view-controls button { border: 0; border-radius: 7px; background: none; color: var(--k-graphite); box-shadow: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .hierarchy-view-controls button[aria-pressed="true"] { background: var(--k-sheet); color: var(--k-ink); box-shadow: 0 1px 2px rgb(10 20 40 / .12); }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-period-navigation :is(button) { border: 1px solid var(--k-line); border-radius: 9px; background: var(--k-sheet); color: var(--k-ink); box-shadow: none; }
+
+/* The panels below the chart share the sheet. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :is(.strategy-side-card, .candidate-section, .empty-state) { border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); box-shadow: none; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-goal-heading .timeline-l3-label { flex: 0 1 auto; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-goal-heading .timeline-l3-label { z-index: 2; padding-right: 10px; background: var(--k-sheet); }

@@ -32,7 +32,7 @@ test('public direct routes return independent HTML documents', async () => {
   }
 });
 
-test('home has four keyboard-native whole-card links with image above title and text', async () => {
+test('home has four keyboard-native space links with title, text and their own mascot pose', async () => {
   const { text } = await get('/');
   const portals = [...text.matchAll(/<a\s+class="portal[^\"]*"[^>]*>([\s\S]*?)<\/a>/g)];
   assert.equal(portals.length, 4);
@@ -41,8 +41,8 @@ test('home has four keyboard-native whole-card links with image above title and 
   assert.match(portals[2][0], /href="\/paper"/);
   assert.match(portals[3][0], /href="\/personal"/);
   for (const [index, portal] of portals.entries()) {
-    assert.ok(portal[1].indexOf('<img') < portal[1].indexOf('<h2'));
-    assert.match(portal[1], /<img[^>]+alt="[^"]+"[^>]+width="\d+"[^>]+height="\d+"/);
+    assert.match(portal[0], /data-pose="\/mascot\/[a-z-]+\.webp"/);
+    assert.match(portal[1], /<h2 id="[^"]+">[^<]+<\/h2>/);
     assert.match(portal[1], /<p>[^<]+<\/p>/);
     const label = ['resume-label','work-label','paper-label','personal-label'][index];
     assert.ok(portal[0].includes(`aria-labelledby="${label}"`) && portal[1].includes(`id="${label}"`));

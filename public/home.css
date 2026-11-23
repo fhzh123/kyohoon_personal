@@ -1,0 +1,189 @@
+/* Home (2026-11 redesign trial). Loaded after kh-system.css, only on the home surface.
+   The page: name and one sentence on the left, the mascot on a cobalt stage on the right,
+   and the four spaces on one ruled line the mascot stands on. */
+
+body[data-surface="home"] {
+  --bg: var(--k-paper); --surface: var(--k-sheet); --ink: var(--k-ink);
+  --muted: var(--k-graphite); --line: var(--k-line); --accent: var(--k-cobalt);
+  margin: 0;
+  background: var(--k-paper);
+  color: var(--k-ink);
+  font-family: var(--k-font);
+  font-size-adjust: from-font;
+  accent-color: var(--k-cobalt);
+}
+body[data-surface="home"] ::selection { background: var(--k-cobalt); color: #fff; }
+
+.home {
+  --gutter: clamp(20px, 4.4vw, 64px);
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  box-sizing: border-box;
+}
+
+/* Header: the shared brand and actions, without the old rule under them. */
+body[data-surface="home"] .home-header {
+  min-height: 0;
+  padding-block: 22px;
+  border-bottom: 0;
+}
+body[data-surface="home"] .home-header .wordmark { font-family: var(--k-font); font-weight: 650; font-size: 1.0625rem; letter-spacing: -.01em; color: var(--k-ink); }
+body[data-surface="home"] .home-header .wordmark img { width: 32px; height: 32px; }
+body[data-surface="home"] .home-header :is(.btn, .logout-button, .space-nav-button) {
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  font-family: var(--k-font);
+  font-weight: 600;
+  box-shadow: none;
+  transition: border-color .2s var(--k-ease), transform .2s var(--k-ease);
+}
+body[data-surface="home"] .home-header :is(.btn, .logout-button, .space-nav-button):hover { border-color: var(--k-ink); transform: translateY(-1px); }
+body[data-surface="home"] .home-header :is(.btn, .logout-button, .space-nav-button):active { transform: translateY(0) scale(.98); }
+html[data-theme="dark"] body[data-surface="home"] .home-header .ui-icon { filter: invert(1); }
+
+/* Main grid: intro | stage, then the spaces across the full width. */
+.home-main {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  grid-template-rows: 1fr auto;
+  column-gap: clamp(24px, 4vw, 72px);
+  row-gap: 0;
+  min-height: 0;
+}
+
+.home-intro {
+  align-self: center;
+  padding-block: clamp(32px, 6vh, 72px);
+}
+.home-intro h1 { margin: 0; font-weight: 700; line-height: 1; }
+.home-name {
+  display: block;
+  font-size: clamp(4rem, 2.4rem + 4.6vw, 6rem);
+  letter-spacing: -.03em;
+}
+.home-name-en {
+  display: block;
+  margin-top: .55em;
+  font-size: clamp(1.25rem, 1rem + .6vw, 1.625rem);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  color: var(--k-graphite);
+}
+.home-lead {
+  max-width: 30em;
+  margin: clamp(28px, 4vh, 44px) 0 0;
+  font-size: clamp(1.0625rem, 1rem + .25vw, 1.25rem);
+  line-height: 1.65;
+  color: var(--k-ink);
+  text-wrap: pretty;
+  word-break: keep-all;
+}
+
+/* The stage: no panel; the mascot stands straight on the ruled line. */
+.home-stage {
+  position: relative;
+  align-self: stretch;
+  margin: clamp(8px, 3vh, 36px) 0 0;
+  min-height: 340px;
+  background: none;
+  overflow: hidden;
+}
+.home-pose {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: auto;
+  height: 94%;
+  max-width: 110%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity .28s var(--k-ease), translate .42s var(--k-ease);
+  translate: -50% 18px;
+}
+.home-pose.is-shown { opacity: 1; translate: -50% 0; }
+.home-pose[data-default-pose] { height: 86%; }
+
+/* The four spaces: one rule, four columns, no boxes. */
+.home-spaces {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 2px solid var(--k-ink);
+}
+.home-space {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  padding: 22px 24px 30px 0;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+.home-space + .home-space { padding-left: 24px; border-left: 1px solid var(--k-line); }
+.home-space h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.1rem + 1vw, 2.125rem);
+  font-weight: 650;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  text-decoration-color: transparent;
+  transition: text-decoration-color .22s var(--k-ease), color .22s var(--k-ease);
+}
+.home-space p { margin: 0; font-size: 1rem; line-height: 1.5; color: var(--k-graphite); word-break: keep-all; }
+.home-access { margin-top: 10px; font-size: .875rem; font-weight: 550; color: var(--k-graphite); }
+.home-access.is-locked { color: var(--k-cobalt-text); }
+.home-space:hover h2,
+.home-space:focus-visible h2 { color: var(--k-cobalt-text); text-decoration-color: currentColor; }
+.home-space:focus-visible { box-shadow: inset 0 0 0 2px var(--k-cobalt); border-radius: 4px; }
+.home-space:active h2 { translate: 0 1px; }
+
+body[data-surface="home"] .site-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-block: 18px 22px;
+  border-top: 1px solid var(--k-line);
+  font-size: .8125rem;
+  color: var(--k-graphite);
+}
+
+/* Entrance: the stage opens from the line and the mascot steps up, once. */
+@keyframes home-pose-rise { from { opacity: 0; translate: -50% 40px; } to { opacity: 1; translate: -50% 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-home-motion="off"]) .home-pose[data-default-pose] { animation: home-pose-rise .8s .32s var(--k-ease) both; }
+}
+html[data-home-motion="on"] .home-pose[data-default-pose] { animation: home-pose-rise .8s .32s var(--k-ease) both; }
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-home-motion="on"]) .home-pose { transition: none; }
+}
+
+/* Tablet: the stage narrows, the spaces go two by two. */
+@media (max-width: 1024px) {
+  .home-main { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr); }
+  .home-spaces { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-space:nth-child(3) { padding-left: 0; border-left: 0; }
+  .home-space:nth-child(n+3) { border-top: 1px solid var(--k-line); }
+}
+
+/* Phone: name, sentence, a shorter stage, then the spaces as rows. */
+@media (max-width: 640px) {
+  .home-main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; }
+  .home-intro { padding-block: 20px 28px; }
+  .home-stage { height: 300px; border-radius: 18px 18px 0 0; }
+  .home-spaces { grid-template-columns: minmax(0, 1fr); }
+  .home-space,
+  .home-space + .home-space { padding: 18px 0 20px; border-left: 0; }
+  .home-space + .home-space { border-top: 1px solid var(--k-line); }
+  .home-access { margin-top: 4px; }
+  body[data-surface="home"] .home-header .header-login { min-height: 44px; }
+}

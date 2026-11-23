@@ -1,0 +1,177 @@
+/* kh design system: expenses page polish. Loaded after /kh-site.css. */
+
+/* 품의 사용내역 in the kh system, the same ledger feel as the research journal.
+   The green-tinted palette from refinement.css goes back to paper, sheet and ink; the metric
+   tiles become one ruled line; alerts lose their side bar; the twelve month cards become one
+   panel with hairline cells. Status colours that mean something stay: green for a closed
+   month, amber for partial or stale, red for over budget and errors.
+   Every rule carries :not(#e1) so it outranks styles.css, refinement.css and taste.css. */
+
+html[data-theme] body[data-surface="expenses"]:not(#e1) {
+  --ex-bg: var(--k-paper); --ex-panel: var(--k-sheet); --ex-soft: var(--k-sunk);
+  --ex-line: var(--k-line); --ex-text: var(--k-ink); --ex-muted: var(--k-graphite);
+  --ex-blue: var(--k-cobalt-text);
+  --ex-teal: #197a5e; --ex-amber: #8a5a12; --ex-red: #b42e36;
+  font-size: 15px;
+}
+html[data-theme="dark"] body[data-surface="expenses"]:not(#e1) { --ex-teal: #73cfa6; --ex-amber: #e3bb72; --ex-red: #ff9d9d; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main { font-variant-numeric: tabular-nums; }
+
+/* Heading. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .ws-heading h1 { font-size: clamp(1.875rem, 1.5rem + 1vw, 2.5rem); font-weight: 700; letter-spacing: -.025em; line-height: 1.2; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .ws-heading p { margin-top: 8px; font-size: .9375rem; color: var(--k-graphite); }
+
+/* Controls: small, one hairline, ink on hover. Primary actions in cobalt. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main :where(button, select, input:not([type="checkbox"])) {
+  min-height: 38px; border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); box-shadow: none;
+  transition: border-color .15s var(--k-ease), background .15s var(--k-ease), transform .15s var(--k-ease);
+}
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main :where(button, select):hover:not(:disabled) { border-color: var(--k-ink); background: var(--k-sheet); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main :where(input:not([type="checkbox"]), select):focus { border-color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main :is(input, select):is([readonly], :disabled) { background: var(--k-sunk); color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .year-controls { gap: 12px; font-size: .8125rem; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .year-controls label { color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .year-controls :is(select, button) { min-height: 36px; padding: 6px 12px; font-size: .875rem; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main .primary {
+  min-height: 40px; padding: 9px 18px; border: 1px solid var(--k-cobalt); border-radius: 10px;
+  background: var(--k-cobalt); color: #fff; font-size: .9375rem; font-weight: 600; opacity: 1;
+}
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main .primary:hover:not(:disabled) { background: color-mix(in srgb, var(--k-cobalt) 88%, #000); border-color: color-mix(in srgb, var(--k-cobalt) 88%, #000); opacity: 1; transform: translateY(-1px); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main .primary:active:not(:disabled) { transform: translateY(0) scale(.98); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) input[type="checkbox"] { accent-color: var(--k-cobalt); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main a { color: var(--k-cobalt-text); }
+
+/* Search: one sheet, the number field large, the recent numbers as small pills. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .search-panel { padding: 22px 24px; border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); box-shadow: none; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .search-panel > label { display: block; margin: 0; font-size: .875rem; font-weight: 650; color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .search-row input { min-height: 48px; padding: 10px 14px; font-size: 1.25rem; font-weight: 550; letter-spacing: 0; background: var(--k-sheet); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .search-row .primary { min-height: 48px; padding: 0 22px; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .search-foot { align-items: center; font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .search-foot label { display: inline-flex; margin: 0; width: auto; align-items: center; gap: 6px; color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .chips { gap: 6px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .chip { min-height: 28px; padding: 2px 11px; border-radius: 999px; font-size: .8125rem; color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .empty-state { padding: 56px 20px; border: 0; background: none; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .empty-state > span { font-size: 24px; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .empty-state h2 { font-size: 1.125rem; font-weight: 650; letter-spacing: -.01em; color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .loading-panel { border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); color: var(--k-graphite); }
+
+/* Report heading: no label above it. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .report-tag { display: none; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .report-title { margin: 36px 0 16px; align-items: flex-end; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .report-title h2 { margin-bottom: 6px; font-size: 1.75rem; font-weight: 700; letter-spacing: -.025em; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .report-title p { font-size: .8125rem; color: var(--k-graphite); }
+
+/* Alerts: a tinted box with a full hairline, no side bar. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .alert {
+  --tone: var(--ex-amber);
+  margin: 10px 0; padding: 11px 14px; border: 1px solid color-mix(in srgb, var(--tone) 30%, var(--k-line)); border-radius: 10px;
+  background: color-mix(in srgb, var(--tone) 6%, var(--k-sheet)); color: var(--k-ink); font-size: .8125rem;
+}
+html[data-theme] body[data-surface="expenses"]:not(#e1) .alert strong { color: var(--tone); font-weight: 650; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .alert.error { --tone: var(--ex-red); color: var(--ex-red); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .alert.success { --tone: var(--ex-teal); color: var(--ex-teal); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) #budget-results .alert { --tone: var(--k-graphite); background: var(--k-sunk); border-color: var(--k-line); color: var(--k-graphite); }
+
+/* Metrics: four figures on one ruled line, no tiles. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .metrics {
+  gap: 0; margin: 18px 0 28px; border: 0; border-top: 1px solid var(--k-line); border-bottom: 1px solid var(--k-line);
+  border-radius: 0; background: none; overflow: visible;
+}
+html[data-theme] body[data-surface="expenses"]:not(#e1) :is(.metric, .metric.emphasis) {
+  padding: 14px 18px; border: 0; border-radius: 0; background: none; color: var(--k-ink);
+}
+html[data-theme] body[data-surface="expenses"]:not(#e1) .metric + .metric { border-left: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) :is(.metric, .metric.emphasis) > span { font-size: .8125rem; font-weight: 600; color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .metric strong { margin: 4px 0 2px; font-size: 1.5rem; font-weight: 700; line-height: 1.25; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) :is(.metric, .metric.emphasis) small { font-size: .75rem; line-height: 1.45; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) #budget-results .metrics { margin: 18px 0 16px; }
+
+/* Panels: one sheet, one hairline. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .panel { padding: 22px 24px; margin-bottom: 20px; border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); box-shadow: none; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .panel h2 { margin-bottom: 14px; font-size: 1.125rem; font-weight: 650; letter-spacing: -.015em; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .report-grid { gap: 20px; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) :is(.note, .help-note, .panel > p) { font-size: .8125rem; line-height: 1.6; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .budget-fields { gap: 14px; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .budget-fields label { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .budget-fields :is(input, select) { min-height: 40px; margin-top: 6px; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .budget-summary { font-size: .875rem; color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .budget-progress { height: 6px; border-radius: 3px; background: var(--k-sunk); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .budget-progress > span { border-radius: 3px; background: var(--k-cobalt); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .budget-progress.over > span { background: var(--ex-red); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .negative { color: var(--ex-red); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) ul.summary-list { margin: 0; padding-left: 18px; font-size: .9375rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) ul.summary-list strong { color: var(--k-ink); font-weight: 650; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) details > summary { font-size: .875rem; color: var(--k-cobalt-text); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .fixed-total { font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; color: var(--k-ink); }
+
+/* Bars: cobalt for closed months, amber for months with only part of the records. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .bars { gap: 10px; margin-top: 8px; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .bar-row { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .bar-track { height: 8px; border-radius: 2px; background: var(--k-sunk); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .bar-fill { border-radius: 2px; background: var(--k-cobalt); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .bar-fill.partial { background: var(--ex-amber); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .bar-row strong { font-weight: 600; color: var(--k-ink); }
+
+/* Tables: ink rule under the header, hairlines between rows, figures right-aligned. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .scroll table { font-size: .875rem; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) th { padding: 10px; background: var(--k-sheet); font-size: .75rem; font-weight: 550; color: var(--k-graphite); border-bottom: 1px solid var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) td { padding: 11px 10px; border-bottom-color: var(--k-line); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) td small { color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) tbody tr:hover { background: color-mix(in srgb, var(--k-sunk) 45%, transparent); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) table:has(thead th:nth-child(4):last-child) th:nth-child(n+2) { text-align: right; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .detail-scroll { border-top: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .transaction-filters { gap: 8px; }
+
+/* Status labels: small, square-ish, colour only where it means something. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) :is(.status, .badge) { padding: 2px 8px; border-radius: 6px; background: var(--k-sunk); color: var(--k-graphite); font-size: .75rem; font-weight: 550; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .status.complete { background: color-mix(in srgb, var(--ex-teal) 12%, var(--k-sheet)); color: var(--ex-teal); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .status:is(.stale, .missing) { background: color-mix(in srgb, var(--ex-amber) 12%, var(--k-sheet)); color: var(--ex-amber); }
+
+/* Monthly files: one panel, twelve hairline cells. */
+html[data-theme] body[data-surface="expenses"]:not(#e1) .section-heading { margin: 8px 0 16px; align-items: flex-end; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .section-heading h2 { margin-bottom: 6px; font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .section-heading p { font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-health { gap: 0; margin-bottom: 20px; padding: 0; border: 0; border-top: 1px solid var(--k-line); border-bottom: 1px solid var(--k-line); border-radius: 0; background: none; font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-health > span { display: flex; align-items: baseline; gap: 8px; padding: 12px 18px; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-health > span:first-child { padding-left: 0; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-health > span + span { border-left: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-health strong { margin: 0; font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-grid {
+  gap: 0; border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); overflow: hidden;
+}
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-card {
+  padding: 18px 20px; border: 0; border-radius: 0; background: none;
+  box-shadow: -1px 0 0 var(--k-line), 0 -1px 0 var(--k-line);
+}
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-card.is-missing { background: color-mix(in srgb, var(--k-sunk) 40%, var(--k-sheet)); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-card.is-future { opacity: 1; background: color-mix(in srgb, var(--k-sunk) 40%, var(--k-sheet)); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-card.is-future .month-top h3 { color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-top { margin-bottom: 10px; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-top h3 { font-size: 1.125rem; font-weight: 700; letter-spacing: -.015em; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-record + .month-record { border-top-color: var(--k-line); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-record p { font-size: .78rem; line-height: 1.65; color: var(--k-graphite); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-record strong { color: var(--k-ink); font-weight: 550; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .filename { font-size: .8125rem; color: var(--k-ink); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-actions { gap: 10px; font-size: .8125rem; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .month-actions button { min-height: 30px; padding: 3px 10px; font-size: .8125rem; }
+html[data-theme] body[data-surface="expenses"]:not(#e1) #upload-panel { border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); }
+html[data-theme] body[data-surface="expenses"]:not(#e1) .upload-label { min-height: 40px; }
+
+@media (max-width: 900px) {
+  html[data-theme] body[data-surface="expenses"]:not(#e1) .metric:nth-child(3) { border-left: 0; }
+  html[data-theme] body[data-surface="expenses"]:not(#e1) .metric:nth-child(-n+2) { border-bottom: 1px solid var(--k-line); }
+}
+@media (max-width: 640px) {
+  html[data-theme] body[data-surface="expenses"]:not(#e1) :is(.metric, .metric.emphasis) { padding: 12px 12px 12px 0; }
+  html[data-theme] body[data-surface="expenses"]:not(#e1) :is(.metric, .metric.emphasis) + .metric { padding-left: 12px; }
+  html[data-theme] body[data-surface="expenses"]:not(#e1) .metric:nth-child(3):nth-child(3) { padding-left: 0; }
+  html[data-theme] body[data-surface="expenses"]:not(#e1) .metric strong { font-size: 1.25rem; }
+  html[data-theme] body[data-surface="expenses"]:not(#e1) :is(.panel, .search-panel) { padding: 18px 16px; }
+  html[data-theme] body[data-surface="expenses"]:not(#e1) .month-health > span { padding: 10px 12px; }
+  html[data-theme] body[data-surface="expenses"]:not(#e1) .search-row .primary { min-height: 44px; }
+}
+
+/* Touch screens keep 44px targets. */
+@media (pointer: coarse) {
+  html[data-theme] body[data-surface="expenses"]:not(#e1) .expense-main :is(button, .upload-label, select, input) { min-height: 44px; }
+}

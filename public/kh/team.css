@@ -1,0 +1,178 @@
+/* kh design system: team page polish. Loaded after /kh-site.css. */
+
+/* 팀 리소스 in the kh system. Same move as the research journal (work-app/lab.css):
+   the per-person cards become one panel split into columns, the three team tiles become
+   one ruled summary line, the month cards become one list, and the note loses its side bar.
+   Task and person colours stay; they carry meaning. Every rule is prefixed with
+   :not(#t1) so it outranks team-resources.css and taste.css without !important. */
+
+html[data-theme] body[data-surface="team-resources"]:not(#t1) {
+  --tr-surface: var(--k-sheet); --tr-raised: var(--k-sunk);
+  --tr-ink: var(--k-ink); --tr-muted: var(--k-graphite); --tr-faint: var(--k-graphite);
+  --tr-border: var(--k-line); --tr-hair: color-mix(in srgb, var(--k-line) 75%, var(--k-sheet));
+  --tr-accent: var(--k-cobalt-text); --tr-track: var(--k-sunk); --tr-radius: var(--k-radius);
+  --p4: #c0577a; --p5: #4f8f3a; --p6: #b3612e; --p7: #5c6fb8;
+  font-size: 15px;
+}
+html[data-theme="dark"] body[data-surface="team-resources"]:not(#t1) { --p4: #e796b2; --p5: #9ccf86; --p6: #e9a173; --p7: #a3b2f0; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-main { font-variant-numeric: tabular-nums; }
+
+/* Heading: title, one sentence, the record dates quietly on the right. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .ws-heading h1 { font-size: clamp(1.875rem, 1.5rem + 1vw, 2.5rem); font-weight: 700; letter-spacing: -.025em; line-height: 1.2; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .ws-heading p { margin-top: 8px; font-size: .9375rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .ws-heading-meta { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .ws-heading-meta a { color: var(--k-cobalt-text); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .ws-heading-meta a:hover { text-decoration: underline; }
+
+/* Controls: one sheet, small controls, the period in ink. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-controls { padding: 10px 14px; border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); box-shadow: none; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .period-control { border-right-color: var(--k-line); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.unit-toggle, .trend-people) { gap: 2px; padding: 3px; border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sunk); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.unit-toggle, .trend-people) button { border-radius: 7px; background: none; color: var(--k-graphite); box-shadow: none; font-weight: 550; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.unit-toggle, .trend-people) button:hover { color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.unit-toggle, .trend-people) button[aria-pressed="true"] { background: var(--k-sheet); color: var(--k-ink); font-weight: 650; box-shadow: 0 1px 2px rgb(10 20 40 / .12); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .trend-people button { padding: 5px 12px; font-size: .8125rem; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-select select { font-size: 1.0625rem; font-weight: 700; color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.tr-step, .month-select select):hover:not(:disabled) { background: var(--k-sunk); color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .person-chip { height: 30px; padding: 0 12px; border: 1px solid var(--k-line); border-radius: 999px; background: none; color: var(--k-graphite); font-size: .8125rem; font-weight: 500; transition: border-color .15s var(--k-ease), color .15s var(--k-ease); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .person-chip:hover { border-color: var(--k-ink); color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .person-chip[aria-pressed="true"] { border-color: color-mix(in srgb, var(--k-ink) 35%, var(--k-line)); background: var(--k-sheet); color: var(--k-ink); font-weight: 600; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .person-chip[aria-pressed="false"] .dot { opacity: .3; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-basis { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-basis:hover { color: var(--k-ink); }
+
+/* Partial-record note: a tinted box with a full hairline, no side bar. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .record-note {
+  padding: 10px 14px; border: 1px solid color-mix(in srgb, var(--tr-note) 30%, var(--k-line)); border-radius: 10px;
+  background: color-mix(in srgb, var(--tr-note) 6%, var(--k-sheet)); color: var(--k-ink); font-size: .875rem;
+}
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .record-note button { color: var(--k-cobalt-text); text-decoration-color: currentColor; }
+
+/* Section heads. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .allocation-section-head { margin-bottom: 14px; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .allocation-section-head h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .allocation-section-head p { font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .chart-interaction-hint { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-section + .tr-section { margin-top: 40px; padding-top: 32px; border-top-color: var(--k-line); }
+
+/* People: one panel split into columns, not a grid of cards. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-people {
+  gap: 0; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); overflow: hidden;
+}
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-person {
+  padding: 18px 20px 12px; border: 0; border-radius: 0; background: none;
+  box-shadow: -1px 0 0 var(--k-line), 0 -1px 0 var(--k-line);
+}
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-person-head h3 { font-size: 1rem; font-weight: 650; letter-spacing: -.01em; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-person-head span { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-lead { margin: 14px 0 12px; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "value label" "value name"; column-gap: 12px; align-items: center; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-lead-label { grid-area: label; align-self: end; font-size: .75rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-lead-value { grid-area: value; margin: 0; font-size: 1.875rem; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-lead-value small { font-size: .9375rem; font-weight: 600; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-lead-name { grid-area: name; align-self: start; margin-top: 2px !important; font-size: .875rem; font-weight: 600; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-strip { height: 8px; margin-bottom: 10px; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-rows { border-top-color: var(--k-line); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-row { min-height: 36px; font-size: .875rem; border-bottom-color: var(--tr-hair); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-row:hover .tr-row-name { text-decoration-color: currentColor; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.tr-row b small, .task-share-list b small) { color: var(--k-graphite); }
+
+/* Team totals: three facts on one ruled line, no tiles. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stats {
+  gap: 0; margin: 0 0 20px; border-top: 1px solid var(--k-line); border-bottom: 1px solid var(--k-line);
+}
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "value label" "value note"; column-gap: 12px; row-gap: 0; align-items: center;
+  padding: 14px 18px; border: 0; border-radius: 0; background: none;
+}
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat + .tr-stat { border-left: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat-label { grid-area: label; align-self: end; font-size: .875rem; font-weight: 600; color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat-note { grid-area: note; align-self: start; font-size: .78rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat b { grid-area: value; font-size: 1.5rem; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat b small { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat:first-child { grid-template-columns: minmax(0, 1fr); grid-template-areas: "label" "value" "note"; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat:first-child .tr-stat-label { font-weight: 500; color: var(--k-graphite); font-size: .78rem; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat b.tr-stat-text { padding: 3px 0 2px; font-size: 1rem; font-weight: 650; letter-spacing: -.01em; line-height: 1.35; }
+
+/* Panels: one sheet, one hairline. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.panel, .detail-source) { border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); box-shadow: none; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .panel { padding: 20px 22px; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .panel:has(> .table-wrap) { padding: 0; overflow: hidden; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .panel-head h3 { font-size: 1rem; font-weight: 650; letter-spacing: -.01em; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .panel-subtitle { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .text-button { color: var(--k-cobalt-text); font-size: .8125rem; font-weight: 550; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .text-button:hover { background: var(--k-sunk); color: var(--k-cobalt-text); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .treemap-tile rect { stroke: var(--k-sheet); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .allocation-matrix thead th { font-size: .75rem; color: var(--k-graphite); border-bottom: 1px solid var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .allocation-matrix tbody :is(th, td) { border-bottom-color: var(--tr-hair); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .allocation-matrix tbody th button { font-size: .8125rem; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .matrix-value:hover { outline-color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.matrix-foot, .chart-note, .area-legend, .legend) { color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .chart-tick { fill: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .chart-tick.selected-month { fill: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .area-shape { stroke: var(--k-sheet); }
+
+/* Each month's main task: one list with dividers, the chosen month tinted cobalt. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-grid {
+  gap: 0; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); overflow: hidden;
+}
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-card {
+  gap: 6px; padding: 14px 16px; border: 0; border-radius: 0; background: none;
+  box-shadow: -1px 0 0 var(--k-line), 0 -1px 0 var(--k-line); transition: background .15s var(--k-ease);
+}
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-card:hover { background: color-mix(in srgb, var(--k-sunk) 55%, var(--k-sheet)); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-card:focus-visible { outline: 2px solid var(--k-cobalt); outline-offset: -2px; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-card.is-selected { background: color-mix(in srgb, var(--k-cobalt) 8%, var(--k-sheet)); box-shadow: -1px 0 0 var(--k-line), 0 -1px 0 var(--k-line); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-card.is-selected .month-focus-label { color: var(--k-cobalt-text); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-label { font-size: .875rem; font-weight: 650; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-task { font-size: .8125rem; color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-share { display: flex; align-items: baseline; gap: 8px; font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .month-focus-share small { display: inline; font-size: .75rem; font-weight: 500; color: var(--k-graphite); }
+
+/* Weekly records: one table on the sheet. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .records-toolbar .search-box { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .records-toolbar .search-box:focus-within { border-color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .records-toolbar .search-box input { font-size: .875rem; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .records-note { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .records-table { font-size: .875rem; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .records-table th { font-size: .75rem; font-weight: 550; color: var(--k-graphite); background: var(--k-sheet); border-bottom: 1px solid var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .records-table td { border-bottom-color: var(--tr-hair); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .records-table tbody tr:hover td { background: color-mix(in srgb, var(--k-sunk) 45%, transparent); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .record-dates { color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .record-tasks button { border-color: var(--k-line); border-radius: 7px; color: var(--k-graphite); font-size: .8125rem; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .record-tasks button:hover { border-color: var(--k-ink); color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .row-link { color: var(--k-cobalt-text); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .row-link:hover { background: var(--k-sunk); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .pagination { color: var(--k-graphite); border-top: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .icon-button { border-color: var(--k-line); border-radius: 9px; color: var(--k-ink); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .icon-button:hover:not(:disabled) { border-color: var(--k-ink); background: none; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-footnote { border-top-color: var(--k-line); font-size: .8125rem; color: var(--k-graphite); }
+
+/* Dialogs: the sheet, one border, a soft shadow only for the floating layer. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(dialog.detail, dialog#method) { border-color: var(--k-line); background: var(--k-sheet); color: var(--k-ink); box-shadow: 0 24px 64px rgb(8 14 26 / .28); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) dialog#method { border-radius: var(--k-radius); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) dialog::backdrop { background: rgb(10 14 22 / .5); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.detail-heading, .modal-heading) h2 { font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; }
+/* No label above a heading: the method title stands alone, the task's category moves under its name. */
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .modal-heading .eyebrow { display: none; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .detail-heading > div { display: flex; flex-direction: column; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .detail-heading .eyebrow { order: 2; margin-top: 4px; font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .detail-share { font-size: 2.25rem; font-weight: 700; letter-spacing: -.025em; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.detail-meta, .detail-caption, .detail-record p, .detail-record-basis, .muted) { color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) :is(.detail-section, .detail-record, .method-content dl > div) { border-color: var(--k-line); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .detail-section h3 { font-size: .9375rem; font-weight: 650; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .detail-source:hover { border-color: var(--k-ink); background: var(--k-sheet); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .method-content dt { font-size: .9375rem; font-weight: 650; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .method-content dd { font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .modal-footer .primary-button { padding: 9px 18px; border-radius: 10px; background: var(--k-cobalt); color: #fff; font-weight: 600; }
+html[data-theme] body[data-surface="team-resources"]:not(#t1) .modal-footer .primary-button:hover { background: color-mix(in srgb, var(--k-cobalt) 88%, #000); }
+
+@media (max-width: 640px) {
+  html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stats { grid-template-columns: minmax(0, 1fr); }
+  html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat { padding: 12px 4px; }
+  html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-stat + .tr-stat { border-left: 0; border-top: 1px solid var(--k-line); }
+  html[data-theme] body[data-surface="team-resources"]:not(#t1) .tr-person { padding: 16px 16px 10px; }
+  html[data-theme] body[data-surface="team-resources"]:not(#t1) .panel { padding: 16px; }
+  html[data-theme] body[data-surface="team-resources"]:not(#t1) .trend-people { display: flex; flex-wrap: wrap; }
+}

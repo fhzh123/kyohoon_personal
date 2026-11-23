@@ -1,0 +1,269 @@
+/* kh design system: login page polish. Loaded after /kh-site.css. */
+
+/* Login: the home's two halves. Left, the title and one sentence over the mascot on a
+   mascot on no panel, like the home; right, one plain sheet with the form. The account-help dialog is the
+   same sheet: left-aligned, hairlines between its parts, no blur behind it. */
+
+html[data-theme] body[data-surface="login"] .login-shell {
+  --gutter: clamp(20px, 4.4vw, 64px);
+  width: min(100%, 1440px);
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  box-sizing: border-box;
+}
+html[data-theme] body[data-surface="login"] .login-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+  align-items: stretch;
+  gap: clamp(32px, 6vw, 96px);
+  min-height: 0;
+  padding: clamp(24px, 5vh, 56px) 0 clamp(40px, 7vh, 80px);
+  text-align: left;
+}
+
+/* Left half */
+html[data-theme] body[data-surface="login"] .login-art {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+}
+html[data-theme] body[data-surface="login"] .login-eyebrow { display: none; }
+html[data-theme] body[data-surface="login"] .login-art h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 1.6rem + 2.6vw, 4rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.03em;
+  color: var(--k-ink);
+  word-break: keep-all;
+}
+html[data-theme] body[data-surface="login"] .login-art > p:not(.login-eyebrow) {
+  margin: 20px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--k-graphite);
+}
+html[data-theme] body[data-surface="login"] .auth-mascot--login {
+  flex: 1;
+  width: 100%;
+  max-width: 560px;
+  min-height: 260px;
+  aspect-ratio: auto;
+  margin: clamp(28px, 4vh, 44px) 0 0;
+  border-radius: 0;
+  background: none;
+  border: 0;
+}
+html[data-theme] body[data-surface="login"] .auth-mascot--login img {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: auto;
+  height: 92%;
+  aspect-ratio: 1920 / 819;
+  translate: -25% 0;
+  object-fit: fill;
+}
+
+/* Right half: one sheet, one hairline. */
+html[data-theme] body[data-surface="login"] .login-card {
+  align-self: center;
+  padding: clamp(28px, 3vw, 40px);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius);
+  background: var(--k-sheet);
+  box-shadow: none;
+}
+html[data-theme] body[data-surface="login"] .login-symbol { display: none; }
+html[data-theme] body[data-surface="login"] .login-card h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--k-ink);
+}
+html[data-theme] body[data-surface="login"] .login-card .muted { margin: 8px 0 8px; font-size: .9375rem; line-height: 1.6; color: var(--k-graphite); }
+html[data-theme] body[data-surface="login"] .login-card form label {
+  display: block;
+  margin: 20px 0 8px;
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--k-ink);
+}
+html[data-theme] body[data-surface="login"] .login-card input:not([type=hidden]) {
+  width: 100%;
+  height: 48px;
+  padding-inline: 14px;
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-paper);
+  color: var(--k-ink);
+  font-size: 1rem;
+  box-shadow: none;
+  transition: border-color .18s var(--k-ease), background .18s var(--k-ease);
+}
+html[data-theme] body[data-surface="login"] .login-card input::placeholder { color: var(--k-graphite); opacity: .8; }
+html[data-theme] body[data-surface="login"] .login-card input:hover:not(:disabled) { border-color: color-mix(in srgb, var(--k-line) 50%, var(--k-ink)); }
+html[data-theme] body[data-surface="login"] .login-card input:focus { border-color: var(--k-cobalt); background: var(--k-sheet); outline: none; }
+html[data-theme] body[data-surface="login"] .login-card input:focus-visible { outline: 2px solid var(--k-cobalt); outline-offset: 1px; }
+html[data-theme] body[data-surface="login"] .password-toggle {
+  inset: 6px 6px 6px auto;
+  width: 52px;
+  border-radius: 8px;
+  color: var(--k-graphite);
+  font-size: .8125rem;
+  font-weight: 600;
+}
+html[data-theme] body[data-surface="login"] .password-toggle:hover { background: var(--k-sunk); color: var(--k-ink); }
+html[data-theme] body[data-surface="login"] .login-card .primary-button {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 28px;
+  padding-inline: 18px;
+  font-size: 1rem;
+  font-weight: 650;
+  transition: background .18s var(--k-ease), transform .18s var(--k-ease);
+}
+html[data-theme] body[data-surface="login"] .login-card .primary-button:hover:not(:disabled) { transform: translateY(-1px); }
+html[data-theme] body[data-surface="login"] .login-card .primary-button:active:not(:disabled) { transform: translateY(0) scale(.99); }
+html[data-theme] body[data-surface="login"] .forgot-link { margin: 16px 0 0; text-align: left; }
+html[data-theme] body[data-surface="login"] .forgot-link button {
+  min-height: 36px;
+  padding: 0;
+  color: var(--k-cobalt-text);
+  font-size: .9375rem;
+  font-weight: 550;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: text-decoration-color .18s var(--k-ease);
+}
+html[data-theme] body[data-surface="login"] .forgot-link button:hover { color: var(--k-cobalt-text); text-decoration-color: currentColor; }
+html[data-theme] body[data-surface="login"] .login-help { margin: 2px 0 0; text-align: left; font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="login"] .login-card .notice {
+  margin: 16px 0 0;
+  padding: 10px 14px;
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sunk);
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--k-ink);
+}
+html[data-theme] body[data-surface="login"] .login-card .notice.error { border-color: color-mix(in srgb, #c8453c 45%, var(--k-line)); background: color-mix(in srgb, #c8453c 9%, var(--k-sheet)); }
+html[data-theme] body[data-surface="login"] .preview-box {
+  margin-top: 24px;
+  padding: 20px 0 0;
+  border: 0;
+  border-top: 1px solid var(--k-line);
+  border-radius: 0;
+  background: none;
+}
+html[data-theme] body[data-surface="login"] .preview-box strong { font-size: .9375rem; font-weight: 650; }
+html[data-theme] body[data-surface="login"] .preview-box p { margin: 4px 0 14px; font-size: .875rem; color: var(--k-graphite); }
+
+/* Account-help dialog */
+html[data-theme] body[data-surface="login"] .contact-dialog {
+  width: min(500px, calc(100% - 32px));
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius);
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  box-shadow: none;
+}
+html[data-theme] body[data-surface="login"] .contact-dialog::backdrop {
+  background: color-mix(in srgb, #0a0e14 55%, transparent);
+  backdrop-filter: none;
+}
+html[data-theme] body[data-surface="login"] .contact-content {
+  display: grid;
+  grid-template-columns: 1fr 72px;
+  column-gap: 16px;
+  padding: 28px 28px 24px;
+  text-align: left;
+}
+html[data-theme] body[data-surface="login"] .contact-content > * { grid-column: 1 / -1; }
+html[data-theme] body[data-surface="login"] .dialog-close {
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  color: var(--k-graphite);
+  font-size: 24px;
+}
+html[data-theme] body[data-surface="login"] .dialog-close:hover { background: var(--k-sunk); color: var(--k-ink); }
+html[data-theme] body[data-surface="login"] .auth-mascot--support {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: end;
+  width: 72px;
+  margin: 0;
+}
+html[data-theme] body[data-surface="login"] .contact-dialog h2 {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 8px 0 8px;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.35;
+}
+html[data-theme] body[data-surface="login"] #contact-description {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0 0 20px;
+  font-size: .9375rem;
+  line-height: 1.65;
+  color: var(--k-graphite);
+}
+html[data-theme] body[data-surface="login"] .contact-methods {
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0;
+  align-items: stretch;
+  padding: 0;
+  border-top: 1px solid var(--k-line);
+  border-bottom: 1px solid var(--k-line);
+}
+html[data-theme] body[data-surface="login"] .contact-qr { padding: 20px 20px 20px 0; border-right: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="login"] .qr-frame { width: 132px; height: 132px; margin: 0 0 12px; padding: 8px; border: 1px solid var(--k-line); border-radius: 10px; background: #fff; }
+html[data-theme] body[data-surface="login"] .contact-qr strong { display: block; font-size: .875rem; font-weight: 650; }
+html[data-theme] body[data-surface="login"] .contact-qr p { max-width: 140px; margin: 4px 0 0; font-size: .8125rem; line-height: 1.55; color: var(--k-graphite); }
+html[data-theme] body[data-surface="login"] .contact-email { align-items: flex-start; justify-content: center; gap: 6px; padding: 20px 0 20px 20px; }
+html[data-theme] body[data-surface="login"] .contact-email > span { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="login"] .contact-email > a { min-height: 36px; font-size: 1.0625rem; font-weight: 650; color: var(--k-cobalt-text); overflow-wrap: anywhere; }
+html[data-theme] body[data-surface="login"] .contact-email .btn { min-height: 40px; padding-inline: 14px; border-radius: 10px; font-size: .8125rem; font-weight: 600; }
+html[data-theme] body[data-surface="login"] .copy-status { min-height: 20px; font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="login"] .contact-done { min-height: 48px; margin-top: 20px; border-radius: 10px; font-size: 1rem; font-weight: 650; }
+
+/* Phone: title and a short stage side by side, the form under them. */
+@media (max-width: 760px) {
+  html[data-theme] body[data-surface="login"] .login-shell { padding-inline: 16px; }
+  html[data-theme] body[data-surface="login"] .login-main { grid-template-columns: minmax(0, 1fr); gap: 24px; max-width: 480px; padding: 16px 0 40px; }
+  html[data-theme] body[data-surface="login"] .login-art { display: grid; grid-template-columns: minmax(0, 1fr) 112px; align-items: end; gap: 12px; min-height: 0; padding: 0; }
+  html[data-theme] body[data-surface="login"] .login-art h1 { font-size: 2rem; }
+  html[data-theme] body[data-surface="login"] .auth-mascot--login {
+    position: relative; right: auto; bottom: auto;
+    grid-column: 2; grid-row: 1;
+    width: 112px; height: 112px; min-height: 0; margin: 0;
+    border-radius: 14px;
+  }
+  html[data-theme] body[data-surface="login"] .auth-mascot--login img { height: 94%; }
+  html[data-theme] body[data-surface="login"] .login-card { padding: 24px 20px; }
+}
+@media (max-width: 480px) {
+  html[data-theme] body[data-surface="login"] .contact-content { padding: 24px 20px 20px; grid-template-columns: 1fr 56px; }
+  html[data-theme] body[data-surface="login"] .auth-mascot--support { width: 56px; }
+  html[data-theme] body[data-surface="login"] .contact-methods { grid-template-columns: minmax(0, 1fr); }
+  html[data-theme] body[data-surface="login"] .contact-qr { display: grid; grid-template-columns: 96px minmax(0, 1fr); column-gap: 14px; align-items: center; padding: 16px 0; border-right: 0; border-bottom: 1px solid var(--k-line); }
+  html[data-theme] body[data-surface="login"] .qr-frame { grid-row: 1 / 3; width: 96px; height: 96px; margin: 0; padding: 6px; }
+  html[data-theme] body[data-surface="login"] .contact-qr p { max-width: none; }
+  html[data-theme] body[data-surface="login"] .contact-email { padding: 16px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme] body[data-surface="login"] .login-card :is(input, .primary-button) { transition: none; }
+}
