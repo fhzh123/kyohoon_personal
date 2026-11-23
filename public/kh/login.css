@@ -1,7 +1,7 @@
 /* kh design system: login page polish. Loaded after /kh-site.css. */
 
 /* Login: the home's two halves. Left, the title and one sentence over the mascot on a
-   pale stage like the home; right, one plain sheet with the form. The account-help dialog is the
+   mascot on no panel, like the home; right, one plain sheet with the form. The account-help dialog is the
    same sheet: left-aligned, hairlines between its parts, no blur behind it. */
 
 html[data-theme] body[data-surface="login"] .login-shell {
@@ -52,13 +52,10 @@ html[data-theme] body[data-surface="login"] .auth-mascot--login {
   min-height: 260px;
   aspect-ratio: auto;
   margin: clamp(28px, 4vh, 44px) 0 0;
-  border-radius: 22px;
-  background:
-    radial-gradient(ellipse 34% 5% at 50% 99%, color-mix(in srgb, var(--k-ink) 16%, transparent), transparent 100%),
-    color-mix(in srgb, var(--k-cobalt) 8%, var(--k-sheet));
-  border: 1px solid color-mix(in srgb, var(--k-cobalt) 14%, var(--k-line));
+  border-radius: 0;
+  background: none;
+  border: 0;
 }
-html[data-theme="dark"] body[data-surface="login"] .auth-mascot--login { background: radial-gradient(ellipse 34% 5% at 50% 99%, rgb(0 0 0 / .45), transparent 100%), color-mix(in srgb, var(--k-cobalt) 16%, var(--k-sheet)); }
 html[data-theme] body[data-surface="login"] .auth-mascot--login img {
   position: absolute;
   left: 50%;

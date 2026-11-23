@@ -85,25 +85,14 @@ html[data-theme="dark"] body[data-surface="home"] .home-header .ui-icon { filter
   word-break: keep-all;
 }
 
-/* The stage: a pale cobalt-tinted panel, rounded on top, flat where it meets the ruled
-   line, with a soft floor shadow under the mascot's feet. */
+/* The stage: no panel; the mascot stands straight on the ruled line. */
 .home-stage {
   position: relative;
   align-self: stretch;
   margin: clamp(8px, 3vh, 36px) 0 0;
   min-height: 340px;
-  border-radius: 22px 22px 0 0;
-  background:
-    radial-gradient(ellipse 34% 5% at 50% 99%, color-mix(in srgb, var(--k-ink) 16%, transparent), transparent 100%),
-    color-mix(in srgb, var(--k-cobalt) 8%, var(--k-sheet));
-  border: 1px solid color-mix(in srgb, var(--k-cobalt) 14%, var(--k-line));
-  border-bottom: 0;
+  background: none;
   overflow: hidden;
-}
-html[data-theme="dark"] .home-stage {
-  background:
-    radial-gradient(ellipse 34% 5% at 50% 99%, rgb(0 0 0 / .45), transparent 100%),
-    color-mix(in srgb, var(--k-cobalt) 16%, var(--k-sheet));
 }
 .home-pose {
   position: absolute;
@@ -169,13 +158,10 @@ body[data-surface="home"] .site-footer {
 }
 
 /* Entrance: the stage opens from the line and the mascot steps up, once. */
-@keyframes home-stage-open { from { clip-path: inset(100% 0 0 0 round 22px 22px 0 0); } to { clip-path: inset(0 0 0 0 round 22px 22px 0 0); } }
 @keyframes home-pose-rise { from { opacity: 0; translate: -50% 40px; } to { opacity: 1; translate: -50% 0; } }
 @media (prefers-reduced-motion: no-preference) {
-  html:not([data-home-motion="off"]) .home-stage { animation: home-stage-open .9s var(--k-ease) both; }
   html:not([data-home-motion="off"]) .home-pose[data-default-pose] { animation: home-pose-rise .8s .32s var(--k-ease) both; }
 }
-html[data-home-motion="on"] .home-stage { animation: home-stage-open .9s var(--k-ease) both; }
 html[data-home-motion="on"] .home-pose[data-default-pose] { animation: home-pose-rise .8s .32s var(--k-ease) both; }
 @media (prefers-reduced-motion: reduce) {
   html:not([data-home-motion="on"]) .home-pose { transition: none; }

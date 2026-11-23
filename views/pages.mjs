@@ -6,7 +6,7 @@ const themeButton = () => `<a class="theme-toggle theme-toggle--icon space-nav-b
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 // kh design system: shared tokens and bridge on every page, then one file per surface.
-const KH_V = '20261124-1';
+const KH_V = '20261124-2';
 const KH_PAGES = new Set(['login', 'selectstar', 'personal', 'demos', 'paper', 'settings', 'travel', 'gallery']);
 const shell = (title, body, surface = '') => `<!doctype html>
 <html lang="ko" data-theme="dark" data-type="service" data-radius="soft" data-motion>
