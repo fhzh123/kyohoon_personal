@@ -1,0 +1,195 @@
+/* kh design system: settings page polish. Loaded after /kh-site.css. */
+
+/* Settings: a plain document. Title and one sentence, a quiet list of sections on the
+   left (current one on a recessed tint, no side stripe), and each section as a heading
+   with its controls under hairlines. */
+
+html[data-theme] body[data-surface="settings"] .paper-shell {
+  --gutter: clamp(20px, 4.4vw, 64px);
+  --paper-accent: var(--k-cobalt);
+  width: min(100%, 1440px);
+  padding-inline: var(--gutter);
+  box-sizing: border-box;
+}
+html[data-theme] body[data-surface="settings"] .settings-main {
+  max-width: 1080px;
+  padding: clamp(16px, 3vh, 32px) 0 80px;
+  --paper-accent: var(--k-cobalt);
+}
+html[data-theme] body[data-surface="settings"] .paper-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0;
+  font-size: .9375rem;
+  color: var(--k-graphite);
+  text-decoration: none;
+}
+html[data-theme] body[data-surface="settings"] .paper-back:hover { color: var(--k-ink); }
+
+/* Heading */
+html[data-theme] body[data-surface="settings"] .settings-heading {
+  margin: clamp(20px, 3vh, 32px) 0 clamp(28px, 4vh, 44px);
+  padding-bottom: clamp(24px, 3vh, 32px);
+  border-bottom: 2px solid var(--k-ink);
+}
+html[data-theme] body[data-surface="settings"] .settings-heading .paper-eyebrow { display: none; }
+html[data-theme] body[data-surface="settings"] .settings-main .settings-heading h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 1.8rem + 2vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  color: var(--k-ink);
+}
+html[data-theme] body[data-surface="settings"] .settings-heading > p:last-child {
+  margin: 14px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--k-graphite);
+}
+
+/* Section list */
+html[data-theme] body[data-surface="settings"] .settings-layout { grid-template-columns: 200px minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); }
+html[data-theme] body[data-surface="settings"] .settings-nav { gap: 2px; top: 24px; }
+html[data-theme] body[data-surface="settings"] .settings-nav a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 550;
+  color: var(--k-graphite);
+  transition: background .18s var(--k-ease), color .18s var(--k-ease);
+}
+html[data-theme] body[data-surface="settings"] .settings-nav a span { margin: 0; font-size: .8125rem; font-weight: 450; opacity: 1; color: var(--k-graphite); }
+html[data-theme] body[data-surface="settings"] .settings-nav a:hover { background: color-mix(in srgb, var(--k-sunk) 60%, transparent); color: var(--k-ink); }
+html[data-theme] body[data-surface="settings"] .settings-nav a[aria-current=page] { border: 0; background: var(--k-sunk); color: var(--k-ink); font-weight: 650; }
+
+/* Section titles */
+html[data-theme] body[data-surface="settings"] .settings-main .settings-section-title h2 {
+  margin: 0 0 6px;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--k-ink);
+}
+html[data-theme] body[data-surface="settings"] .settings-section-title p { margin: 0 0 20px; font-size: .9375rem; line-height: 1.6; color: var(--k-graphite); }
+html[data-theme] body[data-surface="settings"] #appearance .settings-section-title + .paper-field,
+html[data-theme] body[data-surface="settings"] #appearance .paper-subtle + .settings-section-title { margin-top: 0; }
+html[data-theme] body[data-surface="settings"] #appearance .paper-subtle + .settings-section-title { padding-top: 32px; margin-top: 12px; border-top: 1px solid var(--k-line); }
+html[data-theme] body[data-surface="settings"] .settings-main .paper-subtle { margin: 10px 0 0; font-size: .875rem; line-height: 1.6; color: var(--k-graphite); }
+html[data-theme] body[data-surface="settings"] .settings-main .paper-subtle:empty { margin: 0; }
+
+/* Theme choice: three tiles, the chosen one in cobalt. */
+html[data-theme] body[data-surface="settings"] .appearance-options { gap: 12px; }
+html[data-theme] body[data-surface="settings"] .settings-main .appearance-option {
+  min-height: 0;
+  padding: 10px 10px 14px;
+  border: 1px solid var(--k-line);
+  border-radius: 12px;
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  box-shadow: none;
+  transition: border-color .18s var(--k-ease), transform .18s var(--k-ease);
+}
+html[data-theme] body[data-surface="settings"] .settings-main .appearance-option:hover { border-color: var(--k-ink); }
+html[data-theme] body[data-surface="settings"] .settings-main .appearance-option[aria-pressed=true] { border-color: var(--k-cobalt); box-shadow: inset 0 0 0 1px var(--k-cobalt); }
+html[data-theme] body[data-surface="settings"] .appearance-option strong { margin: 12px 4px 0; font-size: 1rem; font-weight: 650; }
+html[data-theme] body[data-surface="settings"] .appearance-option small { margin: 2px 4px 0; font-size: .8125rem; opacity: 1; color: var(--k-graphite); }
+html[data-theme] body[data-surface="settings"] .appearance-sample { height: 88px; border-radius: 8px; border-color: var(--k-line); }
+html[data-theme] body[data-surface="settings"] .appearance-sample.sample-light { background: #eef1f4; border-color: #d3d9e1; }
+html[data-theme] body[data-surface="settings"] .appearance-sample.sample-light i { background: #151b26; }
+html[data-theme] body[data-surface="settings"] .appearance-sample.sample-light b { background: #b6bfcc; }
+html[data-theme] body[data-surface="settings"] .appearance-sample.sample-dark { background: #0e131b; border-color: #263142; }
+html[data-theme] body[data-surface="settings"] .appearance-sample.sample-dark i { background: #e6ebf2; }
+html[data-theme] body[data-surface="settings"] .appearance-sample.sample-dark b { background: #3a475b; }
+html[data-theme] body[data-surface="settings"] .appearance-sample.sample-system { background: linear-gradient(90deg, #eef1f4 50%, #0e131b 50%); border-color: var(--k-line); }
+html[data-theme] body[data-surface="settings"] .appearance-sample.sample-system i { background: #535e70; }
+
+/* Fields */
+html[data-theme] body[data-surface="settings"] .settings-main .paper-field { font-size: .9375rem; font-weight: 600; color: var(--k-ink); margin-bottom: 8px; }
+html[data-theme] body[data-surface="settings"] .settings-main :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select, textarea) {
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  box-shadow: none;
+  transition: border-color .18s var(--k-ease);
+}
+html[data-theme] body[data-surface="settings"] .settings-main select { max-width: 360px; min-height: 46px; }
+html[data-theme] body[data-surface="settings"] .settings-main :is(input, select, textarea):hover:not(:disabled) { border-color: color-mix(in srgb, var(--k-line) 50%, var(--k-ink)); }
+html[data-theme] body[data-surface="settings"] .settings-main :is(input, select, textarea):focus { border-color: var(--k-cobalt); }
+
+/* Buttons from the paper set: secondary on the sheet, primary in cobalt. */
+html[data-theme] body[data-surface="settings"] .settings-main .paper-btn {
+  min-height: 42px;
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  font-weight: 600;
+  box-shadow: none;
+  transition: border-color .18s var(--k-ease), transform .18s var(--k-ease), background .18s var(--k-ease);
+}
+html[data-theme] body[data-surface="settings"] .settings-main .paper-btn:hover:not(:disabled) { border-color: var(--k-ink); background: var(--k-sheet); transform: translateY(-1px); }
+html[data-theme] body[data-surface="settings"] .settings-main .paper-btn.primary { border-color: var(--k-cobalt); background: var(--k-cobalt); color: #fff; }
+html[data-theme] body[data-surface="settings"] .settings-main .paper-btn.primary:hover:not(:disabled) { border-color: color-mix(in srgb, var(--k-cobalt) 88%, #000); background: color-mix(in srgb, var(--k-cobalt) 88%, #000); }
+html[data-theme] body[data-surface="settings"] .settings-main .paper-btn.quiet { border-color: transparent; background: transparent; }
+html[data-theme] body[data-surface="settings"] .settings-main .paper-btn.quiet:hover:not(:disabled) { border-color: var(--k-line); }
+
+/* Background tab */
+html[data-theme] body[data-surface="settings"] .background-grid { gap: 16px; }
+html[data-theme] body[data-surface="settings"] .background-preview { border-color: var(--k-line); border-radius: 10px; color: var(--k-graphite); }
+html[data-theme] body[data-surface="settings"] .background-choice h3 { font-size: 1rem; font-weight: 650; letter-spacing: -.01em; }
+html[data-theme] body[data-surface="settings"] .background-speed > div:first-child { font-size: .9375rem; font-weight: 600; }
+html[data-theme] body[data-surface="settings"] .background-speed output,
+html[data-theme] body[data-surface="settings"] .background-speed-labels,
+html[data-theme] body[data-surface="settings"] .background-access { color: var(--k-graphite); }
+
+/* LLM tab */
+html[data-theme] body[data-surface="settings"] .settings-main .paper-eyebrow { display: none; }
+html[data-theme] body[data-surface="settings"] .settings-content .paper-settings-head { margin-bottom: 8px; padding-bottom: 20px; }
+html[data-theme] body[data-surface="settings"] .settings-content .paper-settings-head h2 { font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="settings"] .settings-content .paper-key-mask { font-family: var(--k-font); font-size: .875rem; letter-spacing: 0; color: var(--k-graphite); }
+html[data-theme] body[data-surface="settings"] .settings-content .paper-field { margin-top: 16px; }
+html[data-theme] body[data-surface="settings"] .settings-content :is(.paper-provider, .paper-setting-section) { border-color: var(--k-line); }
+html[data-theme] body[data-surface="settings"] .settings-content .paper-provider-head label { font-size: 1.125rem; font-weight: 650; letter-spacing: -.015em; }
+html[data-theme] body[data-surface="settings"] .settings-content .paper-setting-section h2 { font-size: 1.1875rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="settings"] .settings-save-bar { border-top-color: var(--k-line); background: var(--k-paper); }
+html[data-theme] body[data-surface="settings"] .settings-save-bar small { color: var(--k-graphite); }
+
+/* Logged-out gate */
+html[data-theme] body[data-surface="settings"] .settings-access { gap: 28px; min-height: 0; padding: 8px 0 24px; }
+html[data-theme] body[data-surface="settings"] .settings-access > img { width: 168px; height: 168px; }
+html[data-theme] body[data-surface="settings"] .settings-access h2 { margin: 0 0 8px; font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="settings"] .settings-access p { margin: 0 0 20px; font-size: .9375rem; line-height: 1.65; color: var(--k-graphite); }
+
+/* Toast */
+html[data-theme] body[data-surface="settings"] .paper-toast { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-ink); color: var(--k-paper); box-shadow: none; }
+
+/* Phone: the section list becomes three tabs on one line. */
+@media (max-width: 760px) {
+  html[data-theme] body[data-surface="settings"] .paper-shell { width: 100%; padding-inline: 16px; }
+  html[data-theme] body[data-surface="settings"] .settings-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  html[data-theme] body[data-surface="settings"] .settings-nav { flex-direction: row; gap: 4px; padding: 4px; border: 0; border-radius: 12px; background: var(--k-sunk); }
+  html[data-theme] body[data-surface="settings"] .settings-nav a { flex: 1; justify-content: center; padding: 10px 6px; border: 0; font-size: .9375rem; }
+  html[data-theme] body[data-surface="settings"] .settings-nav a span { display: none; }
+  html[data-theme] body[data-surface="settings"] .settings-nav a:hover { background: transparent; }
+  html[data-theme] body[data-surface="settings"] .settings-nav a[aria-current=page] { border: 0; background: var(--k-sheet); }
+  html[data-theme] body[data-surface="settings"] .appearance-options { gap: 8px; }
+  html[data-theme] body[data-surface="settings"] .settings-main .appearance-option { padding: 6px 6px 10px; }
+  html[data-theme] body[data-surface="settings"] .appearance-sample { height: 64px; padding: 10px; }
+  html[data-theme] body[data-surface="settings"] .appearance-option strong { font-size: .9375rem; margin-top: 8px; }
+  html[data-theme] body[data-surface="settings"] .appearance-option small { font-size: .75rem; }
+  html[data-theme] body[data-surface="settings"] .settings-main select { max-width: none; }
+}
+@media (max-width: 540px) {
+  html[data-theme] body[data-surface="settings"] .settings-access > img { width: 140px; height: 140px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme] body[data-surface="settings"] .settings-main :is(.paper-btn, .appearance-option, input, select) { transition: none; }
+}

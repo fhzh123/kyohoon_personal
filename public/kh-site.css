@@ -1,0 +1,71 @@
+/* Site-wide bridge to the kh system (see kh-system.css). Loaded on every page after the
+   older layers: it points their tokens at the kh palette, swaps the font, removes the
+   starfield and gives the shared header, buttons and footer one look. Page-specific
+   polish lives in /kh/<page>.css, loaded right after this file. */
+
+:root { --font-sans: var(--k-font); }
+
+html[data-theme] {
+  --bg: var(--k-paper); --surface: var(--k-sheet); --surface-alt: var(--k-sunk); --surface-2: var(--k-sunk);
+  --ink: var(--k-ink); --text: var(--k-ink); --muted: var(--k-graphite); --text-muted: var(--k-graphite);
+  --line: var(--k-line); --border: var(--k-line);
+  --blue: var(--k-cobalt-text); --accent: var(--k-cobalt); --action: var(--k-cobalt);
+  --navy: var(--k-ink); --navy-soft: var(--k-sunk);
+  --ws-bg: var(--k-paper); --ws-side: var(--k-sheet); --ws-surface: var(--k-sheet); --ws-raised: var(--k-sunk);
+  --ws-line: var(--k-line); --ws-line-strong: color-mix(in srgb, var(--k-line) 70%, var(--k-ink));
+  --ws-ink: var(--k-ink); --ws-muted: var(--k-graphite); --ws-faint: color-mix(in srgb, var(--k-graphite) 75%, var(--k-paper));
+  --ws-accent: var(--k-cobalt-text); --ws-accent-ink: #fff;
+  --ws-topbar: color-mix(in srgb, var(--k-paper) 88%, transparent);
+  accent-color: var(--k-cobalt);
+}
+
+html[data-theme] body {
+  background: var(--k-paper);
+  color: var(--k-ink);
+  font-family: var(--k-font);
+}
+html[data-theme] body :is(button, input, select, textarea) { font-family: var(--k-font); }
+html[data-theme] body ::selection { background: var(--k-cobalt); color: #fff; }
+/* The old starfield goes; a background image the owner picked in Settings stays. */
+html[data-theme]:not([data-bg-image="true"]) .ambient-sky { display: none; }
+html[data-theme][data-bg-image="true"] .ambient-sky::after { display: none; }
+
+/* Shared header: brand left, actions right, no rule under it. */
+html[data-theme] .site-header { border-bottom: 0; }
+html[data-theme] .site-header .wordmark { font-family: var(--k-font); font-weight: 650; letter-spacing: -.01em; color: var(--k-ink); }
+html[data-theme] .site-header .wordmark img { width: 32px; height: 32px; }
+
+/* Buttons: one primary (cobalt), one secondary (sheet with a hairline). */
+html[data-theme] :is(.btn, .secondary-button, .logout-button, .theme-toggle, .space-nav-button) {
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  box-shadow: none;
+}
+html[data-theme] :is(.btn--primary, .primary-button) {
+  border: 1px solid var(--k-cobalt);
+  border-radius: 10px;
+  background: var(--k-cobalt);
+  color: #fff;
+  box-shadow: none;
+}
+html[data-theme] :is(.btn, .secondary-button, .logout-button, .space-nav-button):hover { border-color: var(--k-ink); }
+html[data-theme] :is(.btn--primary, .primary-button):hover { background: color-mix(in srgb, var(--k-cobalt) 88%, #000); border-color: color-mix(in srgb, var(--k-cobalt) 88%, #000); }
+html[data-theme="dark"] :is(.btn, .secondary-button, .logout-button, .theme-toggle, .space-nav-button) .ui-icon,
+html[data-theme="dark"] .space-nav-button img { filter: invert(1); }
+html[data-theme] :is(.btn--primary, .primary-button) .ui-icon { filter: invert(1); }
+
+html[data-theme] :focus-visible { outline: 2px solid var(--k-cobalt); outline-offset: 2px; }
+html[data-theme] a { text-underline-offset: 3px; }
+
+html[data-theme] .site-footer { border-top: 1px solid var(--k-line); color: var(--k-graphite); }
+
+/* Phones: the header stays one line; the wordmark and logout keep only their icons. */
+@media (max-width: 480px) {
+  html[data-theme] .site-header { flex-wrap: nowrap; gap: 8px; }
+  html[data-theme] .site-header :is(.header-actions, .hub-header-actions) { flex-wrap: nowrap; gap: 6px; justify-content: flex-end; }
+  html[data-theme] .site-header .wordmark span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  html[data-theme] .site-header .logout-button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  html[data-theme] .site-header .logout-button { min-width: 44px; padding-inline: 10px; }
+}

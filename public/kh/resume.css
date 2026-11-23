@@ -1,0 +1,489 @@
+/* kh design system: resume page polish. Loaded after /kh-site.css. */
+
+/* The Resume is a compiled React bundle, so this file works on its rendered DOM.
+   Aim: a typeset CV. Name and actions on one line, a quiet profile column on the left
+   that stays in view, and one sheet on the right whose sections read as ruled lists
+   (no boxed entries, no glow, no lift). Every element and link stays where it is. */
+
+html[data-theme] body[data-typography="resume"] {
+  --r-gap: clamp(28px, 4vw, 56px);
+  background: var(--k-paper);
+  color: var(--k-ink);
+  font-family: var(--k-font);
+  font-size-adjust: from-font;
+}
+html[data-theme] body[data-typography="resume"] #root > .resume-shell {
+  padding: clamp(16px, 3.3vw, 48px) clamp(16px, 4.4vw, 64px);
+  color: var(--k-ink);
+}
+
+/* Tailwind / taste.css gave every gray box a border, shadow and hover lift. Reset them
+   inside the resume, then add back the few surfaces we want. */
+html[data-theme] body[data-typography="resume"] #root :is(.bg-gray-800, .bg-gray-700, .bg-gray-900) {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+html[data-theme] body[data-typography="resume"] #root :is(.shadow-lg, .shadow-md, .shadow-xl, .hover\:shadow-xl:hover) { box-shadow: none; }
+html[data-theme] body[data-typography="resume"] #root :is(.text-gray-200, .text-white) { color: var(--k-ink); }
+html[data-theme] body[data-typography="resume"] #root :is(.text-gray-300, .text-gray-400, .text-gray-500) { color: var(--k-graphite); }
+
+/* ── Header: brand left, actions right, no box ─────────────────────────────── */
+html[data-theme] body[data-typography="resume"] #root .resume-topbar {
+  max-width: 80rem;
+  margin-bottom: clamp(20px, 3vw, 36px);
+  padding: 0 0 clamp(16px, 2vw, 22px);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--k-ink);
+  border-radius: 0;
+}
+html[data-theme] body[data-typography="resume"] #root .resume-topbar > span {
+  margin: 0;
+  color: var(--k-ink);
+  font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.1;
+}
+html[data-theme] body[data-typography="resume"] #root .resume-face { width: 36px; height: 36px; margin-right: 12px; }
+
+html[data-theme] body[data-typography="resume"] #root .resume-header-actions .resume-icon-action {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  transition: border-color .2s var(--k-ease), transform .2s var(--k-ease);
+}
+html[data-theme] body[data-typography="resume"] #root .resume-header-actions .resume-icon-action:hover { border-color: var(--k-ink); transform: translateY(-1px); background: var(--k-sheet); }
+html[data-theme="dark"] body[data-typography="resume"] #root .resume-header-actions .resume-icon-action .ui-icon { filter: invert(1); }
+
+/* KO / EN: a small segmented control. The sliding knob is a sheet, not a blue pill. */
+html[data-theme] body[data-typography="resume"] #root .resume-language {
+  height: 44px;
+  width: 104px;
+  padding: 3px;
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sunk);
+}
+html[data-theme] body[data-typography="resume"] #root .resume-language > div.absolute {
+  top: 3px;
+  left: 3px;
+  height: calc(100% - 6px);
+  width: calc(50% - 3px);
+  border-radius: 7px;
+  background: var(--k-sheet);
+  box-shadow: 0 0 0 1px var(--k-line);
+}
+html[data-theme] body[data-typography="resume"] #root .resume-language label {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  color: var(--k-graphite);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+html[data-theme] body[data-typography="resume"] #root .resume-language:has(#ko-lang-desktop:checked) label[for="ko-lang-desktop"],
+html[data-theme] body[data-typography="resume"] #root .resume-language:has(#en-lang-desktop:checked) label[for="en-lang-desktop"] { color: var(--k-ink); }
+
+/* ── Two columns ───────────────────────────────────────────────────────────── */
+html[data-theme] body[data-typography="resume"] #root .resume-topbar + div {
+  max-width: 80rem;
+  gap: var(--r-gap);
+  align-items: flex-start;
+}
+
+/* Profile column: left-aligned, no box, stays in view while the CV scrolls. */
+html[data-theme] body[data-typography="resume"] #root .resume-topbar + div > .flex-1 {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 4px 0 0;
+  align-items: flex-start;
+  text-align: left;
+}
+@media (min-width: 1024px) {
+  html[data-theme] body[data-typography="resume"] #root .resume-topbar + div > .flex-1 {
+    width: clamp(280px, 27vw, 360px);
+    position: sticky;
+    top: 24px;
+  }
+}
+html[data-theme] body[data-typography="resume"] #root .perspective-1000 {
+  width: 128px;
+  height: 128px;
+  margin: 0 0 22px;
+  border: 0;
+  background: var(--k-sunk);
+  animation: none;
+  transform: none;
+}
+html[data-theme] body[data-typography="resume"] #root .resume-topbar + div > .flex-1 > div.font-bold {
+  margin-bottom: 14px;
+  text-align: left;
+  color: var(--k-graphite);
+  font-size: clamp(1.125rem, 1rem + .35vw, 1.3125rem);
+  font-weight: 500;
+  letter-spacing: -.015em;
+  line-height: 1.35;
+}
+html[data-theme] body[data-typography="resume"] #root .resume-topbar + div > .flex-1 > div.font-bold > span {
+  color: var(--k-ink);
+  font-weight: 700;
+}
+html[data-theme] body[data-typography="resume"] #root .resume-topbar + div > .flex-1 > p {
+  margin: 0 0 28px;
+  text-align: left;
+  color: var(--k-ink);
+  font-size: 15.5px;
+  line-height: 1.75;
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+
+/* Contact: a ruled sub-section with the icon links in a row. */
+html[data-theme] body[data-typography="resume"] #root .resume-topbar + div > .flex-1 > .mt-auto {
+  margin-top: 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--k-line);
+  border-radius: 0;
+}
+html[data-theme] body[data-typography="resume"] #root .mt-auto > h3 {
+  margin: 0 0 2px;
+  text-align: left;
+  color: var(--k-ink);
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+html[data-theme] body[data-typography="resume"] #root .mt-auto > p {
+  margin: 0 0 10px;
+  text-align: left;
+  color: var(--k-graphite);
+  font-size: 13.5px;
+}
+html[data-theme] body[data-typography="resume"] #root .mt-auto > div.flex {
+  justify-content: flex-start;
+  gap: 0;
+  margin-left: -8px;
+}
+html[data-theme] body[data-typography="resume"] #root .mt-auto a[title] {
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 10px;
+  transition: background-color .2s var(--k-ease);
+}
+html[data-theme] body[data-typography="resume"] #root .mt-auto a[title]:hover { transform: none; background: var(--k-sunk); }
+html[data-theme] body[data-typography="resume"] #root .mt-auto a[title]:active { transform: scale(.96); }
+
+/* ── The CV sheet ──────────────────────────────────────────────────────────── */
+html[data-theme] body[data-typography="resume"] #root .flex-\[2\] {
+  flex: 1 1 0;
+  min-width: 0;
+  background: var(--k-sheet);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+/* Section tabs: one row of words, the current one underlined in ink. */
+html[data-theme] body[data-typography="resume"] #root .resume-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+  margin: 0;
+  padding: 6px clamp(14px, 2.4vw, 28px) 0;
+  border-bottom: 1px solid var(--k-line);
+}
+html[data-theme] body[data-typography="resume"] #root .resume-tab {
+  position: relative;
+  min-height: 52px;
+  padding: 0 12px;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--k-graphite);
+  font-size: 15px;
+  font-weight: 550;
+  letter-spacing: -.01em;
+  transition: color .2s var(--k-ease);
+}
+html[data-theme] body[data-typography="resume"] #root .resume-tab .ui-icon { display: none; }
+html[data-theme] body[data-typography="resume"] #root .resume-tab::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -1px;
+  height: 2px;
+  background: transparent;
+  transition: background-color .2s var(--k-ease);
+}
+html[data-theme] body[data-typography="resume"] #root .resume-tab:hover { color: var(--k-ink); background: transparent; }
+html[data-theme] body[data-typography="resume"] #root .resume-tab:hover::after { background: var(--k-line); }
+html[data-theme] body[data-typography="resume"] #root .resume-tab.is-active { color: var(--k-ink); font-weight: 650; background: transparent; }
+html[data-theme] body[data-typography="resume"] #root .resume-tab.is-active::after { background: var(--k-ink); }
+html[data-theme] body[data-typography="resume"] #root .resume-tab:focus-visible { outline-offset: -4px; border-radius: 6px; }
+
+/* Section body: the full list in the page flow instead of a 615px inner scroller. */
+html[data-theme] body[data-typography="resume"] #root .flex-\[2\] > .h-\[615px\] {
+  height: auto;
+  min-height: 420px;
+  overflow: visible;
+  padding: 8px clamp(18px, 3vw, 40px) 28px;
+  justify-content: flex-start;
+}
+
+/* Entries: no boxes. Ruled rows with a clear title, a quiet meta block, then the text. */
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl {
+  margin: 0;
+  padding: 22px 0 24px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  transform: none;
+  transition: none;
+}
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl + .hover\:shadow-xl { border-top: 1px solid var(--k-line); }
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl:hover { background: transparent; transform: none; }
+
+/* Entry title row (institution logo + title). */
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > div.font-bold:first-child {
+  align-items: flex-start;
+  margin-bottom: 6px;
+  color: var(--k-ink);
+  font-size: clamp(1.0625rem, 1rem + .25vw, 1.1875rem);
+  font-weight: 650;
+  letter-spacing: -.02em;
+  line-height: 1.4;
+}
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > div.font-bold:first-child :is(.rounded-full, .resume-publication-icon) {
+  width: 24px;
+  height: 24px;
+  margin: 1px 10px 0 0;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--k-line);
+}
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > div.font-bold:first-child > span { display: inline-flex; margin-left: -4px; }
+
+/* Meta lines (organisation, date, authors, venue). */
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > div:not(:first-child):is(.text-gray-400, .text-gray-300) {
+  margin-bottom: 2px;
+  color: var(--k-graphite);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > div.mb-2:is(.text-gray-400, .text-gray-300) { margin-bottom: 10px; }
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl strong { color: var(--k-ink); font-weight: 650; }
+
+/* Body text: ink, comfortable measure. */
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > p {
+  max-width: 46em;
+  margin: 4px 0 0;
+  color: var(--k-ink);
+  font-size: 15px;
+  line-height: 1.75;
+  word-break: keep-all;
+}
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > p.mb-2 { margin-bottom: 8px; }
+html[data-theme] body[data-typography="resume"] #root .resume-research-summary.experience-description {
+  margin-top: 4px;
+  color: var(--k-ink);
+  font-size: 15px;
+  line-height: 1.75;
+}
+html[data-theme] body[data-typography="resume"] #root .experience-description .resume-research-meta { color: var(--k-graphite); }
+
+/* Links inside entries: cobalt text, underline on hover. */
+html[data-theme] body[data-typography="resume"] #root :is(.text-blue-400, .text-sky-300, .text-blue-300, .resume-paper-link, .resume-research-row a, .resume-publications-link, .resume-thesis-link) { color: var(--k-cobalt-text); }
+html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > button {
+  min-height: 32px;
+  padding: 0;
+  color: var(--k-cobalt-text);
+  font-size: 14.5px;
+  font-weight: 600;
+}
+html[data-theme] body[data-typography="resume"] #root .resume-paper-link { min-height: 32px; font-size: 14.5px; font-weight: 600; }
+
+/* Education: the lab line as plain text, not a striped box. */
+html[data-theme] body[data-typography="resume"] #root .education-lab {
+  margin: 0 0 8px;
+  padding: 0;
+  gap: 2px 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 14.5px;
+}
+html[data-theme] body[data-typography="resume"] #root .education-lab a { color: var(--k-cobalt-text); font-weight: 600; }
+html[data-theme] body[data-typography="resume"] #root .education-advisor { color: var(--k-graphite); font-size: 14.5px; }
+
+/* Sub-switch (International / Domestic, Honors / Lecture): a small segmented control. */
+html[data-theme] body[data-typography="resume"] #root .h-\[615px\] > .flex.justify-center:first-child {
+  align-self: flex-start;
+  display: inline-flex;
+  gap: 2px;
+  margin: 18px 0 4px;
+  padding: 3px;
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sunk);
+}
+html[data-theme] body[data-typography="resume"] #root .h-\[615px\] > .flex.justify-center:first-child > button {
+  margin: 0;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--k-graphite);
+  font-size: 14px;
+  font-weight: 600;
+}
+html[data-theme] body[data-typography="resume"] #root .h-\[615px\] > .flex.justify-center:first-child > button:hover { color: var(--k-ink); background: transparent; }
+html[data-theme] body[data-typography="resume"] #root .h-\[615px\] > .flex.justify-center:first-child > button:is(.bg-blue-600, .bg-blue-500) {
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  box-shadow: 0 0 0 1px var(--k-line);
+}
+
+/* Footer. */
+html[data-theme] body[data-typography="resume"] #root .resume-shell > footer {
+  max-width: 80rem;
+  margin-top: clamp(32px, 5vw, 56px);
+  padding: 18px 0 8px;
+  border-top: 1px solid var(--k-line);
+  text-align: left;
+  color: var(--k-graphite);
+  font-size: 13px;
+}
+
+/* Phone language button (lg:hidden): a plain sheet circle, not a blue glow. */
+html[data-theme] body[data-typography="resume"] #root .resume-shell > button.fixed {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--k-line);
+  border-radius: 50%;
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  font-size: 20px;
+  box-shadow: 0 6px 18px rgb(10 16 28 / .12);
+}
+html[data-theme] body[data-typography="resume"] #root .resume-shell > button.fixed:hover { transform: translateY(-1px); }
+
+/* ── Project detail dialog ─────────────────────────────────────────────────── */
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 {
+  background: color-mix(in srgb, var(--k-ink) 48%, transparent);
+}
+html[data-theme="dark"] body[data-typography="resume"] #root .fixed.inset-0 { background: rgb(4 7 12 / .72); }
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 > .max-w-3xl {
+  padding: clamp(22px, 3vw, 36px);
+  background: var(--k-sheet);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius);
+  box-shadow: none;
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 > .max-w-3xl > button.absolute {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  color: var(--k-graphite);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1;
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 > .max-w-3xl > button.absolute:hover { color: var(--k-ink); background: var(--k-sunk); }
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 h2 {
+  margin: 0 48px 18px 0;
+  color: var(--k-ink);
+  font-size: clamp(1.375rem, 1.15rem + .8vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.3;
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 .max-w-3xl > img {
+  margin-bottom: 22px;
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: #fff;
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 h3 {
+  margin-bottom: 8px;
+  color: var(--k-ink);
+  font-size: 1.125rem;
+  font-weight: 650;
+  letter-spacing: -.015em;
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 .max-w-3xl > p {
+  color: var(--k-ink);
+  font-size: 15.5px;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 .grid {
+  padding: 14px 0;
+  border-top: 1px solid var(--k-line);
+  color: var(--k-ink);
+  font-size: 14.5px;
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 .grid .text-sky-300 { color: var(--k-graphite); font-weight: 600; }
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 .border-t { border-color: var(--k-line); }
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 h4 {
+  color: var(--k-ink);
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 h4 + div > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--k-line);
+  border-radius: 10px;
+  background: var(--k-sheet);
+  color: var(--k-ink);
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color .2s var(--k-ease), transform .2s var(--k-ease);
+}
+html[data-theme] body[data-typography="resume"] #root .fixed.inset-0 h4 + div > a:hover { border-color: var(--k-ink); transform: translateY(-1px); }
+
+/* ── Phone ─────────────────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  html[data-theme] body[data-typography="resume"] #root .resume-topbar + div { gap: 28px; }
+  html[data-theme] body[data-typography="resume"] #root .flex-\[2\] { width: 100%; flex: 0 0 auto; }
+}
+@media (max-width: 760px) {
+  html[data-theme] body[data-typography="resume"] #root .mt-auto a[title] { min-width: 38px; }
+  html[data-theme] body[data-typography="resume"] #root .resume-topbar { gap: 14px; }
+  html[data-theme] body[data-typography="resume"] #root .resume-header-actions { width: auto; }
+  html[data-theme] body[data-typography="resume"] #root .perspective-1000 { width: 96px; height: 96px; margin-bottom: 16px; }
+  html[data-theme] body[data-typography="resume"] #root .resume-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 4px 8px 0;
+  }
+  html[data-theme] body[data-typography="resume"] #root .resume-tab { min-height: 46px; padding: 0 4px; font-size: 13.5px; text-align: center; }
+  html[data-theme] body[data-typography="resume"] #root .resume-tab::after { left: 4px; right: 4px; }
+  html[data-theme] body[data-typography="resume"] #root .flex-\[2\] > .h-\[615px\] { padding: 4px 18px 20px; min-height: 0; }
+  html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl { padding: 18px 0 20px; }
+  html[data-theme] body[data-typography="resume"] #root .hover\:shadow-xl > p,
+  html[data-theme] body[data-typography="resume"] #root .resume-research-summary.experience-description { font-size: 14.5px; line-height: 1.7; }
+  html[data-theme] body[data-typography="resume"] #root .h-\[615px\] > .flex.justify-center:first-child > button { padding: 0 10px; font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme] body[data-typography="resume"] #root * { transition-duration: 0s !important; }
+}

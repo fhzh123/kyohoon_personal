@@ -12,7 +12,6 @@ body[data-surface="home"] {
   font-size-adjust: from-font;
   accent-color: var(--k-cobalt);
 }
-body[data-surface="home"] .ambient-sky { display: none; }
 body[data-surface="home"] ::selection { background: var(--k-cobalt); color: #fff; }
 
 .home {
@@ -86,15 +85,25 @@ html[data-theme="dark"] body[data-surface="home"] .home-header .ui-icon { filter
   word-break: keep-all;
 }
 
-/* The stage: cobalt, rounded on top, flat where it meets the ruled line. */
+/* The stage: a pale cobalt-tinted panel, rounded on top, flat where it meets the ruled
+   line, with a soft floor shadow under the mascot's feet. */
 .home-stage {
   position: relative;
   align-self: stretch;
   margin: clamp(8px, 3vh, 36px) 0 0;
   min-height: 340px;
   border-radius: 22px 22px 0 0;
-  background: var(--k-cobalt);
+  background:
+    radial-gradient(ellipse 34% 5% at 50% 99%, color-mix(in srgb, var(--k-ink) 16%, transparent), transparent 100%),
+    color-mix(in srgb, var(--k-cobalt) 8%, var(--k-sheet));
+  border: 1px solid color-mix(in srgb, var(--k-cobalt) 14%, var(--k-line));
+  border-bottom: 0;
   overflow: hidden;
+}
+html[data-theme="dark"] .home-stage {
+  background:
+    radial-gradient(ellipse 34% 5% at 50% 99%, rgb(0 0 0 / .45), transparent 100%),
+    color-mix(in srgb, var(--k-cobalt) 16%, var(--k-sheet));
 }
 .home-pose {
   position: absolute;

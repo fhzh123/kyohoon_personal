@@ -5,6 +5,9 @@ const uiIcon = name => `<img class="ui-icon" src="/icons/ui-${name}.svg" width="
 const themeButton = () => `<a class="theme-toggle theme-toggle--icon space-nav-button" href="/settings" data-global-settings aria-label="설정" title="설정">${uiIcon('settings')}</a>`;
 const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><img src="/mascot/face.png" alt="" width="36" height="36"><span>Kyohoon Jin</span></a>';
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
+// kh design system: shared tokens and bridge on every page, then one file per surface.
+const KH_V = '20261124-1';
+const KH_PAGES = new Set(['login', 'selectstar', 'personal', 'demos', 'paper', 'settings', 'travel', 'gallery']);
 const shell = (title, body, surface = '') => `<!doctype html>
 <html lang="ko" data-theme="dark" data-type="service" data-radius="soft" data-motion>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#131517">
@@ -20,7 +23,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script>${surface === 'home' ? '<link rel="stylesheet" href="/kh-system.css?v=20261123-1"><link rel="stylesheet" href="/home.css?v=20261123-1"><script src="/home.js?v=20261123-1" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script><link rel="stylesheet" href="/kh-system.css?v=${KH_V}"><link rel="stylesheet" href="/kh-site.css?v=${KH_V}">${KH_PAGES.has(surface) ? `<link rel="stylesheet" href="/kh/${surface}.css?v=${KH_V}">` : ''}${surface === 'home' ? '<link rel="stylesheet" href="/home.css?v='+KH_V+'"><script src="/home.js?v='+KH_V+'" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
 </head><body data-surface="${surface}"${surface === 'demos' ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 // Home: one large mascot on a cobalt stage. Pointing at or focusing a space

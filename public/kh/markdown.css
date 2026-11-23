@@ -1,0 +1,97 @@
+/* kh design system: markdown page polish. Loaded after /kh-site.css. */
+/* Editor chrome only. The document themes in /markdown-themes.css (.md-doc[data-md-theme])
+   are the user's choice for the rendered page and are left as they are. */
+
+html[data-theme] .md-shell { --md-current: color-mix(in srgb, var(--k-cobalt) 10%, transparent); --md-hover: color-mix(in srgb, var(--k-ink) 6%, transparent); }
+html[data-theme] .md-shell .md-app { background: none; }
+
+/* Sidebar: a heading, the folder tree, the current document as a tint (no side bar). */
+html[data-theme] .md-shell .md-sidebar { border-right-color: var(--k-line); }
+html[data-theme] .md-shell .md-sidebar-head h2 { font-size: .9375rem; font-weight: 650; letter-spacing: -.01em; color: var(--k-ink); }
+html[data-theme] .md-shell .md-folder-toggle { font-size: .9375rem; font-weight: 600; color: var(--k-ink); border-radius: 8px; }
+html[data-theme] .md-shell :is(.md-folder-toggle .md-icon, .md-doc-link .md-icon) { color: var(--k-graphite); }
+html[data-theme] .md-shell .md-count { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] .md-shell .md-docs { border-left-color: var(--k-line); }
+html[data-theme] .md-shell .md-doc-link { font-size: .9375rem; color: var(--k-ink); border-radius: 8px; }
+html[data-theme] .md-shell .md-doc-item.is-current::before { content: none; display: none; }
+html[data-theme] .md-shell .md-doc-item.is-current .md-doc-link { background: var(--md-current); color: var(--k-ink); font-weight: 650; }
+html[data-theme] .md-shell .md-doc-item.is-current .md-doc-link .md-icon { color: var(--k-cobalt-text); }
+html[data-theme] .md-shell .md-text-btn { color: var(--k-cobalt-text); font-size: .875rem; border-radius: 8px; }
+html[data-theme] .md-shell :is(.md-docs-empty, .md-tree-note, .md-tree-empty p, .md-readonly-note) { color: var(--k-graphite); }
+html[data-theme] .md-shell .md-icon-btn { border-radius: 8px; color: var(--k-ink); }
+
+/* Title bar: breadcrumb, title, save state, view switch, theme, export. */
+html[data-theme] .md-shell .md-crumb { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] .md-shell .md-crumb a:hover { color: var(--k-ink); }
+html[data-theme] .md-shell .md-heading h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -.025em; color: var(--k-ink); }
+html[data-theme] .md-shell .md-save { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] .md-shell .md-views { padding: 3px; border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sunk); }
+html[data-theme] .md-shell .md-view-btn { border-radius: 7px; color: var(--k-graphite); }
+html[data-theme] .md-shell .md-view-btn[aria-pressed="true"] { background: var(--k-sheet); color: var(--k-ink); box-shadow: 0 1px 2px rgb(10 20 40 / .12); }
+html[data-theme] .md-shell .md-view-btn::after { border-radius: 8px; background: var(--k-ink); color: var(--k-paper); }
+html[data-theme] .md-shell .md-theme-trigger { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); font-size: .875rem; }
+@media (hover: hover) and (pointer: fine) {
+  html[data-theme] .md-shell .md-theme-trigger:hover { background: var(--k-sheet); border-color: var(--k-ink); }
+}
+html[data-theme] .md-shell .md-theme-trigger > .md-icon { color: var(--k-graphite); }
+html[data-theme] .md-shell .md-theme-chip { border-color: var(--k-line); border-radius: 6px; }
+
+/* Toolbar: icon tools between two hairlines. */
+html[data-theme] .md-shell .md-toolbar { border-color: var(--k-line); }
+html[data-theme] .md-shell .md-tool { border-radius: 8px; color: var(--k-ink); }
+html[data-theme] .md-shell .md-tool-sep { border-left-color: var(--k-line); }
+
+/* Panes: source on the paper, the preview on a slightly recessed ground. No focus stripe;
+   the caret and the pane's own focus are enough. */
+html[data-theme] .md-shell .md-pane--editor:focus-within,
+html[data-theme] .md-shell .md-app[data-view] .md-pane--editor:focus-within { box-shadow: none; }
+html[data-theme] .md-shell .md-app[data-view="split"] .md-pane--editor { border-right-color: var(--k-line); }
+html[data-theme] .md-shell .md-source { color: var(--k-ink); font-size: 1rem; line-height: 1.75; caret-color: var(--k-cobalt); }
+html[data-theme] .md-shell .md-source::placeholder { color: var(--k-graphite); }
+html[data-theme] .md-shell .md-pane--preview { background: color-mix(in srgb, var(--k-sunk) 55%, transparent); }
+html[data-theme] .md-shell .md-pane--preview > .md-doc { border-radius: 10px; }
+
+/* Conflict notice: a full border and a tint. */
+html[data-theme] .md-shell .md-conflict { border-radius: 10px; }
+
+/* Empty state and the signed-out gate: no label above the heading. */
+html[data-theme] .md-shell .md-empty { border-top-color: var(--k-line); }
+html[data-theme] .md-shell .md-empty h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -.025em; }
+html[data-theme] .md-shell .md-empty p { color: var(--k-graphite); }
+html[data-theme] .md-shell .md-gate .space-eyebrow { display: none; }
+html[data-theme] .md-shell .md-gate h1 { font-weight: 700; letter-spacing: -.025em; }
+html[data-theme] .md-shell .md-gate > p:not(.space-eyebrow) { color: var(--k-graphite); }
+
+/* Theme picker popover and dialogs: one sheet, one hairline, one shadow. */
+html[data-theme] .md-theme-panel { border-color: var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); color: var(--k-ink); box-shadow: 0 18px 48px rgb(10 20 40 / .18); }
+html[data-theme] .md-theme-panel-head h2 { font-size: 1rem; font-weight: 700; letter-spacing: -.015em; }
+html[data-theme] .md-theme-panel-note { border-bottom-color: var(--k-line); color: var(--k-graphite); }
+html[data-theme] .md-theme-family { border-radius: 10px; }
+html[data-theme] .md-theme-variant { color: var(--k-graphite); }
+html[data-theme] .md-theme-tile:has(:checked) .md-theme-variant { color: var(--k-ink); }
+html[data-theme] .md-theme-sample { border-color: var(--k-line); border-radius: 8px; background: var(--k-sunk); }
+html[data-theme] .md-theme-tile:has(:checked) .md-theme-sample { box-shadow: 0 0 0 2px var(--k-cobalt); }
+html[data-theme] .md-switch { color: var(--k-graphite); }
+html[data-theme] .md-switch input:checked { background: var(--k-cobalt); }
+html[data-theme] .md-switch input::after { background: #fff; }
+
+html[data-theme] .md-dialog { border-color: var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); color: var(--k-ink); box-shadow: 0 24px 64px rgb(10 20 40 / .22); }
+html[data-theme] .md-dialog::backdrop { background: rgb(10 14 20 / .5); }
+html[data-theme] .md-dialog h2 { font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] .md-dialog-text, html[data-theme] .md-theme-selected { color: var(--k-graphite); }
+html[data-theme] .md-field { border-color: var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); }
+html[data-theme] .md-field:hover { border-color: color-mix(in srgb, var(--k-line) 50%, var(--k-ink)); }
+html[data-theme] .md-dialog--export .md-theme-list { border-color: var(--k-line); border-radius: 10px; }
+
+@media (max-width: 1023px) {
+  /* The closed drawer's shadow used to spill a grey edge onto the page; shade it only when open. */
+  html[data-theme] .md-shell .md-sidebar { background: var(--k-paper); border-right-color: var(--k-line); box-shadow: none; }
+  html[data-theme] .md-shell .md-app[data-sidebar="open"] .md-sidebar { box-shadow: 16px 0 48px rgb(10 20 40 / .18); }
+}
+@media (max-width: 760px) {
+  html[data-theme] .md-shell .md-heading h1 { font-size: 1.25rem; }
+  html[data-theme] .md-shell .md-source { font-size: 16px; }
+}
+
+/* The raw markdown pane keeps a monospaced face: it is code being edited. */
+html[data-theme] body .md-source { font-family: ui-monospace, "SFMono-Regular", "D2Coding", Consolas, "Liberation Mono", monospace; }

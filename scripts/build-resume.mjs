@@ -76,7 +76,8 @@ html = html.replace('</head>', '<link rel="stylesheet" href="/atmosphere.css?v=2
 html = html.replace('</head>', '<link rel="stylesheet" href="/resume-details.css?v=20261114-2"></head>');
 html = html.replace('<html lang="en">', '<html lang="ko" data-theme="dark">');
 html = html.replace('<body>', '<body data-typography="resume">');
-html = html.replace('</body>', '    <script defer src="/resume/resume.js"></script>\n  </body>');
+// kh design system: shared tokens, the site bridge, then the Resume's own polish (loaded last).
+html = html.replace('</body>', '    <link rel="stylesheet" href="/kh-system.css?v=20261124-1"><link rel="stylesheet" href="/kh-site.css?v=20261124-1"><link rel="stylesheet" href="/kh/resume.css?v=20261124-1">\n      <script defer src="/resume/resume.js"></script>\n  </body>');
 await fs.writeFile(path.join(output, 'index.html'), html);
 console.log('Resume: source compiled to public/resume (isolated HTML document).');
 

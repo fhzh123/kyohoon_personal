@@ -28,7 +28,7 @@ html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) {
   accent-color: var(--k-cobalt);
 }
 html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :is(button, input, select, textarea) { font-family: var(--k-font); }
-html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .ambient-sky { display: none; }
+html[data-theme]:not([data-bg-image="true"]) body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .ambient-sky { display: none; }
 html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) ::selection { background: var(--k-cobalt); color: #fff; }
 html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) :focus-visible { outline: 2px solid var(--k-cobalt); outline-offset: 2px; }
 
@@ -218,8 +218,22 @@ html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timel
 html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.status-paused { background: var(--k-sheet); border: 1.5px dashed var(--event-color); color: var(--k-ink); }
 html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.status-paused :is(.timeline-bar-title, .timeline-bar-meta) { color: var(--k-ink); }
 
-@container (width < 84px) {
-  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar-copy { visibility: hidden; }
+/* A bar too short for its title keeps the title anyway: it sits just after the bar,
+   on the lane, in ink, so every bar says what it is. */
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar { overflow: visible; }
+html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-lane { overflow: visible; }
+@container (width < 140px) {
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar-copy {
+    position: absolute; left: calc(100% + 8px); top: 50%; translate: 0 -50%;
+    display: block; width: max-content; max-width: 300px; padding: 2px 6px; border-radius: 5px;
+    background: color-mix(in srgb, var(--k-sheet) 88%, transparent); pointer-events: none;
+  }
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar-copy :is(.timeline-bar-title, .timeline-bar-meta, .timeline-bar-owner) {
+    color: var(--k-ink); overflow: visible; text-overflow: clip; white-space: nowrap;
+  }
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar-copy .timeline-bar-meta { display: none; }
+  /* Near the right edge the title goes before the bar instead. */
+  html[data-theme] body[data-surface="research"]:not(#k1):not(#k2):not(#k3) .timeline-bar.label-before .timeline-bar-copy { left: auto; right: calc(100% + 8px); }
 }
 
 /* Legend and help under the chart. */

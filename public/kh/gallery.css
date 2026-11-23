@@ -1,0 +1,129 @@
+/* kh design system: gallery page polish. Loaded after /kh-site.css. */
+/* This file loads before /gallery/gallery.css (its link sits in the page body), so rules
+   win on specificity. gallery.css redefines --bg/--ink/... for html[data-theme=dark], which
+   would beat kh-site.css by order, so the bridge is restated here with id weight. */
+
+html[data-theme]:not(#k1):has(body[data-surface="gallery"]) {
+  --bg: var(--k-paper); --paper: var(--k-sheet); --ink: var(--k-ink); --muted: var(--k-graphite); --line: var(--k-line);
+  --soft: var(--k-sunk); --blue: var(--k-cobalt-text); --blue-soft: color-mix(in srgb, var(--k-cobalt) 12%, var(--k-sheet));
+  --shadow: none;
+}
+
+/* Heading: title and one sentence; the counts become one quiet line. */
+html[data-theme] body[data-surface="gallery"] .eyebrow { display: none; }
+html[data-theme] body[data-surface="gallery"] .heading { padding: 40px 0 24px; align-items: flex-end; }
+html[data-theme] body[data-surface="gallery"] .heading h1 { font-size: clamp(2rem, 1.5rem + 1.4vw, 2.75rem); font-weight: 700; letter-spacing: -.025em; line-height: 1.15; margin: 0 0 10px; }
+html[data-theme] body[data-surface="gallery"] .heading p { font-size: 1rem; line-height: 1.65; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .heading-meta { gap: 18px; padding-bottom: 4px; }
+html[data-theme] body[data-surface="gallery"] .heading-meta span { display: inline-flex; align-items: baseline; gap: 6px; font-size: .875rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .heading-meta strong { display: inline; font-size: .9375rem; line-height: 1.4; font-weight: 700; letter-spacing: 0; color: var(--k-ink); font-variant-numeric: tabular-nums; }
+
+/* View tabs: text tabs on one hairline; the current one is underlined in ink. */
+html[data-theme] body[data-surface="gallery"] .view-nav { border-bottom-color: var(--k-line); }
+html[data-theme] body[data-surface="gallery"] .view-nav button { font-size: .9375rem; font-weight: 600; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .view-nav button:hover { color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .view-nav button[aria-pressed=true] { color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .view-nav .count { font-size: .75rem; font-weight: 600; background: var(--k-sunk); color: var(--k-graphite); border-radius: 6px; }
+
+/* Viewer: one sheet with one hairline; the stage is a flat ground, no glow or rings. */
+html[data-theme] body[data-surface="gallery"] .viewer { border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); box-shadow: none; }
+html[data-theme] body[data-surface="gallery"] .stage-label { display: none; }
+html[data-theme] body[data-surface="gallery"] .stage-toolbar { justify-content: flex-end; }
+html[data-theme] body[data-surface="gallery"] .stage { background: var(--k-sunk); background-image: none; }
+html[data-theme] body[data-surface="gallery"] .stage[data-background=dark] { background: #141b26; background-image: none; }
+html[data-theme] body[data-surface="gallery"] .stage[data-background=checker] { background: repeating-conic-gradient(#e3e7ed 0% 25%, #fafbfc 0% 50%) 0 / 24px 24px; }
+html[data-theme] body[data-surface="gallery"] .ground-ring { display: none; }
+html[data-theme] body[data-surface="gallery"] .stage-image { filter: none; }
+html[data-theme] body[data-surface="gallery"] .stage-bg-controls button { border: 2px solid var(--k-sheet); box-shadow: 0 0 0 1px var(--k-line); }
+html[data-theme] body[data-surface="gallery"] .stage-bg-controls [data-bg=soft] { background: var(--k-sunk); }
+html[data-theme] body[data-surface="gallery"] .stage-bg-controls [data-bg=dark] { background: #141b26; }
+html[data-theme] body[data-surface="gallery"] .stage-bg-controls button[aria-pressed=true]::after { border-color: var(--k-cobalt); }
+html[data-theme] body[data-surface="gallery"] .stage-footer { height: 50px; background: var(--k-sheet); border-top: 1px solid var(--k-line); color: var(--k-graphite); font-size: .8125rem; }
+html[data-theme] body[data-surface="gallery"] .stage-footer button { width: 34px; height: 34px; border: 1px solid var(--k-line); border-radius: 8px; background: var(--k-sheet); color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .stage-footer button:hover { border-color: var(--k-ink); background: var(--k-sheet); }
+
+html[data-theme] body[data-surface="gallery"] .viewer-side { border-left-color: var(--k-line); padding: 22px 24px; }
+html[data-theme] body[data-surface="gallery"] .side-kicker { font-size: .8125rem; color: var(--k-graphite); font-variant-numeric: tabular-nums; }
+html[data-theme] body[data-surface="gallery"] .favorite-big { border-color: var(--k-line); color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .favorite-big:hover { border-color: var(--k-ink); color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .viewer-side h2 { font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.35; }
+html[data-theme] body[data-surface="gallery"] .tag { border-color: var(--k-line); border-radius: 6px; font-size: .75rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .file-info { border-color: var(--k-line); }
+html[data-theme] body[data-surface="gallery"] .file-info div { font-size: .8125rem; }
+html[data-theme] body[data-surface="gallery"] .file-info dt { color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] :is(.primary-button, .quiet-button) { border-radius: 10px; font-size: .875rem; font-weight: 600; }
+html[data-theme] body[data-surface="gallery"] .primary-button { background: var(--k-cobalt); border-color: var(--k-cobalt); color: #fff; }
+html[data-theme] body[data-surface="gallery"] .primary-button:hover { background: color-mix(in srgb, var(--k-cobalt) 88%, #000); }
+html[data-theme] body[data-surface="gallery"] .quiet-button { background: var(--k-sheet); border-color: var(--k-line); color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .quiet-button:hover { background: var(--k-sheet); border-color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .side-note { font-size: .75rem; line-height: 1.6; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .related p { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .related-grid button { background: var(--k-sunk); border-color: transparent; border-radius: 10px; }
+html[data-theme] body[data-surface="gallery"] .related-grid button:hover { border-color: var(--k-ink); }
+
+/* Direction and motion controls: one sheet, the chosen direction in cobalt. */
+html[data-theme] body[data-surface="gallery"] .motion-panel { border-color: var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); }
+html[data-theme] body[data-surface="gallery"] .direction-label { font-size: .875rem; font-weight: 600; color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .direction-controls button { border-color: var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .direction-controls button:hover { border-color: var(--k-ink); color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .direction-controls button[aria-pressed=true] { border-color: var(--k-cobalt); background: color-mix(in srgb, var(--k-cobalt) 10%, var(--k-sheet)); color: var(--k-cobalt-text); }
+html[data-theme] body[data-surface="gallery"] .motion-actions label { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .motion-actions select { border-color: var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); font-size: .8125rem; }
+html[data-theme] body[data-surface="gallery"] .motion-actions button { font-size: .8125rem; }
+
+/* Collection: heading with a count, search, text filters, then the image grid. */
+html[data-theme] body[data-surface="gallery"] .collection-top { margin-top: 44px; }
+html[data-theme] body[data-surface="gallery"] .collection-top h2 { font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="gallery"] .collection-top h2 small { font-size: .875rem; font-weight: 500; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .collection-actions button { min-height: 40px; font-size: .8125rem; }
+html[data-theme] body[data-surface="gallery"] .search { border-color: var(--k-line); border-radius: 10px; background: var(--k-sheet); }
+html[data-theme] body[data-surface="gallery"] .search:focus-within { border-color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .search svg { color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .search input { font-size: .875rem; color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .search input::placeholder { color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .filters { gap: 4px; }
+html[data-theme] body[data-surface="gallery"] .filters button { border-radius: 999px; font-size: .8125rem; font-weight: 500; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .filters button:hover { color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .filters button[aria-pressed=true] { background: var(--k-ink); border-color: var(--k-ink); color: var(--k-paper); font-weight: 600; }
+html[data-theme] body[data-surface="gallery"] .filters button small { font-size: .75rem; opacity: .75; font-variant-numeric: tabular-nums; }
+
+/* Image tiles: one hairline, no lift glow; the selected one gets an ink border. */
+html[data-theme] body[data-surface="gallery"] .art-card { border: 1px solid var(--k-line); border-radius: 12px; background: var(--k-sheet); box-shadow: none; }
+html[data-theme] body[data-surface="gallery"] .art-card:hover { transform: none; border-color: color-mix(in srgb, var(--k-line) 40%, var(--k-ink)); }
+html[data-theme] body[data-surface="gallery"] .art-card.is-selected { border-color: var(--k-cobalt); box-shadow: 0 0 0 1px var(--k-cobalt); }
+html[data-theme="dark"] body[data-surface="gallery"] .card-image { background: color-mix(in srgb, var(--art-ground, #eef2f9) 12%, var(--k-sunk)); }
+html[data-theme] body[data-surface="gallery"] .card-copy strong { font-size: .875rem; font-weight: 600; letter-spacing: -.01em; }
+html[data-theme] body[data-surface="gallery"] .card-copy small { font-size: .75rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .art-card.featured .card-copy strong { font-size: 1rem; }
+html[data-theme] body[data-surface="gallery"] .favorite-small { border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .favorite-small:hover { border-color: var(--k-ink); color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .mini-download { background: var(--k-sheet); color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .mini-download:hover { border-color: var(--k-line); color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .empty { border: 1px solid var(--k-line); border-radius: 12px; background: var(--k-sheet); color: var(--k-graphite); font-size: .9375rem; }
+html[data-theme] body[data-surface="gallery"] .local-note { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .footer { border-top-color: var(--k-line); color: var(--k-graphite); font-size: .8125rem; }
+
+/* Large view dialog and toast. */
+html[data-theme] body[data-surface="gallery"] .image-dialog { border: 1px solid var(--k-line); border-radius: var(--k-radius); background: var(--k-sheet); color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .image-dialog::backdrop { background: rgb(10 14 20 / .6); backdrop-filter: none; }
+html[data-theme] body[data-surface="gallery"] .dialog-top { border-bottom-color: var(--k-line); }
+html[data-theme] body[data-surface="gallery"] .dialog-top h2 { font-size: 1.125rem; font-weight: 700; letter-spacing: -.02em; }
+html[data-theme] body[data-surface="gallery"] .dialog-top .icon-button { border-color: var(--k-line); border-radius: 10px; background: var(--k-sheet); color: var(--k-ink); }
+html[data-theme] body[data-surface="gallery"] .dialog-foot { font-size: .8125rem; color: var(--k-graphite); }
+html[data-theme] body[data-surface="gallery"] .toast { background: var(--k-ink); color: var(--k-paper); border-radius: 10px; box-shadow: 0 8px 24px rgb(10 20 40 / .18); font-size: .875rem; }
+
+@media (max-width: 760px) {
+  html[data-theme] body[data-surface="gallery"] .heading { padding-top: 24px; }
+  html[data-theme] body[data-surface="gallery"] .heading p { font-size: .9375rem; }
+  html[data-theme] body[data-surface="gallery"] .viewer { border-radius: 12px; }
+  html[data-theme] body[data-surface="gallery"] .viewer-side { border-left: 0; border-top: 1px solid var(--k-line); padding: 20px; }
+  html[data-theme] body[data-surface="gallery"] .card-copy strong { font-size: .8125rem; }
+  html[data-theme] body[data-surface="gallery"] .card-copy small { font-size: .6875rem; }
+  html[data-theme] body[data-surface="gallery"] .footer { font-size: .75rem; }
+}
+
+/* gallery.css fixes the header at 80px; on a phone the actions wrap and ran into the title. */
+html[data-theme] body[data-surface="gallery"] .page .site-header { height: auto; min-height: 80px; }
+@media (max-width: 760px) {
+  html[data-theme] body[data-surface="gallery"] .page .site-header { padding: 14px 0; flex-wrap: wrap; }
+}

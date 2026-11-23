@@ -87,4 +87,4 @@ export function workTopbar(active, {crumb = '', crumbId = '', actions = '', auth
 </header>`;
 }
 
-export const WORK_SHELL_ASSETS = '<link rel="stylesheet" href="/work-shell.css?v=20261121-1"><script src="/work-shell.js?v=20261118-1" defer></script>';
+export const WORK_SHELL_ASSETS = '<link rel="stylesheet" href="/work-shell.css?v=20261121-1"><link rel="stylesheet" href="/kh-system.css?v=20261124-1"><link rel="stylesheet" href="/kh-site.css?v=20261124-1"><script src="/work-shell.js?v=20261118-1" defer></script>';
