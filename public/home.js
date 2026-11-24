@@ -1,33 +1,61 @@
-// Home: pointing at or focusing a space shows the mascot in that space's pose.
+// Keep one visible mascot while the next pose is loading.
 (() => {
   const stage = document.querySelector('[data-home-stage]');
   const nav = document.querySelector('.home-spaces');
-  if (!stage || !nav) return;
-  const base = stage.querySelector('[data-default-pose]');
-  const next = stage.querySelector('[data-next-pose]');
-  const defaultSrc = base.getAttribute('src');
-  let current = defaultSrc;
+  const mascot = stage?.querySelector('[data-default-pose]');
+  if (!mascot || !nav) return;
 
-  function show(src) {
-    if (src === current) return;
-    current = src;
-    if (src === defaultSrc) { next.classList.remove('is-shown'); base.classList.add('is-shown'); return; }
-    const swap = () => { if (current !== src) return; base.classList.remove('is-shown'); next.classList.add('is-shown'); };
-    if (next.getAttribute('src') === src && next.complete) { swap(); return; }
-    next.classList.remove('is-shown');
-    next.src = src;
-    next.decode().then(swap, swap);
+  const defaultSrc = mascot.getAttribute('src');
+  const poses = new Map();
+  let requestedSrc = defaultSrc;
+  let displayedSrc = defaultSrc;
+
+  function loadPose(src) {
+    if (!poses.has(src)) {
+      const image = new Image();
+      image.fetchPriority = 'low';
+      image.src = src;
+      const ready = image.decode().then(() => image, () => {
+        poses.delete(src);
+        return null;
+      });
+      poses.set(src, ready);
+    }
+    return poses.get(src);
   }
 
-  for (const link of nav.querySelectorAll('[data-pose]')) {
+  function display(src) {
+    displayedSrc = src;
+    mascot.classList.toggle('is-space-pose', src !== defaultSrc);
+    mascot.src = src;
+  }
+
+  async function show(src) {
+    requestedSrc = src;
+    if (src === displayedSrc) return;
+    if (src === defaultSrc) {
+      display(src);
+      return;
+    }
+    const ready = await loadPose(src);
+    if (ready && requestedSrc === src && displayedSrc !== src) display(src);
+  }
+
+  const links = nav.querySelectorAll('[data-pose]');
+  for (const link of links) {
     const pose = link.dataset.pose;
     link.addEventListener('pointerenter', () => show(pose));
     link.addEventListener('focus', () => show(pose));
   }
-  nav.addEventListener('pointerleave', () => { if (!nav.contains(document.activeElement)) show(defaultSrc); });
-  nav.addEventListener('focusout', event => { if (!nav.contains(event.relatedTarget)) show(defaultSrc); });
+  nav.addEventListener('pointerleave', () => {
+    show(document.activeElement?.dataset.pose || defaultSrc);
+  });
+  nav.addEventListener('focusout', event => {
+    if (!nav.contains(event.relatedTarget)) show(defaultSrc);
+  });
 
-  // Warm the poses once the page is idle so the first swap is instant.
-  const warm = () => { for (const link of nav.querySelectorAll('[data-pose]')) { const img = new Image(); img.decoding = 'async'; img.src = link.dataset.pose; } };
-  if ('requestIdleCallback' in window) requestIdleCallback(warm, {timeout: 2500}); else setTimeout(warm, 1200);
+  // Load secondary poses after giving the initial mascot priority.
+  const warm = () => { for (const link of links) void loadPose(link.dataset.pose); };
+  if ('requestIdleCallback' in window) requestIdleCallback(warm, {timeout: 2500});
+  else setTimeout(warm, 1200);
 })();

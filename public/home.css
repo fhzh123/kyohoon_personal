@@ -99,15 +99,12 @@ html[data-theme="dark"] body[data-surface="home"] .home-header .ui-icon { filter
   left: 50%;
   bottom: 0;
   width: auto;
-  height: 94%;
+  height: 86%;
   max-width: 110%;
   object-fit: contain;
-  opacity: 0;
-  transition: opacity .28s var(--k-ease), translate .42s var(--k-ease);
-  translate: -50% 18px;
+  translate: -50% 0;
 }
-.home-pose.is-shown { opacity: 1; translate: -50% 0; }
-.home-pose[data-default-pose] { height: 86%; }
+.home-pose.is-space-pose { height: 94%; }
 
 /* The four spaces: one rule, four columns, no boxes. */
 .home-spaces {
@@ -163,9 +160,6 @@ body[data-surface="home"] .site-footer {
   html:not([data-home-motion="off"]) .home-pose[data-default-pose] { animation: home-pose-rise .8s .32s var(--k-ease) both; }
 }
 html[data-home-motion="on"] .home-pose[data-default-pose] { animation: home-pose-rise .8s .32s var(--k-ease) both; }
-@media (prefers-reduced-motion: reduce) {
-  html:not([data-home-motion="on"]) .home-pose { transition: none; }
-}
 
 /* Tablet: the stage narrows, the spaces go two by two. */
 @media (max-width: 1024px) {
