@@ -1,129 +1,100 @@
-# Kyohoon Jin
+<div align="center">
+  <img src="public/mascot/face.png" width="88" height="88" alt="Kyohoon Jin 마스코트">
+  <h1>Kyohoon Jin</h1>
+  <p>진교훈의 포트폴리오, 연구 작업 공간, 개인 기록</p>
+  <p><a href="https://www.kyohoon.app">홈페이지</a> &nbsp;|&nbsp; <a href="https://www.kyohoon.app/resume">Resume</a> &nbsp;|&nbsp; <a href="https://www.kyohoon.app/work/demos">연구 데모</a> &nbsp;|&nbsp; <a href="https://www.kyohoon.app/personal/gallery">마스코트 갤러리</a></p>
+</div>
 
-AI Research Engineer 진교훈의 개인 홈페이지입니다. 경력과 연구 성과를 소개하고, 연구 작업과 개인 기록을 관리합니다.
+## 사이트 둘러보기
 
-[홈페이지](https://www.kyohoon.app) | [Resume](https://www.kyohoon.app/resume) | [Personal](https://www.kyohoon.app/personal) | [갤러리](https://www.kyohoon.app/personal/gallery)
+Selectstar에서 AI 모델 학습에 쓰이는 데이터를 만들고, 모델을 평가하는 방법을 연구합니다. 이 사이트에 경력과 연구 결과를 공개하고, 팀 업무와 논문 작업을 관리합니다.
 
-## 공간 안내
-
-| 공간 | 주소 | 주요 기능 | 접근 |
-| --- | --- | --- | --- |
-| Home | `/` | Resume, Selectstar, Paper, Personal로 이동 | 공개 |
-| Resume | `/resume` | 경력, 논문, 프로젝트, 학력과 연락처 | 공개 |
-| Selectstar | `/work` | 연구일지, 팀 리소스, 연구 데모, 품의 사용내역 | 허용된 계정 |
-| 팀 리소스 | `/work/team-resources` | 과업 배분, 월별 변화, 주간 원본 기록(사이드바 하위 메뉴) | 허용된 계정 |
-| Paper | `/paper` | 논문 리뷰 준비와 리뷰탈 준비 | 허용된 계정 |
-| Personal | `/personal` | 여행의 흔적과 마스코트 갤러리 | 공개 |
-| 여행의 흔적 | `/personal/travel` | 지구본에서 지역별 여행 사진과 기록 열람 | 공개 열람, Editor 편집 |
-| 갤러리 | `/personal/gallery` | 마스코트 모아보기, 검색, 좋아요, 방향 전환과 다운로드 | 공개 |
-| 설정 | `/settings` | 화면 테마, 배경과 LLM 설정 | 항목별 권한 적용 |
+| 공간 | 하는 일 | 접근 |
+| --- | --- | --- |
+| [Home](https://www.kyohoon.app) | 네 공간의 입구. 링크에 마우스를 올리거나 키보드로 초점을 맞추면 마스코트가 해당 공간의 모습으로 바뀝니다. | 공개 |
+| [Resume](https://www.kyohoon.app/resume) | 경력, 학력, 논문, 프로젝트와 연락처를 모은 공개 이력서입니다. | 공개 |
+| [Selectstar](https://www.kyohoon.app/work) | 연구일지, 팀 리소스, 연구 데모, 품의 사용내역을 한곳에서 엽니다. | 등록 계정, 연구 데모는 공개 |
+| [Paper](https://www.kyohoon.app/paper) | 리뷰어로서 쓸 논문 리뷰와 저자로서 준비할 리뷰탈을 관리합니다. | 등록 계정 |
+| [Personal](https://www.kyohoon.app/personal) | 여행 기록, 마스코트 갤러리, 마크다운 에디터를 모았습니다. | 여행 기록과 갤러리는 공개, 에디터는 등록 계정 |
+| [설정](https://www.kyohoon.app/settings) | 라이트, 다크, 시스템 테마와 홈 시작 애니메이션을 선택합니다. 배경 이미지와 움직임, LLM도 설정할 수 있습니다. | 화면 설정은 공개, 배경과 LLM 설정은 등록 계정 |
 
 ### Selectstar
 
-모든 Selectstar 화면은 같은 왼쪽 메뉴와 상단 바를 사용합니다. 메뉴의 각 항목은 하위 메뉴로 펼쳐지며, 연구일지의 L3 연구축에서 팀 리소스의 월별 변화나 데모로 바로 이동할 수 있습니다. 공통 마크업은 `views/work-shell.mjs`에 있고, 정적 화면에는 `node scripts/sync-work-shell.mjs`로 반영합니다. 빌드와 테스트에서 반영 여부를 확인합니다.
-
-Selectstar(`/work`)와 Personal(`/personal`) 첫 화면은 Paper 홈과 같은 구성(큰 제목과 마스코트, 2열 큰 카드)을 `views/pages.mjs`의 `spaceHub`와 `public/space-hub.css`로 함께 씁니다. 도구가 늘면 카드가 한 줄씩 추가됩니다. 첫 화면에는 왼쪽 메뉴가 없고, 각 도구에 들어가면 나타납니다. 메뉴 왼쪽 위의 Kyohoon Jin은 전체 홈으로 갑니다. 연구일지의 색은 팀 리소스와 같은 무채색 톤입니다. `scripts/build-research-tone.mjs`가 기존 스타일의 남색 계열 색만 무채색으로 바꾼 `work-app/research-tone.css`를 만들고(빌드 때 다시 생성), `work-app/refine.css`가 카드·패널·숫자 모양을 다듬습니다. 기능과 데이터는 바꾸지 않습니다.
-
-- **연구일지와 로드맵:** 연구 계층, 일정, 노트, 관련 논문을 관리합니다. 연구 유형, 상태와 담당자를 여러 개 선택해 필터링하고, 캘린더와 담당자별 리소스를 확인합니다.
-- **팀 리소스:** 각 팀원의 기록된 업무를 100%로 환산해 과업별 비중을 비교합니다. 팀 전체 배분, 월별 변화, 주간 원본 링크를 제공합니다. 휴가와 개인 업무시간 합계는 비교 지표에서 제외합니다.
-- **연구 데모:** Ontology와 Document Parsing 데모를 새 창에서 엽니다.
-- **품의 사용내역:** 월별 엑셀을 업로드하고 품의 예산과 카드 내역을 확인합니다. 원본 파일과 월별 데이터를 관리합니다.
+| 도구 | 기능 |
+| --- | --- |
+| [연구일지](https://www.kyohoon.app/work/app/index.html) | 로드맵, 연간 조망, 연구 후보, L3 연구축과 연구 노트를 관리합니다. 연구 유형, 상태, 담당자를 복수 선택해 필터링하고 일정과 담당자별 주간 및 월간 배정 비중을 확인합니다. 연구 노트에는 참고 링크와 논문을 첨부할 수 있습니다. |
+| [팀 리소스](https://www.kyohoon.app/work/team-resources) | Notion의 주간 업무 기록을 바탕으로 과업별 배분과 월별 변화를 확인합니다. 주 단위와 월 단위 보기, 주간 원본 기록 링크를 제공합니다. |
+| [연구 데모](https://www.kyohoon.app/work/demos) | [Ontology](https://www.kyohoon.app/work/demos/ontology/)에서 문서 속 개념과 관계를 탐색하고, [Document Parsing](https://www.kyohoon.app/work/demos/document-parsing/)에서 문서 레이아웃을 분석하고 텍스트와 표를 추출한 결과를 확인합니다. |
+| [품의 사용내역](https://www.kyohoon.app/work/expenses/) | 월별 카드 내역 엑셀을 가져와 품의별 예산과 사용액을 비교하고 원본 파일을 관리합니다. |
 
 ### Paper
 
-리뷰어로서 평가를 작성하는 **논문 리뷰 준비**와 저자로서 리뷰어별 쟁점과 답변을 정리하는 **논문 리뷰탈 준비**를 제공합니다. 논문 PDF와 메모를 바탕으로 작업하고, 설정한 LLM을 이용해 리뷰나 답변 작성을 보조합니다.
+- **논문 리뷰 준비**에서는 요약, 강점, 약점과 기타 의견을 항목별로 정리해 영문 리뷰를 작성합니다.
+- **논문 리뷰탈 준비**에서는 리뷰어별 쟁점과 대응 근거를 정리하고, 리뷰 원문 번역과 영문 답변 초안 작성을 보조합니다.
+- 작업별로 학회와 마감일, 진행 상태, 글자 수 제한을 설정할 수 있습니다. PDF 첨부는 선택이며, 초안은 자동 저장되고 마크다운으로 내보낼 수 있습니다. 모델과 Reasoning Effort는 공통 설정에서, 프롬프트는 작업 화면에서 바꿉니다.
+- **AI 컨퍼런스 데드라인** 화면은 준비 중입니다.
 
 ### Personal
 
-- **여행의 흔적:** 지구본을 회전하고 지역을 선택해 여행 사진과 설명을 봅니다. Editor는 기록과 사진을 편집하고, 관광과 학회 방문의 색상을 설정합니다.
-- **갤러리:** 마스코트의 여러 모습을 검색하고 분류별로 둘러봅니다. 8방향 보기, 걷기 재생, 이미지 확대, 원본 PNG와 WebP 다운로드, 좋아요 ZIP 다운로드를 지원합니다. 좋아요는 현재 브라우저에 저장됩니다.
+| 도구 | 기능 |
+| --- | --- |
+| [여행의 흔적](https://www.kyohoon.app/personal/travel) | 지구본에서 방문 지역을 선택해 사진과 기록을 봅니다. Editor는 여행 또는 학회 방문으로 분류해 기록을 편집하고 표시 색을 지정할 수 있습니다. |
+| [마스코트 갤러리](https://www.kyohoon.app/personal/gallery) | 마스코트의 여러 모습을 검색하고, 8방향으로 돌려보거나 걷는 모습을 재생합니다. 원본 이미지를 받을 수 있고, 브라우저에 저장한 좋아요는 ZIP으로 묶어 내려받을 수 있습니다. |
+| [마크다운 에디터](https://www.kyohoon.app/personal/markdown) | 문서를 폴더에 정리하고, 편집기와 미리보기를 나란히 띄우거나 각각 볼 수 있습니다. 문서 테마, 자동 저장, PDF 내보내기를 지원합니다. |
 
-갤러리 대표 이미지는 액자를 든 전용 마스코트입니다. T1 유니폼을 입은 모습은 T1을 응원하는 팬의 모습으로 소개합니다.
+## 코드 구조
 
-## 화면과 탐색
+로컬 Node.js 서버와 Vercel 함수가 같은 HTTP 핸들러를 사용합니다. 핸들러가 경로에 따라 HTML이나 정적 파일을 제공하고, 데이터가 필요한 요청은 기능별 모듈에서 처리합니다. Resume는 React와 Tailwind CSS로 작성해 Webpack으로 빌드합니다.
 
-기본 테마는 시스템 설정을 따르며, 직접 선택한 라이트 모드와 다크 모드는 브라우저에 저장됩니다. Resume를 제외한 공간은 상단에서 해당 공간의 홈과 전체 홈으로 이동할 수 있습니다. Resume의 홈 버튼은 로그인 세션을 확인한 경우 표시합니다.
+```mermaid
+flowchart TD
+    Local["로컬 Node.js 서버"] --> App["server/app.mjs"]
+    Vercel["Vercel 함수"] --> App
+    App --> Views["HTML 템플릿과 정적 화면"]
+    App --> Routes["기능별 API"]
+    Routes --> Data["Supabase Auth / Postgres / Storage"]
+```
 
-배경과 LLM 설정은 로그인한 계정의 권한에 따라 이용합니다.
+| 수정할 내용 | 먼저 볼 파일 |
+| --- | --- |
+| 홈과 공간별 첫 화면, 공통 탐색 | [views/pages.mjs](views/pages.mjs), [views/navigation.mjs](views/navigation.mjs), [public/home.js](public/home.js) |
+| Resume의 경력, 논문, 프로젝트 | [경력 데이터](legacy/resume/src/experienceData.js), [논문 데이터](legacy/resume/src/PublicationsData.js), [프로젝트 데이터](legacy/resume/src/projectsData.js), [Resume 빌드](scripts/build-resume.mjs) |
+| Selectstar 공통 메뉴와 연구일지 | [views/work-shell.mjs](views/work-shell.mjs), [work-app/](work-app/), [scripts/sync-work-shell.mjs](scripts/sync-work-shell.mjs) |
+| 팀 리소스, 품의, 연구 데모 | [팀 리소스 화면](views/team-resources.html), [품의 화면](work-expenses/), [연구 데모](work-demos/) |
+| 논문 리뷰와 리뷰탈, LLM 연동 | [public/paper.js](public/paper.js), [server/paper-routes.mjs](server/paper-routes.mjs), [server/paper-providers.mjs](server/paper-providers.mjs) |
+| 여행 기록과 마스코트 이미지 | [public/travel/](public/travel/), [public/gallery/](public/gallery/), [public/mascot/](public/mascot/) |
+| 마크다운 편집과 PDF 출력 | [public/markdown-editor.js](public/markdown-editor.js), [server/markdown-routes.mjs](server/markdown-routes.mjs), [server/markdown-pdf.mjs](server/markdown-pdf.mjs) |
+| 공통 스타일과 테마 | [public/kh-system.css](public/kh-system.css), [public/kh/](public/kh/), [public/theme.js](public/theme.js) |
+| 요청 처리, 접근 정책, 자동 테스트 | [server/app.mjs](server/app.mjs), [supabase/](supabase/), [tests/](tests/) |
 
-## 실행
+Resume의 빌드 결과는 `public/resume/`에 생성됩니다. Selectstar 공통 메뉴를 수정한 뒤에는 `node scripts/sync-work-shell.mjs`로 정적 화면에도 반영합니다.
 
-Node.js 22 이상이 필요합니다.
+## 로컬 실행
+
+Node.js 22 이상과 npm이 필요합니다.
 
 ```sh
 npm ci
+npm run build
 npm run dev
 ```
 
-기본 개발 주소는 `http://127.0.0.1:3000`입니다. 환경변수는 [.env.example](.env.example)을 참고해 `.env.local`에 설정합니다. Supabase 로그인에는 `SUPABASE_URL`과 `SUPABASE_ANON_KEY`가 필요합니다.
+개발 서버는 <http://127.0.0.1:3000>에서 실행됩니다. 로그인과 원격 데이터가 필요한 기능을 확인하려면 [.env.example](.env.example)을 참고해 `.env.local`에 `SUPABASE_URL`과 `SUPABASE_ANON_KEY`를 설정합니다. 로컬에서 마크다운 PDF를 내보낼 때는 Chrome 또는 Edge가 필요하며, 실행 파일을 자동으로 찾지 못하면 `CHROME_PATH`를 설정합니다.
 
 | 명령 | 용도 |
 | --- | --- |
-| `npm run dev` | 개발 서버 실행 |
-| `npm run build` | 사전 테스트, Resume 빌드, 문법과 타입 검사, 연구일지 번들 생성 |
-| `npm run typecheck` | 타입 검사 |
-| `npm test` | 전체 테스트 실행 |
-| `npm start` | 운영 모드 서버 실행 |
+| `npm run build` | 사전 테스트, Resume 빌드, 연구일지 번들 생성, 타입 및 배포 자산 검사 |
+| `npm test` | 전체 자동 테스트 실행 |
+| `npm run typecheck` | TypeScript 타입 검사 |
+| `npm run build:resume` | Resume만 다시 빌드 |
+| `npm start` | 운영 모드로 로컬 서버 실행 |
 
-개발용 `/work/preview`는 localhost의 개발 환경에서만 사용할 수 있습니다. 미리 가져온 `private/work/` 사본을 사용하며 운영 환경에서는 차단됩니다.
+업무 자료를 가져온 사본이 `private/work/`에 있으면 개발 서버에서 `/work/preview`로 열 수 있습니다. 미리보기에서 수정한 내용은 로컬 사본에 저장됩니다.
 
-로컬에서 팀 리소스를 보려면 승인된 Notion 스냅샷을 `private/work/team-resources.json`에 두고 개발 로그인으로 접속합니다. 운영 서버는 Supabase의 `team_resource_snapshots`에서 로그인한 팀원에게 데이터를 제공합니다.
+## 인증과 배포
 
-## 기술 구성
+이메일과 비밀번호는 Supabase Auth에서 확인합니다. 보호된 화면과 API는 활성 `workspace_members` 등록이 필요합니다. Reader는 허용된 데이터를 열람하고, Editor는 기능별 권한에 따라 저장할 수 있습니다. 세션은 HttpOnly 쿠키로 관리하며 3시간 동안 활동이 없으면 만료됩니다.
 
-| 영역 | 구성 |
-| --- | --- |
-| 서버 | Node.js 22, 공통 HTTP 핸들러, Vercel Node 함수 |
-| 화면 | 서버 렌더링 HTML, CSS, JavaScript |
-| Resume | React 19, Webpack, Babel, Tailwind CSS 3 |
-| 인증과 데이터 | Supabase Auth, Postgres, Storage |
-| 글꼴 | Pretendard |
-| 배포 | GitHub `main`에 연결된 Vercel 프로젝트 |
+팀 리소스 화면은 Supabase의 `team_resource_snapshots`에서 현재 스냅샷을 읽습니다. [스냅샷 갱신 스크립트](scripts/team-resources-sync.mjs)는 Notion에서 정리한 데이터를 갱신용 SQL로 변환합니다. 테이블과 접근 정책은 [Supabase SQL](supabase/)에서 확인할 수 있습니다.
 
-### 저장소 구조
-
-| 경로 | 역할 |
-| --- | --- |
-| `server/`, `api/` | 라우팅, 인증, 권한 확인과 데이터 처리 |
-| `views/` | Home, Selectstar, Paper, Personal과 설정 화면 |
-| `public/` | 공개 스타일, 스크립트, 마스코트와 정적 자산 |
-| `public/gallery/` | 갤러리 동작과 방향별 이미지 |
-| `legacy/resume/` | Resume React 소스 |
-| `public/resume/` | 빌드된 Resume |
-| `work-app/` | 연구일지와 로드맵 |
-| `work-expenses/` | 품의 분석 |
-| `work-demos/` | Ontology와 Document Parsing 데모 |
-| `supabase/` | 기능별 데이터 구조와 접근 정책 |
-| `scripts/` | 빌드, 자료 가져오기와 검증 도구 |
-| `tests/` | 자동 테스트 |
-| `docs/` | 구축과 운영 참고 문서 |
-
-## 인증과 데이터 관리
-
-공개 회원가입은 제공하지 않습니다. 보호된 기능은 Supabase의 유효한 로그인 세션과 활성 `workspace_members` 등록을 함께 확인합니다. Reader는 열람하고 Editor는 허용된 데이터를 편집합니다.
-
-세션은 HttpOnly 쿠키로 관리하며 3시간 동안 사이트 활동이 없으면 만료됩니다. 연구 자료와 품의 원본은 비공개 Storage를 사용하고, 여행 사진은 공개 열람용 `travel-photos` 버킷에 저장합니다. 연구 상태와 품의 교체 등은 revision 검사로 오래된 화면의 덮어쓰기를 방지합니다.
-
-실제 키, 계정 정보, 개인 자료와 로컬 환경 파일은 커밋하지 않습니다. 기능별 테이블과 정책은 `supabase/`, 배포 참고 사항은 [docs/deployment.md](docs/deployment.md)에서 확인할 수 있습니다. `docs/`의 과거 기록은 작성 시점의 상태를 설명하므로 현재 동작은 실행 코드를 기준으로 확인합니다.
-
-### 팀 리소스 갱신
-
-초기 데이터 구조는 [supabase/team-resources.sql](supabase/team-resources.sql)에 정의되어 있습니다. Notion에서 확인한 정규화 스냅샷을 운영 권한으로 `id = current` 행에 갱신합니다. 화면에는 스냅샷 기준일과 마지막 주간 기록의 종료일이 표시됩니다. 갱신할 때 휴가 항목과 제외 대상 팀원을 걸러냅니다.
-
-갱신은 매주 목요일 오전 7시(KST) 예약 작업이 합니다. 오전 6시 전후에 Slack 스크럼이 Notion `개별_MM_모음`에 정리된 뒤, 예약 작업이 최근 5주의 Notion 기록을 읽어 [scripts/team-resources-sync.mjs](scripts/team-resources-sync.mjs)로 SQL을 만들고 실행합니다. 그 이전 주는 저장된 스냅샷을 그대로 둡니다. SQL에는 JSON 체크섬이 들어 있어 복사 중 내용이 바뀌면 아무것도 쓰지 않습니다. `--dry-run`을 붙이면 쓰기 없이 결과 요약만 확인합니다. 팀 리소스 화면은 월 단위와 주 단위(Notion 주차와 같은 목요일 기준)를 모두 볼 수 있습니다.
-
-## 주요 변경
-
-| 날짜 | 내용 |
-| --- | --- |
-| 2026-11-21 | 로그아웃 버튼 통일, 연구일지 작업 버튼 정리와 사용자 배경 적용, 홈 상단 바로가기 정리, Resume 경력 순서·온톨로지 프로젝트·데모 연결, 연구 데모 공개 |
-| 2026-11-20 | 연구일지 설정은 색상만, 메뉴 순서(로드맵·담당자 리소스·연간 조망), 검색·보관·구간 추가를 제목 줄로 이동, 지구본 색상은 여행의 흔적 안에서, 프롬프트는 Paper 각 작업에서, Reasoning Effort 직접 입력, Paper AI 컨퍼런스 데드라인(공사 중) |
-| 2026-11-19 | 팀 리소스 주 단위 보기, 매주 목요일 Notion 자동 갱신 |
-| 2026-11-19 | 연구일지 담당자 리소스: 팀원별 월·주 단위 배정(%·MM) 표와 그래프 |
-| 2026-11-18 | Selectstar 공통 사이드바와 상단 바, 팀 리소스 화면 재구성, 팀 리소스 대시보드, 연구 일정 달력 입력, 활동 기준 자동 로그아웃 |
-| 2026-11-17 | 공간 홈과 전체 홈 탐색 통일, 마스코트 갤러리 공개, 갤러리 전용 마스코트 추가와 T1 이미지 설명 정리 |
-| 2026-11-13 | Resume와 프로젝트 이미지 정리, 연구 필터와 L3 편집, 로그인에 따른 Resume 이동 처리 |
-| 2026-11-12 | 연구 로드맵, 캘린더와 자동 저장, 품의 분석, 테마와 마스코트 구성 |
-| 2026-11-11 | 개인 홈페이지 저장소 구성 |
-
-전체 변경 사항은 [커밋 기록](https://github.com/fhzh123/kyohoon_personal/commits/main)에서 확인할 수 있습니다.
+Vercel은 GitHub의 `main`을 배포합니다. [vercel.json](vercel.json)에서 빌드 명령과 라우팅, 함수에 포함할 파일을 설정하며 [api/index.mjs](api/index.mjs)가 운영 진입점입니다. 변경 이력은 [커밋 기록](https://github.com/fhzh123/kyohoon_personal/commits/main/)에서 볼 수 있습니다.
