@@ -12,7 +12,7 @@ const esc = value => String(value).replace(/[&<>"']/g, c => ({'&': '&amp;', '<':
 export const mdIcon = name => `<svg class="md-icon" aria-hidden="true" focusable="false"><use href="#mdi-${name}"></use></svg>`;
 const sprite = () => `<svg class="md-sprite" width="0" height="0" aria-hidden="true" focusable="false">${Object.entries(MARKDOWN_ICONS).map(([k, v]) => `<symbol id="mdi-${k}" viewBox="0 0 24 24">${v}</symbol>`).join('')}</svg>`;
 
-export const markdownHead = () => `<link rel="stylesheet" href="/markdown-themes.css?v=${V}"><link rel="stylesheet" href="/markdown-editor.css?v=${V}"><link rel="stylesheet" href="/kh/markdown.css?v=20261124-1">`;
+export const markdownHead = () => `<link rel="stylesheet" href="/markdown-themes.css?v=${V}"><link rel="stylesheet" href="/markdown-editor.css?v=20261125-responsive-1"><link rel="stylesheet" href="/kh/markdown.css?v=20261124-1">`;
 
 // Toolbar: [command, label, icon, shortcut]. Shortcuts follow GitHub and Google Docs.
 const TOOL_GROUPS = [
