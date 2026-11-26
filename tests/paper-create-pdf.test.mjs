@@ -17,7 +17,7 @@ test('Personal stays public even when header authentication is unavailable',asyn
  }assert.ok(authCalls>0);
  const d=new JSDOM(homePage()).window.document;
  assert.equal(d.querySelector('a.portal[href="/personal"] .home-access').textContent,'누구나 볼 수 있음');
- assert.ok(d.querySelector('a.portal[href="/paper"] .home-access.is-locked'));assert.notEqual(d.querySelector('a.portal[href="/paper"]').dataset.pose,d.querySelector('[data-default-pose]').getAttribute('src'));
+ assert.ok(d.querySelector('a.portal[href="/paper"] .home-access.is-locked'));assert.notEqual(d.querySelector('a.portal[href="/paper"]').dataset.pose,d.querySelector('[data-mascot-image]').getAttribute('src'));
 });
 async function creation(withFile,failUpload=false){
  const fixture={projects:[],settings:publicSettings(null,{}),defaults:DEFAULT_PROMPTS},calls=[];

@@ -7,7 +7,7 @@ const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 // kh design system: shared tokens and bridge on every page, then one file per surface.
 const KH_V = '20261124-2';
-const HOME_V = '20261125-responsive-1';
+const HOME_V = '20261127-mascot-play-1';
 const KH_PAGES = new Set(['login', 'selectstar', 'personal', 'demos', 'paper', 'settings', 'travel', 'gallery']);
 const shell = (title, body, surface = '') => `<!doctype html>
 <html lang="ko" data-theme="dark" data-type="service" data-radius="soft" data-motion>
@@ -24,11 +24,10 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script><link rel="stylesheet" href="/kh-system.css?v=${KH_V}"><link rel="stylesheet" href="/kh-site.css?v=${KH_V}">${KH_PAGES.has(surface) ? `<link rel="stylesheet" href="/kh/${surface}.css?v=${KH_V}">` : ''}${surface === 'home' ? '<link rel="stylesheet" href="/home.css?v='+HOME_V+'"><script src="/home.js?v='+HOME_V+'" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script><link rel="stylesheet" href="/kh-system.css?v=${KH_V}"><link rel="stylesheet" href="/kh-site.css?v=${KH_V}">${KH_PAGES.has(surface) ? `<link rel="stylesheet" href="/kh/${surface}.css?v=${KH_V}">` : ''}${surface === 'home' ? '<link rel="stylesheet" href="/home.css?v='+HOME_V+'"><link rel="stylesheet" href="/mascot-play.css?v='+HOME_V+'"><script src="/mascot-play.js?v='+HOME_V+'" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
 </head><body data-surface="${surface}"${surface === 'demos' ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
-// Home: one large mascot on a cobalt stage. Pointing at or focusing a space
-// swaps the mascot into that space's pose; the four spaces sit on one ruled line.
+// Home keeps four navigation links alongside a small, locally animated mascot.
 const HOME_SPACES = [
   {id:'resume', href:'/resume', title:'Resume', text:'경력, 논문, 프로젝트', locked:false, pose:'resume-hover.webp'},
   {id:'work', href:'/work', title:'Selectstar', text:'연구일지, 팀 리소스, 업무 도구', locked:true, pose:'selectstar-hover.webp'},
@@ -44,9 +43,18 @@ export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
       <h1 id="intro-title"><span class="home-name">진교훈</span> <span class="home-name-en" lang="en">Kyohoon Jin</span></h1>
       <p class="home-lead">Selectstar의 AI Research Engineer입니다. 모델이 배울 데이터를 만들고, 그 모델을 어떻게 평가할지 연구합니다.</p>
     </section>
-    <figure class="home-stage" aria-hidden="true" data-home-stage>
-      <img class="home-pose" src="/mascot/original.png" alt="" width="512" height="512" fetchpriority="high" data-default-pose>
-    </figure>
+    <div class="home-stage mascot-play" data-home-stage data-mascot-play>
+      <p class="mascot-status" data-mascot-status role="status" aria-live="polite" aria-atomic="true">안녕! 잠깐 같이 놀아요.</p>
+      <button class="mascot-body" type="button" data-mascot-button aria-label="마스코트 콕 찌르기" aria-describedby="mascot-help">
+        <img class="mascot-image" src="/mascot/play/idle.png" alt="" width="512" height="512" fetchpriority="high" data-mascot-image>
+      </button>
+      <div class="mascot-tools">
+        <button class="mascot-snack" type="button" data-mascot-snack aria-label="마스코트에게 간식 주기"><img src="/mascot/play/snack.png" width="48" height="48" alt="" draggable="false"><span>간식 주기</span></button>
+        <button class="mascot-pet" type="button" data-mascot-pet>쓰다듬기</button>
+      </div>
+      <p class="mascot-help" id="mascot-help">콕 눌러 보세요. 머리를 쓱쓱 쓰다듬거나 간식을 끌어다 줘도 좋아요.</p>
+      <noscript><p>마스코트와 놀려면 JavaScript를 켜 주세요.</p></noscript>
+    </div>
     <nav class="home-spaces" aria-label="홈페이지 공간">
       ${HOME_SPACES.map(space => `<a class="portal home-space" href="${space.href}" aria-labelledby="${space.id}-label" data-pose="/mascot/${space.pose}">
         <h2 id="${space.id}-label">${space.title}</h2>

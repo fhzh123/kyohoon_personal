@@ -1,0 +1,25 @@
+
+.home-stage.mascot-play { display:grid; grid-template-rows:auto minmax(210px,1fr) auto auto; justify-items:center; align-content:end; overflow:visible; min-height:390px; padding:12px 0 20px; gap:12px; }
+.mascot-status { margin:0; min-height:1.7em; max-width:100%; text-align:center; font-size:1rem; line-height:1.7; color:var(--k-ink); }
+.mascot-body { position:relative; display:block; width:min(100%,360px); height:100%; min-height:210px; max-height:380px; padding:0; border:0; background:transparent; border-radius:20px; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:pan-y; }
+.mascot-image { display:block; width:100%; height:100%; max-height:380px; object-fit:contain; pointer-events:none; user-select:none; -webkit-user-select:none; }
+.mascot-tools { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:12px; }
+.mascot-tools button { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:8px 16px; color:var(--k-ink); background:var(--k-sheet); border:1px solid var(--k-line); border-radius:12px; font:inherit; font-size:1rem; cursor:pointer; transition:transform .16s,border-color .16s; }
+.mascot-tools button:hover { border-color:var(--k-cobalt); transform:translateY(-2px); }
+.mascot-tools button:active { transform:scale(.97); }
+.mascot-tools .mascot-snack { touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab; }
+.mascot-snack img { object-fit:contain; pointer-events:none; }
+.mascot-snack.is-dragging { cursor:grabbing; z-index:10; }
+.mascot-play button:focus-visible { outline:3px solid var(--k-cobalt); outline-offset:4px; }
+.mascot-help { max-width:27em; margin:0; font-size:.875rem; line-height:1.65; text-align:center; color:var(--k-graphite); word-break:keep-all; }
+.mascot-poke-effect { position:absolute; pointer-events:none; font-size:1.125rem; font-weight:750; color:var(--k-cobalt-text); animation:mascot-pop .55s ease-out both; }
+@keyframes mascot-pop { from { opacity:1; transform:translate(-50%,-50%) scale(.7); } to { opacity:0; transform:translate(-50%,-120%) scale(1.2); } }
+@media (max-width:640px) { .home-stage.mascot-play { height:auto; min-height:370px; margin:0; padding-block:12px 24px; } .mascot-body { width:min(76vw,290px); height:240px; } .mascot-help { max-width:24em; } }
+@media (prefers-reduced-motion:reduce) { .mascot-play *, .mascot-play *::before { animation:none!important; transition:none!important; } }
+html[data-home-motion="off"] .mascot-play * { animation:none!important; transition:none!important; }
+
+.mascot-play[data-drop-target="true"] .mascot-body { outline:2px dashed var(--k-cobalt); outline-offset:2px; }
+.mascot-play[data-dragging="true"] .mascot-snack { cursor:grabbing; position:relative; z-index:10; }
+
+.mascot-play[data-gaze="left"] .mascot-image { transform:translateX(-5px); }
+.mascot-play[data-gaze="right"] .mascot-image { transform:translateX(5px); }
