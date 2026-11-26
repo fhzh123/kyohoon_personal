@@ -1,7 +1,7 @@
 // Run explicitly with node --test tests/mascot-play.browser.mjs and an installed Chrome.
 // Set MASCOT_QA_DIR to retain the screenshots used for visual inspection.
 import assert from 'node:assert/strict';
-import {mkdir} from 'node:fs/promises';
+import {mkdir, writeFile} from 'node:fs/promises';
 import {createServer} from 'node:http';
 import path from 'node:path';
 import {before, after, test} from 'node:test';
@@ -92,9 +92,17 @@ function distinctFrames(t, poses, first, second) {
 
 async function capture(page, name) {
   if (!output) return;
-  const button = await page.$(robot);
-  try { await button.screenshot({path: path.join(output, name + '.png')}); }
-  finally { await button.dispose(); }
+  // Capture directly from the compositor. Element screenshots can wait for
+  // scroll/layout and miss the 95ms midpoint during screenshot-enabled QA.
+  const clip = await page.$eval(robot, el => {
+    const box = el.getBoundingClientRect();
+    return {x: box.x + scrollX, y: box.y + scrollY, width: box.width, height: box.height, scale: 1};
+  });
+  const cdp = await page.createCDPSession();
+  try {
+    const {data} = await cdp.send('Page.captureScreenshot', {format: 'png', clip});
+    await writeFile(path.join(output, name + '.png'), Buffer.from(data, 'base64'));
+  } finally { await cdp.detach(); }
 }
 
 async function breathing(page) {
