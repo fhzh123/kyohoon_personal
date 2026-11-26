@@ -8,7 +8,7 @@ import bpy
 from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / 'public' / 'mascot' / 'play' / 'snack.png'
+OUTPUT = ROOT / 'artifacts' / 'mascot-frames' / 'snack.png'
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 random.seed(17)

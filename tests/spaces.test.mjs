@@ -10,7 +10,7 @@ test('four home destinations preserve existing poses; tools use unique illustrat
  assert.deepEqual([...d.querySelectorAll('a.portal')].map(a=>a.getAttribute('href')),['/resume','/work','/paper','/personal']);
  const poses=[...d.querySelectorAll('a.portal')].map(a=>a.dataset.pose);assert.equal(new Set(poses).size,4,'each space has its own mascot pose');
  for(const pose of poses)assert.ok(existsSync(new URL('../public'+pose,import.meta.url)),pose);
- assert.equal(d.querySelector('[data-mascot-image]').getAttribute('src'),'/mascot/play/idle.png');
+ assert.equal(d.querySelector('[data-mascot-image]').getAttribute('src'),'/mascot/play/idle.webp');
  assert.ok(!poses.includes(d.querySelector('[data-mascot-image]').getAttribute('src')),'the resting pose differs from every space pose');
  const hub=new JSDOM(workPage({mode:'supabase',role:'editor'})).window.document;
  assert.deepEqual([...hub.querySelectorAll('a.tool-card')].map(a=>a.getAttribute('href')),['/work/app/index.html','/work/team-resources','/work/demos','/work/expenses/']);

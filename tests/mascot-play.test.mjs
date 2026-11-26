@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import test from 'node:test';
+import {setImmediate} from 'node:timers';
 import {JSDOM} from 'jsdom';
 
 const source = await readFile(new URL('../public/mascot-play.js', import.meta.url), 'utf8');
 const markup = `<div data-mascot-play>
   <p data-mascot-status role="status" aria-live="polite">Ready</p>
-  <button type="button" data-mascot-button><img data-mascot-image src="/mascot/play/idle.png" alt=""></button>
+  <button type="button" data-mascot-button><img data-mascot-image src="/mascot/play/idle.webp" alt=""></button>
   <button type="button" data-mascot-snack>Feed</button>
   <button type="button" data-mascot-pet>Pet</button>
 </div>`;
@@ -59,8 +60,9 @@ async function fixture(t, {reduced = false, motion = 'system', html = markup, de
     const end = now + ms;
     let steps = 0;
     while (true) {
-      await Promise.resolve();
-      await Promise.resolve();
+      // Drain the entire decode/Promise.all/hold chain before choosing the next timer.
+      await new Promise(resolve => setImmediate(resolve));
+      record();
       const next = [...timers].filter(([, job]) => job.at <= end).sort((a, b) => a[1].at - b[1].at || a[0] - b[0])[0];
       if (!next) break;
       assert.ok(++steps < 10000, 'timer loop must make progress');
@@ -70,7 +72,6 @@ async function fixture(t, {reduced = false, motion = 'system', html = markup, de
       record();
     }
     now = end;
-    await Promise.resolve();
     record();
   }
   function pointer(target, type, {x = 220, y = 140, id = 1, ...extra} = {}) {
@@ -91,15 +92,25 @@ test('module is harmless on pages without a mascot or with incomplete markup', a
   }
 });
 
-test('arrival greets with both wave poses and settles back to idle', async t => {
-  const h = await fixture(t);
-  await h.advance(4000);
-  const poses = h.history.map(frame => frame.src);
-  assert.ok(poses.some(src => src?.endsWith('/wave1.png')), 'greeting includes first wave');
-  assert.ok(poses.some(src => src?.endsWith('/wave2.png')), 'greeting includes second wave');
+const wave = ['wave-up', 'wave1', 'wave-mid', 'wave2', 'wave-down'];
+const poseUrl = name => '/mascot/play/' + name + '.webp';
+
+function frameNames(h) {
+  return h.history.map(frame => frame.src?.split('/').pop()?.replace(/\.webp$/, ''))
+    .filter((name, i, names) => i === 0 || name !== names[i - 1]);
+}
+
+test('a slow arrival waits for all five wave frames, then raises, waves and lowers the hand', async t => {
+  const h = await fixture(t, {deferDecode: true});
+  assert.deepEqual([...h.decodes.keys()].sort(), ['idle', ...wave].map(poseUrl).sort());
+  for (const name of ['idle', ...wave.slice(0, -1)]) h.decodes.get(poseUrl(name)).resolve();
+  await h.advance(12000);
   assert.equal(h.root.dataset.state, 'idle');
-  assert.match(h.image.src, /\/idle\.png$/);
-  assert.ok(h.status.textContent.trim());
+  assert.deepEqual(frameNames(h), ['idle']);
+  h.decodes.get(poseUrl('wave-down')).resolve();
+  await h.advance(4000);
+  assert.deepEqual(frameNames(h), ['idle', 'wave-up', 'wave1', 'wave-mid', 'wave2', 'wave-mid', 'wave1', 'wave-mid', 'wave2', 'wave-down', 'idle']);
+  assert.equal(h.root.dataset.state, 'idle');
 });
 
 test('native mascot click interrupts greeting, shows local poke feedback, then removes it', async t => {
@@ -108,10 +119,11 @@ test('native mascot click interrupts greeting, shows local poke feedback, then r
   assert.equal(h.root.dataset.state, 'poke');
   assert.match(h.status.textContent, /^아얏!/u);
   await h.advance(0);
-  assert.match(h.image.src, /\/poke\.png$/);
+  assert.match(h.image.src, /\/poke\.webp$/);
   assert.equal(h.button.querySelectorAll('.mascot-poke-effect').length, 1);
   await h.advance(4000);
   assert.equal(h.root.dataset.state, 'idle');
+  assert.deepEqual(frameNames(h).slice(-3), ['poke', 'poke-recover', 'idle']);
   assert.equal(h.root.querySelectorAll('.mascot-poke-effect').length, 0);
 });
 
@@ -121,11 +133,8 @@ test('native snack click feeds through chewing and happiness without stale greet
   h.snack.click();
   assert.equal(h.root.dataset.state, 'gaze');
   await h.advance(4000);
-  const poses = h.history.map(frame => frame.src);
-  for (const pose of ['eat1', 'eat2', 'happy']) {
-    assert.ok(poses.some(src => src?.endsWith('/' + pose + '.png')), 'feeding shows ' + pose);
-  }
-  assert.equal(poses.some(src => /\/wave[12]\.png$/.test(src)), false);
+  assert.deepEqual(frameNames(h).slice(-6), ['look', 'reach', 'eat1', 'eat2', 'happy', 'idle']);
+  assert.ok(!frameNames(h).some(name => wave.includes(name)), 'interrupted greeting stays cancelled');
   assert.equal(h.root.dataset.state, 'idle');
 });
 
@@ -136,7 +145,7 @@ test('pet button offers the gesture action through native keyboard-compatible cl
   assert.equal(h.root.dataset.state, 'pet');
   assert.notEqual(h.status.textContent, before);
   await h.advance(4000);
-  assert.ok(h.history.some(frame => frame.src?.endsWith('/happy.png')));
+  assert.deepEqual(frameNames(h).slice(-5), ['pet', 'pet-nuzzle', 'pet', 'pet-nuzzle', 'idle']);
   assert.equal(h.root.dataset.state, 'idle');
   assert.equal(h.root.querySelector('.mascot-poke-effect'), null);
 });
@@ -149,9 +158,10 @@ test('rapid alternating input cancels old sequences and leaves only the latest p
   h.snack.click();
   h.button.click();
   assert.equal(h.root.dataset.state, 'poke');
+  await h.advance(0);
   h.history.length = 0;
   await h.advance(4000);
-  assert.equal(h.history.some(frame => /\/(?:eat[12]|pet|wave[12])\.png$/.test(frame.src)), false);
+  assert.deepEqual(frameNames(h), ['poke', 'poke-recover', 'idle']);
   assert.equal(h.root.dataset.state, 'idle');
   assert.equal(h.root.querySelectorAll('.mascot-poke-effect').length, 0);
   assert.equal(h.captured.size, 0);
@@ -161,7 +171,7 @@ test('reduced motion and explicit motion off retain all native actions without w
   for (const options of [{reduced: true}, {motion: 'off'}]) {
     const h = await fixture(t, options);
     await h.advance(4000);
-    assert.equal(h.history.some(frame => /\/wave[12]\.png$/.test(frame.src)), false);
+    assert.ok(!frameNames(h).some(name => wave.includes(name)));
     for (const action of [h.button, h.snack, h.pet]) {
       const before = h.status.textContent;
       action.click();
@@ -198,7 +208,7 @@ test('snack drag feeds only when released over the mascot', async t => {
     assert.equal(h.captured.size, 0);
     h.history.length = 0;
     await h.advance(4000);
-    assert.equal(h.history.some(frame => frame.src?.endsWith('/eat1.png')), inside);
+    assert.equal(h.history.some(frame => frame.src?.endsWith('/eat1.webp')), inside);
     assert.equal(h.root.dataset.state, 'idle');
   }
 });
@@ -215,11 +225,11 @@ test('cancel and lost capture release snack drag without feeding or leaving stal
     assert.equal(h.captured.size, 0);
     h.history.length = 0;
     await h.advance(4000);
-    assert.equal(h.history.some(frame => frame.src?.endsWith('/eat1.png')), false);
+    assert.equal(h.history.some(frame => frame.src?.endsWith('/eat1.webp')), false);
     assert.equal(h.root.dataset.state, 'idle');
     h.snack.click();
     await h.advance(4000);
-    assert.ok(h.history.some(frame => frame.src?.endsWith('/eat1.png')), 'feeding still works after cancel');
+    assert.ok(h.history.some(frame => frame.src?.endsWith('/eat1.webp')), 'feeding still works after cancel');
   }
 });
 
@@ -250,7 +260,7 @@ test('Escape and window blur cancel an active drag and clear transient styles', 
     assert.ok(!h.snack.style.translate, 'snack returns to its original position');
     h.history.length = 0;
     await h.advance(4000);
-    assert.equal(h.history.some(frame => /\/eat[12]\.png$/.test(frame.src)), false);
+    assert.equal(h.history.some(frame => /\/eat[12]\.webp$/.test(frame.src)), false);
   }
 });
 
@@ -283,13 +293,14 @@ test('turning motion off mid-action clears old frames and keeps static feedback 
   assert.equal(h.timers.size, 0);
   h.history.length = 0;
   h.pet.click();
-  assert.equal(h.root.dataset.state, 'happy');
+  assert.equal(h.root.dataset.state, 'pet');
   await h.advance(899);
-  assert.equal(h.root.dataset.state, 'happy');
+  assert.equal(h.root.dataset.state, 'pet');
   await h.advance(1);
   assert.equal(h.root.dataset.state, 'idle');
   await h.advance(10000);
-  assert.equal(h.history.some(frame => ['wave', 'blink', 'eat', 'pet'].includes(frame.state)), false);
+  assert.deepEqual(frameNames(h).slice(-2), ['pet-nuzzle', 'idle']);
+  assert.ok(h.history.every(frame => ['pet', 'idle'].includes(frame.state)));
 });
 
 test('failed pose falls back to the last loaded image and is not retried on the next action', async t => {
@@ -299,7 +310,7 @@ test('failed pose falls back to the last loaded image and is not retried on the 
   const good = h.image.getAttribute('src');
   h.button.click();
   await h.advance(0);
-  assert.match(h.image.src, /\/poke\.png$/);
+  assert.match(h.image.src, /\/poke\.webp$/);
   h.image.dispatchEvent(new h.w.Event('error'));
   assert.equal(h.image.getAttribute('src'), good);
   assert.equal(h.root.dataset.imageError, 'true');
@@ -327,29 +338,25 @@ test('total image failure leaves a single fallback and working controls', async 
 
 test('late decodes cannot overwrite a newer interaction or its final idle pose', async t => {
   const h = await fixture(t, {deferDecode: true});
-  assert.equal(h.decodes.size, 9, 'all nine poses are preloaded once');
   h.button.click();
   assert.equal(h.root.dataset.state, 'poke', 'feedback starts before decoding');
-  assert.match(h.status.textContent, /^아얏!/u);
   assert.equal(h.button.querySelectorAll('.mascot-poke-effect').length, 1);
   h.pet.click();
+  for (const name of ['idle', 'poke', ...wave]) h.decodes.get(poseUrl(name)).resolve();
+  await h.advance(12000);
   assert.equal(h.root.dataset.state, 'pet');
-  assert.match(h.image.src, /\/idle\.png$/, 'keep the existing image while decoding');
-  for (const name of ['poke', 'wave1']) {
-    h.decodes.get('/mascot/play/' + name + '.png').resolve();
-    await h.advance(0);
-    assert.match(h.image.src, /\/idle\.png$/, name + ' is superseded');
-  }
-  h.decodes.get('/mascot/play/pet.png').resolve();
+  assert.deepEqual(frameNames(h), ['idle'], 'superseded greet and poke never display');
+  h.decodes.get(poseUrl('pet')).resolve();
   await h.advance(0);
-  assert.match(h.image.src, /\/pet\.png$/);
-  await h.advance(1500);
+  assert.match(h.image.src, /\/pet\.webp$/);
+  await h.advance(10000);
+  assert.match(h.image.src, /\/pet\.webp$/, 'keep the first frame until the nuzzle decodes');
+  h.decodes.get(poseUrl('pet-nuzzle')).resolve();
+  await h.advance(0);
+  assert.match(h.image.src, /\/pet-nuzzle\.webp$/);
+  await h.advance(2000);
   assert.equal(h.root.dataset.state, 'idle');
-  h.decodes.get('/mascot/play/idle.png').resolve();
-  await h.advance(0);
-  h.decodes.get('/mascot/play/happy.png').resolve();
-  await h.advance(0);
-  assert.match(h.image.src, /\/idle\.png$/, 'late happiness cannot restore a finished action');
+  assert.deepEqual(frameNames(h), ['idle', 'pet', 'pet-nuzzle', 'pet', 'pet-nuzzle', 'idle']);
 });
 
 test('hiding the tab invalidates an outstanding decoded pose', async t => {
@@ -357,24 +364,147 @@ test('hiding the tab invalidates an outstanding decoded pose', async t => {
   h.button.click();
   Object.defineProperty(h.w.document, 'hidden', {configurable: true, value: true});
   h.w.document.dispatchEvent(new h.w.Event('visibilitychange'));
-  h.decodes.get('/mascot/play/poke.png').resolve();
-  h.decodes.get('/mascot/play/wave1.png').resolve();
+  h.decodes.get('/mascot/play/poke.webp').resolve();
+  for (const name of wave) h.decodes.get(poseUrl(name)).resolve();
   await h.advance(0);
   assert.equal(h.root.dataset.state, 'idle');
-  assert.match(h.image.src, /\/idle\.png$/);
+  assert.match(h.image.src, /\/idle\.webp$/);
   assert.equal(h.timers.size, 0);
 });
 
 test('decode rejection keeps the previous image and allows another action to succeed', async t => {
   const h = await fixture(t, {deferDecode: true});
   h.button.click();
-  h.decodes.get('/mascot/play/poke.png').reject(new Error('fixture decode failure'));
+  h.decodes.get('/mascot/play/poke.webp').reject(new Error('fixture decode failure'));
   await h.advance(0);
   assert.equal(h.root.dataset.state, 'poke');
-  assert.match(h.image.src, /\/idle\.png$/);
+  assert.match(h.image.src, /\/idle\.webp$/);
   h.pet.click();
-  h.decodes.get('/mascot/play/pet.png').resolve();
+  h.decodes.get('/mascot/play/pet.webp').resolve();
   await h.advance(0);
   assert.equal(h.root.dataset.state, 'pet');
-  assert.match(h.image.src, /\/pet\.png$/);
+  assert.match(h.image.src, /\/pet\.webp$/);
+});
+
+test('reduced motion holds a slow static reaction for its full duration after decode', async t => {
+  const h = await fixture(t, {reduced: true, deferDecode: true});
+  assert.deepEqual([...h.decodes.keys()], [poseUrl('idle')]);
+  h.decodes.get(poseUrl('idle')).resolve();
+  h.button.click();
+  h.pet.click();
+  h.decodes.get(poseUrl('poke')).resolve();
+  await h.advance(5000);
+  assert.equal(h.root.dataset.state, 'pet');
+  assert.deepEqual(frameNames(h), ['idle'], 'interrupted poke and greeting stay cancelled');
+  h.decodes.get(poseUrl('pet-nuzzle')).resolve();
+  await h.advance(899);
+  assert.match(h.image.src, /\/pet-nuzzle\.webp$/);
+  assert.equal(h.root.dataset.state, 'pet');
+  await h.advance(1);
+  assert.equal(h.root.dataset.state, 'idle');
+  assert.deepEqual(frameNames(h), ['idle', 'pet-nuzzle', 'idle']);
+});
+
+const menuMarkup = `<main class="home-main">${markup}
+  <nav class="home-spaces">
+    <a href="/resume" data-pose="/mascot/resume-hover.webp">Resume</a>
+    <a href="/work" data-pose="/mascot/selectstar-hover.webp">Selectstar</a>
+    <a href="/paper" data-pose="/mascot/paper-pose.webp">Paper</a>
+    <a href="/personal" data-pose="/mascot/personal-pose.webp">Personal</a>
+  </nav>
+</main>`;
+
+test('menu hover survives idle blinking and falls back to keyboard focus before idle', async t => {
+  const h = await fixture(t, {html: menuMarkup});
+  await h.advance(4000);
+  const links = [...h.w.document.querySelectorAll('[data-pose]')];
+  for (const link of links) {
+    link.focus();
+    await h.advance(0);
+    assert.equal(h.image.getAttribute('src'), link.dataset.pose);
+    assert.equal(h.root.dataset.state, 'menu');
+  }
+  h.pointer(links[0], 'pointerenter');
+  await h.advance(0);
+  h.history.length = 0;
+  await h.advance(8000);
+  assert.ok(h.history.every(frame => frame.src === links[0].dataset.pose));
+  h.pointer(links[0].parentElement, 'pointerleave');
+  await h.advance(0);
+  assert.equal(h.image.getAttribute('src'), links[3].dataset.pose);
+  links[3].blur();
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'idle');
+  assert.equal(h.image.getAttribute('src'), poseUrl('idle'));
+});
+
+test('greeting takes priority over a menu pose selected while wave images are loading', async t => {
+  const h = await fixture(t, {html: menuMarkup, deferDecode: true});
+  const [first, second] = h.w.document.querySelectorAll('[data-pose]');
+  h.pointer(first, 'pointerenter');
+  h.decodes.get(first.dataset.pose).resolve();
+  await h.advance(0);
+  assert.equal(h.image.getAttribute('src'), first.dataset.pose);
+  for (const name of ['idle', ...wave]) h.decodes.get(poseUrl(name)).resolve();
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'wave');
+  assert.equal(h.image.getAttribute('src'), poseUrl('wave-up'));
+  h.pointer(second, 'pointerenter');
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'wave', 'menu input cannot interrupt greeting');
+  await h.advance(4000);
+  h.decodes.get(second.dataset.pose).resolve();
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'menu');
+  assert.equal(h.image.getAttribute('src'), second.dataset.pose);
+});
+
+test('mascot, snack and pet clicks take priority over menu hover and focus', async t => {
+  for (const [control, state] of [['button', 'poke'], ['snack', 'gaze'], ['pet', 'pet']]) {
+    const h = await fixture(t, {html: menuMarkup});
+    await h.advance(4000);
+    const [first, second] = h.w.document.querySelectorAll('[data-pose]');
+    first.focus();
+    await h.advance(0);
+    assert.equal(h.root.dataset.state, 'menu');
+    h[control].click();
+    h.pointer(second, 'pointerenter');
+    await h.advance(0);
+    assert.equal(h.root.dataset.state, state, control + ' owns playback');
+    assert.notEqual(h.image.getAttribute('src'), first.dataset.pose);
+    assert.notEqual(h.image.getAttribute('src'), second.dataset.pose);
+    await h.advance(4000);
+    assert.equal(h.root.dataset.state, 'menu');
+    assert.equal(h.image.getAttribute('src'), second.dataset.pose);
+  }
+});
+
+test('late menu decodes cannot overwrite a click or the selected menu after it finishes', async t => {
+  const h = await fixture(t, {html: menuMarkup, reduced: true, deferDecode: true});
+  const [first, second] = h.w.document.querySelectorAll('[data-pose]');
+  h.pointer(first, 'pointerenter');
+  h.button.click();
+  h.pointer(second, 'pointerenter');
+  h.decodes.get(poseUrl('poke')).resolve();
+  h.decodes.get(first.dataset.pose).resolve();
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'poke');
+  assert.equal(h.image.getAttribute('src'), poseUrl('poke'));
+  await h.advance(900);
+  h.decodes.get(second.dataset.pose).resolve();
+  await h.advance(0);
+  assert.equal(h.image.getAttribute('src'), second.dataset.pose);
+});
+
+test('leaving a menu before its image decodes keeps idle visible with motion off', async t => {
+  const h = await fixture(t, {html: menuMarkup, motion: 'off', deferDecode: true});
+  h.decodes.get(poseUrl('idle')).resolve();
+  await h.advance(0);
+  const link = h.w.document.querySelector('[data-pose]');
+  h.pointer(link, 'pointerenter');
+  h.pointer(link.parentElement, 'pointerleave');
+  h.decodes.get(link.dataset.pose).resolve();
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'idle');
+  assert.equal(h.image.getAttribute('src'), poseUrl('idle'));
 });

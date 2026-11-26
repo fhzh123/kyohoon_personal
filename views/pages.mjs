@@ -7,7 +7,7 @@ const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 // kh design system: shared tokens and bridge on every page, then one file per surface.
 const KH_V = '20261124-2';
-const HOME_V = '20261127-mascot-play-1';
+const HOME_V = '20261127-mascot-play-2';
 const KH_PAGES = new Set(['login', 'selectstar', 'personal', 'demos', 'paper', 'settings', 'travel', 'gallery']);
 const shell = (title, body, surface = '') => `<!doctype html>
 <html lang="ko" data-theme="dark" data-type="service" data-radius="soft" data-motion>
@@ -24,7 +24,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script><link rel="stylesheet" href="/kh-system.css?v=${KH_V}"><link rel="stylesheet" href="/kh-site.css?v=${KH_V}">${KH_PAGES.has(surface) ? `<link rel="stylesheet" href="/kh/${surface}.css?v=${KH_V}">` : ''}${surface === 'home' ? '<link rel="stylesheet" href="/home.css?v='+HOME_V+'"><link rel="stylesheet" href="/mascot-play.css?v='+HOME_V+'"><script src="/mascot-play.js?v='+HOME_V+'" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script><link rel="stylesheet" href="/kh-system.css?v=${KH_V}"><link rel="stylesheet" href="/kh-site.css?v=${KH_V}">${KH_PAGES.has(surface) ? `<link rel="stylesheet" href="/kh/${surface}.css?v=${KH_V}">` : ''}${surface === 'home' ? '<link rel="stylesheet" href="/home.css?v='+HOME_V+'"><link rel="stylesheet" href="/mascot-play.css?v='+HOME_V+'"><script defer src="/mascot-snack-flight.js"></script><script src="/mascot-play.js?v='+HOME_V+'" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
 </head><body data-surface="${surface}"${surface === 'demos' ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 // Home keeps four navigation links alongside a small, locally animated mascot.
@@ -46,10 +46,10 @@ export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
     <div class="home-stage mascot-play" data-home-stage data-mascot-play>
       <p class="mascot-status" data-mascot-status role="status" aria-live="polite" aria-atomic="true">안녕! 잠깐 같이 놀아요.</p>
       <button class="mascot-body" type="button" data-mascot-button aria-label="마스코트 콕 찌르기" aria-describedby="mascot-help">
-        <img class="mascot-image" src="/mascot/play/idle.png" alt="" width="512" height="512" fetchpriority="high" data-mascot-image>
+        <img class="mascot-image" src="/mascot/play/idle.webp" alt="" width="512" height="512" fetchpriority="high" data-mascot-image>
       </button>
       <div class="mascot-tools">
-        <button class="mascot-snack" type="button" data-mascot-snack aria-label="마스코트에게 간식 주기"><img src="/mascot/play/snack.png" width="48" height="48" alt="" draggable="false"><span>간식 주기</span></button>
+        <button class="mascot-snack" type="button" data-mascot-snack aria-label="마스코트에게 간식 주기"><img src="/mascot/play/snack.webp" width="48" height="48" alt="" draggable="false"><span>간식 주기</span></button>
         <button class="mascot-pet" type="button" data-mascot-pet>쓰다듬기</button>
       </div>
       <p class="mascot-help" id="mascot-help">콕 눌러 보세요. 머리를 쓱쓱 쓰다듬거나 간식을 끌어다 줘도 좋아요.</p>

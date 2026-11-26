@@ -67,5 +67,5 @@ for (const file of ['views/team-resources.html', 'public/team-resources.css', 'p
 
 // Homepage play assets must be present in the Vercel output.
 execFileSync(process.execPath,['--check','public/mascot-play.js'],{cwd:root,stdio:'inherit'});
-for(const name of ['idle','wave1','wave2','poke','pet','eat1','eat2','happy','blink','snack']) await access(path.join(root,'public/mascot/play/'+name+'.png'));
+for(const name of ['idle','idle-inhale','wave-up','wave-mid','wave1','wave2','wave-down','poke','poke-recover','pet','pet-nuzzle','look','reach','eat1','eat2','happy','blink','snack']) await access(path.join(root,'public/mascot/play/'+name+'.webp'));
 await access(path.join(root,'public/mascot-play.css'));
