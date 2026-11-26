@@ -141,6 +141,3 @@ for name in a.poses:
     bpy.ops.render.render(write_still=True)
     print('POSE_RENDERED', name, s.render.filepath, flush=True)
 print('Source preserved:', a.source, flush=True)
-
-
-

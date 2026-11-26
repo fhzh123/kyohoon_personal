@@ -13,7 +13,7 @@ const markup = `<div data-mascot-play>
 
 // The virtual clock tests DOM state and event ordering, not browser painting
 // or operating-system pointer capture. Image decoding never uses the network.
-async function fixture(t, {reduced = false, motion = 'system', html = markup} = {}) {
+async function fixture(t, {reduced = false, motion = 'system', html = markup, deferDecode = false} = {}) {
   const {window: w} = new JSDOM(html, {url: 'https://fixture.invalid/', runScripts: 'outside-only', pretendToBeVisual: true});
   t.after(() => w.close());
   const timers = new Map();
@@ -31,7 +31,13 @@ async function fixture(t, {reduced = false, motion = 'system', html = markup} = 
   Object.defineProperty(w.performance, 'now', {value: () => now});
   w.matchMedia = () => ({matches: reduced, addEventListener() {}, removeEventListener() {}});
   w.document.documentElement.dataset.homeMotion = motion;
-  w.HTMLImageElement.prototype.decode = () => Promise.resolve();
+  const decodes = new Map();
+  w.HTMLImageElement.prototype.decode = function () {
+    if (!deferDecode) return Promise.resolve();
+    const src = this.getAttribute('src');
+    assert.equal(decodes.has(src), false, 'preload is cached for ' + src);
+    return new Promise((resolve, reject) => decodes.set(src, {resolve, reject}));
+  };
   const root = w.document.querySelector('[data-mascot-play]');
   const button = root?.querySelector('[data-mascot-button]');
   const snack = root?.querySelector('[data-mascot-snack]');
@@ -74,7 +80,7 @@ async function fixture(t, {reduced = false, motion = 'system', html = markup} = 
   }
   w.eval(source);
   await advance(0);
-  return {w, root, button, snack, pet, image, status, captured, timers, history, advance, pointer};
+  return {w, root, button, snack, pet, image, status, captured, timers, history, advance, pointer, decodes};
 }
 
 test('module is harmless on pages without a mascot or with incomplete markup', async t => {
@@ -100,6 +106,8 @@ test('native mascot click interrupts greeting, shows local poke feedback, then r
   const h = await fixture(t);
   h.button.click();
   assert.equal(h.root.dataset.state, 'poke');
+  assert.match(h.status.textContent, /^아얏!/u);
+  await h.advance(0);
   assert.match(h.image.src, /\/poke\.png$/);
   assert.equal(h.button.querySelectorAll('.mascot-poke-effect').length, 1);
   await h.advance(4000);
@@ -290,6 +298,7 @@ test('failed pose falls back to the last loaded image and is not retried on the 
   h.image.dispatchEvent(new h.w.Event('load'));
   const good = h.image.getAttribute('src');
   h.button.click();
+  await h.advance(0);
   assert.match(h.image.src, /\/poke\.png$/);
   h.image.dispatchEvent(new h.w.Event('error'));
   assert.equal(h.image.getAttribute('src'), good);
@@ -315,3 +324,57 @@ test('total image failure leaves a single fallback and working controls', async 
   assert.equal(h.root.dataset.state, 'idle');
 });
 
+
+test('late decodes cannot overwrite a newer interaction or its final idle pose', async t => {
+  const h = await fixture(t, {deferDecode: true});
+  assert.equal(h.decodes.size, 9, 'all nine poses are preloaded once');
+  h.button.click();
+  assert.equal(h.root.dataset.state, 'poke', 'feedback starts before decoding');
+  assert.match(h.status.textContent, /^아얏!/u);
+  assert.equal(h.button.querySelectorAll('.mascot-poke-effect').length, 1);
+  h.pet.click();
+  assert.equal(h.root.dataset.state, 'pet');
+  assert.match(h.image.src, /\/idle\.png$/, 'keep the existing image while decoding');
+  for (const name of ['poke', 'wave1']) {
+    h.decodes.get('/mascot/play/' + name + '.png').resolve();
+    await h.advance(0);
+    assert.match(h.image.src, /\/idle\.png$/, name + ' is superseded');
+  }
+  h.decodes.get('/mascot/play/pet.png').resolve();
+  await h.advance(0);
+  assert.match(h.image.src, /\/pet\.png$/);
+  await h.advance(1500);
+  assert.equal(h.root.dataset.state, 'idle');
+  h.decodes.get('/mascot/play/idle.png').resolve();
+  await h.advance(0);
+  h.decodes.get('/mascot/play/happy.png').resolve();
+  await h.advance(0);
+  assert.match(h.image.src, /\/idle\.png$/, 'late happiness cannot restore a finished action');
+});
+
+test('hiding the tab invalidates an outstanding decoded pose', async t => {
+  const h = await fixture(t, {deferDecode: true});
+  h.button.click();
+  Object.defineProperty(h.w.document, 'hidden', {configurable: true, value: true});
+  h.w.document.dispatchEvent(new h.w.Event('visibilitychange'));
+  h.decodes.get('/mascot/play/poke.png').resolve();
+  h.decodes.get('/mascot/play/wave1.png').resolve();
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'idle');
+  assert.match(h.image.src, /\/idle\.png$/);
+  assert.equal(h.timers.size, 0);
+});
+
+test('decode rejection keeps the previous image and allows another action to succeed', async t => {
+  const h = await fixture(t, {deferDecode: true});
+  h.button.click();
+  h.decodes.get('/mascot/play/poke.png').reject(new Error('fixture decode failure'));
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'poke');
+  assert.match(h.image.src, /\/idle\.png$/);
+  h.pet.click();
+  h.decodes.get('/mascot/play/pet.png').resolve();
+  await h.advance(0);
+  assert.equal(h.root.dataset.state, 'pet');
+  assert.match(h.image.src, /\/pet\.png$/);
+});
