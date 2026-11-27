@@ -1,4 +1,4 @@
-import {shell,privateHeader,publicHeader,footer,escapeHtml} from './pages.mjs';
+import {shell,privateHeader,publicHeader,footer,escapeHtml,DEFAULT_HOME_TITLE} from './pages.mjs';
 import {homeMascotOptions} from './gallery.mjs';
 
 const descriptions={background:'배경 이미지를 바꾸고 움직임 속도를 조절하려면 로그인해 주세요.',llm:'API 키와 모델 설정은 로그인 후 이용할 수 있습니다.'};
@@ -39,12 +39,20 @@ export function settingsPage({authenticated=false}={}){
     <div class="settings-section-title"><h2>시작 애니메이션</h2><p>홈 화면이 처음 나타날 때의 움직임을 설정합니다.</p></div>
     <label class="paper-field" for="home-motion">재생 방식</label><select id="home-motion" data-home-motion-select><option value="system">기기 설정 따르기</option><option value="on">켜기</option><option value="off">끄기</option></select>
     <p class="paper-subtle" id="home-motion-status" role="status"></p>
+    <section class="paper-setting-section" aria-labelledby="home-title-settings-heading">
+      <div class="settings-section-title"><h2 id="home-title-settings-heading">홈 제목</h2></div>
+      <form data-default-home-title="${DEFAULT_HOME_TITLE}">
+        <label class="paper-field"><span>표시할 문구</span><input name="home-title" type="text" value="${DEFAULT_HOME_TITLE}" placeholder="${DEFAULT_HOME_TITLE}" autocomplete="off"></label>
+        <div class="paper-actions"><button class="paper-btn primary" type="submit">제목 저장</button><button class="paper-btn" type="button" data-home-title-reset>기본값으로</button></div>
+        <p class="paper-subtle" role="status" data-home-title-status></p>
+      </form>
+    </section>
     ${mascotSettings()}</section>
     <section id="background" class="settings-panel" hidden><div id="background-controls" class="background-settings" data-authenticated="${authenticated}">${content('background','배경')}</div></section>
     <section id="llm" class="settings-panel" hidden><div id="llm-app" data-authenticated="${authenticated}" aria-busy="${authenticated}">${content('llm','모델')}</div></section>
   </div></div></main>${footer()}</div>
   <template id="settings-login-template">${loginGate('llm')}</template>
   <div id="settings-status" class="paper-toast" role="status" aria-live="polite" hidden></div>
-  <script src="/settings.js?v=20261128-1" defer></script><script src="/appearance-settings.js?v=20261115-3" defer></script>`,'settings');
+  <script src="/home-title.js?v=1" defer></script><script src="/settings.js?v=20261128-1" defer></script><script src="/appearance-settings.js?v=20261115-3" defer></script>`,'settings');
 }
 

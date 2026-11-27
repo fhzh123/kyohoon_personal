@@ -101,7 +101,9 @@ html[data-theme] .home-header .wordmark { font-family: var(--font-sans); color: 
   line-height: 1.02;
   letter-spacing: -.075em;
   word-break: keep-all;
+  overflow-wrap: anywhere;
 }
+.desk-title-period { color: var(--desk-blue); }
 
 .desk-work { grid-area: work; width: 100%; min-width: 0; }
 .desk-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

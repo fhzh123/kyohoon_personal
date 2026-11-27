@@ -8,7 +8,8 @@ const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 // kh design system: shared tokens and bridge on every page, then one file per surface.
 const KH_V = '20261124-2';
-const HOME_V = '20261128-desk-2';
+const HOME_V = '20261128-desk-3';
+export const DEFAULT_HOME_TITLE = '작업실.';
 const KH_PAGES = new Set(['login', 'selectstar', 'personal', 'demos', 'paper', 'settings', 'travel', 'gallery']);
 const shell = (title, body, surface = '') => `<!doctype html>
 <html lang="ko" data-theme="dark" data-type="service" data-radius="soft" data-motion>
@@ -25,7 +26,7 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script type="module" src="/assets/taste/motion/motion.js"></script>
 <link rel="stylesheet" href="/atmosphere.css?v=20261115-2">
-<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script><link rel="stylesheet" href="/kh-system.css?v=${KH_V}"><link rel="stylesheet" href="/kh-site.css?v=${KH_V}">${KH_PAGES.has(surface) ? `<link rel="stylesheet" href="/kh/${surface}.css?v=${KH_V}">` : ''}${surface === 'home' ? '<link rel="stylesheet" href="/home.css?v='+HOME_V+'"><script src="/home.js?v='+HOME_V+'" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
+<link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script><link rel="stylesheet" href="/kh-system.css?v=${KH_V}"><link rel="stylesheet" href="/kh-site.css?v=${KH_V}">${KH_PAGES.has(surface) ? `<link rel="stylesheet" href="/kh/${surface}.css?v=${KH_V}">` : ''}${surface === 'home' ? '<link rel="stylesheet" href="/home.css?v='+HOME_V+'"><script src="/home-title.js?v=1" defer></script><script src="/home.js?v='+HOME_V+'" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
 </head><body data-surface="${surface}"${surface === 'demos' ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
 
@@ -85,7 +86,7 @@ export const homePage = ({authenticated = false, selectstarOnly = false, markdow
   <main id="main" class="home-main" aria-labelledby="intro-title">
     <div class="desk-intro">
       <div class="desk-day"><time class="desk-date" data-desk-date></time><span class="desk-weather" data-desk-weather hidden></span></div>
-      <h1 id="intro-title">오늘</h1>
+      <h1 id="intro-title" data-default-home-title="${DEFAULT_HOME_TITLE}"><span data-home-title-text>${DEFAULT_HOME_TITLE.slice(0,-1)}</span><span class="desk-title-period" data-home-title-period>.</span></h1>
     </div>
     <div class="desk-work">
       <section class="desk-shortcuts" aria-labelledby="desk-shortcut-heading">
