@@ -16,7 +16,8 @@ test('Personal stays public even when header authentication is unavailable',asyn
   await handler(req,res);assert.equal(res.status,200);if(method==='HEAD')assert.equal(res.body,'');else{assert.match(res.body,/Personal/);assert.doesNotMatch(res.body,/api\/auth\/logout/);}
  }assert.ok(authCalls>0);
  const d=new JSDOM(homePage()).window.document;
- assert.equal(d.querySelector('a.portal[href="/personal"] .home-access').textContent,'누구나 볼 수 있음');
+ assert.equal(d.querySelectorAll('a.portal').length,4);
+ assert.deepEqual([...d.querySelectorAll('a.portal .home-access')].map(badge=>[badge.closest('a').getAttribute('href'),badge.textContent]),[['/work','로그인 후 이용'],['/paper','로그인 후 이용']]);
  assert.ok(d.querySelector('a.portal[href="/paper"] .home-access.is-locked'));assert.notEqual(d.querySelector('a.portal[href="/paper"]').dataset.pose,d.querySelector('[data-default-pose]').getAttribute('src'));
 });
 async function creation(withFile,failUpload=false){

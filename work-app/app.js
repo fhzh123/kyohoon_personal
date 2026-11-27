@@ -18,7 +18,8 @@
   let state = validateState(clone(window.RESEARCH_SEED));
   const today = () => P.iso(new Date());
   const initialDate = today() < MIN_DATE ? MIN_DATE : today();
-  let view='roadmap', unit='week', anchor=initialDate, selectedYear=Number(initialDate.slice(0,4)), overviewMonth=Number(initialDate.slice(5,7));
+  const roadmapUnitKey = KEY + '-roadmap-unit';
+  let view='roadmap', unit='month', anchor=initialDate, selectedYear=Number(initialDate.slice(0,4)), overviewMonth=Number(initialDate.slice(5,7));
   let search='',goalFilter=null,categoryFilter=null,statusFilter=null,ownerFilter=null;
   let dirty=false, storageFailed=false, sourceIssue='', memoryRecovery=null, toastTimer, lastFocus=null;
   let taskSnapshot='', periodEdited=false, editorDraft=null, commitEditor=null, editorEvents=null;
@@ -198,7 +199,11 @@
     $('#roadmap-today').onclick=()=>{anchor=today()<MIN_DATE?MIN_DATE:today();render();};
     $('#roadmap-visibility').onclick=openRoadmapVisibility;
     bindFilters();bindTasks(host);
-    host.querySelectorAll('[data-unit]').forEach(button=>button.onclick=()=>{unit=button.dataset.unit;render();});
+    host.querySelectorAll('[data-unit]').forEach(button=>button.onclick=()=>{
+      unit=button.dataset.unit;
+      try { localStorage.setItem(roadmapUnitKey,unit); } catch {}
+      render();
+    });
     $('#anchor-month').onchange=e=>{if(/^\d{4}-\d{2}$/.test(e.target.value)&&e.target.value>='2026-11'){anchor=e.target.value+'-01';render();}};
     $('#edit-year-direction').onclick=()=>{selectedYear=focusYear;navigate('overview');$('#annual-focus')?.focus();};
   }
@@ -603,6 +608,10 @@ function renderAllocations(){
   window.addEventListener('beforeunload',e=>{if(dirty||storageFailed){e.preventDefault();e.returnValue='';}});
   window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue)toast('다른 창에서 계획이 변경됐습니다. 현재 내용을 백업한 뒤 새로고침해 주세요.');});
   const initialParams=new URLSearchParams(location.search||'');
+  try {
+    const savedUnit=localStorage.getItem(roadmapUnitKey);
+    if(Object.hasOwn(units,savedUnit))unit=savedUnit;
+  } catch {}
   if(Object.hasOwn(units,initialParams.get('unit')))unit=initialParams.get('unit');
   if(state.goals.some(g=>g.id===initialParams.get('l3')))goalFilter=[initialParams.get('l3')];
   const requested=alias(location.hash.slice(1));if(views[requested])view=requested;

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="682" viewBox="0 0 680 682" role="img" aria-labelledby="title description">
+  <title id="title">Financial document linking and metadata</title>
+  <desc id="description">Source documents are split by article into a hierarchy. In parallel, topic modeling clusters words and documents to build a vocabulary. That vocabulary informs per-article head and sub-head graphs. Links from the same hierarchy level can be combined into multi-hop paths for question answering.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="m1 1 7 4-7 4" fill="none" stroke="#5d7086" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <g id="document" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-13-16H3l10 10v22h-26z" fill="#fff"/>
+      <path d="M3-16v10h10M-7 1H7M-7 7H5" fill="none"/>
+    </g>
+    <g id="graph" stroke="currentColor" stroke-width="2">
+      <path d="m-19-12 19 12 17-13m-17 13-16 15m16-15 19 16m-36-31 13-6" fill="none"/>
+      <g fill="#fff"><circle r="7"/><circle cx="-19" cy="-12" r="4"/><circle cx="17" cy="-13" r="4"/><circle cx="-16" cy="15" r="4"/><circle cx="19" cy="16" r="4"/><circle cx="-4" cy="-21" r="3"/></g>
+    </g>
+    <g id="pairs" fill="#39485d" stroke="#a8b4c2" stroke-width="2">
+      <path d="M0 0h40M0 14h40M0 28h40"/>
+      <g stroke="none"><circle r="4"/><circle cx="40" r="4"/><circle cy="14" r="4"/><circle cx="40" cy="14" r="4"/><circle cy="28" r="4"/><circle cx="40" cy="28" r="4"/></g>
+    </g>
+    <g id="path" fill="none" stroke="#8d9bad" stroke-width="3">
+      <path d="M0 0h80"/>
+      <circle r="6" fill="#39485d" stroke="none"/><circle cx="40" r="6" fill="#bb790d" stroke="none"/>
+    </g>
+  </defs>
+  <rect width="680" height="682" fill="#f6f8fb"/>
+  <g font-family="Arial, sans-serif" text-anchor="middle" fill="#15263b">
+    <rect x="196" y="18" width="288" height="54" rx="12" fill="#e8eff8" stroke="#c3d2e4"/>
+    <use href="#document" transform="translate(226 45)" color="#345f92"/>
+    <text x="356" y="52" font-size="23" font-weight="700">Source documents</text>
+
+    <g fill="none" stroke="#5d7086" stroke-width="2">
+      <path d="M340 72v16H142v16" marker-end="url(#arrow)"/>
+      <path d="M340 88h132v16" marker-end="url(#arrow)"/>
+      <path d="M142 170v13" marker-end="url(#arrow)"/>
+      <path d="M142 273v27" marker-end="url(#arrow)"/>
+      <path d="M256 344h18v-56h26" marker-end="url(#arrow)"/>
+      <path d="M472 170v16m-125 30v-13h82v13m-41-13v-17h163v17m-51 13v-13h103v13"/>
+      <path d="M347 309v14" marker-end="url(#arrow)"/>
+      <path d="M429 309v14" marker-end="url(#arrow)"/>
+      <path d="M500 309v14" marker-end="url(#arrow)"/>
+      <path d="M603 309v14" marker-end="url(#arrow)"/>
+      <path d="M472 410v22" marker-end="url(#arrow)"/>
+    </g>
+    <g fill="#fff" stroke="#ccd7e4">
+      <rect x="28" y="108" width="228" height="62" rx="10"/>
+      <rect x="304" y="108" width="336" height="62" rx="10"/>
+      <rect x="28" y="187" width="228" height="86" rx="10"/>
+      <rect x="28" y="304" width="228" height="80" rx="10"/>
+      <rect x="304" y="263" width="336" height="46" rx="10"/>
+      <rect x="28" y="434" width="612" height="143" rx="12"/>
+      <rect x="340" y="610" width="176" height="50" rx="10"/>
+      <rect x="536" y="610" width="104" height="50" rx="10" fill="#e8eff8" stroke="#c3d2e4"/>
+    </g>
+    <g font-size="23" font-weight="700">
+      <text x="142" y="147">Topic modeling</text>
+      <text x="472" y="147">Chunk by article</text>
+      <text x="142" y="338">Vocabulary</text>
+      <text x="472" y="293">Head / Sub-head</text>
+      <text x="334" y="469">Build multi-hop paths within the same level</text>
+      <text x="428" y="642">Generate Q&amp;A</text>
+      <text x="588" y="642">Q / A</text>
+    </g>
+    <g font-size="22" fill="#344b63">
+      <text x="142" y="220">Word clusters</text>
+      <text x="142" y="249">Document clusters</text>
+      <text x="142" y="365">by topic</text>
+      <text x="383" y="513" text-anchor="start">Same level</text>
+      <text x="383" y="552" text-anchor="start">Different levels</text>
+    </g>
+    <g color="#526e91">
+      <use href="#document" x="347" y="235"/><use href="#document" x="429" y="235"/>
+      <use href="#document" x="500" y="235"/><use href="#document" x="603" y="235"/>
+      <text x="550" y="242" font-size="24">…</text>
+    </g>
+    <use href="#graph" x="347" y="350" color="#a66a08"/>
+    <use href="#graph" x="429" y="350" color="#247ca0"/>
+    <use href="#graph" x="500" y="350" color="#4d608c"/>
+    <use href="#graph" x="603" y="350" color="#a55c34"/>
+    <use href="#pairs" x="327" y="378"/><use href="#pairs" x="409" y="378"/>
+    <use href="#pairs" x="480" y="378"/><use href="#pairs" x="583" y="378"/>
+    <g>
+      <circle cx="367" cy="392" r="4" fill="#bb790d"/><circle cx="409" cy="392" r="4" fill="#bb790d"/><circle cx="449" cy="392" r="4" fill="#23714f"/>
+      <circle cx="480" cy="378" r="4" fill="#bb790d"/><circle cx="520" cy="378" r="4" fill="#4d608c"/>
+      <circle cx="583" cy="406" r="4" fill="#23714f"/><circle cx="623" cy="406" r="4" fill="#247ca0"/>
+    </g>
+    <use href="#path" x="233" y="506"/><circle cx="313" cy="506" r="6" fill="#23714f"/>
+    <use href="#path" x="233" y="545"/><circle cx="313" cy="545" r="6" fill="#4d608c"/>
+    <g fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m350 506 5 5 9-10" stroke="#23714f"/>
+      <path d="m352 541 10 10m0-10-10 10" stroke="#a33838"/>
+    </g>
+    <g fill="none" stroke="#5d7086" stroke-width="2">
+      <path d="M313 515v10H190v110h143" marker-end="url(#arrow)"/>
+      <path d="M519 635h12" marker-end="url(#arrow)"/>
+    </g>
+  </g>
+</svg>

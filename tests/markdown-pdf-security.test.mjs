@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {buffer} from 'node:stream/consumers';
 import {createMarkdownPdfRenderer, allowPdfRequest, buildMarkdownPdfHtml, pdfDisposition} from '../server/markdown-pdf.mjs';
 
 test('PDF request policy blocks navigation, executable resources and local schemes', () => {
@@ -43,7 +44,7 @@ function fakeBrowser({pdfError, contentDelay = 0} = {}) {
     setRequestInterception:async value => calls.push(['interception', value]),
     on:() => {}, emulateMediaType:async value => calls.push(['media', value]),
     setContent:async () => { calls.push(['content']); if (contentDelay) await new Promise(resolve => setTimeout(resolve, contentDelay)); },
-    pdf:async options => { calls.push(['pdf', options]); if (pdfError) throw pdfError; return new Uint8Array([37, 80, 68, 70]); },
+    createPDFStream:async options => { calls.push(['pdf', options]); if (pdfError) throw pdfError; return new Blob(['%PDF']).stream(); },
   };
   const context = {newPage:async () => page, close:async () => { calls.push(['close']); }};
   return {calls, browser:{createBrowserContext:async () => context}};
@@ -55,7 +56,7 @@ test('PDF renderer disables scripts before loading and always closes its isolate
     const render = createMarkdownPdfRenderer({getBrowser:async () => browser});
     const pending = render({title:'문서', content:'# 제목', theme:'ivory'});
     if (pdfError) await assert.rejects(pending, /print failure/);
-    else assert.deepEqual(await pending, Buffer.from('%PDF'));
+    else assert.deepEqual(await buffer(await pending), Buffer.from('%PDF'));
     assert.ok(calls.findIndex(([name]) => name === 'javascript') < calls.findIndex(([name]) => name === 'content'));
     assert.deepEqual(calls.find(([name]) => name === 'javascript'), ['javascript', false]);
     assert.deepEqual(calls.find(([name]) => name === 'interception'), ['interception', true]);

@@ -51,12 +51,11 @@ async function seed(h) {
 const docUrl = document => '/api/markdown/documents/' + document.id;
 const folderUrl = folder => '/api/markdown/folders/' + folder.id;
 
-test('Markdown PDF authorizes readers, downloads vector bytes, and never persists the requested theme', async t => {
+test('Markdown PDF lets the local preview download vector bytes without persisting the requested theme', async t => {
   const calls = [], pdf = Buffer.from('%PDF-1.7\nexample');
   const h = await fixture(t, {renderPdf:async document => { calls.push(document); return pdf; }});
   const {document} = await seed(h);
   const saved = (await h.call(docUrl(document), 'PATCH', {revision:document.revision, title:'한글 "문서"', content:'# 실제 본문', theme:'night'})).value;
-  h.setAccess({...editor, role:'reader'});
   const response = await h.call(docUrl(document) + '/pdf?theme=github-dark');
   assert.equal(response.status, 200);
   assert.equal(response.contentType, 'application/pdf');
@@ -90,7 +89,7 @@ test('Markdown PDF validates authentication, IDs, themes, missing documents, and
 test('Markdown PDF remote reads use the member token and translate failures into JSON errors', async t => {
   const id = randomUUID(), reads = [];
   const h = await fixture(t, {
-    access:{mode:'supabase', role:'reader', token:'reader-token'},
+    access:{mode:'supabase', role:'editor', isOwner:true, token:'owner-token'},
     authFetch:async (url, options) => { reads.push({url, options}); return {ok:true, json:async () => [{id, title:'원격 문서', content:'# 본문', theme:'ivory'}]}; },
     renderPdf:async () => { throw Error('Browser internal details'); },
   });
@@ -99,9 +98,9 @@ test('Markdown PDF remote reads use the member token and translate failures into
   assert.deepEqual(response.value, {error:'PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'});
   assert.equal(reads.length, 1);
   assert.equal(reads[0].options.method, 'GET');
-  assert.equal(reads[0].options.headers.Authorization, 'Bearer reader-token');
+  assert.equal(reads[0].options.headers.Authorization, 'Bearer owner-token');
   assert.match(reads[0].url, new RegExp('id=eq\\.' + id));
-  const forbidden = await fixture(t, {access:{mode:'supabase', role:'reader', token:'inactive'}, authFetch:async () => ({ok:false, status:403})});
+  const forbidden = await fixture(t, {access:{mode:'supabase', role:'editor', isOwner:true, token:'stale-owner'}, authFetch:async () => ({ok:false, status:403})});
   assert.equal((await forbidden.call('/api/markdown/documents/' + id + '/pdf')).status, 403);
 });
 
@@ -160,12 +159,13 @@ test('Markdown requires authentication for reads and every write endpoint', asyn
   assert.equal((await h.call('/api/markdown-other/tree')).handled, false);
 });
 
-test('Markdown reader can read existing documents but every mutation returns the agreed 403', async t => {
+test('Markdown reader cannot read existing documents, export PDFs, or mutate data', async t => {
   const h = await fixture(t);
   const {folder, document} = await seed(h);
   h.setAccess({...editor, role:'reader'});
-  assert.equal((await h.call('/api/markdown/tree')).value.role, 'reader');
-  assert.deepEqual((await h.call(docUrl(document))).value, document);
+  for (const url of ['/api/markdown/tree', docUrl(document), docUrl(document) + '/pdf']) {
+    assert.equal((await h.call(url)).status, 403);
+  }
   const previousLimits = h.limits.length;
   for (const [url, method] of [
     ['/api/markdown/folders', 'POST'], [folderUrl(folder), 'PATCH'], [folderUrl(folder), 'DELETE'],
@@ -173,7 +173,7 @@ test('Markdown reader can read existing documents but every mutation returns the
   ]) {
     const response = await h.call(url, method, {});
     assert.equal(response.status, 403);
-    assert.deepEqual(response.value, {error:'읽기 전용 계정입니다.'});
+    assert.deepEqual(response.value, {error:'소유자만 마크다운 에디터를 사용할 수 있습니다.'});
   }
   assert.equal(h.limits.length, previousLimits);
 });
@@ -291,7 +291,7 @@ function remoteStore() {
 
 test('Markdown Supabase CRUD sends user bearer tokens, selected fields and revision predicates', async t => {
   const store = remoteStore(), userId = randomUUID();
-  const h = await fixture(t, {access:{mode:'supabase', role:'editor', userId, token:'user-token'}, authFetch:store.authFetch});
+  const h = await fixture(t, {access:{mode:'supabase', role:'editor', isOwner:true, userId, token:'user-token'}, authFetch:store.authFetch});
   const {folder, document} = await seed(h);
   assert.equal(store.folders.get(folder.id).updated_by, userId);
   assert.equal(store.documents.get(document.id).updated_by, userId);
@@ -336,7 +336,7 @@ test('Markdown Supabase CRUD sends user bearer tokens, selected fields and revis
 
 test('Markdown Supabase CAS detects a race at the write and returns the latest document', async t => {
   const store = remoteStore();
-  const h = await fixture(t, {access:{...editor, mode:'supabase', userId:randomUUID()}, authFetch:store.authFetch});
+  const h = await fixture(t, {access:{...editor, mode:'supabase', isOwner:true, userId:randomUUID()}, authFetch:store.authFetch});
   const {document} = await seed(h);
   const newer = {...document, content:'다른 창에서 저장', revision:randomUUID()};
   store.onPatch(documents => documents.set(document.id, newer));
@@ -348,15 +348,16 @@ test('Markdown Supabase CAS detects a race at the write and returns the latest d
   assert.equal((await h.call(docUrl(document), 'PATCH', {revision:newer.revision, content:'삭제 후 저장'})).status, 404);
 });
 
-test('Markdown Supabase reader never writes and upstream failures do not leak details', async t => {
+test('Markdown Supabase rejects non-owners before fetching data and hides upstream failure details', async t => {
   const store = remoteStore();
-  const h = await fixture(t, {access:{...editor, mode:'supabase', role:'reader', token:'reader-token'}, authFetch:store.authFetch});
-  assert.deepEqual((await h.call('/api/markdown/tree')).value, {folders:[], documents:[], role:'reader'});
-  assert.ok(store.calls.every(call => call.headers.Authorization === 'Bearer reader-token'));
-  const count = store.calls.length;
-  assert.equal((await h.call('/api/markdown/folders', 'POST', {name:'금지'})).status, 403);
-  assert.equal(store.calls.length, count);
-  h.setAccess({...editor, mode:'supabase', userId:randomUUID(), token:'editor-token'});
+  const h = await fixture(t, {authFetch:store.authFetch});
+  for (const role of ['reader', 'editor', 'selectstar_reader']) {
+    h.setAccess({mode:'supabase', role, isOwner:false, token:'non-owner-token'});
+    assert.equal((await h.call('/api/markdown/tree')).status, 403);
+    assert.equal((await h.call('/api/markdown/folders', 'POST', {name:'금지'})).status, 403);
+  }
+  assert.equal(store.calls.length, 0);
+  h.setAccess({...editor, mode:'supabase', isOwner:true, userId:randomUUID(), token:'owner-token'});
   assert.equal((await h.call('/api/markdown/documents', 'POST', {folder_id:randomUUID(), title:'없는 폴더'})).status, 404);
   for (const status of [401, 403, 500]) {
     store.fail({status, body:{message:'private upstream detail'}});
@@ -395,7 +396,7 @@ test('Markdown HTTP integration authenticates the user and enforces the actual b
   const userId = randomUUID(), store = remoteStore();
   const handler = createHandler({environment:{SUPABASE_URL:'https://project.supabase.co', SUPABASE_ANON_KEY:'fixture'}, fetcher:async (url, options) => {
     if (url.endsWith('/auth/v1/user')) return Response.json({id:userId});
-    if (url.includes('/rest/v1/workspace_members?')) return Response.json([{user_id:userId, role:'editor'}]);
+    if (url.includes('/rest/v1/workspace_members?')) return Response.json([{user_id:userId, role:'editor', is_owner:true}]);
     return store.authFetch(url.replace('https://project.supabase.co', ''), options);
   }});
   const headers = {cookie:'kh_access=fixture-token', origin:'http://test.invalid'};

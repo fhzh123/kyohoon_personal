@@ -41,8 +41,6 @@ const App = () => {
   const [activeLectureHonorsType, setActiveLectureHonorsType] = useState('Honors'); // Default to Lecture
   // State to manage the visibility of the KakaoTalk QR modal
   const [showKakaoQr, setShowKakaoQr] = useState(false);
-  // State to manage the flip state of the profile picture
-  const [isFlipped, setIsFlipped] = useState(false);
   // State to manage image loading in the project modal
   const [isLoadingImage, setIsLoadingImage] = useState(true);
   // State for language toggle
@@ -342,10 +340,15 @@ const App = () => {
                   <div className="text-sm md:text-base text-gray-400 mb-2">{project.period}</div>
                   <p className="text-sm md:text-base text-gray-300 mb-2" dangerouslySetInnerHTML={{ __html: project.description }}></p>
                   <button
+                    type="button"
+                    aria-haspopup="dialog"
                     onClick={() => setSelectedProject(project)}
-                    className="text-blue-400 hover:underline text-sm md:text-base cursor-pointer"
+                    className="resume-project-action cursor-pointer"
                   >
                     {currentData.buttons.viewDetails}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                      <path d="M5 12h14m-6-6 6 6-6 6" />
+                    </svg>
                   </button>
                 </div>
               ))}
@@ -518,49 +521,7 @@ const App = () => {
       <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-4 md:gap-5 animate-fadeIn">
         {/* Left Profile Section */}
         <div className="flex-1 bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg flex flex-col items-center">
-          {/* Profile Picture with Flip Animation and added effects */}
-          <div
-            className="w-32 h-32 md:w-48 md:h-48 mb-4 md:mb-6 perspective-1000 cursor-pointer rounded-full overflow-hidden border-4 border-blue-500 transition-transform duration-300 hover:scale-105 animate-glowPulse"
-            onClick={() => setIsFlipped(!isFlipped)}
-          >
-            <div
-              className={`relative w-full h-full transition-transform duration-700`}
-              style={{
-                transformStyle: 'preserve-3d',
-                transformOrigin: 'center',
-                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
-              }}
-            >
-              {/* Front Face */}
-              <div
-                className="absolute inset-0 w-full h-full"
-                style={{
-                  backfaceVisibility: 'hidden',
-                  transform: 'rotateY(0deg)'
-                }}
-              >
-                <img
-                  src="https://raw.githubusercontent.com/fhzh123/fhzh123/refs/heads/main/KyohoonJin_%ED%94%84%EB%A1%9C%ED%95%84%EC%82%AC%EC%A7%84.jpg"
-                  alt="Profile Front"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {/* Back Face */}
-              <div
-                className="absolute inset-0 w-full h-full transform rotate-y-180"
-                style={{
-                  backfaceVisibility: 'hidden',
-                  transform: 'rotateY(180deg)'
-                }}
-              >
-                <img
-                  src="https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/kyohoon_back_profile.png?raw=true"
-                  alt="Profile Back"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
+          <img className="resume-portrait" src="/resume/profile.jpg" alt="Kyohoon Jin" width="128" height="128" />
 
           {/* Emphasized 'AI Research Engineer' text */}
           <div className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-center">
@@ -639,14 +600,14 @@ const App = () => {
             }
           }}
         >
-          <div className="bg-gray-800 rounded-lg shadow-xl p-6 md:p-8 w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
+          <div role="dialog" aria-labelledby="resume-project-title" className="bg-gray-800 rounded-lg shadow-xl p-6 md:p-8 w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
             <button
               onClick={() => setSelectedProject(null)}
               className="absolute top-3 right-3 md:top-4 md:right-4 text-gray-400 hover:text-white text-2xl md:text-3xl font-bold transition-colors duration-200"
             >
               &times;
             </button>
-            <h2 className="text-2xl md:text-3xl font-bold text-sky-400 mb-3 md:mb-4">{projectTitle(selectedProject)}</h2>
+            <h2 id="resume-project-title" className="text-2xl md:text-3xl font-bold text-sky-400 mb-3 md:mb-4">{projectTitle(selectedProject)}</h2>
             {selectedProject.imageUrl && (
               <>
                 {isLoadingImage && (
@@ -696,9 +657,12 @@ const App = () => {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-blue-700 hover:bg-blue-600 text-white py-1.5 px-3 md:py-2 md:px-4 rounded-md transition-colors duration-200 text-xs md:text-sm"
+                      className="resume-project-action"
                     >
                       {link.name}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                        <path d="M7 17 17 7M7 7h10v10" />
+                      </svg>
                     </a>
                   ))}
                 </div>

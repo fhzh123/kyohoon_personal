@@ -1,9 +1,9 @@
 # Markdown PDF downloads
 
 `GET /api/markdown/documents/:id/pdf?theme=<key>` reads the saved document under
-the caller's membership. Readers and editors can download; the theme override
-does not write to the document. Omitting it uses the saved theme. The response
-is an uncached attachment with a UTF-8 title filename.
+the Markdown access policy. The theme override applies to the download.
+Omitting it uses the saved theme. The response is an uncached attachment with
+a UTF-8 title filename.
 
 `server/markdown-pdf.mjs` shares Markdown options and task lists with the preview,
 sanitizes raw HTML, embeds the theme stylesheet, Wanted Sans and Noto Color Emoji,
@@ -24,9 +24,20 @@ The registry's latest Puppeteer was 25.18.1 when checked; 25.11.0 is deliberatel
 pinned because [Puppeteer's browser table](https://pptr.dev/supported-browsers)
 maps it to Chrome 153, following the
 [Chromium package's compatibility guidance](https://github.com/Sparticuz/chromium#install).
-`vercel.json` includes the package's compressed binaries and requests 1769 MB
-memory. The Linux launch removes `--single-process` so isolated contexts work.
-A render has a 25 second deadline and closes its context on success or failure.
+`vercel.json` includes the package's compressed binaries and sets a 180-second
+function limit. That duration fits Fluid Compute and legacy Pro and Enterprise
+plans. Memory is managed through Vercel on Fluid Compute. The Linux launch
+removes `--single-process` so isolated contexts work.
+
+Chromium gets up to 25 seconds to launch. A 90-second deadline covers the
+entire render and CDP stream, including startup and asset loading. Printing
+waits for the document load event and its fonts. The browser context closes
+after the stream ends, expires, or is cancelled. The editor allows 155 seconds
+for authentication, fetching the document, rendering and downloading the body.
+
+The Node.js function streams the PDF from Chromium to the HTTP response. This
+avoids holding a full PDF buffer in Node and uses Vercel's streaming response
+support for files over its [4.5 MB buffered response limit](https://vercel.com/kb/guide/how-to-bypass-vercel-body-size-limit-serverless-functions).
 
 Local runs use `CHROME_PATH` when set, otherwise common Chrome/Edge locations
 on Windows, Linux and macOS. The browser sandbox stays enabled by default.
@@ -66,6 +77,7 @@ Font assets are read on the first render; PDF/browser imports remain lazy.
 node --test tests/*.test.mjs
 node scripts/markdown-pdf-samples.mjs
 node scripts/markdown-pdf-samples.mjs sprinkles
+node scripts/markdown-pdf-samples.mjs --long sprinkles
 node scripts/markdown-pdf-font-check.mjs
 ```
 
@@ -77,6 +89,10 @@ It also writes `typed-emoji.pdf` and its Markdown source, including
 😀 🎉 ✅ 🇰🇷 👍🏽, variation selectors, ZWJ and keycap examples. Default tests
 inject fake browsers/renderers and never launch Chromium. The emoji unit test
 checks the embedded bytes/checksum, unicode-range, all theme stacks and CSP.
+
+`--long sprinkles` uses local Chromium and the authenticated HTTP route with
+fixture authentication and storage responses. It verifies a chunked download
+over 4.5 MB, including the PDF header and end marker.
 
 The font-check script uses `CSS.getPlatformFontsForNode` through CDP with page
 JavaScript disabled, without `page.evaluate`. It inspects typed emoji, all six

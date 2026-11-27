@@ -3,8 +3,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, timingSafeEqual, randomUUID, createHash } from 'node:crypto';
 import {gzipSync,gunzipSync} from 'node:zlib';
+import {Readable} from 'node:stream';
+import {pipeline} from 'node:stream/promises';
 import { homePage, loginPage, workPage, demosPage, personalPage, markdownPage } from '../views/pages.mjs';
-import { previewAllowed, safeRelativePath, safeLoginDestination, validState } from './policy.mjs';
+import { previewAllowed, safeRelativePath, safeLoginDestination, validState, isSelectstarReader, canAccessMarkdown, memberLoginDestination } from './policy.mjs';
 import {demoRoutes} from './demo-routes.mjs';
 import {teamResourceRoutes} from './team-resource-routes.mjs';
 import { expenseRoutes } from './expense-routes.mjs';
@@ -42,10 +44,12 @@ export function createHandler({localPreview = false, rootDir = root, environment
       const script=`<script src="/session-activity.js?v=20261118-1" data-idle-ms="${IDLE_MS}" data-server-now="${clock()}" data-last-active="${session.lastActive}" data-session-key="${key}" defer></script>`;
       const compressed=extras['Content-Encoding']==='gzip';
       const html=compressed?gunzipSync(value).toString('utf8'):String(value);
-      const tracked=html.replace(/<\/head>/i,script+'</head>');
+      const menu=session.selectstarOnly?html.replace(/<a\b[^>]*\bdata-global-settings\b[^>]*>[\s\S]*?<\/a>/g,''):html;
+      const tracked=menu.replace(/<\/head>/i,script+'</head>');
       value=compressed?gzipSync(Buffer.from(tracked)):tracked;
     }
     res.writeHead(status, {...securityHeaders, 'Cache-Control':'private, no-store, max-age=0', 'Content-Type':contentType, ...extras});
+    if (value instanceof Readable) return pipeline(value, res);
     res.end(Buffer.isBuffer(value) || typeof value === 'string' ? value : JSON.stringify(value));
   };
   const redirect = (res, location, cookies) => send(res, 303, '', 'text/plain', {Location:location, ...(cookies ? {'Set-Cookie':cookies} : {})});
@@ -54,11 +58,12 @@ export function createHandler({localPreview = false, rootDir = root, environment
   const authFetch = async (url, options = {}) => fetcher(supabaseBase + url, {...options, signal:AbortSignal.timeout(12000), headers:{...baseHeaders,...options.headers}});
   const bearer = token => ({Authorization:`Bearer ${token}`});
   const member = async token => {
-    const response = await authFetch('/rest/v1/workspace_members?select=user_id,role&active=eq.true', {headers:bearer(token)});
+    const response = await authFetch('/rest/v1/workspace_members?select=*&active=eq.true', {headers:bearer(token)});
     if(response.status===429||response.status>=500)throw new Error('Authentication is temporarily unavailable');
     if (!response.ok) return null;
     const rows = await response.json();
-    return Array.isArray(rows) && rows.length === 1 ? rows[0] : null;
+    const membership = Array.isArray(rows) && rows.length === 1 ? rows[0] : null;
+    return ['reader','editor','selectstar_reader'].includes(membership?.role) ? membership : null;
   };
   function queueCookies(res,values){
     res.authCookies??=new Map();for(const value of values)res.authCookies.set(value.split('=')[0],value);
@@ -104,11 +109,16 @@ export function createHandler({localPreview = false, rootDir = root, environment
     const user=await response.json();if(!membership||membership.user_id!==user.id)return null;
     // Recheck after upstream calls, so a slow refresh cannot revive an idle session.
     if(idle&&clock()>=idle.expiresAt){clearSession(res);return null;}
-    res.siteSession={token,refreshToken,userId:user.id,lastActive:idle?.lastActive??now,expiresAt:(idle?.lastActive??now)+IDLE_MS};
+    res.siteSession={token,refreshToken,userId:user.id,selectstarOnly:isSelectstarReader(membership),lastActive:idle?.lastActive??now,expiresAt:(idle?.lastActive??now)+IDLE_MS};
     if(refreshed)queueCookies(res,[setCookie('kh_access',token,Math.max(1,Math.min(3600,Number(refreshed.expires_in)||3600)))]);
     const navigation=req.method==='GET'&&req.headers['sec-fetch-dest']==='document'&&!/prefetch|prerender/i.test(String(req.headers['sec-purpose']||req.headers.purpose||''));
     if(!idle||refreshed||navigation)setActivity(res,navigation?clock():res.siteSession.lastActive);
-    return {mode:'supabase',role:membership.role,userId:user.id,token};
+    return {mode:'supabase',role:membership.role,isOwner:membership.is_owner===true,userId:user.id,token};
+  }
+  async function authorizeOutsideSelectstar(req,res) {
+    const access=await authorize(req,res);
+    if (isSelectstarReader(access)) throw Object.assign(new Error('Selectstar access only'),{status:403});
+    return access;
   }
   async function localEnvelope() {
     return JSON.parse(await readFile(path.join(rootDir,'private/work/workspace-state.json'),'utf8'));
@@ -138,7 +148,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
       workspace={revision:String(row.revision),state:row.state,updatedAt:row.updated_at};
       taxonomySource=row.taxonomy_source; legacySeed=row.legacy_seed;
     }
-    return {workspace,taxonomySource,legacySeed,context:{mode:access.mode,storageKey:`kyohoon-work-${access.mode}-${access.userId}`,role:access.role}};
+    return {workspace,taxonomySource,legacySeed,context:{mode:access.mode,storageKey:`kyohoon-work-${access.mode}-${access.userId}`,role:isSelectstarReader(access)?'reader':access.role}};
   }
   async function serveFile(req,res,base,relative) {
     const safe = safeRelativePath(relative);
@@ -151,9 +161,9 @@ export function createHandler({localPreview = false, rootDir = root, environment
   const handleDemos=demoRoutes({authorize,send,rootDir});
   const handleTeamResources=teamResourceRoutes({authorize,authFetch,bearer,redirect,rootDir,send});
   const handleExpenses=expenseRoutes({authorize,authFetch,bearer,send,body,serveFile,rootDir});
-  const handlePaper=paperRoutes({authorize,authFetch,bearer,send,body,rootDir,environment,fetcher});
-  const handleAppearance=appearanceRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
-  const handleTravel=travelRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
+  const handlePaper=paperRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment,fetcher});
+  const handleAppearance=appearanceRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment});
+  const handleTravel=travelRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment});
   const handleMarkdown=markdownRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
   return async function handler(req,res) {
     try {
@@ -199,7 +209,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
         const session = await result.json();
         const membership = await member(session.access_token);
         if (!membership || membership.user_id !== session.user?.id) return send(res,403,loginPage({configured,preview:preview(req),next,message:'이 계정에는 업무 공간 접근 권한이 없습니다.'}),'text/html; charset=utf-8');
-        return redirect(res,next,[setCookie('kh_access',session.access_token),setCookie('kh_refresh',session.refresh_token,SESSION_COOKIE_AGE),setCookie('kh_idle',sealIdle(clock(),session.refresh_token||session.access_token),SESSION_COOKIE_AGE)]);
+        return redirect(res,memberLoginDestination(next,membership),[setCookie('kh_access',session.access_token),setCookie('kh_refresh',session.refresh_token,SESSION_COOKIE_AGE),setCookie('kh_idle',sealIdle(clock(),session.refresh_token||session.access_token),SESSION_COOKIE_AGE)]);
       }
       if (pathname === '/api/auth/logout' && req.method === 'POST') {
         const access = cookiesOf(req).kh_access;
@@ -211,7 +221,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
         const next=safeLoginDestination(requestUrl.searchParams.get('next'));
         const access=await authorize(req,res);
-        if(access)return redirect(res,next);
+        if(access)return redirect(res,memberLoginDestination(next,access));
         return send(res,200,req.method==='HEAD'?'':loginPage({configured,preview:preview(req),next,message:requestUrl.searchParams.get('reason')==='idle'?'3시간 동안 활동이 없어 로그아웃되었습니다. 다시 로그인해 주세요.':''}),'text/html; charset=utf-8');
       }
       if (pathname === '/work/preview') {
@@ -232,13 +242,14 @@ export function createHandler({localPreview = false, rootDir = root, environment
       }
       if(pathname==='/personal/markdown'||pathname==='/personal/markdown/'){
         if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'허용되지 않은 요청입니다.'});
-        const access=await authorize(req,res).catch(()=>null);
-        return send(res,200,req.method==='HEAD'?'':markdownPage(access),'text/html; charset=utf-8');
+        const access=await authorize(req,res);
+        if(access&&!canAccessMarkdown(access))return send(res,403,{error:'소유자만 마크다운 에디터를 열 수 있습니다.'});
+        return send(res,access?200:401,req.method==='HEAD'?'':markdownPage(access),'text/html; charset=utf-8');
       }
       if(pathname==='/personal/travel'||pathname==='/personal/travel/'){
         if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'허용되지 않은 요청입니다.'});
         const access=await authorize(req,res).catch(()=>null);
-        return send(res,200,req.method==='HEAD'?'':travelPage(access),'text/html; charset=utf-8');
+        return send(res,200,req.method==='HEAD'?'':travelPage(isSelectstarReader(access)?null:access),'text/html; charset=utf-8');
       }
       if (await handleTeamResources(req,res,requestUrl)) return;
       if (pathname === '/work/demos' || pathname === '/work/demos/') {
@@ -315,7 +326,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
       if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (pathname === '/') {
         const access=await authorize(req,res);
-        return send(res,200,homePage({authenticated:Boolean(access)}),'text/html; charset=utf-8');
+        return send(res,200,homePage({authenticated:Boolean(access),selectstarOnly:isSelectstarReader(access)}),'text/html; charset=utf-8');
       }
       if (pathname === '/resume' || pathname === '/resume/') {
         // Keep the public CV available to everyone; only expose the Home shortcut

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
+import {buffer} from 'node:stream/consumers';
 import {JSDOM} from 'jsdom';
 import {buildMarkdownPdfHtml, pdfDisposition, allowPdfRequest, createMarkdownPdfRenderer, localChromePath} from '../server/markdown-pdf.mjs';
 import {MARKDOWN_THEME_KEYS} from '../views/markdown-themes.mjs';
@@ -89,7 +90,7 @@ function fakeBrowser({failPdf = false, stall = false} = {}) {
   const calls = [], handlers = {};
   const page = Object.fromEntries(['setDefaultTimeout', 'setDefaultNavigationTimeout', 'setJavaScriptEnabled', 'setRequestInterception', 'emulateMediaType', 'setContent'].map(name => [name, async (...args) => { calls.push([name, ...args]); }]));
   page.on = (event, listener) => { handlers[event] = listener; };
-  page.pdf = async options => { calls.push(['pdf', options]); if (failPdf) throw Error('print failed'); if (stall) return new Promise(() => {}); return new Uint8Array([37, 80, 68, 70]); };
+  page.createPDFStream = async options => { calls.push(['pdf', options]); if (failPdf) throw Error('print failed'); return new ReadableStream({start(controller) { if (!stall) { controller.enqueue(Buffer.from('%PDF')); controller.close(); } }}); };
   const context = {newPage:async () => page, close:async () => { calls.push(['close']); }};
   return {browser:{createBrowserContext:async () => context}, calls, handlers};
 }
@@ -98,7 +99,11 @@ test('PDF renderer disables JS before loading, emits A4 without headers, and alw
   for (const failPdf of [false, true]) {
     const fake = fakeBrowser({failPdf}), render = createMarkdownPdfRenderer({getBrowser:async () => fake.browser});
     if (failPdf) await assert.rejects(render({content:'본문'}), /print failed/);
-    else assert.equal((await render({content:'본문'})).toString(), '%PDF');
+    else {
+      const stream = await render({content:'본문'});
+      assert.equal(fake.calls.some(([name]) => name === 'close'), false);
+      assert.equal((await buffer(stream)).toString(), '%PDF');
+    }
     assert.ok(fake.calls.findIndex(([name]) => name === 'setJavaScriptEnabled') < fake.calls.findIndex(([name]) => name === 'setContent'));
     assert.deepEqual(fake.calls.find(([name]) => name === 'setJavaScriptEnabled'), ['setJavaScriptEnabled', false]);
     assert.deepEqual(fake.calls.find(([name]) => name === 'setRequestInterception'), ['setRequestInterception', true]);
@@ -106,6 +111,8 @@ test('PDF renderer disables JS before loading, emits A4 without headers, and alw
     assert.equal(options.format, 'A4');
     assert.equal(options.printBackground, true);
     assert.equal(options.displayHeaderFooter, false);
+    assert.equal(options.waitForFonts, true);
+    assert.equal(fake.calls.find(([name]) => name === 'setContent')[2].waitUntil, 'load');
     assert.deepEqual(options.margin, {top:0, right:0, bottom:0, left:0});
     assert.equal(fake.calls.at(-1)[0], 'close');
   }
@@ -113,7 +120,7 @@ test('PDF renderer disables JS before loading, emits A4 without headers, and alw
 
 test('PDF render deadline closes an in-progress page and reports timeout', async () => {
   const fake = fakeBrowser({stall:true}), render = createMarkdownPdfRenderer({getBrowser:async () => fake.browser, timeout:100});
-  await assert.rejects(render({content:'본문'}), /PDF timeout/);
+  await assert.rejects(async () => buffer(await render({content:'본문'})), /PDF timeout/);
   assert.equal(fake.calls.at(-1)[0], 'close');
 });
 
