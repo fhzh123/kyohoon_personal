@@ -8,7 +8,7 @@ const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 // kh design system: shared tokens and bridge on every page, then one file per surface.
 const KH_V = '20261124-2';
-const HOME_V = '20261127-desk-1';
+const HOME_V = '20261128-desk-1';
 const KH_PAGES = new Set(['login', 'selectstar', 'personal', 'demos', 'paper', 'settings', 'travel', 'gallery']);
 const shell = (title, body, surface = '') => `<!doctype html>
 <html lang="ko" data-theme="dark" data-type="service" data-radius="soft" data-motion>
@@ -84,8 +84,8 @@ export const homePage = ({authenticated = false, selectstarOnly = false, markdow
   </header>
   <main id="main" class="home-main" aria-labelledby="intro-title">
     <div class="desk-intro">
-      <time class="desk-date" data-desk-date></time>
-      <h1 id="intro-title">내 작업실<span aria-hidden="true">.</span></h1>
+      <div class="desk-day"><time class="desk-date" data-desk-date></time><span class="desk-weather" data-desk-weather hidden></span></div>
+      <h1 id="intro-title">진교훈<span aria-hidden="true">.</span></h1>
     </div>
     <div class="desk-work">
       <section class="desk-shortcuts" aria-labelledby="desk-shortcut-heading">
@@ -97,6 +97,7 @@ export const homePage = ({authenticated = false, selectstarOnly = false, markdow
     </div>
     <section class="home-stage" aria-label="마스코트" data-home-stage>
       <div class="desk-scene">
+        <p class="desk-forecast" data-desk-forecast hidden></p>
         <div class="desk-horizon" aria-hidden="true"></div><div class="desk-plinth" aria-hidden="true"></div>
         <button class="desk-mascot" type="button" aria-label="마스코트 콕 찌르기" data-desk-poke disabled>
           <img class="home-pose" src="/mascot/original.png" width="512" height="512" alt="" fetchpriority="high" data-default-pose>
@@ -110,7 +111,7 @@ export const homePage = ({authenticated = false, selectstarOnly = false, markdow
       </div>
     </section>
   </main>
-  ${footer()}
+  <footer class="site-footer"><a href="https://open-meteo.com/en/license" data-desk-weather-source hidden>날씨 · Open-Meteo</a><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>
   <dialog class="desk-dialog" data-desk-dialog aria-labelledby="desk-dialog-heading">
     <form method="dialog">
       <h2 id="desk-dialog-heading">바로가기 편집</h2>

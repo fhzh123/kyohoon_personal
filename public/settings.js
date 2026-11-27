@@ -39,5 +39,49 @@ if(a==='retry')await init();
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(data?.role==='editor')saveSettings().catch(e=>notice(e.message,true));}});
 window.addEventListener('beforeunload',e=>{if(settingsDirty||busy){e.preventDefault();e.returnValue='';}});
 async function init(){if(app.dataset.authenticated==='false'){app.innerHTML=window.SettingsAccess.render('llm');app.setAttribute('aria-busy','false');return;}try{data=await api('/api/settings/llm');renderSettings();if(data.role!=='editor'){for(const n of app.querySelectorAll('input,select,textarea,button'))n.disabled=true;app.insertAdjacentHTML('afterbegin','<p class="paper-subtle">읽기 전용 계정입니다.</p>');}}catch(e){app.innerHTML=e.status===401?window.SettingsAccess.render('llm'):'<h2>LLM 설정</h2><p>'+esc(e.message)+'</p>'+btn('다시 불러오기','retry');}app.setAttribute('aria-busy','false');}
+
+function initMascotSettings() {
+  const section = document.querySelector('[data-mascot-settings]');
+  if (!section) return;
+  const select = section.querySelector('select');
+  const image = section.querySelector('[data-mascot-preview]');
+  const reset = section.querySelector('[data-mascot-reset]');
+  const status = section.querySelector('[data-mascot-status]');
+  const key = 'kyohoon-home-mascot';
+  const defaultSrc = image.getAttribute('src');
+
+  function show(src = '') {
+    if (['/mascot/paper-pose.webp', '/mascot/personal-pose.webp'].includes(src) &&
+        !Array.from(select.options).some(option => option.value === src)) {
+      select.add(new Option('이전에 고른 모습', src));
+    }
+    select.value = src;
+    if (select.selectedIndex < 0) select.value = '';
+    image.src = select.value || defaultSrc;
+    image.alt = select.selectedOptions[0].textContent;
+    reset.disabled = !select.value;
+  }
+
+  function save(src) {
+    try {
+      if (src) localStorage.setItem(key, src);
+      else localStorage.removeItem(key);
+    } catch {
+      status.textContent = '이 브라우저에 설정을 저장할 수 없어요.';
+      show(image.getAttribute('src') === defaultSrc ? '' : image.getAttribute('src'));
+      return;
+    }
+    show(src);
+    status.textContent = src ? '홈 마스코트 모습을 저장했어요.' : '기본 모습으로 돌렸어요.';
+  }
+
+  try { show(localStorage.getItem(key) || ''); } catch { show(); }
+  select.addEventListener('change', () => save(select.value));
+  reset.addEventListener('click', () => save(''));
+  window.addEventListener('storage', event => {
+    if (event.key === key || event.key === null) show(event.newValue || '');
+  });
+}
+initMascotSettings();
 init();
 })();

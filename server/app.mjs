@@ -13,6 +13,7 @@ import { expenseRoutes } from './expense-routes.mjs';
 import { paperRoutes } from './paper-routes.mjs';
 import { appearanceRoutes } from './appearance-routes.mjs';
 import {travelRoutes} from './travel-routes.mjs';
+import {loadHomeWeather} from './home-weather.mjs';
 import {markdownRoutes} from './markdown-routes.mjs';
 import {travelPage} from '../views/travel.mjs';
 import {galleryPage} from '../views/gallery.mjs';
@@ -185,6 +186,15 @@ export function createHandler({localPreview = false, rootDir = root, environment
         if(!incoming||!Number.isSafeInteger(incoming.lastActivity)||incoming.lastActivity>now+60000||incoming.lastActivity<now-IDLE_MS)return send(res,400,{error:'활동 시간을 확인해 주세요.'});
         setActivity(res,Math.max(res.siteSession.lastActive,Math.min(now,incoming.lastActivity)));
         return send(res,200,{lastActive:res.siteSession.lastActive,expiresAt:res.siteSession.expiresAt,serverNow:clock()});
+      }
+      if (pathname === '/api/home-weather') {
+        if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
+        const forecast = await loadHomeWeather(fetcher, clock()).catch(() => null);
+        if (!forecast) return send(res,503,{error:'날씨를 불러올 수 없습니다.'});
+        return send(res,200,req.method === 'HEAD' ? '' : forecast,'application/json; charset=utf-8',{
+          'Cache-Control':'public, max-age=120',
+          'Vercel-CDN-Cache-Control':'public, s-maxage=600',
+        });
       }
       if(await handleTravel(req,res,requestUrl))return;
       if(await handleMarkdown(req,res,requestUrl))return;

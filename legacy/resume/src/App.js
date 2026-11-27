@@ -339,14 +339,27 @@ const App = () => {
                   </div>
                   <div className="text-sm md:text-base text-gray-400 mb-2">{project.period}</div>
                   <p className="text-sm md:text-base text-gray-300 mb-2" dangerouslySetInnerHTML={{ __html: project.description }}></p>
-                  <button
-                    type="button"
-                    aria-haspopup="dialog"
-                    onClick={() => setSelectedProject(project)}
-                    className="text-blue-400 hover:underline text-sm md:text-base cursor-pointer"
-                  >
-                    {currentData.buttons.viewDetails}
-                  </button>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <button
+                      type="button"
+                      aria-haspopup="dialog"
+                      onClick={() => setSelectedProject(project)}
+                      className="text-blue-400 hover:underline text-sm md:text-base cursor-pointer"
+                    >
+                      {currentData.buttons.viewDetails}
+                    </button>
+                    {project.externalLinks?.map(link => (
+                      <a
+                        key={link.url}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sky-300 hover:underline text-sm md:text-base"
+                      >
+                        {link.name}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
