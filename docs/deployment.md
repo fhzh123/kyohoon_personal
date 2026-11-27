@@ -18,6 +18,32 @@ values ('00000000-0000-0000-0000-000000000000'::uuid, 'editor', true);
 
 권한을 중지할 때는 해당 사용자의 `active=false`로 변경한다. 허용 사용자는 현재 하나의 연구 공간을 공유한다. 개인별 별도 연구 공간이 필요한 경우 현재 스키마를 그대로 확장 배포하지 말고 workspace별 membership으로 바꿔야 한다.
 
+### Selectstar 읽기 전용 및 Markdown 소유자
+
+- 신규 프로젝트에서는 SQL Editor에서 `schema.sql` → `team-resources.sql` → `card-ledger.sql` → `paper.sql` → `appearance.sql` → `travel.sql` → `markdown.sql` → `selectstar-access.sql` 순서로 실행한다.
+- 이미 설치한 프로젝트에서는 `schema.sql`, `paper.sql`, `markdown.sql`이 적용되어 있는지 확인한 후 새 `selectstar-access.sql`만 실행한다. 마이그레이션 후 아래의 소유자 권한을 지정하고, 새 앱 코드 배포를 확인한 후 회사 계정에 `selectstar_reader` 역할을 부여한다.
+- 회사 계정은 Selectstar의 연구일지, 팀 리소스, 공개 데모, 카드 내역을 읽을 수 있다. Markdown CRUD 및 PDF 내보내기에는 활성 `editor` 계정의 명시적인 소유자 권한이 필요하다.
+
+Supabase Authentication에서 확인한 실제 계정 UUID로 관리자 SQL Editor에서 실행한다. 아래 UUID는 예시다.
+
+```sql
+-- 기존 활성 editor 계정에 Markdown 소유자 권한을 부여한다.
+update public.workspace_members
+set is_owner = true
+where user_id = '00000000-0000-0000-0000-000000000001'::uuid
+  and role = 'editor' and active
+returning user_id, role, active, is_owner;
+
+-- 기존 Auth 사용자를 회사 읽기 전용 회원으로 등록한다.
+insert into public.workspace_members (user_id, role, active, is_owner)
+values ('00000000-0000-0000-0000-000000000002'::uuid, 'selectstar_reader', true, false)
+returning user_id, role, active, is_owner;
+```
+
+회사 사용자에게 이미 멤버십 행이 있다면 해당 UUID에 한해 `role = 'selectstar_reader', active = true, is_owner = false`로 갱신한다. 소유자 권한만 회수할 때는 `is_owner = false`로 변경한다.
+
+마이그레이션을 적용한 별도의 테스트 DB에서 `tests/selectstar-rls.sql`을 관리자 권한으로 실행해 역할별 직접 DB 접근을 확인한다. 테스트 데이터는 트랜잭션 종료 시 롤백된다.
+
 `workspace_members`는 본인 행 조회만 허용하며 회원 추가·역할 변경을 클라이언트에 허용하지 않는다. `workspaces`는 활성 허용 사용자만 읽고 editor만 상태를 변경한다. 웹 서버는 사용자 토큰 검증과 회원 확인을 매 요청 수행하며 DB에서도 RLS를 적용한다. 상태·분류·이전 시드는 실제 원본의 관계를 보존하기 위해 JSONB로 저장한다.
 
 첨부는 **비공개** `work-attachments` 버킷의 `research/<영문파일명>`에 저장한다. DB 권한과 별도로 Storage RLS도 적용한다. 공개 URL이나 public 버킷으로 전환하지 않는다. [Supabase RLS 안내](https://supabase.com/docs/guides/database/postgres/row-level-security), [Storage 권한 안내](https://supabase.com/docs/guides/storage/security/access-control)

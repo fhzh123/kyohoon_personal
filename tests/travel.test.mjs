@@ -34,7 +34,7 @@ test('image limits and color validation reject disguised files and unsafe CSS va
 });
 test('travel HTTP writes reject foreign origins before auth or storage, public pages keep native links',async()=>{
  let calls=0;const handler=createHandler({environment:{SUPABASE_URL:'https://project.supabase.co',SUPABASE_ANON_KEY:'fixture'},fetcher:async()=>{calls++;throw Error('must not run');}});const req=Readable.from([]);Object.assign(req,{url:'/api/travel/entries/JPN-1860',method:'PUT',headers:{host:'test.invalid',origin:'https://evil.invalid','content-type':'application/json'},body:{},socket:{}});const res={setHeader(){},writeHead(s){this.status=s;},end(){}};await handler(req,res);assert.equal(res.status,403);assert.equal(calls,0);
- const d=new JSDOM(personalPage()).window.document;assert.equal(d.querySelectorAll('.personal-tools .tool-card').length,3);assert.equal(d.querySelectorAll('.personal-tools .is-pending').length,0);const t=new JSDOM(travelPage()).window.document;assert.equal(t.querySelector('[data-role=editor]'),null);assert.deepEqual([...t.querySelectorAll('[data-preset]')].map(b=>b.textContent),['대한민국','일본','유럽','중국']);assert.ok(t.querySelector('[data-region-select]'));assert.equal(t.querySelector('[data-travel-colors-open]'),null,'visitors do not see the color settings');assert.equal(t.querySelector('a[href="/settings#travel"]'),null);
+ const d=new JSDOM(personalPage()).window.document;assert.equal(d.querySelectorAll('.personal-tools .tool-card').length,2);assert.equal(d.querySelectorAll('.personal-tools .is-pending').length,0);const t=new JSDOM(travelPage()).window.document;assert.equal(t.querySelector('[data-role=editor]'),null);assert.deepEqual([...t.querySelectorAll('[data-preset]')].map(b=>b.textContent),['대한민국','일본','유럽','중국']);assert.ok(t.querySelector('[data-region-select]'));assert.equal(t.querySelector('[data-travel-colors-open]'),null,'visitors do not see the color settings');assert.equal(t.querySelector('a[href="/settings#travel"]'),null);
  const signed=new JSDOM(travelPage({role:'editor'})).window.document;assert.ok(signed.querySelector('[data-travel-colors-open]'));assert.ok(signed.querySelector('dialog#travel-colors-dialog #travel-settings'));assert.ok(signed.querySelector('script[src^="/travel-settings.js"]'));
 });
 test('travel color controls reflect permissions and only show saved success after a server response',async()=>{
@@ -133,8 +133,8 @@ test('stale editor saves never adopt an unseen newer revision for a retry',async
   assert.equal(form.elements.title.value,'수정 중인 기록');assert.match(d.querySelector('[data-error]').textContent,/최신 기록/);
  }finally{w.close();}
 });
-test('Personal retains three requested spaces and travel navigation returns to Personal',()=>{
- const d=new JSDOM(personalPage()).window.document;
+test('Owner sees all three Personal tools and travel links back to Personal',()=>{
+ const d=new JSDOM(personalPage({mode:'supabase',role:'editor',isOwner:true})).window.document;
  assert.deepEqual([...d.querySelectorAll('.personal-tools h2')].map(n=>n.textContent),['여행의 흔적','갤러리','마크다운 에디터']);
  assert.equal(d.querySelector('a.space-card[href="/personal/markdown"] img').getAttribute('src'),'/mascot/markdown-editor.webp');
  const m=new JSDOM(markdownPage(null)).window.document;

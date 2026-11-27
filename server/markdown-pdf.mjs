@@ -2,6 +2,8 @@ import {readFile, access, mkdir, mkdtemp, rm} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {Readable} from 'node:stream';
+import {buffer} from 'node:stream/consumers';
 import MarkdownIt from 'markdown-it';
 import sanitizeHtml from 'sanitize-html';
 import {createMarkdownEngine} from '../public/markdown-renderer.js';
@@ -11,6 +13,9 @@ const engine = createMarkdownEngine(MarkdownIt);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
 let assetsPromise;
 let browserPromise;
+const LAUNCH_TIMEOUT = 25000;
+const RENDER_TIMEOUT = 90000;
+const PROTOCOL_TIMEOUT = RENDER_TIMEOUT + 10000;
 
 export function pdfDisposition(title) {
   const name = String(title || 'document').replace(/[\x00-\x1f\x7f/\\]/g, '_').toWellFormed() + '.pdf';
@@ -99,7 +104,7 @@ async function launchBrowser() {
   const {default:puppeteer} = await import('puppeteer-core');
   if (process.env.VERCEL && process.platform === 'linux') {
     const {default:chromium} = await import('@sparticuz/chromium');
-    return puppeteer.launch({args:chromium.args.filter(arg => arg !== '--single-process'), executablePath:await chromium.executablePath(), headless:'shell', timeout:25000, protocolTimeout:25000});
+    return puppeteer.launch({args:chromium.args.filter(arg => arg !== '--single-process'), executablePath:await chromium.executablePath(), headless:'shell', timeout:LAUNCH_TIMEOUT, protocolTimeout:PROTOCOL_TIMEOUT});
   }
   const dir = fileURLToPath(new URL('../artifacts/', import.meta.url));
   await mkdir(dir, {recursive:true});
@@ -107,7 +112,7 @@ async function launchBrowser() {
   try {
     const browser = await puppeteer.launch({executablePath:await localChromePath(), userDataDir:profile,
       args:process.env.MARKDOWN_PDF_LOCAL_NO_SANDBOX === '1' ? ['--disable-gpu', '--no-sandbox'] : [],
-      headless:true, timeout:25000, protocolTimeout:25000});
+      headless:true, timeout:LAUNCH_TIMEOUT, protocolTimeout:PROTOCOL_TIMEOUT});
     browser.once('disconnected', () => { void rm(profile, {recursive:true, force:true}).catch(() => {}); });
     return browser;
   } catch (error) { await rm(profile, {recursive:true, force:true}); throw error; }
@@ -129,15 +134,30 @@ export async function closeMarkdownPdfBrowser() {
   if (pending) await (await pending).close();
 }
 
-export function createMarkdownPdfRenderer({getBrowser = warmBrowser, timeout = 25000} = {}) {
+export function createMarkdownPdfRenderer({getBrowser = warmBrowser, timeout = RENDER_TIMEOUT} = {}) {
   return async document => {
-    let context, timer, expired = false;
+    let context, stream, timer, expired = false;
+    const timeoutError = new Error('PDF timeout');
+    const cleanup = () => {
+      clearTimeout(timer);
+      const activeContext = context;
+      context = undefined;
+      if (activeContext) void activeContext.close().catch(() => {});
+    };
+    const deadline = new Promise((_, reject) => {
+      timer = setTimeout(() => {
+        expired = true;
+        if (stream) stream.destroy(timeoutError);
+        else reject(timeoutError);
+      }, timeout);
+    });
     const work = (async () => {
       const html = await buildMarkdownPdfHtml(document);
+      if (expired) throw timeoutError;
       const browser = await getBrowser();
-      if (expired) throw new Error('PDF timeout');
+      if (expired) throw timeoutError;
       context = await browser.createBrowserContext();
-      if (expired) { await context.close(); throw new Error('PDF timeout'); }
+      if (expired) { cleanup(); throw timeoutError; }
       const page = await context.newPage();
       page.setDefaultTimeout(timeout);
       page.setDefaultNavigationTimeout(timeout);
@@ -147,19 +167,23 @@ export function createMarkdownPdfRenderer({getBrowser = warmBrowser, timeout = 2
         void (allowPdfRequest(request) ? request.continue() : request.abort()).catch(() => {});
       });
       await page.emulateMediaType('print');
-      await page.setContent(html, {waitUntil:'networkidle0', timeout});
-      return Buffer.from(await page.pdf({format:'A4', preferCSSPageSize:true, printBackground:true, displayHeaderFooter:false, margin:{top:0, right:0, bottom:0, left:0}, timeout}));
+      await page.setContent(html, {waitUntil:'load', timeout});
+      if (expired) throw timeoutError;
+      return page.createPDFStream({format:'A4', preferCSSPageSize:true, printBackground:true, displayHeaderFooter:false, waitForFonts:true, margin:{top:0, right:0, bottom:0, left:0}, timeout});
     })();
     try {
-      return await Promise.race([work, new Promise((_, reject) => {
-        timer = setTimeout(() => { expired = true; reject(new Error('PDF timeout')); }, timeout);
-      })]);
-    } finally {
-      clearTimeout(timer);
-      // Closing the isolated context closes every page, including failed loads.
-      if (context) await context.close().catch(() => {});
+      stream = Readable.fromWeb(await Promise.race([work, deadline]));
+      // Keep the page alive until every CDP chunk has been read or the client disconnects.
+      stream.once('close', cleanup);
+      // The deadline can also expire before the caller starts consuming the stream.
+      stream.on('error', () => {});
+      return stream;
+    } catch (error) {
+      cleanup();
+      throw error;
     }
   };
 }
 
-export const renderMarkdownPdf = createMarkdownPdfRenderer();
+export const streamMarkdownPdf = createMarkdownPdfRenderer();
+export const renderMarkdownPdf = async document => buffer(await streamMarkdownPdf(document));

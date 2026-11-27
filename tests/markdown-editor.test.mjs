@@ -213,7 +213,7 @@ async function editorFixture({role = 'editor', handler, narrow = false, stored =
   const fetch = async (url, init = {}) => {
     const body = init.body ? JSON.parse(init.body) : null;
     requests.push({url, method: init.method || 'GET', body});
-    const custom = handler && await handler(url, init.method || 'GET', body, {doc, setDoc: d => { doc = d; }});
+    const custom = handler && await handler(url, init.method || 'GET', body, {doc, signal:init.signal, setDoc: d => { doc = d; }});
     if (custom) return custom;
     if (url.endsWith('/tree')) return Response.json({folders: [folder], documents: [{id: doc.id, folder_id: doc.folder_id, title: doc.title, theme: doc.theme, updated_at: doc.updated_at}], role});
     if (url.endsWith(`/documents/${doc.id}`) && (init.method || 'GET') === 'GET') return Response.json(doc);
@@ -409,6 +409,45 @@ test('PDF download without saving the theme, error messages from the server, and
     assert.equal(requests.filter(r => r.method === 'PATCH').length, 0, 'theme not saved when unticked');
     assert.equal(getDoc().theme, 'ivory');
     assert.equal(d.querySelector('[data-preview]').dataset.mdTheme, 'ivory');
+  } finally { w.close(); }
+});
+
+test('PDF download deadline covers the response body and leaves the dialog ready to retry', async () => {
+  let abortDownload;
+  const {w, d, until} = await editorFixture({handler:(url, _method, _body, {signal}) => {
+    if (!/\/pdf\?/.test(url)) return;
+    if (abortDownload) return pdfResponse();
+    return {
+      ok:true,
+      headers:new Headers({'Content-Type':'application/pdf'}),
+      blob:() => new Promise((_, reject) => {
+        signal.addEventListener('abort', () => reject(signal.reason), {once:true});
+        abortDownload = true;
+      }),
+    };
+  }});
+  try {
+    const {downloads} = downloadHarness(w, d);
+    const schedule = w.setTimeout.bind(w);
+    let expire;
+    w.setTimeout = (callback, delay) => {
+      if (delay === 155000) { expire = callback; return 0; }
+      return schedule(callback, delay);
+    };
+    d.querySelector('[data-action=export]').click();
+    const dialog = d.querySelector('#md-export-dialog');
+    const submit = dialog.querySelector('[data-export-submit]');
+    const form = dialog.querySelector('[data-export-form]');
+    form.requestSubmit(submit);
+    await until(() => abortDownload);
+    expire();
+    const error = dialog.querySelector('[data-export-error]');
+    await until(() => error.textContent);
+    assert.match(error.textContent, /시간이 초과/);
+    assert.equal(submit.disabled, false);
+    assert.equal(downloads.length, 0);
+    form.requestSubmit(submit);
+    await until(() => downloads.length === 1);
   } finally { w.close(); }
 });
 

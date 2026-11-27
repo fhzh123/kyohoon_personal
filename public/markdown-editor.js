@@ -20,6 +20,8 @@ const PREVIEW_THEME_KEY = 'kyohoon-markdown-preview-theme';
 // defined in markdown-editor.css, light or dark with the site.
 const SITE_STYLE = '_site';
 const REVOKE_DELAY = 1500;
+// Allow for authorization, document fetch and the server's 90-second render budget.
+const PDF_DOWNLOAD_TIMEOUT = 155000;
 
 import {createMarkdownEngine} from './markdown-renderer.js';
 
@@ -567,28 +569,34 @@ export function mountMarkdownEditor(root, options = {}) {
       if (state.failed || Object.keys(state.pending).length) return fail('저장하지 못한 내용이 있어 PDF를 만들 수 없습니다. 저장을 다시 시도해 주세요.');
       if (keep) { state.current.theme = theme; setPreviewTheme(theme); }
     }
-    let response;
+    let timedOut = false;
+    const timer = win.setTimeout(() => {
+      timedOut = true;
+      abort.abort();
+    }, PDF_DOWNLOAD_TIMEOUT);
     try {
-      response = await fetcher(`${API}/documents/${encodeURIComponent(state.current.id)}/pdf?theme=${encodeURIComponent(theme)}`, {
+      const response = await fetcher(`${API}/documents/${encodeURIComponent(state.current.id)}/pdf?theme=${encodeURIComponent(theme)}`, {
         credentials: 'same-origin', headers: {'Accept': 'application/pdf'}, signal: abort.signal,
       });
+      if (abort.signal.aborted) return;
+      if (!response.ok || !/pdf/i.test(response.headers.get('content-type') || '')) {
+        const data = await response.json().catch(() => null);
+        if (abort.signal.aborted) return;
+        return fail(data?.error || (response.status === 401 ? '로그인이 끝났습니다. 다시 로그인해 주세요.' : 'PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'));
+      }
+      const blob = await response.blob();
+      if (abort.signal.aborted) return;
+      downloadBlob(blob, `${pdfTitle(state.current.title)}.pdf`);
+      exportAbort = null;
+      closeModal(el.exportDialog, 'done');
+      announce('PDF를 내려받았습니다');
     } catch {
       if (abort.signal.aborted) return;
       return fail('PDF를 내려받지 못했습니다. 연결을 확인하고 다시 시도해 주세요.');
+    } finally {
+      win.clearTimeout(timer);
+      if (timedOut && exportAbort === abort) fail('PDF 다운로드 시간이 초과되었습니다. 다시 시도해 주세요.');
     }
-    if (abort.signal.aborted) return;
-    if (!response.ok || !/pdf/i.test(response.headers.get('content-type') || '')) {
-      let data = null;
-      try { data = await response.json(); } catch {}
-      return fail(data?.error || (response.status === 401 ? '로그인이 끝났습니다. 다시 로그인해 주세요.' : 'PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.'));
-    }
-    let blob;
-    try { blob = await response.blob(); } catch { return fail('PDF를 내려받지 못했습니다. 다시 시도해 주세요.'); }
-    if (abort.signal.aborted) return;
-    downloadBlob(blob, `${pdfTitle(state.current.title)}.pdf`);
-    exportAbort = null;
-    closeModal(el.exportDialog, 'done');
-    announce('PDF를 내려받았습니다');
   }
 
   // ---------- events ----------

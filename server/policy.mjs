@@ -25,10 +25,25 @@ export function safeLoginDestination(value) {
   try {
     const url = new URL(value, 'https://local.invalid');
     if (url.origin !== 'https://local.invalid') return '/';
-    const allowed = ['/', '/work', '/work/', '/work/demos', '/work/demos/', '/work/app/index.html', '/work/expenses', '/work/expenses/', '/work/expenses/index.html', '/personal', '/personal/', '/personal/travel', '/personal/travel/'];
+    const allowed = ['/', '/work', '/work/', '/work/demos', '/work/demos/', '/work/app/index.html', '/work/team-resources', '/work/team-resources/', '/work/expenses', '/work/expenses/', '/work/expenses/index.html', '/personal', '/personal/', '/personal/travel', '/personal/travel/'];
     if (/^\/work\/demos\/(?:ontology|document-parsing)(?:\/(?:index\.html|outputs\/(?:evaluation_results|hits5_case_analysis)\.html)?)?$/.test(url.pathname)) return url.pathname + url.search + url.hash;
     return [...allowed,'/paper','/paper/','/settings','/settings/','/personal/gallery','/personal/gallery/','/personal/markdown','/personal/markdown/','/resume','/resume/'].includes(url.pathname) ? url.pathname + url.search + url.hash : '/';
   } catch { return '/'; }
+}
+
+/** @param {{role:string} | null | undefined} access */
+export function isSelectstarReader(access) {
+  return access?.role === 'selectstar_reader';
+}
+
+/** @param {{role:string, mode:string, isOwner?:boolean} | null | undefined} access */
+export function canAccessMarkdown(access) {
+  return access?.role === 'editor' && (access.mode === 'local' || access.isOwner === true);
+}
+
+/** @param {string} next @param {{role:string}} membership */
+export function memberLoginDestination(next, membership) {
+  return isSelectstarReader(membership) && !/^\/work(?:[/?#]|$)/.test(next) ? '/work' : next;
 }
 /** @param {unknown} state */
 export function validState(state) {

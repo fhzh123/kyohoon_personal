@@ -77,7 +77,7 @@ test('Resume static archived assets retain their recorded SHA-256 values', async
 test('Resume document uses its isolated styles plus the shared typography', async () => {
   const dom = new JSDOM(html, { url: 'http://localhost:3000/resume' });
   const document = dom.window.document;
-  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261115-2', '/resume-details.css?v=20261114-2', '/kh-system.css?v=20261124-1', '/kh-site.css?v=20261124-1', '/kh/resume.css?v=20261124-1']);
+  assert.deepEqual([...document.querySelectorAll('link[rel=stylesheet]')].map(node => node.getAttribute('href')), ['/resume/resume.css', '/typography.css?v=20261112-1', '/taste.css?v=20261113-1', '/atmosphere.css?v=20261115-2', '/resume-details.css?v=20261114-2', '/kh-system.css?v=20261124-1', '/kh-site.css?v=20261124-1', '/kh/resume.css?v=20261127-1']);
   assert.deepEqual([...document.querySelectorAll('script[src]')].map(node => node.getAttribute('src')), ['/theme.js?v=20261116-2', '/resume/resume.js']);
   assert.equal(document.querySelector('link[rel=icon]').getAttribute('href'), '/mascot/face.png');
   assert.equal(document.querySelectorAll('iframe').length, 0);
@@ -98,9 +98,8 @@ test('Resume mounts original identity, intro, six navigation tabs and profile as
   assert.match(document.body.textContent, /저는 셀렉트스타에서 AI Research Engineer로 근무/);
   for (const label of ['Experience', 'Education', 'Projects', 'Publications', 'Honors & Lecture', 'Patent']) exact(document, 'button.resume-tab', label);
   assert.ok(exact(document, 'button.resume-tab', 'Experience').classList.contains('is-active'));
-  assert.match(document.querySelector('img[alt="Profile Front"]').getAttribute('src'), /^https:\/\/raw\.githubusercontent\.com\//);
-  assert.match(document.querySelector('img[alt="Profile Back"]').getAttribute('src'), /^https:\/\/github\.com\//);
-  for (const image of document.querySelectorAll('img')) assert.match(image.getAttribute('src'), /^(https:\/\/|\/icons\/|\/mascot\/)/);
+  assert.equal(document.querySelector('img.resume-portrait[alt="Kyohoon Jin"]').getAttribute('src'), '/resume/profile.jpg');
+  for (const image of document.querySelectorAll('img')) assert.match(image.getAttribute('src'), /^(https:\/\/|\/icons\/|\/mascot\/|\/resume\/)/);
 });
 
 test('Resume tab navigation and publication/lecture sub-tabs update actual content', async t => {
@@ -178,7 +177,7 @@ test('No project is pending and Samsung keeps its detail and image', async t => 
   const buttons = [...document.querySelectorAll('button')].filter(node => node.textContent.trim() === '자세히 보기');
   buttons[5].click();
   await waitFor(() => document.querySelector('h2')?.textContent.includes('[삼성생명 C-Lab]'), 'Original Samsung detail opens');
-  assert.match(document.querySelector('h2').parentElement.textContent, /삼성생명은 독자적으로/);
+  assert.match(document.querySelector('h2').parentElement.textContent, /Python 분석 도구는 전체 테이블에서 연산을 실행합니다/);
   assert.ok(document.querySelector('h2').parentElement.querySelector('img[src*="Project_ATA.png"]'));
 });
 
@@ -196,7 +195,8 @@ test('Project 추가 정보 links papers and DATUMO docs as new-tab links', asyn
       ['논문 · MHTS (LREC 2026)', 'https://arxiv.org/abs/2504.08756']
     ],
     'Neural Journalism: 빅데이터와 딥러닝 기반 차세대 저널리즘 연구': [
-      ['논문 · PRISM (IEEE Access 2024)', 'https://ieeexplore.ieee.org/document/10766499']
+      ['논문 · PRISM (IEEE Access 2024)', 'https://ieeexplore.ieee.org/document/10766499'],
+      ['논문 · SUMMPILOT (AAAI 2025 Demonstration Track)', 'https://arxiv.org/abs/2601.08475']
     ],
     '[인공지능 학습용 데이터 구축 사업] 작업현장 안전 데이터 사업': [
       ['논문 · Robust Detector (ESWA 2023)', 'https://www.sciencedirect.com/science/article/abs/pii/S0957417423014860'],
@@ -216,7 +216,10 @@ test('Project 추가 정보 links papers and DATUMO docs as new-tab links', asyn
       assert.deepEqual(links, expected[title]);
       if (title.startsWith('DATUMO')) {
         assert.equal(detail.querySelector('img')?.getAttribute('src'), '/resume/projects/datumo-observability.png');
-        assert.match(detail.textContent, /GIFT/);
+        assert.match(detail.textContent, /경계 후보 주변의 문맥/);
+        assert.match(detail.textContent, /지식그래프 트리플/);
+        assert.match(detail.textContent, /자동 프롬프트 튜닝/);
+        assert.doesNotMatch(detail.textContent, /GIFT|CALM|심사 중/);
         assert.match(detail.textContent, /프로젝트 기한: Feb 2026 - Aug 2026/);
       }
     }
@@ -263,16 +266,15 @@ test('Resume project detail modal opens, shows ontology details, and closes by b
   await waitFor(() => !document.querySelector('h2'), 'Backdrop closes project detail');
 });
 
-test('Resume profile flip and KakaoTalk QR modal retain original interactions', async t => {
+test('Resume portrait stays static and the KakaoTalk QR modal remains interactive', async t => {
   const window = await mount(t);
   const { document } = window;
-  const profile = document.querySelector('.perspective-1000');
-  assert.ok(profile);
-  assert.equal(profile.firstElementChild.style.transform, 'rotateY(0deg)');
-  profile.click();
-  await waitFor(() => profile.firstElementChild.style.transform === 'rotateY(180deg)', 'Profile flips');
-  profile.click();
-  await waitFor(() => profile.firstElementChild.style.transform === 'rotateY(0deg)', 'Profile flips back');
+  const portrait = document.querySelector('img.resume-portrait');
+  assert.equal(portrait.closest('button, a, [role="button"], [tabindex]'), null);
+  portrait.click();
+  assert.equal(document.querySelector('img.resume-portrait'), portrait);
+  assert.equal(portrait.getAttribute('src'), '/resume/profile.jpg');
+  assert.equal(document.querySelector('img[alt="Profile Back"]'), null);
   const kakao = document.querySelector('a[title=KakaoTalk]');
   assert.ok(kakao);
   kakao.click();

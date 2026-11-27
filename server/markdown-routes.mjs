@@ -2,10 +2,11 @@ import {readFile, writeFile, mkdir, rename} from 'node:fs/promises';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {MARKDOWN_THEME_KEYS} from '../views/markdown-themes.mjs';
+import {canAccessMarkdown} from './policy.mjs';
 // The PDF stack (Chromium, sanitizer) loads only when a PDF is requested, so a
 // problem there can never stop the rest of the site from starting.
 const loadPdf = () => import('./markdown-pdf.mjs');
-const renderMarkdownPdf = async options => (await loadPdf()).renderMarkdownPdf(options);
+const streamMarkdownPdf = async options => (await loadPdf()).streamMarkdownPdf(options);
 
 export const THEMES = MARKDOWN_THEME_KEYS;
 const DOCUMENT_FIELDS = 'id,folder_id,title,content,theme,revision,updated_at';
@@ -27,7 +28,7 @@ const folderOut = row => pick(row, FOLDER_FIELDS);
 const documentOut = row => pick(row, DOCUMENT_FIELDS);
 const conflict = document => fail('다른 곳에서 먼저 수정되었습니다.', 409, {document:documentOut(document)});
 
-export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDir, environment = {}, renderPdf = renderMarkdownPdf}) {
+export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDir, environment = {}, renderPdf = streamMarkdownPdf}) {
   const statePath = path.join(rootDir, 'private/markdown/state.json');
   let queue = Promise.resolve();
   const read = async () => {
@@ -67,7 +68,7 @@ export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDi
     try {
       const access = await authorize(req, res);
       if (!access) throw fail('로그인이 필요합니다.', 401);
-      if (req.method !== 'GET' && access.role !== 'editor') throw fail('읽기 전용 계정입니다.', 403);
+      if (!canAccessMarkdown(access)) throw fail('소유자만 마크다운 에디터를 사용할 수 있습니다.', 403);
       const headers = {...bearer(access.token), 'Content-Type':'application/json', Prefer:'return=representation'};
       const local = access.mode === 'local';
       const rows = (resource, query, method = 'GET', value) => remote('/rest/v1/markdown_' + resource + (query ? '?' + query : ''), {
@@ -92,7 +93,7 @@ export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDi
         let pdf;
         try { pdf = await renderPdf({title:document.title, content:document.content, theme}); }
         catch { throw fail('PDF를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.', 503); }
-        send(res, 200, pdf, 'application/pdf', {'Content-Disposition':(await loadPdf()).pdfDisposition(document.title), 'Cache-Control':'no-store'});
+        await send(res, 200, pdf, 'application/pdf', {'Content-Disposition':(await loadPdf()).pdfDisposition(document.title), 'Cache-Control':'no-store'});
         return true;
       }
       if (pathname === '/api/markdown/tree' && req.method === 'GET') {
@@ -184,6 +185,7 @@ export function markdownRoutes({authorize, authFetch, bearer, send, body, rootDi
       }
       send(res, 200, result);
     } catch (error) {
+      if (res.headersSent || res.destroyed) return true;
       send(res, error.status || (error instanceof SyntaxError ? 400 : 503), {
         error:error.markdownMessage || (error.status === 413 ? '요청이 너무 큽니다.' : error instanceof SyntaxError ? '입력 형식을 확인해 주세요.' : '마크다운 문서를 처리하지 못했습니다.'),
         ...(error.document ? {document:error.document} : {}),

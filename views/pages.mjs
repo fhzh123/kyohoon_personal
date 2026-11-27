@@ -1,3 +1,4 @@
+import {canAccessMarkdown} from '../server/policy.mjs';
 import {spaceNavigation} from './navigation.mjs';
 import {workSidebar, workTopbar, WORK_SHELL_ASSETS, WORK_SECTIONS} from './work-shell.mjs';
 import {markdownHead, markdownEditorMain, markdownTail, markdownGate} from './markdown-editor.mjs';
@@ -36,9 +37,9 @@ const HOME_SPACES = [
   {id:'personal', href:'/personal', title:'Personal', text:'여행 기록, 갤러리, 마크다운 에디터', locked:false, pose:'personal-pose.webp'},
 ];
 
-export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
+export const homePage = ({authenticated = false, selectstarOnly = false} = {}) => shell('진교훈', `
 <div class="home">
-  <header class="site-header home-header">${brand()}<nav class="header-actions" aria-label="빠른 이동">${themeButton()}${authenticated ? logoutButton() : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
+  <header class="site-header home-header">${brand()}<nav class="header-actions" aria-label="빠른 이동">${selectstarOnly ? '' : themeButton()}${authenticated ? logoutButton() : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
   <main id="main" class="home-main" aria-labelledby="intro-title">
     <section class="home-intro">
       <h1 id="intro-title"><span class="home-name">진교훈</span> <span class="home-name-en" lang="en">Kyohoon Jin</span></h1>
@@ -48,10 +49,10 @@ export const homePage = ({authenticated = false} = {}) => shell('진교훈', `
       <img class="home-pose" src="/mascot/original.png" alt="" width="512" height="512" fetchpriority="high" data-default-pose>
     </figure>
     <nav class="home-spaces" aria-label="홈페이지 공간">
-      ${HOME_SPACES.map(space => `<a class="portal home-space" href="${space.href}" aria-labelledby="${space.id}-label" data-pose="/mascot/${space.pose}">
+      ${HOME_SPACES.filter(space => !selectstarOnly || space.id !== 'paper').map(space => `<a class="portal home-space" href="${space.href}" aria-labelledby="${space.id}-label" data-pose="/mascot/${space.pose}">
         <h2 id="${space.id}-label">${space.title}</h2>
         <p>${space.text}</p>
-        <span class="home-access${space.locked ? ' is-locked' : ''}">${space.locked ? '로그인 후 이용' : '누구나 볼 수 있음'}</span>
+        ${space.locked ? '<span class="home-access is-locked">로그인 후 이용</span>' : ''}
       </a>`).join('')}
     </nav>
   </main>${footer()}
@@ -113,7 +114,7 @@ function spaceHub({header, eyebrow, title, description, hero, heroAlt, note = ''
 // Connection line shown above a space's tools. Logged-out visitors (access is null) see nothing.
 export function spaceStatus(access) {
   if (!access) return '';
-  const text = access.mode === 'local' ? '로컬 개발 미리보기 · localhost 전용' : access.role === 'reader' ? '연결됨 · 읽기 전용' : '연결됨 · 편집 가능';
+  const text = access.mode === 'local' ? '로컬 개발 미리보기 · localhost 전용' : access.role !== 'editor' ? '연결됨 · 읽기 전용' : '연결됨 · 편집 가능';
   return `<p class="space-status"><span aria-hidden="true"></span>${text}</p>`;
 }
 
@@ -145,7 +146,7 @@ export function personalPage(access) {
   return shell('Personal', spaceHub({
     header, eyebrow: '여행과 일상을 위한 공간', title: 'Personal',
     description: '여행과 일상의 기록을<br>모아두는 공간입니다.', hero: 'personal-idle.webp', heroAlt: '소파에 앉아 쉬는 마스코트',
-    note: spaceStatus(access), label: 'Personal 도구', cards, extraClass: 'personal-tools',
+    note: spaceStatus(access), label: 'Personal 도구', cards: cards.filter(card => card.href !== '/personal/markdown' || canAccessMarkdown(access)), extraClass: 'personal-tools',
   }), 'personal');
 }
 

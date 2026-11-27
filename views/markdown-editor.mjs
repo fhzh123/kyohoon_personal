@@ -5,7 +5,7 @@
 import {MARKDOWN_THEMES, DEFAULT_MARKDOWN_THEME} from './markdown-themes.mjs';
 import {MARKDOWN_ICONS} from './markdown-icons.mjs';
 
-export const MARKDOWN_ASSET_VERSION = '20261122-2';
+export const MARKDOWN_ASSET_VERSION = '20261127-1';
 const V = MARKDOWN_ASSET_VERSION;
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));

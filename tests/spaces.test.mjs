@@ -15,7 +15,7 @@ test('four home destinations preserve existing poses; tools use unique illustrat
  assert.deepEqual([...hub.querySelectorAll('a.tool-card')].map(a=>a.getAttribute('href')),['/work/app/index.html','/work/team-resources','/work/demos','/work/expenses/']);
  assert.equal(new Set([...hub.querySelectorAll('.space-card-art')].map(x=>x.src)).size,4);
  assert.equal(new JSDOM(demosPage()).window.document.querySelectorAll('main a[target="_blank"][rel="noopener noreferrer"]').length,4);
- const personal=new JSDOM(personalPage()).window.document;assert.equal(personal.querySelectorAll('.personal-tools .tool-card').length,3);assert.equal(personal.querySelectorAll('.personal-tools .is-pending').length,0);assert.equal(personal.querySelector('.personal-tools a').getAttribute('href'),'/personal/travel');
+ const personal=new JSDOM(personalPage()).window.document;assert.equal(personal.querySelectorAll('.personal-tools .tool-card').length,2);assert.equal(personal.querySelectorAll('.personal-tools .is-pending').length,0);assert.equal(personal.querySelector('.personal-tools a').getAttribute('href'),'/personal/travel');
 });
 test('same-page brand navigation never activates loader, actual document navigation does',async()=>{
  const w=new JSDOM('<div class="app-shell"></div><a id="brand" href="#roadmap">Atlas</a><a id="open" href="/work/app/index.html?reload=1">Open</a>',{url:'https://fixture.invalid/work/app/index.html',runScripts:'outside-only'}).window;

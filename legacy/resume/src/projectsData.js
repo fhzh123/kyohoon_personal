@@ -15,9 +15,9 @@ const projects_ = [
       // Detailed fields for modal
       imageUrl: '/resume/projects/datumo-observability.png', // Image for project detail
       subtitle: '챗봇 대화 로그 모니터링 대시보드 개발',
-      fullDescription: 'DATUMO 플랫폼의 Observability 기능으로, 챗봇 대화 로그를 모니터링하는 대시보드를 팀과 함께 개발했습니다. 챗봇 세션은 길이가 매우 길어 분석 전에 주제별로 나누는 과정이 필요하여, 이를 위해 Global·Local 관점의 점검과 필터링으로 대화 주제 경계를 찾는 GIFT 방법론을 연구했습니다(ARR 10월 사이클 제출, 심사 중). 대화를 한눈에 볼 수 있도록 임베딩이 뭉치지 않고 잘 분리되어 보이게 하는 시각화용 임베딩 KG-Neighbor를 연구하여 WSDM에 게재가 확정되었습니다. 또한 사용자가 의도한 카테고리 안에서 대화하는지, 어떤 비율로 대화하는지를 파악하기 위해 자동 프롬프트 튜닝 기반의 Generalized Category Discovery 방법론 CALM을 연구했습니다(AAAI 제출, 심사 중). 이와 함께 Observability MVP를 위한 프롬프팅과 서비스 연동 작업도 진행했습니다.',
+      fullDescription: '팀과 함께 DATUMO Observability의 챗봇 대화 로그 모니터링 대시보드를 개발했습니다. 긴 대화에서 주제가 바뀌는 지점을 찾기 위해 세션 전체의 흐름과 경계 후보 주변의 문맥을 점검하고 후보를 걸러내는 방법을 연구했습니다. 대화 시각화에는 텍스트에서 추출한 지식그래프 트리플의 공유 정도로 임베딩 거리를 조정하고 이웃 그래프를 재구성하는 KG-Neighbor를 연구했습니다. 자동 프롬프트 튜닝을 활용해 기존 카테고리와 새로운 카테고리를 함께 탐색하고, 카테고리별 대화 비중을 파악하는 방법도 연구했습니다. Observability MVP의 프롬프트 구성과 서비스 연동을 담당했습니다.',
       companyOrInstitution: 'Selectstar (DATUMO)',
-      role: '대화 주제 분할(GIFT), 대화 시각화(KG-Neighbor), 카테고리 탐색(CALM) 연구 참여 및 Observability MVP 프롬프팅·연동 개발',
+      role: '대화 주제 분할, 대화 시각화(KG-Neighbor), 카테고리 탐색 연구 및 Observability MVP 프롬프트 구성·서비스 연동',
       externalLinks: [
         { name: '서비스 문서 · DATUMO Observability', url: 'https://docs.datumo.com/en/docs/observability/core-concept' },
         { name: '논문 · KG-Neighbor (WSDM)', url: 'https://arxiv.org/html/2611.07246v1' },
@@ -72,16 +72,16 @@ const projects_ = [
     {
       title: '[삼성생명 C-Lab] LLM내 정형데이터 연결 및 내제지식화 기술 개발',
       period: 'Jun 2025 - Dec 2025',
-      description: '- 방대한 양의 정형데이터를 LLM에 효과적으로 내제지식화 하는 기술 개발 <br /> - 이를 통한 사내 정형 데이터 기반 의사결정 목표',
+      description: '- LLM으로 테이블 구조를 파악하고 분석을 계획한 뒤 Python으로 전체 테이블의 통계 계산 <br /> - 계산 근거를 추적할 수 있는 인사이트 보고서 생성 및 단계별 검증',
       link: '#', // This link is now used to trigger the modal
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 1" />,
       icon2: <IconPlaceholder src="https://image.ajunews.com/content/image/2022/04/12/20220412133454615065.jpg" alt="Second Project Icon" />, // Added second icon
       // Detailed fields for modal
       imageUrl: 'https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/Project_ATA.png?raw=true', // Image for project detail
-      subtitle: '정형데이터 연결 및 내제지식화 기술 개발',
-      fullDescription: '삼성생명은 독자적으로 방대한 양의 고객 정형 데이터를 보유하고 있지만, 이를 LLM에 효과적으로 연결하고 활용하는 기술이 부족했습니다. 이 프로젝트에서는 LLM과 정형 데이터를 연결하여 내제지식을 생성하는 기술을 개발했습니다. 이를 통해 고객 맞춤형 서비스 제공 및 데이터 기반 의사결정 지원을 목표로 하고 있습니다.',
+      subtitle: '정형 데이터 자동 분석 및 통계 기반 인사이트 보고서 생성',
+      fullDescription: '삼성생명 C-Lab에서 정형 데이터로부터 통계적 근거가 있는 인사이트 보고서를 생성하는 파이프라인을 개발했습니다. LLM은 테이블 샘플과 열 이름으로 스키마를 추론하고 분석에 필요한 통계 연산을 선택합니다. Python 분석 도구는 전체 테이블에서 연산을 실행합니다. 계산 결과에서 비교, 추세, 이상 징후 등 인사이트 후보를 도출해 보고서를 작성하고, 단계별 검증을 통과하지 못한 결과는 해당 단계로 돌려보내 수정합니다. 보고서의 주요 수치 진술은 원본 테이블과 계산 결과까지 추적할 수 있도록 설계했습니다.',
       companyOrInstitution: '삼성생명',
-      role: '정형 데이터 분석 파이프라인 개발 및 LLM 내제지식화 기술 구현',
+      role: 'LLM 및 Python 기반 정형 데이터 분석과 인사이트 보고서 생성 파이프라인 개발',
       externalLinks: [
         // { name: 'GitHub Repository', url: 'https://github.com/your_github/project-a' },
         { name: '관련 기사 (News)', url: 'https://wowtale.net/2025/10/30/249506/' },
@@ -94,7 +94,7 @@ const projects_ = [
       link: '#',
       icon: <IconPlaceholder src="https://logo-resources.thevc.kr/organizations/200x200/a72b6be358f7e753fd51ef4e011070dfe7298e32f8979cd099e0a5fb5d690e39_1691372959298758.jpg" alt="Project Icon 2" />,
       // Detailed fields for modal
-      imageUrl: 'https://github.com/fhzh123/image_upload_for_kyohoon/blob/main/Project_KHTS.jpg?raw=true',
+      imageUrl: '/resume/projects/finance-document-linking.svg',
       subtitle: '금융 도메인 특화 문서간 연결 및 메타데이터 구축',
       fullDescription: '금융 도메인에서의 텍스트 데이터 활용을 극대화하기 위해, 다양한 금융 문서 간의 정보를 연결하고 문서의 메타데이터를 구축하는 기술을 개발했습니다. 이를 통해 금융 데이터의 효율적인 관리 및 활용을 지원하고, 데이터 기반 의사결정 프로세스를 개선하는 것을 목표로 하고 있습니다.',
       companyOrInstitution: '',
@@ -151,6 +151,7 @@ const projects_ = [
       role: 'PLM(T5-base) 및 LLM(GPT-API)을 활용한 Controllable Text Summarization 모델 개발',
       externalLinks: [
         { name: '논문 · PRISM (IEEE Access 2024)', url: 'https://ieeexplore.ieee.org/document/10766499' },
+        { name: '논문 · SUMMPILOT (AAAI 2025 Demonstration Track)', url: 'https://arxiv.org/abs/2601.08475' },
       ],
     },
     {
@@ -291,9 +292,9 @@ const projectEnglishCopy = [
     "title": "Monitoring Dashboard Development for the DATUMO Platform",
     "description": "- Developed the DATUMO Observability feature for monitoring chatbot conversation logs <br /> - Research on dialogue topic segmentation, conversation visualization and category discovery, plus MVP engineering",
     "subtitle": "Monitoring Dashboard for Chatbot Conversation Logs",
-    "fullDescription": "As a team, we built a monitoring dashboard for chatbot conversation logs as part of the DATUMO Observability feature. Chatbot sessions can be very long, so conversations must be split by topic before analysis; we studied GIFT, a method that finds topic boundaries through global and local inspection and filtering (submitted to the ARR October cycle, under review). To make conversations easy to browse, we studied KG-Neighbor, an embedding designed for well-separated visualization, which was accepted at WSDM. To help developers see whether users talk within the intended categories and in what proportions, we studied CALM, a Generalized Category Discovery method based on automatic prompt tuning (submitted to AAAI, under review). We also worked on prompting and service integrations for the Observability MVP.",
+    "fullDescription": "Our team built a dashboard for monitoring chatbot conversation logs in DATUMO Observability. To segment long sessions by topic, we studied how to identify topic changes by examining the full session and the context around each candidate boundary, then filtering the candidates. For visualization, we studied KG-Neighbor, which adjusts embedding distances using shared knowledge graph triples extracted from the text and rebuilds the neighborhood graph. We also studied automatic prompt tuning to discover existing and emerging categories and estimate the share of conversations in each category. I worked on prompt design and service integration for the Observability MVP.",
     "companyOrInstitution": "Selectstar (DATUMO)",
-    "role": "Research on dialogue topic segmentation (GIFT), conversation visualization (KG-Neighbor) and category discovery (CALM), and prompting and integrations for the Observability MVP",
+    "role": "Research on dialogue topic segmentation, conversation visualization (KG-Neighbor) and category discovery, plus prompt design and service integration for the Observability MVP",
     "externalLinkNames": [
       "Service docs · DATUMO Observability",
       "Paper · KG-Neighbor (WSDM)"
@@ -326,11 +327,11 @@ const projectEnglishCopy = [
   },
   {
     "title": "[Samsung Life C-Lab] Integrating Structured Data into LLMs",
-    "description": "- Developed technology to incorporate large-scale structured data into LLM knowledge <br /> - Supported decision-making based on internal structured data",
-    "subtitle": "Structured Data Integration and Knowledge Incorporation for LLMs",
-    "fullDescription": "Samsung Life holds a large volume of structured customer data but lacked technology to connect it effectively to LLMs. We developed technology that connects LLMs with structured data and incorporates it into model knowledge, with the aim of supporting personalized customer services and data-driven decision-making.",
+    "description": "- Used an LLM to plan statistical analyses and Python to run them on full tables <br /> - Generated insight reports with traceable numerical evidence and stage-by-stage verification",
+    "subtitle": "Automated Tabular Analysis and Statistical Insight Reports",
+    "fullDescription": "At Samsung Life C-Lab, we developed a pipeline that turns structured data into insight reports grounded in statistical calculations. An LLM infers the schema from a table sample and column headers, then selects the statistical operations. Python tools run those operations on the full table. The pipeline uses the results to identify comparisons, trends and anomalies, and sends outputs that fail verification back to the relevant stage for revision. The pipeline retains a trace from the report’s key numerical claims to the source data and calculations.",
     "companyOrInstitution": "Samsung Life Insurance",
-    "role": "Development of structured data analysis pipelines and technology for incorporating data into LLM knowledge",
+    "role": "Development of an LLM- and Python-based pipeline for tabular data analysis and insight report generation",
     "externalLinkNames": [
       "Related article (News)"
     ]
@@ -370,7 +371,8 @@ const projectEnglishCopy = [
     "companyOrInstitution": "National Research Foundation of Korea and Boston University (Prof. Derry Tanti Wijaya’s Lab)",
     "role": "Development of controllable text summarization models using a pretrained language model (T5-base) and an LLM (GPT API)",
     "externalLinkNames": [
-      "Paper · PRISM (IEEE Access 2024)"
+      "Paper · PRISM (IEEE Access 2024)",
+      "Paper · SUMMPILOT (AAAI 2025 Demonstration Track)"
     ]
   },
   {

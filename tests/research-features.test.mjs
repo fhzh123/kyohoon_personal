@@ -12,14 +12,15 @@ const seed={version:4,goals:[{id:'g1',title:'검증용 연구축'}],phases:[],no
   {id:'done',title:'표 형식의 데이터를 분석하는 기술',goalId:'g1',status:'done'},
   {id:'future',title:'원천 데이터의 구조화 모달리티 확장 기술',goalId:'g1'}
 ]};
-async function fixture(role='editor', initial=seed, catalog=[], currentDate='2026-11-09') {
+async function fixture(role='editor', initial=seed, catalog=[], currentDate='2026-11-09', {savedUnit,query=''}={}) {
   const html=(await readFile(new URL('work-app/index.html',root),'utf8')).replace(/<script[^>]*src=[^>]*><\/script>/g,'');
-  const dom=new JSDOM(html,{url:'https://fixture.invalid/work/app/index.html',runScripts:'outside-only',pretendToBeVisual:true});
+  const dom=new JSDOM(html,{url:'https://fixture.invalid/work/app/index.html'+query,runScripts:'outside-only',pretendToBeVisual:true});
   const w=dom.window,puts=[],gets=[];
   const RealDate=w.Date;w.Date=class extends RealDate {constructor(...args){super(...(args.length?args:[currentDate+'T12:00:00']));}static now(){return new RealDate(currentDate+'T12:00:00').getTime();}};let remote={revision:'4',state:clone(initial)};
   w.scrollTo=()=>{};w.confirm=()=>true;w.HTMLElement.prototype.scrollIntoView=()=>{};
   w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
   w.WORK_CONTEXT={mode:'supabase',storageKey:'synthetic-'+role,role};w.RESEARCH_SEED=clone(initial);w.RESEARCH_TAXONOMY_SOURCE={catalog};w.RESEARCH_LEGACY_SEED=clone(seed);w.WORK_INITIAL_ENVELOPE=clone(remote);
+  if(savedUnit)w.localStorage.setItem(w.WORK_CONTEXT.storageKey+'-roadmap-unit',savedUnit);
   w.fetch=async(url,options={})=>{
     assert.equal(url,'/api/research-state');
     if(options.method==='PUT'){const payload=JSON.parse(options.body);puts.push(payload);assert.equal(payload.revision,remote.revision);remote={revision:String(+remote.revision+1),state:clone(payload.state)};}
@@ -489,9 +490,20 @@ test('owner filters include joint assignments but exclude nonmatching parents wi
 });
 
 
-test('journal opens at the local current week and month, including a week across New Year',async()=>{
+test('journal defaults to the current month and navigates across New Year',async()=>{
  const f=await fixture('editor',seed,[],'2026-12-31');try{
   const d=f.document;assert.equal(d.querySelector('#anchor-month').value,'2026-12');
+  assert.equal(d.querySelector('[data-unit="month"]').getAttribute('aria-pressed'),'true');
+  assert.equal(d.querySelectorAll('.timeline-column').length,12);
+  assert.match(d.querySelector('.timeline-column.is-current').textContent,/이번 달/);
+  d.querySelector('[data-step-period="1"]').click();assert.equal(d.querySelector('#anchor-month').value,'2027-01');
+  assert.equal(d.querySelector('.timeline-column.is-current'),null);
+  d.querySelector('[data-step-period="-1"]').click();assert.equal(d.querySelector('#anchor-month').value,'2026-12');
+  const month=d.querySelector('#anchor-month');month.value='2028-02';month.dispatchEvent(new f.w.Event('change'));
+  assert.equal(d.querySelector('#anchor-month').value,'2028-02');
+  assert.match(d.querySelector('.timeline-cell').title,/2028-02-01 — 2028-02-29/);
+  d.querySelector('#roadmap-today').click();assert.equal(d.querySelector('#anchor-month').value,'2026-12');
+  d.querySelector('[data-unit="week"]').click();
   const current=d.querySelector('.timeline-column.is-current');assert.match(current.textContent,/이번 주/);assert.match(current.textContent,/12.28–1.3/);assert.equal(d.querySelectorAll('.timeline-column.is-current').length,1);
   assert.equal(d.querySelectorAll('.timeline-cell.is-current').length,d.querySelectorAll('.timeline-row').length);
   d.querySelector('[data-step-period="1"]').click();assert.equal(d.querySelector('.timeline-column.is-current'),null);
@@ -500,6 +512,22 @@ test('journal opens at the local current week and month, including a week across
   assert.equal(f.puts.length,0);
  }finally{f.close();}
  const g=await fixture('reader',seed,[],'2027-01-01');try{g.document.querySelector('[data-view="overview"]').click();assert.equal(g.document.querySelector('[data-calendar-month]').value,'2027-01');}finally{g.close();}
+});
+
+test('roadmap keeps explicit browser preferences and gives valid URL units precedence',async()=>{
+ const key='synthetic-reader-roadmap-unit';
+ const f=await fixture('reader');let savedUnit;try{
+  assert.equal(f.w.localStorage.getItem(key),null);
+  f.document.querySelector('[data-unit="year"]').click();
+  savedUnit=f.w.localStorage.getItem(key);assert.equal(savedUnit,'year');
+  assert.equal(f.puts.length,0);
+ }finally{f.close();}
+ for(const [options,expected] of [[{savedUnit},'year'],[{savedUnit,query:'?unit=week'},'week'],[{savedUnit,query:'?unit=invalid'},'year'],[{savedUnit:'invalid'},'month']]){
+  const g=await fixture('reader',seed,[],'2026-11-09',options);try{
+   assert.equal(g.document.querySelector('[data-unit][aria-pressed="true"]').dataset.unit,expected);
+   assert.equal(g.w.localStorage.getItem(key),options.savedUnit);
+  }finally{g.close();}
+ }
 });
 test('all L3 axes share the same badge, creation label and editable title',async()=>{
  const initial=clone(seed);initial.goals.push({id:'official',title:'원본 연구축',assetId:'official'});
@@ -564,12 +592,12 @@ test('resource warnings include hidden and filtered work and readers cannot save
 });
 
 test('roadmap shows ISO week codes alongside monthly ordinal weeks and preserves the ISO year at New Year',async()=>{
- const f=await fixture('editor',seed,[],'2026-11-17');try{
+ const f=await fixture('editor',seed,[],'2026-11-17',{query:'?unit=week'});try{
   const d=f.document,headers=[...d.querySelectorAll('.timeline-column')],fourth=headers.find(column=>column.querySelector('strong').textContent==='11월 넷째주');
   assert.equal(fourth.querySelector('.timeline-week-code').textContent,'2026-W48');
   assert.equal(d.querySelector('.timeline-column.is-current .timeline-week-code').textContent,'2026-W47');
  }finally{f.close();}
- const n=await fixture('editor',seed,[],'2027-01-01');try{
+ const n=await fixture('editor',seed,[],'2027-01-01',{query:'?unit=week'});try{
   assert.equal(n.document.querySelector('.timeline-column.is-current .timeline-week-code').textContent,'2026-W53');
  }finally{n.close();}
 });
@@ -610,7 +638,7 @@ test('L4 peak sums only simultaneously scheduled L5 and does not add sequential 
 });
 test('roadmap resources use this week, this month and this year independently of chart navigation',async()=>{
  const initial=allocationSeed();initial.tasks.push({id:'future-allocation',title:'Future',parentId:'root',goalId:'g1',owner:'A',ownerAllocations:[{owner:'A',percent:90}],start:'2027-02-01',end:'2027-02-28',planUnit:'week'});
- const f=await fixture('editor',initial,[],'2026-11-17');try{
+ const f=await fixture('editor',initial,[],'2026-11-17',{query:'?unit=week'});try{
   const d=f.document,heading=()=>d.querySelector('#roadmap-resources').textContent;
   assert.match(heading(),/이번 주.*2026-W47/);assert.match(heading(),/2026-11-16 ~ 2026-11-22/);assert.equal(d.querySelector('[data-resource-owner="A"] .resource-percent').textContent,'0%');assert.match(d.querySelector('[data-resource-owner="A"]').textContent,/이 기간에 배정된 L5 없음/);
   d.querySelector('[data-step-period="1"]').click();assert.match(heading(),/2026-11-16 ~ 2026-11-22/);
