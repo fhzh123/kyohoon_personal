@@ -7,17 +7,29 @@
   date.dateTime = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' }).format(now);
   date.textContent = today.format(now);
 
-  fetch('/api/home-weather', {credentials: 'omit'})
+  const weatherLine = document.querySelector('[data-desk-weather]');
+  const forecastBubble = document.querySelector('[data-desk-forecast]');
+  const weatherSource = document.querySelector('[data-desk-weather-source]');
+  const showWeather = (line, message, hasData = false) => {
+    weatherLine.textContent = line;
+    forecastBubble.textContent = message;
+    weatherLine.hidden = forecastBubble.hidden = false;
+    weatherSource.hidden = !hasData;
+  };
+
+  showWeather('서울 날씨 불러오는 중', '내일 날씨를 확인하고 있어요.');
+  const weatherUrl = '/api/home-weather?date=' + encodeURIComponent(date.dateTime);
+  // Protected Vercel previews require the same-origin cookie on the API request.
+  fetch(weatherUrl, {credentials: 'same-origin', signal: AbortSignal.timeout?.(8000)})
     .then(response => response.ok ? response.json() : null)
     .then(weather => {
-      if (weather?.date !== date.dateTime) return;
-      const current = document.querySelector('[data-desk-weather]');
-      const forecast = document.querySelector('[data-desk-forecast]');
-      current.textContent = weather.city + ' · ' + weather.condition + ' ' + weather.temperature + '°';
-      forecast.textContent = weather.message;
-      current.hidden = forecast.hidden = document.querySelector('[data-desk-weather-source]').hidden = false;
+      if (weather?.date !== date.dateTime) throw new Error('Weather unavailable');
+      const line = weather.condition && Number.isFinite(weather.temperature)
+        ? weather.city + ' · ' + weather.condition + ' ' + weather.temperature + '°'
+        : '서울 현재 날씨를 확인할 수 없어요';
+      showWeather(line, weather.message || '내일 날씨를 아직 못 가져왔어요.', true);
     })
-    .catch(() => {});
+    .catch(() => showWeather('서울 날씨를 불러오지 못했어요', '내일 예보를 아직 못 가져왔어요.'));
 
   const list = document.querySelector('[data-desk-tools]');
   const edit = document.querySelector('[data-desk-edit]');

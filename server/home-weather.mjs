@@ -21,11 +21,13 @@ function tomorrowMessage(condition, todayHigh, tomorrowHigh) {
   if (condition === '뇌우') return '내일은 천둥·번개 예보가 있어요.';
   if (condition === '비') return '내일은 비가 온대요. 우산 챙겨요!';
   if (condition === '눈') return '내일은 눈이 온대요. 따뜻하게 입어요!';
-  const change = Math.round(tomorrowHigh - todayHigh);
+  const change = Number.isFinite(todayHigh) && Number.isFinite(tomorrowHigh)
+    ? Math.round(tomorrowHigh - todayHigh)
+    : 0;
   if (change <= -7) return '내일은 낮 기온이 ' + Math.abs(change) + '°C쯤 내려가요. 따뜻하게 입어요!';
   if (change >= 7) return '내일은 낮 기온이 ' + change + '°C쯤 올라가요!';
   if (condition === '맑음') {
-    return tomorrowHigh < 10 ? '내일은 맑대요. 산책 갈 땐 따뜻하게!' : '내일은 맑대요. 잠깐 나들이 어때요?';
+    return Number.isFinite(tomorrowHigh) && tomorrowHigh < 10 ? '내일은 맑대요. 산책 갈 땐 따뜻하게!' : '내일은 맑대요. 잠깐 나들이 어때요?';
   }
   if (condition === '안개') return '내일은 안개가 낄 수 있어요.';
   return condition === '흐림' ? '내일은 하늘이 흐릴 거래요.' : '내일은 구름이 조금 낀대요.';
@@ -42,13 +44,14 @@ export async function loadHomeWeather(fetcher, now) {
   const condition = CONDITIONS.get(current?.weather_code);
   const tomorrow = CONDITIONS.get(daily?.weather_code?.[1]);
   const [todayHigh, tomorrowHigh] = daily?.temperature_2m_max ?? [];
-  if (!current?.time?.startsWith(date + 'T') || daily?.time?.[0] !== date ||
-      daily.time[1] !== tomorrowDate || !condition || !tomorrow ||
-      ![temperature, todayHigh, tomorrowHigh].every(Number.isFinite)) {
-    throw new Error('Incomplete weather forecast');
-  }
+  const observationTime = Date.parse(current?.time + '+09:00');
+  const hasCurrent = condition && Number.isFinite(temperature) && Math.abs(observationTime - now) < 3_600_000;
+  const hasTomorrow = tomorrow && daily?.time?.[0] === date && daily.time[1] === tomorrowDate;
+  if (!hasCurrent && !hasTomorrow) throw new Error('Incomplete weather forecast');
   return {
-    date, city: '서울', condition, temperature: Math.round(temperature),
-    message: tomorrowMessage(tomorrow, todayHigh, tomorrowHigh),
+    date,
+    city: '서울',
+    ...(hasCurrent ? {condition, temperature: Math.round(temperature)} : {}),
+    ...(hasTomorrow ? {message: tomorrowMessage(tomorrow, todayHigh, tomorrowHigh)} : {}),
   };
 }

@@ -8,7 +8,7 @@ const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 // kh design system: shared tokens and bridge on every page, then one file per surface.
 const KH_V = '20261124-2';
-const HOME_V = '20261128-desk-1';
+const HOME_V = '20261128-desk-2';
 const KH_PAGES = new Set(['login', 'selectstar', 'personal', 'demos', 'paper', 'settings', 'travel', 'gallery']);
 const shell = (title, body, surface = '') => `<!doctype html>
 <html lang="ko" data-theme="dark" data-type="service" data-radius="soft" data-motion>
@@ -85,7 +85,7 @@ export const homePage = ({authenticated = false, selectstarOnly = false, markdow
   <main id="main" class="home-main" aria-labelledby="intro-title">
     <div class="desk-intro">
       <div class="desk-day"><time class="desk-date" data-desk-date></time><span class="desk-weather" data-desk-weather hidden></span></div>
-      <h1 id="intro-title">진교훈<span aria-hidden="true">.</span></h1>
+      <h1 id="intro-title">오늘</h1>
     </div>
     <div class="desk-work">
       <section class="desk-shortcuts" aria-labelledby="desk-shortcut-heading">

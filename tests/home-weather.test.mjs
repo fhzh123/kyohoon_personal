@@ -38,3 +38,28 @@ test('rejects unavailable or stale forecasts', async () => {
   await assert.rejects(() => loadHomeWeather(() => new Response(null,{status:503}), now));
   await assert.rejects(() => loadHomeWeather(() => Response.json(fixture()), now + 86_400_000));
 });
+
+test('accepts a recent observation from before midnight in Seoul', async () => {
+  const data = fixture();
+  data.current.time = '2026-11-28T23:45';
+  const result = await loadHomeWeather(() => Response.json(data), now);
+  assert.equal(result.temperature, 4);
+  assert.match(result.message, /맑대요/);
+});
+
+test('keeps tomorrow’s advice when the current temperature is unavailable', async () => {
+  const data = fixture({code:61});
+  data.current.temperature_2m = null;
+  data.daily.temperature_2m_max[1] = null;
+  const result = await loadHomeWeather(() => Response.json(data), now);
+  assert.equal(result.temperature, undefined);
+  assert.match(result.message, /비.*우산/);
+});
+
+test('keeps current weather when tomorrow’s forecast is unavailable', async () => {
+  const data = fixture();
+  data.daily.weather_code[1] = null;
+  const result = await loadHomeWeather(() => Response.json(data), now);
+  assert.equal(result.condition, '흐림');
+  assert.equal(result.message, undefined);
+});

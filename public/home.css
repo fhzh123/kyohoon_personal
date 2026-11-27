@@ -102,7 +102,6 @@ html[data-theme] .home-header .wordmark { font-family: var(--font-sans); color: 
   letter-spacing: -.075em;
   word-break: keep-all;
 }
-.desk-intro h1 span { color: var(--desk-blue); }
 
 .desk-work { grid-area: work; width: 100%; min-width: 0; }
 .desk-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -379,7 +378,6 @@ html[data-home-motion="on"] .is-poked .home-pose { animation: desk-poke .48s var
   color: var(--desk-muted);
   font-size: .875rem;
   font-weight: 600;
-  white-space: nowrap;
 }
 
 .desk-forecast {
