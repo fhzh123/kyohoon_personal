@@ -5,7 +5,7 @@ import { randomBytes, timingSafeEqual, randomUUID, createHash } from 'node:crypt
 import {gzipSync,gunzipSync} from 'node:zlib';
 import {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
-import { homePage, loginPage, workPage, demosPage, personalPage, markdownPage } from '../views/pages.mjs';
+import { homePage, loginPage, workPage, demosPage, personalPage, markdownPage, accessDeniedPage } from '../views/pages.mjs';
 import { previewAllowed, safeRelativePath, safeLoginDestination, validState, isSelectstarReader, canAccessMarkdown, memberLoginDestination } from './policy.mjs';
 import {demoRoutes} from './demo-routes.mjs';
 import {teamResourceRoutes} from './team-resource-routes.mjs';
@@ -243,7 +243,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
       if(pathname==='/personal/markdown'||pathname==='/personal/markdown/'){
         if(!['GET','HEAD'].includes(req.method))return send(res,405,{error:'허용되지 않은 요청입니다.'});
         const access=await authorize(req,res);
-        if(access&&!canAccessMarkdown(access))return send(res,403,{error:'소유자만 마크다운 에디터를 열 수 있습니다.'});
+        if(access&&!canAccessMarkdown(access))return send(res,403,req.method==='HEAD'?'':accessDeniedPage({markdown:true,selectstarOnly:isSelectstarReader(access)}),'text/html; charset=utf-8');
         return send(res,access?200:401,req.method==='HEAD'?'':markdownPage(access),'text/html; charset=utf-8');
       }
       if(pathname==='/personal/travel'||pathname==='/personal/travel/'){
@@ -341,6 +341,11 @@ export function createHandler({localPreview = false, rootDir = root, environment
     } catch (error) {
       // Never log passwords, tokens, upstream bodies, file contents or private filenames.
       const status=error?.status || 503;
+      const pathname = String(req.url || '').split('?')[0];
+      if (status === 403 && ['/paper','/paper/','/settings','/settings/'].includes(pathname)
+          && ['GET','HEAD'].includes(req.method)) {
+        return send(res,403,req.method==='HEAD'?'':accessDeniedPage({selectstarOnly:true}),'text/html; charset=utf-8');
+      }
       return send(res,status,{error:status===413?'요청이 너무 큽니다.':'요청을 처리하지 못했습니다. 설정과 연결 상태를 확인해 주세요.'});
     }
   };

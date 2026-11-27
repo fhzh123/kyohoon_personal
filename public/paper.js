@@ -82,12 +82,12 @@
     dialog.innerHTML='<form id="paper-project-form"><h2 id="paper-dialog-title">'+(isNew?types[p.type]+' 시작':'논문 정보 수정')+'</h2>'+input('논문 제목','title',p.title)+input('학회 / 저널','venue',p.venue)+
       '<div class="paper-pair">'+input('마감일','deadline',p.deadline,'date')+input(p.type==='rebuttal'?'리뷰어별 글자 제한 (0: 없음)':'전체 리뷰 글자 제한 (0: 없음)','charLimit',p.charLimit,'number')+'</div>'+
       '<label class="paper-field"><span>상태</span><select name="status">'+Object.entries(statuses).map(([v,n])=>'<option value="'+v+'" '+(v===p.status?'selected':'')+'>'+n+'</option>').join('')+'</select></label>'+
-      (isNew&&p.type==='review'?'<label class="paper-field"><span>논문 PDF <small>선택 사항</small></span><input type="file" id="paper-create-pdf" name="pdf" accept="application/pdf,.pdf"><small class="paper-subtle">5 MB까지 첨부할 수 있으며, 나중에 추가해도 됩니다.</small></label>':'')+
+      (isNew?'<label class="paper-field"><span>논문 PDF <small>선택 사항</small></span><input type="file" id="paper-create-pdf" name="pdf" accept="application/pdf,.pdf"><small class="paper-subtle">'+maxPdfMb+' MB까지 첨부할 수 있으며, 나중에 추가해도 됩니다.</small></label>':'')+
       '<div class="paper-actions">'+btn('취소','close-dialog')+'<button class="paper-btn primary" type="submit">'+(isNew?'작업 만들기':'적용')+'</button></div></form>';
     showDialog();
     $('#paper-project-form').onsubmit=async e=>{e.preventDefault();const form=new FormData(e.target);const next={...clone(p),title:String(form.get('title')).trim(),venue:String(form.get('venue')),deadline:String(form.get('deadline')),status:form.get('status'),charLimit:Number(form.get('charLimit'))};
       if(!next.title||next.title.length>300||!Number.isInteger(next.charLimit)||next.charLimit<0||next.charLimit>100000){notice('제목과 글자 수 제한을 확인해 주세요.',true);return;}
-      const file=isNew&&p.type==='review'?$('#paper-create-pdf')?.files[0]:null;
+      const file=isNew?$('#paper-create-pdf')?.files[0]:null;
       if(file){try{validatePdf(file);}catch(error){notice(error.message,true);return;}}
       if(isNew){if(!safeLeave())return;await run(async()=>{current={id:next.id,data:next,revision:null};reviewerId=null;issueId=null;dirty=true;
         try{await save();}catch(error){notice(error.message,true);return;}
@@ -163,16 +163,18 @@
   }
   async function copyText(value){try{await navigator.clipboard.writeText(value||'');notice('클립보드에 복사했습니다.');}catch{dialog.innerHTML='<h2 id="paper-dialog-title">텍스트 복사</h2><p class="paper-subtle">아래 내용을 선택해 복사해 주세요.</p><textarea aria-label="복사할 텍스트" readonly>'+esc(value)+'</textarea><div class="paper-actions">'+btn('닫기','close-dialog')+'</div>';showDialog();dialog.querySelector('textarea').select();}}
   async function openSettings(){await save();window.location.assign('/settings?returnTo='+encodeURIComponent(location.pathname+location.search+location.hash)+'#llm');}
+  const maxPdfBytes=Number(app.dataset.maxPdfBytes);
+  const maxPdfMb=maxPdfBytes/1_000_000;
   async function uploadFile(file){
     validatePdf(file);
     if(preview)throw Error('미리보기에서는 PDF를 저장하지 않습니다.');
     await save();
     const ticket=await api('/api/paper/file/upload','POST',{projectId:current.id,name:file.name,size:file.size});let r;
     if(ticket.local){const base64=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('파일을 읽지 못했습니다.'));reader.readAsDataURL(file);});r=await api('/api/paper/file','POST',{projectId:current.id,name:file.name,base64});}
-    else{const uploaded=await fetch(ticket.uploadUrl,{method:'PUT',credentials:'omit',headers:{'Content-Type':'application/pdf','x-upsert':'false'},body:file});if(!uploaded.ok)throw Error('PDF 업로드에 실패했습니다. 5 MB 이하인지 확인하고 다시 첨부해 주세요.');r=await api('/api/paper/file/complete','POST',{projectId:current.id,name:file.name,path:ticket.path});}
+    else{const uploaded=await fetch(ticket.uploadUrl,{method:'PUT',credentials:'omit',headers:{'Content-Type':'application/pdf','x-upsert':'false'},body:file});if(!uploaded.ok)throw Error('PDF 업로드에 실패했습니다. 연결을 확인하고 다시 첨부해 주세요.');r=await api('/api/paper/file/complete','POST',{projectId:current.id,name:file.name,path:ticket.path});}
     current.data.pdf=r.pdf;mark();await save();renderEditor();notice('PDF를 첨부했습니다.');
   }
-  function validatePdf(file){if(!file.size)throw Error('비어 있는 파일은 첨부할 수 없습니다.');if(file.size>5000000)throw Error('PDF는 5 MB까지 첨부할 수 있습니다.');if(file.type!=='application/pdf'&&!/\.pdf$/i.test(file.name))throw Error('PDF 파일을 선택해 주세요.');}
+  function validatePdf(file){if(!file.size)throw Error('비어 있는 파일은 첨부할 수 없습니다.');if(file.size>maxPdfBytes)throw Error(`PDF는 ${maxPdfMb} MB까지 첨부할 수 있습니다.`);if(file.type!=='application/pdf'&&!/\.pdf$/i.test(file.name))throw Error('PDF 파일을 선택해 주세요.');}
   app.addEventListener('input',e=>{
     const n=e.target;if(busy)return;
     if(n.id==='paper-search'){query=n.value;renderRows();return;}

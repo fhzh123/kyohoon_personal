@@ -1,0 +1,28 @@
+.access-denied-shell {
+  width: min(100% - 36px, 1080px);
+  min-height: 100svh;
+  margin-inline: auto;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+.access-denied {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  align-items: center;
+  gap: clamp(20px, 6vw, 80px);
+  padding-block: 48px;
+}
+.access-denied h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4.8vw, 3.6rem);
+  letter-spacing: -.045em;
+  line-height: 1.14;
+  word-break: keep-all;
+}
+.access-denied p { color: var(--k-graphite); margin: 16px 0 24px; line-height: 1.6; word-break: keep-all; text-wrap: pretty; }
+.access-denied .btn { display: inline-flex; align-items: center; min-height: 44px; }
+.access-denied img { width: min(100%, 270px); height: auto; object-fit: contain; justify-self: center; }
+@media (max-width: 640px) {
+  .access-denied { grid-template-columns: minmax(0, 1fr); align-content: center; }
+  .access-denied img { width: min(52vw, 200px); grid-row: 1; justify-self: start; }
+}
