@@ -326,7 +326,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
       if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (pathname === '/') {
         const access=await authorize(req,res);
-        return send(res,200,homePage({authenticated:Boolean(access),selectstarOnly:isSelectstarReader(access)}),'text/html; charset=utf-8');
+        return send(res,200,homePage({authenticated:Boolean(access),selectstarOnly:isSelectstarReader(access),markdownAllowed:!access||canAccessMarkdown(access)}),'text/html; charset=utf-8');
       }
       if (pathname === '/resume' || pathname === '/resume/') {
         // Keep the public CV available to everyone; only expose the Home shortcut

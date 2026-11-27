@@ -8,7 +8,7 @@ const brand = () => '<a class="wordmark" href="/" aria-label="Kyohoon Jin 홈"><
 const footer = () => `<footer class="site-footer"><span>© ${new Date().getFullYear()} Kyohoon Jin</span></footer>`;
 // kh design system: shared tokens and bridge on every page, then one file per surface.
 const KH_V = '20261124-2';
-const HOME_V = '20261125-responsive-1';
+const HOME_V = '20261127-desk-1';
 const KH_PAGES = new Set(['login', 'selectstar', 'personal', 'demos', 'paper', 'settings', 'travel', 'gallery']);
 const shell = (title, body, surface = '') => `<!doctype html>
 <html lang="ko" data-theme="dark" data-type="service" data-radius="soft" data-motion>
@@ -28,35 +28,100 @@ const shell = (title, body, surface = '') => `<!doctype html>
 <link rel="stylesheet" href="/auth.css?v=20261113-2"><link rel="stylesheet" href="/space-navigation.css?v=20261117-1"><script src="/space-navigation.js?v=20261117-1" defer></script><link rel="stylesheet" href="/kh-system.css?v=${KH_V}"><link rel="stylesheet" href="/kh-site.css?v=${KH_V}">${KH_PAGES.has(surface) ? `<link rel="stylesheet" href="/kh/${surface}.css?v=${KH_V}">` : ''}${surface === 'home' ? '<link rel="stylesheet" href="/home.css?v='+HOME_V+'"><script src="/home.js?v='+HOME_V+'" defer></script>' : ''}${surface === 'demos' ? WORK_SHELL_ASSETS : ''}
 </head><body data-surface="${surface}"${surface === 'demos' ? ' data-work-shell' : ''}><div class="ambient-sky" aria-hidden="true"></div><a class="skip-link" href="#main">본문으로 건너뛰기</a>${body}</body></html>`;
 
-// Home: one large mascot on a cobalt stage. Pointing at or focusing a space
-// swaps the mascot into that space's pose; the four spaces sit on one ruled line.
+
 const HOME_SPACES = [
-  {id:'resume', href:'/resume', title:'Resume', text:'경력, 논문, 프로젝트', locked:false, pose:'resume-hover.webp'},
-  {id:'work', href:'/work', title:'Selectstar', text:'연구일지, 팀 리소스, 업무 도구', locked:true, pose:'selectstar-hover.webp'},
-  {id:'paper', href:'/paper', title:'Paper', text:'리뷰탈 준비와 논문 리뷰', locked:true, pose:'paper-pose.webp'},
-  {id:'personal', href:'/personal', title:'Personal', text:'여행 기록, 갤러리, 마크다운 에디터', locked:false, pose:'personal-pose.webp'},
+  {id:'resume', href:'/resume', title:'Resume', pose:'resume-hover.webp'},
+  {id:'work', href:'/work', title:'Selectstar', pose:'selectstar-hover.webp'},
+  {id:'paper', href:'/paper', title:'Paper', pose:'paper-pose.webp'},
+  {id:'personal', href:'/personal', title:'Personal', pose:'personal-pose.webp'},
 ];
 
-export const homePage = ({authenticated = false, selectstarOnly = false} = {}) => shell('진교훈', `
+const HOME_TOOLS = [
+  {id:'journal', href:'/work/app/index.html', title:'이번 주 연구일지', detail:'연구 로드맵', icon:'calendar', locked:true},
+  {id:'rebuttal', href:'/paper#rebuttal', title:'논문 리뷰탈', detail:'Paper', icon:'document', locked:true, fullAccess:true},
+  {id:'markdown', href:'/personal/markdown', title:'마크다운 에디터', detail:'Personal', icon:'edit', locked:true, owner:true},
+  {id:'resources', href:'/work/team-resources', title:'팀 리소스', detail:'Selectstar', icon:'calendar', locked:true},
+  {id:'review', href:'/paper#review', title:'논문 리뷰', detail:'Paper', icon:'document', locked:true, fullAccess:true},
+  {id:'gallery', href:'/personal/gallery', title:'마스코트 갤러리', detail:'Personal', icon:'image'},
+  {id:'travel', href:'/personal/travel', title:'여행의 흔적', detail:'Personal', icon:'globe'},
+  {id:'resume', href:'/resume', title:'이력서', detail:'Resume', icon:'document'},
+];
+
+const DESK_ICONS = {
+  calendar:'M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm2-2v4m10-4v4M4 11h16m-11 4h1m4 0h1',
+  document:'M6 3h8l4 4v14H6zM14 3v5h4m-9 4h6m-6 4h6',
+  edit:'m14 7 3 3M5 16 16 5a2.1 2.1 0 0 1 3 3L8 19l-4 1z',
+  image:'M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5m-5-8h.01',
+  globe:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 0c5 5 5 13 0 18-5-5-5-13 0-18ZM3 12h18',
+  clock:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4v5l3 2',
+  chevron:'m9 5 7 7-7 7',
+  shuffle:'M4 7h3c4 0 6 10 10 10h3m-3-3 3 3-3 3M4 17h3c1.4 0 2.6-1.3 3.4-2.6M13.6 9.6C14.4 8.3 15.6 7 17 7h3m-3-3 3 3-3 3',
+};
+const deskIcon = name => '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + DESK_ICONS[name] + '"/></svg>';
+
+function deskTool(tool, authenticated) {
+  const needsLogin = tool.locked && !authenticated;
+  const href = needsLogin ? '/login?next=' + encodeURIComponent(tool.href) : tool.href;
+  return '<li data-tool="' + tool.id + '"><a class="desk-tool" href="' + href + '"><span class="desk-icon">' + deskIcon(tool.icon) + '</span><strong>' + tool.title + '</strong><span class="desk-tool-detail">' + (needsLogin ? '로그인 후 이용' : tool.detail) + '</span>' + deskIcon('chevron') + '</a></li>';
+}
+
+function deskRecent(authenticated, selectstarOnly) {
+  if (selectstarOnly) return '';
+  const href = authenticated ? '/paper#rebuttal' : '/login?next=%2Fpaper%23rebuttal';
+  return '<section class="desk-recent" aria-labelledby="desk-recent-heading"' + (authenticated ? ' data-desk-recent' : '') + '><h2 id="desk-recent-heading">이어쓰기</h2><a href="' + href + '"><span class="desk-icon">' + deskIcon('clock') + '</span><span class="desk-recent-copy"><strong>Paper 작업 열기</strong><small>' + (authenticated ? '논문 리뷰와 리뷰탈' : '로그인하면 최근 Paper 작업을 이어서 열 수 있어요.') + '</small></span>' + deskIcon('chevron') + '</a></section>';
+}
+
+export const homePage = ({authenticated = false, selectstarOnly = false, markdownAllowed = !authenticated} = {}) => {
+  const tools = HOME_TOOLS.filter(tool => (!selectstarOnly || (!tool.fullAccess && !tool.owner)) && (!tool.owner || markdownAllowed));
+  const spaces = HOME_SPACES.filter(space => !selectstarOnly || space.id !== 'paper');
+  return shell('진교훈', `
 <div class="home">
-  <header class="site-header home-header">${brand()}<nav class="header-actions" aria-label="빠른 이동">${selectstarOnly ? '' : themeButton()}${authenticated ? logoutButton() : '<a class="btn header-login" href="/login">로그인</a>'}</nav></header>
-  <main id="main" class="home-main" aria-labelledby="intro-title">
-    <section class="home-intro">
-      <h1 id="intro-title"><span class="home-name">진교훈</span> <span class="home-name-en" lang="en">Kyohoon Jin</span></h1>
-      <p class="home-lead">Selectstar의 AI Research Engineer입니다. 모델이 배울 데이터를 만들고, 그 모델을 어떻게 평가할지 연구합니다.</p>
-    </section>
-    <figure class="home-stage" aria-hidden="true" data-home-stage>
-      <img class="home-pose" src="/mascot/original.png" alt="" width="512" height="512" fetchpriority="high" data-default-pose>
-    </figure>
+  <header class="site-header home-header">${brand()}
     <nav class="home-spaces" aria-label="홈페이지 공간">
-      ${HOME_SPACES.filter(space => !selectstarOnly || space.id !== 'paper').map(space => `<a class="portal home-space" href="${space.href}" aria-labelledby="${space.id}-label" data-pose="/mascot/${space.pose}">
-        <h2 id="${space.id}-label">${space.title}</h2>
-        <p>${space.text}</p>
-        ${space.locked ? '<span class="home-access is-locked">로그인 후 이용</span>' : ''}
-      </a>`).join('')}
+      ${spaces.map(space => `<a href="${space.href}" data-pose="/mascot/${space.pose}">${space.title}</a>`).join('')}
     </nav>
-  </main>${footer()}
+    <nav class="header-actions" aria-label="계정과 설정">${selectstarOnly ? '' : themeButton()}${authenticated ? logoutButton() : '<a class="btn header-login" href="/login">로그인</a>'}</nav>
+  </header>
+  <main id="main" class="home-main" aria-labelledby="intro-title">
+    <div class="desk-intro">
+      <time class="desk-date" data-desk-date></time>
+      <h1 id="intro-title">내 작업실<span aria-hidden="true">.</span></h1>
+    </div>
+    <div class="desk-work">
+      <section class="desk-shortcuts" aria-labelledby="desk-shortcut-heading">
+        <div class="desk-section-heading"><h2 id="desk-shortcut-heading">바로가기</h2><button class="desk-edit" type="button" data-desk-edit hidden>편집</button></div>
+        <ul class="desk-tools" data-desk-tools data-desk-profile="${selectstarOnly ? 'selectstar' : markdownAllowed ? 'full' : 'member'}">${tools.slice(0, 3).map(tool => deskTool(tool, authenticated)).join('')}</ul>
+        <template data-desk-options>${tools.map(tool => deskTool(tool, authenticated)).join('')}</template>
+      </section>
+      ${deskRecent(authenticated, selectstarOnly)}
+    </div>
+    <section class="home-stage" aria-label="마스코트" data-home-stage>
+      <div class="desk-scene">
+        <div class="desk-horizon" aria-hidden="true"></div><div class="desk-plinth" aria-hidden="true"></div>
+        <button class="desk-mascot" type="button" aria-label="마스코트 콕 찌르기" data-desk-poke disabled>
+          <img class="home-pose" src="/mascot/original.png" width="512" height="512" alt="" fetchpriority="high" data-default-pose>
+          <span class="desk-poke-feedback" aria-hidden="true" hidden>콕!</span>
+        </button>
+        <span class="desk-announce" role="status" data-desk-announce></span>
+      </div>
+      <div class="desk-stage-controls">
+        <a href="/personal/gallery">마스코트 갤러리</a>
+        <button type="button" data-desk-pose hidden>${deskIcon('shuffle')}<span>모습 바꾸기</span></button>
+      </div>
+    </section>
+  </main>
+  ${footer()}
+  <dialog class="desk-dialog" data-desk-dialog aria-labelledby="desk-dialog-heading">
+    <form method="dialog">
+      <h2 id="desk-dialog-heading">바로가기 편집</h2>
+      <p id="desk-dialog-help">자주 쓰는 도구를 최대 3개 골라주세요.</p>
+      <fieldset aria-label="도구 선택" aria-describedby="desk-dialog-help">${tools.map(tool => `<label><input type="checkbox" name="tool" value="${tool.id}">${tool.title}</label>`).join('')}</fieldset>
+      <p class="desk-dialog-error" role="status"></p>
+      <div class="desk-dialog-actions"><button value="cancel" formnovalidate>취소</button><button value="save">저장</button></div>
+    </form>
+  </dialog>
 </div>`, 'home');
+};
 
 export function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));

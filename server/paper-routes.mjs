@@ -30,6 +30,22 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
       // The global endpoint reuses existing encrypted records, so saved keys migrate without decryption or duplication.
       const p=url.pathname.replace(/^\/api\/settings\/llm(?=\/|$)/,'/api/paper/settings').replace('/api/paper/settings/models','/api/paper/models');
       if(p==='/api/paper/settings'&&req.method==='GET'){send(res,200,{settings:publicSettings(await getSettings(),environment),defaults:DEFAULT_PROMPTS,role:access.role,mode:access.mode});return true;}
+      if(p==='/api/paper/recent'&&req.method==='GET'){
+        let project;
+        if(access.mode==='local'){
+          const {projects}=await readLocal();
+          const latest=projects.slice().sort((a,b)=>b.updated_at.localeCompare(a.updated_at))[0];
+          if(latest)project={id:latest.id,title:latest.data.title,type:latest.data.type,updated_at:latest.updated_at};
+        }else{
+          const query=new URLSearchParams({
+            user_id:'eq.'+uid,select:'id,title:data->>title,type:data->>type,updated_at',
+            order:'updated_at.desc,id.asc',limit:'1',
+          });
+          [project]=await (await upstream('/rest/v1/paper_projects?'+query)).json();
+        }
+        send(res,200,{project:project??null},'application/json; charset=utf-8',{'Cache-Control':'private, no-store'});
+        return true;
+      }
       if(p==='/api/paper'&&req.method==='GET'){
         const [rows,settings]=await Promise.all([access.mode==='local'?readLocal().then(x=>x.projects):upstream('/rest/v1/paper_projects?user_id=eq.'+encodeURIComponent(uid)+'&select=id,data,revision,updated_at&order=updated_at.desc&limit=200').then(r=>r.json()),getSettings()]);
         send(res,200,{projects:rows,settings:publicSettings(settings,environment),defaults:DEFAULT_PROMPTS,role:access.role,mode:access.mode});return true;
