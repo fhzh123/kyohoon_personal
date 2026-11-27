@@ -7,6 +7,30 @@
   date.dateTime = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' }).format(now);
   date.textContent = today.format(now);
 
+  const weatherLine = document.querySelector('[data-desk-weather]');
+  const forecastBubble = document.querySelector('[data-desk-forecast]');
+  const weatherSource = document.querySelector('[data-desk-weather-source]');
+  const showWeather = (line, message, hasData = false) => {
+    weatherLine.textContent = line;
+    forecastBubble.textContent = message;
+    weatherLine.hidden = forecastBubble.hidden = false;
+    weatherSource.hidden = !hasData;
+  };
+
+  showWeather('서울 날씨 불러오는 중', '내일 날씨를 확인하고 있어요.');
+  const weatherUrl = '/api/home-weather?date=' + encodeURIComponent(date.dateTime);
+  // Protected Vercel previews require the same-origin cookie on the API request.
+  fetch(weatherUrl, {credentials: 'same-origin', signal: AbortSignal.timeout?.(8000)})
+    .then(response => response.ok ? response.json() : null)
+    .then(weather => {
+      if (weather?.date !== date.dateTime) throw new Error('Weather unavailable');
+      const line = weather.condition && Number.isFinite(weather.temperature)
+        ? weather.city + ' · ' + weather.condition + ' ' + weather.temperature + '°'
+        : '서울 현재 날씨를 확인할 수 없어요';
+      showWeather(line, weather.message || '내일 날씨를 아직 못 가져왔어요.', true);
+    })
+    .catch(() => showWeather('서울 날씨를 불러오지 못했어요', '내일 예보를 아직 못 가져왔어요.'));
+
   const list = document.querySelector('[data-desk-tools]');
   const edit = document.querySelector('[data-desk-edit]');
   const dialog = document.querySelector('[data-desk-dialog]');
@@ -87,6 +111,7 @@
   const original = mascot.getAttribute('src');
   const wardrobe = [original, ...links.map(link => link.dataset.pose)];
   const poseKey = 'kyohoon-home-mascot';
+  const validPose = src => typeof src === 'string' && /^\/(?:mascot|gallery\/assets)\/[\w-]+\.(?:png|webp|jpg)$/i.test(src);
   const poseCache = new Map();
   let selectedPose = original;
   let requestedPose = original;
@@ -108,9 +133,16 @@
 
   try {
     const saved = localStorage.getItem(poseKey);
-    if (wardrobe.includes(saved)) selectedPose = saved;
+    if (validPose(saved)) selectedPose = saved;
   } catch {}
   void showPose(selectedPose);
+
+  window.addEventListener('storage', event => {
+    if (event.key !== poseKey && event.key !== null) return;
+    const src = event.newValue;
+    selectedPose = validPose(src) ? src : original;
+    void showPose(selectedPose);
+  });
 
   links.forEach(link => {
     link.addEventListener('pointerenter', event => {
@@ -126,7 +158,10 @@
   changePose.hidden = false;
   changePose.addEventListener('click', () => {
     selectedPose = wardrobe[(wardrobe.indexOf(selectedPose) + 1) % wardrobe.length];
-    try { localStorage.setItem(poseKey, selectedPose); } catch {}
+    try {
+      if (selectedPose === original) localStorage.removeItem(poseKey);
+      else localStorage.setItem(poseKey, selectedPose);
+    } catch {}
     void showPose(selectedPose);
   });
 

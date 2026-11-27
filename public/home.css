@@ -101,8 +101,9 @@ html[data-theme] .home-header .wordmark { font-family: var(--font-sans); color: 
   line-height: 1.02;
   letter-spacing: -.075em;
   word-break: keep-all;
+  overflow-wrap: anywhere;
 }
-.desk-intro h1 span { color: var(--desk-blue); }
+.desk-title-period { color: var(--desk-blue); }
 
 .desk-work { grid-area: work; width: 100%; min-width: 0; }
 .desk-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -365,4 +366,74 @@ html[data-home-motion="on"] .is-poked .home-pose { animation: desk-poke .48s var
   .home-stage { min-height: 395px; }
   .home .desk-tool { grid-template-columns: auto minmax(0, 1fr) 14px; }
   .desk-tool-detail { display: none; }
+}
+
+.desk-day {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 13px;
+  row-gap: 4px;
+}
+
+.desk-weather {
+  color: var(--desk-muted);
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+.desk-forecast {
+  position: absolute;
+  top: clamp(13px, 3vh, 24px);
+  left: 50%;
+  z-index: 1;
+  width: max-content;
+  max-width: calc(100% - 26px);
+  margin: 0;
+  padding: 9px 13px;
+  transform: translateX(-50%);
+  border: 1px solid var(--desk-rule);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--desk-panel) 68%, var(--bg));
+  color: var(--desk-ink);
+  font-size: .875rem;
+  font-weight: 630;
+  line-height: 1.45;
+  text-align: center;
+  word-break: keep-all;
+  box-shadow: 0 5px 16px #121b371a;
+}
+
+.desk-forecast::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 4px);
+  bottom: -5px;
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  background: inherit;
+  border-right: inherit;
+  border-bottom: inherit;
+}
+
+.desk-scene:has(.desk-forecast:not([hidden])) .desk-mascot {
+  height: calc(100% - 79px);
+}
+
+.home .site-footer { gap: 12px; }
+.home .site-footer a { margin-inline-end: auto; }
+.home .site-footer a:hover { color: var(--desk-blue); }
+
+@media (max-width: 580px) {
+  .desk-weather { font-size: .8125rem; }
+  .home-stage:has(.desk-forecast:not([hidden])) { min-height: 166px; }
+  .desk-forecast {
+    top: 6px;
+    max-width: calc(100% - 10px);
+    padding: 4px 6px;
+    border-radius: 9px;
+    font-size: .75rem;
+  }
+  .desk-scene:has(.desk-forecast:not([hidden])) .desk-mascot { height: calc(100% - 57px); }
 }
