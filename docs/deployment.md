@@ -90,3 +90,5 @@ node --env-file=.env.upload.local scripts/upload-work.mjs --upload
 - 로그인·로그아웃·토큰 갱신·첨부 표시와 실제 DB 저장을 각 계정으로 확인할 것.
 
 이 검증은 로컬 검사를 통과했다는 이유로 완료로 간주할 수 없다. 실제 Supabase 연결 후의 결과를 별도로 기록해야 한다. 작업 중 추가된 홈페이지 Draft에 따라 Work는 연구일지·연구 데모 진입 허브로 통합한다. 외부 데모 사이트의 별도 접근 권한은 이 홈페이지의 Supabase 권한과 별개이므로 해당 사이트에서도 필요한 접근 설정을 확인한다.
+
+Paper PDF는 브라우저에서 비공개 Supabase Storage로 직접 업로드하며 최대 30 MB를 허용합니다. 기존 프로젝트에는 `supabase/paper-pdf-limit.sql`을 적용하고 Storage 전역 업로드 한도가 30 MB 이상인지 확인합니다.

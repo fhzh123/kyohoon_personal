@@ -343,12 +343,9 @@ const App = () => {
                     type="button"
                     aria-haspopup="dialog"
                     onClick={() => setSelectedProject(project)}
-                    className="resume-project-action cursor-pointer"
+                    className="text-blue-400 hover:underline text-sm md:text-base cursor-pointer"
                   >
                     {currentData.buttons.viewDetails}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                      <path d="M5 12h14m-6-6 6 6-6 6" />
-                    </svg>
                   </button>
                 </div>
               ))}
@@ -657,12 +654,9 @@ const App = () => {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="resume-project-action"
+                      className="bg-blue-700 hover:bg-blue-600 text-white py-1.5 px-3 md:py-2 md:px-4 rounded-md transition-colors duration-200 text-xs md:text-sm"
                     >
                       {link.name}
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                        <path d="M7 17 17 7M7 7h10v10" />
-                      </svg>
                     </a>
                   ))}
                 </div>

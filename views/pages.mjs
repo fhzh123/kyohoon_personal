@@ -141,17 +141,39 @@ export function personalPage(access) {
   const cards = [
     {kicker:'기록', title:'여행의 흔적', image:'travel-globe.webp', description:'다녀온 곳의 사진과 이야기를<br>지구본 위에 남깁니다.', meta:'지구본 · 여행 기록', href:'/personal/travel', action:'여행 기록 보기'},
     {kicker:'컬렉션', title:'갤러리', image:'gallery.png', description:'마스코트의 다양한 모습을<br>둘러보고 내려받습니다.', meta:'모아보기 · 8방향 · 걷는 모습', href:'/personal/gallery', action:'갤러리 보기'},
-    {kicker:'글쓰기', title:'마크다운 에디터', image:'markdown-editor.webp', description:'마크다운으로 글을 쓰고<br>모양을 바로 확인합니다.', meta:'폴더 · 나란히 보기 · PDF 내보내기', href:'/personal/markdown', action:'마크다운 에디터 열기'},
+    {kicker:'글쓰기', title:'마크다운 에디터', image:'markdown-editor.webp', description:'마크다운으로 글을 쓰고<br>모양을 바로 확인합니다.', meta:canAccessMarkdown(access) ? '폴더 · 나란히 보기 · PDF 내보내기' : 'Owner 전용', href:'/personal/markdown', action:'마크다운 에디터 열기'},
   ];
   return shell('Personal', spaceHub({
     header, eyebrow: '여행과 일상을 위한 공간', title: 'Personal',
     description: '여행과 일상의 기록을<br>모아두는 공간입니다.', hero: 'personal-idle.webp', heroAlt: '소파에 앉아 쉬는 마스코트',
-    note: spaceStatus(access), label: 'Personal 도구', cards: cards.filter(card => card.href !== '/personal/markdown' || canAccessMarkdown(access)), extraClass: 'personal-tools',
+    note: spaceStatus(access), label: 'Personal 도구', cards, extraClass: 'personal-tools',
   }), 'personal');
 }
 
 // 마크다운 에디터: 폴더와 문서 목록, 편집기와 미리보기, PDF 내보내기.
 // 로그인하지 않은 방문자에게는 로그인 안내만 보여 줍니다.
+export function accessDeniedPage({markdown = false, selectstarOnly = false} = {}) {
+  const description = markdown
+    ? '마크다운 에디터는 사이트 소유자만 열 수 있습니다.'
+    : '현재 로그인한 계정에는 이 페이지를 읽을 권한이 없습니다.';
+  const back = selectstarOnly ? '/work' : markdown ? '/personal' : '/';
+  const backLabel = selectstarOnly ? 'Selectstar로 돌아가기' : markdown ? 'Personal로 돌아가기' : '홈으로 돌아가기';
+  return shell('접근 권한 없음', `
+<link rel="stylesheet" href="/access-denied.css">
+<div class="access-denied-shell">
+  <header class="site-header">${brand()}${logoutButton()}</header>
+  <main id="main" class="access-denied" aria-labelledby="denied-title">
+    <div>
+      <h1 id="denied-title">이 페이지를 열 수 없어요</h1>
+      <p>${description}</p>
+      <a class="btn btn--primary" href="${back}">${backLabel}</a>
+    </div>
+    <img src="/mascot/login-required.png" width="512" height="512" alt="">
+  </main>
+  ${footer()}
+</div>`);
+}
+
 export function markdownPage(access) {
   if (!access) {
     const header = publicHeader('personal').replace('</div></header>', '<a class="btn" href="/login?next=%2Fpersonal%2Fmarkdown">로그인</a></div></header>');

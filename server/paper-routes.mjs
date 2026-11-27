@@ -26,7 +26,7 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
       const validPdfPath=(p,id)=>typeof p==='string'&&p.startsWith(uid+'/'+id+'/')&&/^[a-f0-9-]+\.pdf$/.test(p.split('/').at(-1))&&p.split('/').length===3;
       const getPdf=async project=>{if(!project.pdf)return null;if(!validPdfPath(project.pdf.path,project.id))throw fail('첨부파일 경로가 올바르지 않습니다.');
         const bytes=access.mode==='local'?await readFile(path.join(rootDir,'private/paper/files',...project.pdf.path.split('/'))):Buffer.from(await(await upstream('/storage/v1/object/authenticated/paper-files/'+project.pdf.path)).arrayBuffer());
-        if(bytes.length>MAX_PDF_BYTES)throw fail('첨부파일이 너무 큽니다.',413);return {name:project.pdf.name,base64:bytes.toString('base64'),bytes};};
+        if(bytes.length>MAX_PDF_BYTES)throw fail('첨부파일이 너무 큽니다.',413);return {name:project.pdf.name,bytes};};
       // The global endpoint reuses existing encrypted records, so saved keys migrate without decryption or duplication.
       const p=url.pathname.replace(/^\/api\/settings\/llm(?=\/|$)/,'/api/paper/settings').replace('/api/paper/settings/models','/api/paper/models');
       if(p==='/api/paper/settings'&&req.method==='GET'){send(res,200,{settings:publicSettings(await getSettings(),environment),defaults:DEFAULT_PROMPTS,role:access.role,mode:access.mode});return true;}
@@ -72,9 +72,9 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
         send(res,200,{settings:publicSettings(row,environment)});return true;
       }
       if(p==='/api/paper/file'&&req.method==='POST'){
-        const input=JSON.parse(await body(req,access.mode==='local'?6800000:3450000));const row=await getProject(input.projectId);text(input.name,250);
+        const input=JSON.parse(await body(req,access.mode==='local'?Math.ceil(MAX_PDF_BYTES/3)*4+4096:3450000));const row=await getProject(input.projectId);text(input.name,250);
         if(typeof input.base64!=='string'||!/^[A-Za-z0-9+/]+={0,2}$/.test(input.base64))throw fail('PDF 형식을 확인해 주세요.');
-        const bytes=Buffer.from(input.base64,'base64');if(bytes.length>MAX_PDF_BYTES)throw fail('PDF는 5 MB까지 첨부할 수 있습니다.',413);if(!bytes.subarray(0,5).equals(Buffer.from('%PDF-')))throw fail('PDF 파일만 첨부할 수 있습니다.');
+        const bytes=Buffer.from(input.base64,'base64');if(bytes.length>MAX_PDF_BYTES)throw fail(`PDF는 ${MAX_PDF_BYTES/1_000_000} MB까지 첨부할 수 있습니다.`,413);if(!bytes.subarray(0,5).equals(Buffer.from('%PDF-')))throw fail('PDF 파일만 첨부할 수 있습니다.');
         const filePath=uid+'/'+row.id+'/'+randomUUID()+'.pdf';
         if(access.mode==='local'){const dest=path.join(rootDir,'private/paper/files',...filePath.split('/'));await mkdir(path.dirname(dest),{recursive:true});await writeFile(dest,bytes,{mode:0o600});}
         else await upstream('/storage/v1/object/paper-files/'+filePath,{method:'POST',headers:{'Content-Type':'application/pdf','x-upsert':'false'},body:bytes});
@@ -82,7 +82,7 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
       }
       if(p==='/api/paper/file/upload'&&req.method==='POST'){
         const input=JSON.parse(await body(req,2000)),row=await getProject(input.projectId);text(input.name,250);
-        if(!Number.isInteger(input.size)||input.size<5||input.size>MAX_PDF_BYTES)throw fail('PDF는 5 MB까지 첨부할 수 있습니다.',413);
+        if(!Number.isInteger(input.size)||input.size<5||input.size>MAX_PDF_BYTES)throw fail(`PDF는 ${MAX_PDF_BYTES/1_000_000} MB까지 첨부할 수 있습니다.`,413);
         if(access.mode==='local'){send(res,200,{local:true});return true;}
         const filePath=uid+'/'+row.id+'/'+randomUUID()+'.pdf';
         const signed=await(await upstream('/storage/v1/object/upload/sign/paper-files/'+filePath,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).json();
@@ -104,6 +104,7 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
         if(active.has(uid))throw fail('진행 중인 생성이 끝난 후 다시 실행해 주세요.',429);active.add(uid);
         try{const input=JSON.parse(await body(req,4000)),row=await getProject(input.projectId),settings=await getSettings(),config=publicSettings(settings,environment),provider=config.provider,record=settings?.encrypted_keys?.[provider];if(!record)throw fail('설정에서 선택한 제공사의 API 키를 먼저 저장해 주세요.');
           const task=buildTask(row.data,input,config.prompts),pdf=input.includePdf&&input.action!=='translate'?await getPdf(row.data):null;
+          if(pdf)pdf.base64=pdf.bytes.toString('base64');
           const result=await generate({provider,key:decryptKey(record,uid,provider,environment),model:config.models[provider],effort:config.efforts[provider],...task,pdf},fetcher);
           send(res,200,{...result,sourceRevision:row.revision});return true;
         }finally{active.delete(uid);}

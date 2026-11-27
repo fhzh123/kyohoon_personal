@@ -20,7 +20,7 @@ test('Personal stays public even when header authentication is unavailable',asyn
  assert.deepEqual([...d.querySelectorAll('a.portal .home-access')].map(badge=>[badge.closest('a').getAttribute('href'),badge.textContent]),[['/work','로그인 후 이용'],['/paper','로그인 후 이용']]);
  assert.ok(d.querySelector('a.portal[href="/paper"] .home-access.is-locked'));assert.notEqual(d.querySelector('a.portal[href="/paper"]').dataset.pose,d.querySelector('[data-default-pose]').getAttribute('src'));
 });
-async function creation(withFile,failUpload=false){
+async function creation(withFile,failUpload=false,type='review'){
  const fixture={projects:[],settings:publicSettings(null,{}),defaults:DEFAULT_PROMPTS},calls=[];
  const w=new JSDOM(paperPage(),{url:'https://fixture.invalid/paper',runScripts:'outside-only'}).window;
  Object.defineProperty(w,'crypto',{value:{randomUUID}});w.confirm=()=>true;w.scrollTo=()=>{};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
@@ -34,7 +34,7 @@ async function creation(withFile,failUpload=false){
  };
  w.eval(await readFile(new URL('../public/paper.js',import.meta.url),'utf8'));
  const settle=()=>new Promise(r=>setTimeout(r,15));await settle();
- w.document.querySelector('[data-action=choose-review]').click();await settle();w.document.querySelector('[data-action=new-review]').click();await settle();
+ w.document.querySelector('[data-action=choose-'+type+']').click();await settle();w.document.querySelector('[data-action=new-'+type+']').click();await settle();
  const fileInput=w.document.querySelector('#paper-create-pdf');assert.ok(fileInput);assert.equal(fileInput.required,false);
  w.document.querySelector('input[name=title]').value='New review paper';
  if(withFile)Object.defineProperty(fileInput,'files',{value:[new w.File(['%PDF-1.7\n test'], 'review.pdf',{type:'application/pdf'})]});
@@ -48,3 +48,4 @@ async function creation(withFile,failUpload=false){
 test('review can be created without an optional PDF',()=>creation(false));
 test('review creation saves its record before uploading and attaching the selected PDF',()=>creation(true));
 test('failed initial PDF upload retains the new review and shows a recoverable error',()=>creation(true,true));
+test('rebuttal creation offers and attaches an optional PDF',()=>creation(true,false,'rebuttal'));

@@ -118,10 +118,14 @@ test('Only the explicit active Owner gets the Markdown page and API', async () =
   const {request, dataRequests} = fixture();
   for (const token of ['company', 'reader', 'editor']) {
     for (const path of ['/personal/markdown', '/personal/markdown/']) {
-      assert.equal((await request(path, token)).status, 403, token);
+      const denied = await request(path, token);
+      assert.equal(denied.status, 403, token);
+      assert.match(denied.text, /이 페이지를 열 수 없어요/);
+      assert.match(denied.text, /src="\/mascot\/login-required\.png"/);
+      assert.doesNotMatch(denied.text, /data-md-app/);
       assert.equal((await request(path, token, 'HEAD')).status, 403, token);
     }
-    assert.doesNotMatch((await request('/personal', token)).text, /href="\/personal\/markdown"/);
+    assert.match((await request('/personal', token)).text, /href="\/personal\/markdown"/);
     for (const path of ['/api/markdown/tree', '/api/markdown/documents/' + documentId, '/api/markdown/documents/' + documentId + '/pdf']) {
       assert.equal((await request(path, token)).status, 403, token + ' ' + path);
     }

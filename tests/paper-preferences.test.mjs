@@ -53,8 +53,8 @@ test('reasoning parameters use each provider API and None omits every reasoning 
   if(effort==='none'){assert.equal(payload.reasoning,undefined);assert.equal(payload.output_config,undefined);assert.equal(payload.thinking,undefined);assert.equal(payload.generationConfig?.thinkingConfig,undefined);}else if(provider==='openai')assert.equal(payload.reasoning.effort,'high');else if(provider==='anthropic')assert.equal(payload.output_config.effort,'high');else assert.equal(payload.generationConfig.thinkingConfig.thinkingLevel,'high');
  }
 });
-test('5MB PDFs use owner-scoped signed uploads and completion validates the private PDF before attaching',async()=>{
- const uid=randomUUID(),row=makeProject(),bytes=Buffer.alloc(3100000,32);bytes.write('%PDF-1.7');let signedPath;
+test('17 MB PDFs use owner-scoped signed uploads and completion validates the private PDF before attaching',async()=>{
+ const uid=randomUUID(),row=makeProject(),bytes=Buffer.alloc(17000000,32);bytes.write('%PDF-1.7');let signedPath;
  const handler=paperRoutes({authorize:async()=>({userId:uid,role:'editor',mode:'supabase',token:'session'}),environment:{SUPABASE_URL:'https://storage.invalid'},rootDir:'.',bearer:()=>({Authorization:'Bearer session'}),body:async req=>JSON.stringify(req.input),send:(res,status,value)=>Object.assign(res,{status,value}),authFetch:async(url,opt)=>{
  if(url.startsWith('/rest/v1/paper_projects')){assert.match(url,new RegExp('user_id=eq.'+uid));return Response.json([row]);}
  if(url.startsWith('/storage/v1/object/upload/sign/')){signedPath=url.slice('/storage/v1/object/upload/sign/paper-files/'.length);return Response.json({url:'/object/upload/sign/paper-files/'+signedPath+'?token=temporary'});}
@@ -62,7 +62,7 @@ test('5MB PDFs use owner-scoped signed uploads and completion validates the priv
  }});
  const call=async(path,input)=>{const res={};await handler({method:'POST',input},res,new URL(path,'https://test.invalid'));return res;};
  const t=await call('/api/paper/file/upload',{projectId:row.id,name:'large.pdf',size:bytes.length});assert.equal(t.status,200);assert.ok(signedPath.startsWith(uid+'/'+row.id+'/'));assert.match(t.value.uploadUrl,/^https:\/\/storage.invalid\/storage\/v1\/object\/upload\/sign\//);
- const done=await call('/api/paper/file/complete',{projectId:row.id,name:'large.pdf',path:signedPath});assert.equal(done.status,200);assert.equal(done.value.pdf.size,3100000);
+ const done=await call('/api/paper/file/complete',{projectId:row.id,name:'large.pdf',path:signedPath});assert.equal(done.status,200);assert.equal(done.value.pdf.size,17000000);
  assert.equal((await call('/api/paper/file/complete',{projectId:row.id,name:'large.pdf',path:randomUUID()+'/'+row.id+'/'+randomUUID()+'.pdf'})).status,400);
  assert.equal((await call('/api/paper/file/upload',{projectId:row.id,name:'large.pdf',size:MAX_PDF_BYTES+1})).status,413);
 });
