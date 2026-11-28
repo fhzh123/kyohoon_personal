@@ -205,7 +205,7 @@ html[data-theme] .home-header .wordmark { font-family: var(--font-sans); color: 
   --poke-y: 29%;
   position: absolute;
   width: 78%;
-  height: 92%;
+  height: calc(100% - 79px);
   bottom: 7%;
   display: grid;
   place-items: end center;
@@ -350,9 +350,9 @@ html[data-home-motion="on"] .is-poked .home-pose { animation: desk-poke .48s var
   }
   .desk-intro h1 { font-size: clamp(2.2rem, 10vw, 3.35rem); letter-spacing: -.07em; margin-top: 10px; }
   .desk-date { font-size: .8125rem; padding-bottom: 5px; }
-  .home-stage { position: relative; min-height: 122px; height: 100%; grid-template-rows: 1fr; border-radius: 12px; }
+  .home-stage { position: relative; min-height: 166px; height: 100%; grid-template-rows: 1fr; border-radius: 12px; }
   .desk-plinth { bottom: 12%; box-shadow: 0 4px 0 var(--desk-plinth), 0 10px 12px #0c15293b; }
-  .desk-mascot { width: 92%; height: 90%; }
+  .desk-mascot { width: 92%; height: calc(100% - 57px); }
   .desk-stage-controls { position: absolute; inset: 0; padding: 0; border: 0; pointer-events: none; }
   .desk-stage-controls a { display: none; }
   .desk-stage-controls button { position: absolute; bottom: 2px; right: 2px; min-width: 38px; min-height: 38px; justify-content: center; pointer-events: auto; }
@@ -417,9 +417,6 @@ html[data-home-motion="on"] .is-poked .home-pose { animation: desk-poke .48s var
   border-bottom: inherit;
 }
 
-.desk-scene:has(.desk-forecast:not([hidden])) .desk-mascot {
-  height: calc(100% - 79px);
-}
 
 .home .site-footer { gap: 12px; }
 .home .site-footer a { margin-inline-end: auto; }
@@ -427,7 +424,6 @@ html[data-home-motion="on"] .is-poked .home-pose { animation: desk-poke .48s var
 
 @media (max-width: 580px) {
   .desk-weather { font-size: .8125rem; }
-  .home-stage:has(.desk-forecast:not([hidden])) { min-height: 166px; }
   .desk-forecast {
     top: 6px;
     max-width: calc(100% - 10px);
@@ -435,5 +431,4 @@ html[data-home-motion="on"] .is-poked .home-pose { animation: desk-poke .48s var
     border-radius: 9px;
     font-size: .75rem;
   }
-  .desk-scene:has(.desk-forecast:not([hidden])) .desk-mascot { height: calc(100% - 57px); }
 }

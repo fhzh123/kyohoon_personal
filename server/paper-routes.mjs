@@ -3,6 +3,7 @@ import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {paperPage} from '../views/paper.mjs';
 import {settingsPage} from '../views/settings.mjs';
+import {canManageHomeSettings} from './policy.mjs';
 import {PROVIDERS,DEFAULT_PROMPTS,validateProject,validateSettings,publicSettings,uuid,text,fail,decryptKey,buildTask,MAX_PDF_BYTES} from './paper-core.mjs';
 import {generate,listModels} from './paper-providers.mjs';
 
@@ -15,7 +16,7 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
   return async(req,res,url)=>{
     if(!['/paper','/paper/','/settings','/settings/'].includes(url.pathname)&&!url.pathname.startsWith('/api/paper')&&!url.pathname.startsWith('/api/settings/'))return false;
     const access=await authorize(req,res);
-    if(['/settings','/settings/'].includes(url.pathname)&&['GET','HEAD'].includes(req.method)){send(res,200,req.method==='HEAD'?'':settingsPage({authenticated:!!access}),'text/html; charset=utf-8');return true;}
+    if(['/settings','/settings/'].includes(url.pathname)&&['GET','HEAD'].includes(req.method)){send(res,200,req.method==='HEAD'?'':settingsPage({authenticated:!!access,manageHome:canManageHomeSettings(access)}),'text/html; charset=utf-8');return true;}
     if(!access){send(res,['GET','HEAD'].includes(req.method)&&url.pathname.startsWith('/paper')?303:401,{error:'로그인 후 이용해 주세요.'},'application/json; charset=utf-8',url.pathname.startsWith('/paper')?{Location:'/login?next=%2Fpaper'}:{});return true;}
     try{
       if(url.pathname==='/paper'||url.pathname==='/paper/'){if(!['GET','HEAD'].includes(req.method))throw fail('허용되지 않은 요청입니다.',405);send(res,200,req.method==='HEAD'?'':paperPage(access),'text/html; charset=utf-8');return true;}
