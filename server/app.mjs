@@ -166,7 +166,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
   const handleExpenses=expenseRoutes({authorize,authFetch,bearer,send,body,serveFile,rootDir});
   const handlePaper=paperRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment,fetcher});
   const handleAppearance=appearanceRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment});
-  const handleCalendar=calendarRoutes({authorize,send,environment,fetcher,clock});
+  const handleCalendar=calendarRoutes({authorize,send,environment,fetcher,clock,authFetch,bearer,body,rootDir});
   const handleTravel=travelRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment});
   const handleMarkdown=markdownRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
   return async function handler(req,res) {
@@ -174,7 +174,8 @@ export function createHandler({localPreview = false, rootDir = root, environment
       const requestUrl = new URL(req.url,'http://local.invalid');
       const pathname = requestUrl.pathname;
       const markdownApi=pathname==='/api/markdown'||pathname.startsWith('/api/markdown/');
-      if (!['GET','HEAD','POST','PUT'].includes(req.method) && !(markdownApi&&['PATCH','DELETE'].includes(req.method))) return send(res,405,{error:'허용되지 않은 요청입니다.'});
+      const calendarEntry=pathname.startsWith('/api/calendar/entries/');
+      if (!['GET','HEAD','POST','PUT'].includes(req.method) && !((markdownApi||calendarEntry)&&['PATCH','DELETE'].includes(req.method))) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (['POST','PUT','PATCH','DELETE'].includes(req.method) && !sameOrigin(req,environment)) return send(res,403,{error:'다른 출처의 요청은 허용되지 않습니다.'});
       if(pathname==='/api/auth/idle-logout'&&req.method==='POST'){
         const cookies=cookiesOf(req),idle=readIdle(cookies.kh_idle,cookies.kh_refresh||cookies.kh_access,clock());
@@ -243,14 +244,14 @@ export function createHandler({localPreview = false, rootDir = root, environment
         try { await localEnvelope(); } catch { return send(res,503,{error:'프로젝트에 업무 자료를 먼저 가져와 주세요.'}); }
         return redirect(res,'/work',setCookie('kh_local',localToken,3600));
       }
-      // Calendar is the owner's schedule. While it is a design draft with sample events,
-      // Vercel preview deployments and the local server show it without signing in.
+      // Calendar is the owner's schedule: anyone sees the link, only the owner gets in.
+      // The local dev server alone opens it without signing in, with sample events.
       if (pathname === '/calendar' || pathname === '/calendar/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
         const access=await authorize(req,res).catch(()=>null);
-        const draft=environment.VERCEL_ENV==='preview'||(environment.NODE_ENV==='development'&&!environment.VERCEL);
+        const draft=environment.NODE_ENV==='development'&&!environment.VERCEL;
         if(!draft&&!access)return redirect(res,'/login?next=%2Fcalendar');
-        if(!draft&&!canManageHomeSettings(access))return send(res,403,req.method==='HEAD'?'':accessDeniedPage({selectstarOnly:isSelectstarReader(access)}),'text/html; charset=utf-8');
+        if(access&&!canManageHomeSettings(access))return send(res,403,req.method==='HEAD'?'':accessDeniedPage({calendar:true,selectstarOnly:isSelectstarReader(access)}),'text/html; charset=utf-8');
         return send(res,200,req.method==='HEAD'?'':calendarPage(access),'text/html; charset=utf-8');
       }
       if (pathname === '/personal' || pathname === '/personal/') {

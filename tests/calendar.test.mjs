@@ -16,24 +16,29 @@ async function request(handler, url) {
 }
 const source = path => readFile(new URL('../' + path, import.meta.url), 'utf8');
 
-test('calendar draft opens on preview deployments and stays behind sign-in in production', async () => {
-  const preview = await request(createHandler({environment: {VERCEL: '1', VERCEL_ENV: 'preview'}}), '/calendar');
-  assert.equal(preview.status, 200);
-  assert.match(preview.text, /data-cal-app/);
-  const production = await request(createHandler({environment: {VERCEL: '1', VERCEL_ENV: 'production'}}), '/calendar');
-  assert.equal(production.status, 303);
-  assert.equal(production.headers.location, '/login?next=%2Fcalendar');
+test('calendar asks for sign-in everywhere except the local dev server', async () => {
+  for (const env of [{VERCEL: '1', VERCEL_ENV: 'preview'}, {VERCEL: '1', VERCEL_ENV: 'production'}]) {
+    const page = await request(createHandler({environment: env}), '/calendar');
+    assert.equal(page.status, 303, env.VERCEL_ENV);
+    assert.equal(page.headers.location, '/login?next=%2Fcalendar');
+  }
+  const local = await request(createHandler({environment: {NODE_ENV: 'development'}}), '/calendar');
+  assert.equal(local.status, 200);
+  assert.match(local.text, /data-cal-app/);
 });
 
-test('only the owner sees Calendar in the home space list', () => {
+test('every visitor sees the Calendar link except Selectstar-only accounts', () => {
   const links = html => [...new JSDOM(html).window.document.querySelectorAll('.home-spaces a')].map(a => a.getAttribute('href'));
-  assert.ok(!links(homePage()).includes('/calendar'));
+  assert.ok(links(homePage()).includes('/calendar'));
   assert.ok(links(homePage({authenticated: true, markdownAllowed: true, manageHome: true})).includes('/calendar'));
+  assert.ok(links(homePage({authenticated: true, markdownAllowed: false})).includes('/calendar'));
+  assert.ok(!links(homePage({authenticated: true, selectstarOnly: true, markdownAllowed: false})).includes('/calendar'));
 });
 
 test('calendar renders all four views from the sample schedule', async () => {
   const w = new JSDOM(calendarPage(null), {url: 'https://fixture.invalid/calendar?view=month&date=2026-11-28', runScripts: 'outside-only'}).window;
   w.matchMedia = () => ({matches: false});
+  w.eval(await source('public/calendar/calendar-palette.js'));
   w.eval(await source('public/calendar/calendar-data.js'));
   w.eval(await source('public/calendar/calendar.js'));
   const d = w.document;

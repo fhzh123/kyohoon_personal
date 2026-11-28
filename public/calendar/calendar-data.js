@@ -1,12 +1,13 @@
-/* Sample schedule for the Calendar design draft. Outlook will replace this file's output.
+/* Calendar list, holidays, and a sample schedule. The sample only shows on the local dev server
+   without signing in; signed in, the page uses Outlook (Selectstar) and the saved events.
    Events are built around today so every view has something to show whenever the page opens.
    Each event: {id, cal, title, start: Date, end: Date, allDay, place?, note?}. All-day ends are exclusive. */
 (() => {
   'use strict';
   const CALENDARS = [
-    {id: 'work', name: 'Selectstar', detail: '회의와 업무'},
-    {id: 'paper', name: 'Paper', detail: '리뷰와 마감'},
-    {id: 'personal', name: 'Personal', detail: '운동과 약속'},
+    {id: 'personal', name: 'Personal', detail: '직접 입력', own: true},
+    {id: 'work', name: 'Selectstar', detail: 'Outlook'},
+    {id: 'paper', name: 'Paper', detail: '직접 입력', own: true},
     {id: 'holiday', name: '공휴일', detail: '대한민국'},
   ];
 

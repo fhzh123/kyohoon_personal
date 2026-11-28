@@ -19,7 +19,7 @@ function selectTab(){
   }
   window.AtlasTheme?.refresh();
 }
-const returnLink=$('#settings-return');try{const u=new URL(new URLSearchParams(location.search).get('returnTo')||'/',location.origin);if(u.origin===location.origin&&/^\/(?:$|paper(?:\/|$)|resume(?:\/|$)|work(?:\/|$)|personal(?:\/|$))/.test(u.pathname))returnLink.href=u.pathname+u.search+u.hash;}catch{}
+const returnLink=$('#settings-return');try{const u=new URL(new URLSearchParams(location.search).get('returnTo')||'/',location.origin);if(u.origin===location.origin&&/^\/(?:$|paper(?:\/|$)|resume(?:\/|$)|work(?:\/|$)|personal(?:\/|$)|calendar(?:\/|$))/.test(u.pathname))returnLink.href=u.pathname+u.search+u.hash;}catch{}
 window.SettingsAccess={render(tab){const fragment=$('#settings-login-template').content.cloneNode(true);fragment.querySelector('[data-access-description]').textContent=tab==='background'?'배경 이미지를 바꾸고 움직임 속도를 조절하려면 로그인해 주세요.':'API 키와 모델 설정은 로그인 후 이용할 수 있습니다.';fragment.querySelector('[data-access-login]').href='/login?next='+encodeURIComponent('/settings'+location.search+'#'+tab);const holder=document.createElement('div');holder.append(fragment);return holder.innerHTML;}};
 window.addEventListener('hashchange',selectTab);selectTab();
   // Reasoning Effort: the provider's current levels, or any value typed in, in case the scheme changes later.
