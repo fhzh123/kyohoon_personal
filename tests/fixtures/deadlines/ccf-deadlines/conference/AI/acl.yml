@@ -1,0 +1,15 @@
+- title: ACL
+  description: Annual Meeting of the Association for Computational Linguistics
+  sub: AI
+  confs:
+    - year: 2027
+      id: acl27
+      link: https://2027.aclweb.org/
+      timeline:
+        - deadline: '2027-01-04 23:59:59'
+          comment: 'ARR Submission'
+        - deadline: '2027-03-20 23:59:59'
+          comment: 'Commitment deadline for papers reviewed by ARR'
+      timezone: UTC-12
+      date: August 17-22, 2027
+      place: Kyoto, Japan

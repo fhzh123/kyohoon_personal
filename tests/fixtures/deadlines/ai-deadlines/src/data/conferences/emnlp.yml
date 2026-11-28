@@ -1,0 +1,20 @@
+- title: EMNLP
+  year: 2027
+  id: emnlp27
+  link: https://2027.emnlp.org/
+  deadlines:
+    - type: paper
+      label: Paper submission
+      date: '2027-05-25 23:59:59'
+      timezone: AoE
+    - type: camera_ready
+      label: Camera-ready
+      date: '2027-09-01 12:00'
+      timezone: America/Los_Angeles
+    - type: registration
+      label: Registration
+      date: '2027-06-01 23:59:59'
+      timezone: AoE
+  date: November 1-5, 2027
+  city: Somewhere
+  country: Earth

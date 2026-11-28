@@ -13,6 +13,9 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
   const localPath=path.join(rootDir,'private/paper/state.json');
   const readLocal=async()=>{try{return JSON.parse(await readFile(localPath,'utf8'));}catch(e){if(e.code==='ENOENT')return {projects:[],settings:null};throw e;}};
   const writeLocal=async data=>{await mkdir(path.dirname(localPath),{recursive:true});await writeFile(localPath+'.tmp',JSON.stringify(data),{mode:0o600});await rename(localPath+'.tmp',localPath);};
+  // The weekly workflow rewrites this file; a deploy ships the new copy, so one read per instance is enough.
+  let deadlines=null;
+  const readDeadlines=async()=>deadlines??=JSON.parse(await readFile(path.join(rootDir,'server/deadlines/deadlines.json'),'utf8'));
   return async(req,res,url)=>{
     if(!['/paper','/paper/','/settings','/settings/'].includes(url.pathname)&&!url.pathname.startsWith('/api/paper')&&!url.pathname.startsWith('/api/settings/'))return false;
     const access=await authorize(req,res);
@@ -20,6 +23,7 @@ export function paperRoutes({authorize,authFetch,bearer,send,body,rootDir,enviro
     if(!access){send(res,['GET','HEAD'].includes(req.method)&&url.pathname.startsWith('/paper')?303:401,{error:'로그인 후 이용해 주세요.'},'application/json; charset=utf-8',url.pathname.startsWith('/paper')?{Location:'/login?next=%2Fpaper'}:{});return true;}
     try{
       if(url.pathname==='/paper'||url.pathname==='/paper/'){if(!['GET','HEAD'].includes(req.method))throw fail('허용되지 않은 요청입니다.',405);send(res,200,req.method==='HEAD'?'':paperPage(access),'text/html; charset=utf-8');return true;}
+      if(url.pathname==='/api/paper/deadlines'){if(!['GET','HEAD'].includes(req.method))throw fail('허용되지 않은 요청입니다.',405);send(res,200,await readDeadlines(),'application/json; charset=utf-8',{'Cache-Control':'private, max-age=300'});return true;}
       const uid=access.userId;
       const upstream=async(p,options={})=>{const r=await authFetch(p,{...options,headers:{...bearer(access.token),...options.headers}});if(!r.ok)throw fail('Paper 저장소에 연결하지 못했습니다. 서버 설정과 데이터베이스 준비 상태를 확인해 주세요.',503);return r;};
       const getSettings=async()=>access.mode==='local'?(await readLocal()).settings:(await(await upstream('/rest/v1/paper_settings?user_id=eq.'+encodeURIComponent(uid)+'&select=config,encrypted_keys,revision')).json())[0]||null;

@@ -1,0 +1,6 @@
+{"editions":[
+ {"conference":"pakdd","year":2027,"link":"https://www.pakdd2027.org/","dates":"June 29 to July 2, 2027","place":"Wellington, New Zealand","checked":"2026-11-28","sources":["https://www.pakdd2027.org/pages/dates"],
+  "deadlines":[{"kind":"submission","label":"Paper submission","date":"2026-12-04 23:59","timezone":"AoE","note":"11월 20일에서 연장됨","source":"https://www.pakdd2027.org/pages/dates"}]},
+ {"conference":"acl","year":2027,"link":"https://2027.aclweb.org/","dates":"August 17-22, 2027","place":"Kyoto, Japan","checked":"2026-11-28","sources":["https://2027.aclweb.org/"],
+  "deadlines":[{"kind":"submission","label":"ARR submission","date":"2027-01-04 23:59","timezone":"AoE","source":"https://2027.aclweb.org/"},{"kind":"commitment","label":"Commitment deadline","date":null,"timezone":"AoE","source":"https://2027.aclweb.org/"}]}
+]}

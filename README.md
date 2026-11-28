@@ -32,7 +32,8 @@ Selectstar에서 AI 모델 학습에 쓰이는 데이터를 만들고, 모델을
 - **논문 리뷰 준비**에서는 요약, 강점, 약점과 기타 의견을 항목별로 정리해 영문 리뷰를 작성합니다.
 - **논문 리뷰탈 준비**에서는 리뷰어별 쟁점과 대응 근거를 정리하고, 리뷰 원문 번역과 영문 답변 초안 작성을 보조합니다.
 - 작업별로 학회와 마감일, 진행 상태, 글자 수 제한을 설정할 수 있습니다. PDF 첨부는 선택이며, 초안은 자동 저장되고 마크다운으로 내보낼 수 있습니다. 모델과 Reasoning Effort는 공통 설정에서, 프롬프트는 작업 화면에서 바꿉니다.
-- **AI 컨퍼런스 데드라인** 화면은 준비 중입니다.
+- **AI 컨퍼런스 데드라인**에서는 ACL, EMNLP, NAACL, EACL, COLING, COLM, ICLR, ICML, NeurIPS, AAAI, IJCAI, CVPR, ICCV, ECCV, KDD, WSDM, WWW, PAKDD, ECML PKDD의 마감을 분야(NLP, ML, CV, Data Mining & Web)와 마감 종류별로 봅니다. 마감 시각과 남은 시간은 KST로 계산하고, 학회가 공지한 원래 시각과 시간대(AoE, UTC 등)를 함께 표시합니다. 카드의 로고는 학회를 운영하는 기관(ACL, ACM, IEEE/CVF 등)을 나타냅니다.
+- 마감 데이터는 매주 목요일 오전 9시(KST)에 [GitHub Actions](.github/workflows/deadlines.yml)가 [ccfddl/ccf-deadlines](https://github.com/ccfddl/ccf-deadlines)와 [huggingface/ai-deadlines](https://github.com/huggingface/ai-deadlines)에서 다시 만들어 `main`에 올립니다. 공식 페이지에서 직접 확인한 회차는 [server/deadlines/manual.json](server/deadlines/manual.json)에 적어 두며, 이 값이 데이터셋보다 우선합니다. 데이터셋의 날짜가 확인한 값과 다르면 카드에 함께 표시하고, 확인한 회차의 TBA 항목은 데이터셋에 날짜가 생기면 채워집니다. Actions 탭의 Conference deadlines에서 Run workflow로 바로 갱신할 수도 있습니다.
 
 ### Personal
 
@@ -62,6 +63,7 @@ flowchart TD
 | Selectstar 공통 메뉴와 연구일지 | [views/work-shell.mjs](views/work-shell.mjs), [work-app/](work-app/), [scripts/sync-work-shell.mjs](scripts/sync-work-shell.mjs) |
 | 팀 리소스, 품의, 연구 데모 | [팀 리소스 화면](views/team-resources.html), [품의 화면](work-expenses/), [연구 데모](work-demos/) |
 | 논문 리뷰와 리뷰탈, LLM 연동 | [public/paper.js](public/paper.js), [server/paper-routes.mjs](server/paper-routes.mjs), [server/paper-providers.mjs](server/paper-providers.mjs) |
+| AI 컨퍼런스 데드라인 | [public/paper-deadlines.js](public/paper-deadlines.js), [server/deadlines/](server/deadlines/), [scripts/deadlines-sync.mjs](scripts/deadlines-sync.mjs) |
 | 여행 기록과 마스코트 이미지 | [public/travel/](public/travel/), [public/gallery/](public/gallery/), [public/mascot/](public/mascot/) |
 | 마크다운 편집과 PDF 출력 | [public/markdown-editor.js](public/markdown-editor.js), [server/markdown-routes.mjs](server/markdown-routes.mjs), [server/markdown-pdf.mjs](server/markdown-pdf.mjs) |
 | 공통 스타일과 테마 | [public/kh-system.css](public/kh-system.css), [public/kh/](public/kh/), [public/theme.js](public/theme.js) |
