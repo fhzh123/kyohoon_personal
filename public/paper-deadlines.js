@@ -53,7 +53,7 @@
     if(!org)return '';
     // 로고 파일이 없는 기관은 약칭을 씁니다. 긴 약칭은 단어마다 줄을 바꿉니다.
     const mark=org.name.replace(/ Foundation$/,''),words=mark.split(' ');
-    return '<span class="dl-org" title="'+esc(org.full)+'">'+(org.logo?'<img src="'+esc(org.logo)+'" alt="'+esc(org.name)+'" width="28" height="28">':'<b'+(Math.max(...words.map(w=>w.length))>4?' class="is-long"':'')+' aria-label="'+esc(org.name)+'">'+words.map(esc).join('<br>')+'</b>')+'</span>';
+    return '<span class="dl-org'+(org.logo&&org.tile?org.tile.split(' ').map(t=>' is-'+esc(t)).join(''):'')+'" title="'+esc(org.full)+'">'+(org.logo?'<img src="'+esc(org.logo)+'" alt="'+esc(org.name)+'" width="28" height="28">':'<b'+(Math.max(...words.map(w=>w.length))>4?' class="is-long"':'')+' aria-label="'+esc(org.name)+'">'+words.map(esc).join('<br>')+'</b>')+'</span>';
   }
   const badge=k=>'<span class="dl-kind" data-kind="'+esc(k)+'">'+esc(KIND_NAMES[k]||k)+'</span>';
   const external=(href,label,cls='dl-site')=>href?'<a class="'+cls+'" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer">'+label+'<svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M4 2h6v6M10 2 3 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a>':'';

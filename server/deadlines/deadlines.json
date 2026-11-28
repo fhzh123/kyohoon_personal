@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-28T15:11:20.681Z",
+ "generatedAt": "2026-11-28T15:00:00.000Z",
  "schedule": "Every Thursday 09:00 KST",
  "sources": [
   {
@@ -59,32 +59,41 @@
   "colm": {
    "name": "COLM",
    "full": "Conference on Language Modeling",
-   "url": "https://colmweb.org/"
+   "url": "https://colmweb.org/",
+   "logo": "/icons/venues/colm.svg",
+   "tile": "dark wide"
   },
   "iclr": {
    "name": "ICLR",
    "full": "International Conference on Learning Representations",
-   "url": "https://iclr.cc/"
+   "url": "https://iclr.cc/",
+   "logo": "/icons/venues/iclr.svg"
   },
   "imls": {
    "name": "IMLS",
    "full": "International Machine Learning Society",
-   "url": "https://icml.cc/"
+   "url": "https://icml.cc/",
+   "logo": "/icons/venues/icml.svg",
+   "tile": "dark"
   },
   "neurips": {
    "name": "NeurIPS Foundation",
    "full": "Neural Information Processing Systems Foundation",
-   "url": "https://neurips.cc/"
+   "url": "https://neurips.cc/",
+   "logo": "/icons/venues/neurips.svg"
   },
   "aaai": {
    "name": "AAAI",
    "full": "Association for the Advancement of Artificial Intelligence",
-   "url": "https://aaai.org/"
+   "url": "https://aaai.org/",
+   "logo": "/icons/venues/aaai.svg"
   },
   "ijcai": {
    "name": "IJCAI",
    "full": "International Joint Conferences on Artificial Intelligence Organization",
-   "url": "https://www.ijcai.org/"
+   "url": "https://www.ijcai.org/",
+   "logo": "/icons/venues/ijcai.svg",
+   "tile": "dark"
   },
   "cvf": {
    "name": "IEEE/CVF",
@@ -95,7 +104,9 @@
   "ecva": {
    "name": "ECVA",
    "full": "European Computer Vision Association",
-   "url": "https://www.ecva.net/"
+   "url": "https://www.ecva.net/",
+   "logo": "/icons/venues/ecva.png",
+   "tile": "wide"
   },
   "acm": {
    "name": "ACM",
@@ -111,7 +122,8 @@
   "ecmlpkdd": {
    "name": "ECML PKDD",
    "full": "ECML PKDD Steering Committee",
-   "url": "https://ecmlpkdd.org/"
+   "url": "https://ecmlpkdd.org/",
+   "logo": "/icons/venues/ecmlpkdd.svg"
   }
  },
  "kinds": [

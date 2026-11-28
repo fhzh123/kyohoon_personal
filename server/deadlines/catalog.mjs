@@ -9,21 +9,23 @@ export const CATEGORIES=[
   {id:'dm',name:'Data Mining & Web',full:'Data Mining, Web and Information Retrieval'}
 ];
 
-// logo: a file under /icons. A body with no logo file is shown by its short name.
+// logo: a file under /icons (credits in public/icons/venues/README.md). A conference that runs itself
+// carries its own mark. tile:'dark' puts a white mark on a dark tile, as on the body's own site.
+// A body with no series-wide logo (ICCL for COLING, the PAKDD steering committee) is shown by its short name.
 export const ORGANIZERS={
   acl:{name:'ACL',full:'Association for Computational Linguistics',url:'https://www.aclweb.org/',logo:'/icons/venues/acl.svg'},
   iccl:{name:'ICCL',full:'International Committee on Computational Linguistics',url:'https://coling-iccl.org/'},
-  colm:{name:'COLM',full:'Conference on Language Modeling',url:'https://colmweb.org/'},
-  iclr:{name:'ICLR',full:'International Conference on Learning Representations',url:'https://iclr.cc/'},
-  imls:{name:'IMLS',full:'International Machine Learning Society',url:'https://icml.cc/'},
-  neurips:{name:'NeurIPS Foundation',full:'Neural Information Processing Systems Foundation',url:'https://neurips.cc/'},
-  aaai:{name:'AAAI',full:'Association for the Advancement of Artificial Intelligence',url:'https://aaai.org/'},
-  ijcai:{name:'IJCAI',full:'International Joint Conferences on Artificial Intelligence Organization',url:'https://www.ijcai.org/'},
+  colm:{name:'COLM',full:'Conference on Language Modeling',url:'https://colmweb.org/',logo:'/icons/venues/colm.svg',tile:'dark wide'},
+  iclr:{name:'ICLR',full:'International Conference on Learning Representations',url:'https://iclr.cc/',logo:'/icons/venues/iclr.svg'},
+  imls:{name:'IMLS',full:'International Machine Learning Society',url:'https://icml.cc/',logo:'/icons/venues/icml.svg',tile:'dark'},
+  neurips:{name:'NeurIPS Foundation',full:'Neural Information Processing Systems Foundation',url:'https://neurips.cc/',logo:'/icons/venues/neurips.svg'},
+  aaai:{name:'AAAI',full:'Association for the Advancement of Artificial Intelligence',url:'https://aaai.org/',logo:'/icons/venues/aaai.svg'},
+  ijcai:{name:'IJCAI',full:'International Joint Conferences on Artificial Intelligence Organization',url:'https://www.ijcai.org/',logo:'/icons/venues/ijcai.svg',tile:'dark'},
   cvf:{name:'IEEE/CVF',full:'IEEE Computer Society and the Computer Vision Foundation',url:'https://www.thecvf.com/',logo:'/icons/ieee.svg'},
-  ecva:{name:'ECVA',full:'European Computer Vision Association',url:'https://www.ecva.net/'},
+  ecva:{name:'ECVA',full:'European Computer Vision Association',url:'https://www.ecva.net/',logo:'/icons/venues/ecva.png',tile:'wide'},
   acm:{name:'ACM',full:'Association for Computing Machinery',url:'https://www.acm.org/',logo:'/icons/acm.svg'},
   pakdd:{name:'PAKDD',full:'PAKDD Steering Committee',url:'https://www.pakdd.net/'},
-  ecmlpkdd:{name:'ECML PKDD',full:'ECML PKDD Steering Committee',url:'https://ecmlpkdd.org/'}
+  ecmlpkdd:{name:'ECML PKDD',full:'ECML PKDD Steering Committee',url:'https://ecmlpkdd.org/',logo:'/icons/venues/ecmlpkdd.svg'}
 };
 
 export const CONFERENCES=[
