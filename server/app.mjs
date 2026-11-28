@@ -18,6 +18,7 @@ import {markdownRoutes} from './markdown-routes.mjs';
 import {travelPage} from '../views/travel.mjs';
 import {galleryPage} from '../views/gallery.mjs';
 import {calendarPage} from '../views/calendar.mjs';
+import {calendarRoutes} from './calendar-routes.mjs';
 import {IDLE_MS,SESSION_COOKIE_AGE,sealIdle,readIdle} from './idle-session.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -165,6 +166,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
   const handleExpenses=expenseRoutes({authorize,authFetch,bearer,send,body,serveFile,rootDir});
   const handlePaper=paperRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment,fetcher});
   const handleAppearance=appearanceRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment});
+  const handleCalendar=calendarRoutes({authorize,send,environment,fetcher,clock});
   const handleTravel=travelRoutes({authorize:authorizeOutsideSelectstar,authFetch,bearer,send,body,rootDir,environment});
   const handleMarkdown=markdownRoutes({authorize,authFetch,bearer,send,body,rootDir,environment});
   return async function handler(req,res) {
@@ -272,6 +274,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
         const access=await authorize(req,res).catch(()=>null);
         return send(res,200,req.method==='HEAD'?'':travelPage(isSelectstarReader(access)?null:access),'text/html; charset=utf-8');
       }
+      if (await handleCalendar(req,res,requestUrl)) return;
       if (await handleTeamResources(req,res,requestUrl)) return;
       if (pathname === '/work/demos' || pathname === '/work/demos/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});

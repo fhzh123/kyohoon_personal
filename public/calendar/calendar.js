@@ -37,7 +37,9 @@
   const shortTime = time;
 
   const calendars = new Map(sample.calendars.map(c => [c.id, c]));
-  const events = sample.events.slice().sort((a, b) => a.start - b.start || b.end - a.end);
+  const byStart = (a, b) => a.start - b.start || b.end - a.end;
+  let events = sample.events.slice().sort(byStart);
+  let shownCalendars = sample.calendars;
   const holidays = sample.holidays;
 
   // ---------------------------------------------------------------- state
@@ -71,7 +73,7 @@
       : `${fMonthDayWeek.format(e.start)} ${time(e.start)}부터 ${time(e.end)}까지`;
     return `${e.title}, ${when}, ${c.name}`;
   };
-  const eventAttrs = e => `type="button" class="cal-event" data-cal="${e.cal}" data-event="${e.id}" aria-label="${esc(eventLabel(e))}"`;
+  const eventAttrs = e => `type="button" class="cal-event" data-cal="${e.cal}" data-event="${esc(e.id)}" aria-label="${esc(eventLabel(e))}"`;
 
   // Lanes for bars inside one row of days: first-fit by start date.
   function laneBars(list, first, count) {
@@ -262,7 +264,7 @@
   }
 
   function renderSources() {
-    $('[data-sources]').innerHTML = sample.calendars.map(c => `<li><label class="cal-source" data-cal="${c.id}"><input type="checkbox" value="${c.id}"${state.hidden.has(c.id) ? '' : ' checked'}><span class="cal-swatch" aria-hidden="true"></span><span class="cal-source-name">${esc(c.name)}</span><span class="cal-source-detail">${esc(c.detail)}</span></label></li>`).join('');
+    $('[data-sources]').innerHTML = shownCalendars.map(c => `<li><label class="cal-source" data-cal="${c.id}"><input type="checkbox" value="${c.id}"${state.hidden.has(c.id) ? '' : ' checked'}><span class="cal-swatch" aria-hidden="true"></span><span class="cal-source-name">${esc(c.name)}</span><span class="cal-source-detail">${esc(c.detail)}</span></label></li>`).join('');
   }
 
   function renderUpcoming() {
@@ -431,6 +433,40 @@
     app.querySelectorAll('[data-now]').forEach(line => { line.style.top = `${minutes(now) / 60 * HOUR}px`; });
   }, 30000);
 
+  // Outlook: the server reads the published .ics links and returns plain events. Until a link
+  // is set, or when the viewer is not the owner (a preview without sign-in), the sample stays.
+  const note = $('.cal-source-note');
+  const fTimeOfDay = fmt({hour: 'numeric', minute: '2-digit'});
+  const parseEventDate = (value, allDay) => {
+    if (!allDay) return new Date(value);
+    const [y, m, d] = value.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  async function loadOutlook() {
+    let data;
+    try {
+      const response = await fetch('/api/calendar/events', {credentials: 'same-origin', headers: {accept: 'application/json'}});
+      if (!response.ok) return;
+      data = await response.json();
+    } catch { return; }
+    if (!data?.connected) {
+      note.textContent = 'Outlook 게시 링크를 아직 등록하지 않아 예시 일정을 보여 줍니다.';
+      return;
+    }
+    const real = data.events.filter(e => calendars.has(e.cal)).map(e => ({...e, start: parseEventDate(e.start, e.allDay), end: parseEventDate(e.end, e.allDay)}));
+    events = [...sample.events.filter(e => e.cal === 'holiday'), ...real].sort(byStart);
+    shownCalendars = sample.calendars.filter(c => c.id === 'holiday' || data.calendars.includes(c.id));
+    app.dataset.source = 'outlook';
+    const failed = data.errors.map(e => calendars.get(e.cal)?.name).filter(Boolean);
+    note.textContent = failed.length
+      ? `${failed.join(', ')} 캘린더를 새로 읽지 못해 마지막으로 받은 일정을 보여 줍니다.`
+      : `Outlook에서 ${fTimeOfDay.format(new Date(data.fetchedAt))}에 불러온 일정입니다.`;
+    note.classList.toggle('is-warning', failed.length > 0);
+    renderSources();
+    render({keepScroll: true});
+  }
+
   renderSources();
   render();
+  loadOutlook();
 })();
