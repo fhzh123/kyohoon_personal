@@ -34,18 +34,18 @@
   const workspaceName=type=>type==='rebuttal'?'논문 리뷰탈 준비':'논문 리뷰 준비';
 
   function renderLanding(){
-    view='landing';workspace=null;current=null;query='';filter='all';
+    window.PaperDeadlines?.leave();view='landing';workspace=null;current=null;query='';filter='all';
     app.innerHTML='<section class="paper-welcome"><div><p class="paper-eyebrow">논문을 위한 작업 공간</p><h1>Paper</h1><p>리뷰탈, 논문 리뷰, 학회 마감을<br>나누어 관리합니다.</p>'+(document.getElementById('paper-space-status')?.innerHTML||'')+'</div><img src="/mascot/paper.png" alt="논문과 펜을 든 마스코트" width="210" height="210"></section>'+
       (preview?'<p class="paper-preview-note">가상 논문으로 구성한 미리보기입니다. 편집 내용은 이 화면에서만 유지됩니다.</p>':'')+
       '<nav class="paper-choices" aria-label="논문 작업 선택">'+['rebuttal','review'].map(type=>{
         const count=data.projects.filter(x=>x.data.type===type&&x.data.status==='active').length;
         return '<button type="button" class="paper-choice" data-action="choose-'+type+'"><img src="/mascot/'+(type==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"><span class="paper-choice-role">'+(type==='rebuttal'?'저자로서':'리뷰어로서')+'</span><span class="paper-choice-title">'+workspaceName(type)+'<span aria-hidden="true">→</span></span><span class="paper-choice-description">'+(type==='rebuttal'?'리뷰어별 쟁점을 정리하고<br>근거를 담은 답변을 준비합니다.':'네 항목에 평가 메모를 적고<br>영문 리뷰를 작성합니다.')+'</span><span class="paper-choice-count">진행 중인 논문 '+count+'편</span></button>';
-      }).join('')+'<button type="button" class="paper-choice paper-choice-soon" data-action="choose-deadlines"><img src="/mascot/personal-coming-one.webp" alt="" width="168" height="168"><span class="paper-choice-role">투고 일정</span><span class="paper-choice-title">AI 컨퍼런스 데드라인<span aria-hidden="true">→</span></span><span class="paper-choice-description">AI 학회 마감일을<br>한곳에 모아 봅니다.</span><span class="paper-choice-count">준비 중</span></button></nav>';
+      }).join('')+'<button type="button" class="paper-choice" data-action="choose-deadlines"><img src="/mascot/paper-pose.webp" alt="" width="168" height="168"><span class="paper-choice-role">투고 일정</span><span class="paper-choice-title">AI 컨퍼런스 데드라인<span aria-hidden="true">→</span></span><span class="paper-choice-description">19개 학회의 마감을<br>KST 기준으로 모아 봅니다.</span><span class="paper-choice-count">매주 목요일 오전 9시 갱신</span></button></nav>';
     app.setAttribute('aria-busy','false');
   }
   function renderList(){
     if(!workspace){renderLanding();return;}
-    view='list';app.innerHTML='<button class="paper-back" data-action="back-paper">← Paper</button><section class="paper-welcome paper-workspace-welcome"><div><p class="paper-eyebrow">Paper / '+(workspace==='rebuttal'?'저자 작업':'리뷰어 작업')+'</p><h1>'+workspaceName(workspace)+'</h1><p>'+(workspace==='rebuttal'?'리뷰어별 쟁점과 답변을 정리합니다.':'평가 메모를 영문 리뷰로 다듬습니다.')+'</p></div><img src="/mascot/'+(workspace==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"></section>'+
+    window.PaperDeadlines?.leave();view='list';app.innerHTML='<button class="paper-back" data-action="back-paper">← Paper</button><section class="paper-welcome paper-workspace-welcome"><div><p class="paper-eyebrow">Paper / '+(workspace==='rebuttal'?'저자 작업':'리뷰어 작업')+'</p><h1>'+workspaceName(workspace)+'</h1><p>'+(workspace==='rebuttal'?'리뷰어별 쟁점과 답변을 정리합니다.':'평가 메모를 영문 리뷰로 다듬습니다.')+'</p></div><img src="/mascot/'+(workspace==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"></section>'+
       (preview?'<p class="paper-preview-note">가상 논문으로 구성한 미리보기입니다. 편집 내용은 이 화면에서만 유지됩니다.</p>':'')+
       '<div class="paper-topline"><div class="paper-actions">'+btn(workspace==='rebuttal'?'＋ 리뷰탈 논문 추가':'＋ 리뷰할 논문 추가','new-'+workspace,'primary')+btn('프롬프트 설정','prompts')+'</div>'+'</div>'+
       '<div class="paper-toolbar"><div class="paper-tabs" role="tablist" aria-label="작업 상태">'+[['all','전체'],...Object.entries(statuses)].map(([k,label])=>'<button type="button" role="tab" class="paper-tab" aria-selected="'+(filter===k)+'" data-filter="'+k+'">'+label+'<span>'+data.projects.filter(x=>x.data.type===workspace&&(k==='all'||x.data.status===k)).length+'</span></button>').join('')+'</div><input class="paper-search" id="paper-search" type="search" aria-label="논문 제목 또는 학회 검색" placeholder="제목 또는 학회 검색" value="'+esc(query)+'"></div><div class="paper-list" id="paper-list"></div>'+
@@ -57,11 +57,11 @@
     $('#paper-list').innerHTML=rows.length?rows.map(row=>{const p=row.data;const isAcl=/\b(?:ACL|ARR|EMNLP|NAACL|EACL|AACL)\b/i.test(p.venue);const venueLabel=esc(p.venue.trim().replace(/\b20\d{2}\b/g,'').trim()||'미지정');return '<article class="paper-row" tabindex="0" role="button" data-open="'+esc(p.id)+'" aria-label="'+esc(p.title)+' 열기"><div class="paper-venue '+(isAcl?'paper-venue-acl':'')+'">'+(isAcl?'<img src="/icons/venues/acl.svg" width="54" height="54" alt="ACL">':'<span>'+venueLabel+'</span>')+'</div><div><span class="paper-type">'+types[p.type]+' / '+statuses[p.status]+'</span><h2>'+esc(p.title)+'</h2><div class="paper-meta"><span>'+esc(p.venue||'학회 미입력')+'</span>'+(p.type==='rebuttal'?'<span>'+p.reviewers.length+'명 리뷰어</span>':'')+'</div></div><div class="paper-row-end"><strong>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</strong></div><span class="paper-arrow" aria-hidden="true">→</span></article>';}).join(''):'<div class="paper-empty"><h2>'+(query?'검색 결과가 없습니다.':'첫 번째 논문을 등록해 주세요.')+'</h2><p>제목과 학회를 적고 바로 메모를 시작할 수 있습니다.</p></div>';
 
   }
-  // AI 컨퍼런스 데드라인: 아직 만드는 중입니다. 정리 방식이 정해지면 이 화면을 채웁니다.
+  // AI 컨퍼런스 데드라인: 화면과 계산은 paper-deadlines.js가 맡습니다.
   function renderDeadlines(){
     view='deadlines';workspace=null;current=null;
-    app.innerHTML='<button class="paper-back" data-action="back-paper">← Paper</button><section class="paper-construction" aria-labelledby="paper-construction-title"><img src="/mascot/personal-coming-one.webp" alt="안전모를 쓰고 블록을 나르는 공사 중 마스코트" width="240" height="240"><p class="paper-eyebrow">Paper / 투고 일정</p><h1 id="paper-construction-title">AI 컨퍼런스 데드라인</h1><p>지금 공사 중입니다.<br>학회 마감일을 정리하는 방식이 정해지면 이곳에 열립니다.</p></section>';
-    app.setAttribute('aria-busy','false');
+    if(window.PaperDeadlines)window.PaperDeadlines.render(app);
+    else{app.innerHTML='<button class="paper-back" data-action="back-paper">← Paper</button><div class="paper-empty"><h2>마감 일정 화면을 불러오지 못했습니다.</h2><p>페이지를 새로고침해 주세요.</p></div>';app.setAttribute('aria-busy','false');}
   }
   // 작업별 기본 프롬프트는 그 작업 화면에서 고칩니다. 저장은 공통 LLM 설정과 같은 곳에 합니다.
   const promptGroups={rebuttal:[['translate','리뷰 원문 → 한국어 번역'],['rebuttal','대응 메모와 실험 결과 → 영문 리뷰탈']],review:[['review','Summary, Strength, Weakness, ETC 메모와 논문 → 영문 리뷰']]};
@@ -98,7 +98,7 @@
   function showDialog(){if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');}
   async function openProject(projectId,restore=false){if(!safeLeave())return;await save();current=clone(data.projects.find(x=>x.id===projectId));workspace=current.data.type;reviewerId=current.data.reviewers[0]?.id;issueId=current.data.reviewers[0]?.issues[0]?.id;dirty=false;saveConflict=false;view='editor';if(!restore)route('editor',current.id);renderEditor();window.scrollTo?.(0,0);}
   function renderEditor(){
-    view='editor';const p=current.data;app.innerHTML='<div class="paper-topline"><button class="paper-back" data-action="back">← '+workspaceName(p.type)+'</button></div>'+
+    window.PaperDeadlines?.leave();view='editor';const p=current.data;app.innerHTML='<div class="paper-topline"><button class="paper-back" data-action="back">← '+workspaceName(p.type)+'</button></div>'+
       '<div class="paper-project-heading"><div><p class="paper-eyebrow">'+types[p.type]+' / '+statuses[p.status]+'</p><h1>'+esc(p.title)+'</h1><div class="paper-meta"><label class="paper-project-status"><span class="sr-only">진행 상태</span><select data-project-status aria-label="진행 상태">'+Object.entries(statuses).map(([v,n])=>'<option value="'+v+'" '+(v===p.status?'selected':'')+'>'+n+'</option>').join('')+'</select></label><span>'+esc(p.venue||'학회 미입력')+'</span><span>'+(p.deadline?esc(p.deadline)+' 마감':'마감일 미설정')+'</span>'+(p.charLimit?'<span>'+p.charLimit+'자 제한</span>':'')+'</div></div><div class="paper-actions">'+btn('정보 수정','edit-meta')+btn('MD 내보내기','export')+'</div></div>'+
       '<div class="paper-attachment"><div class="paper-actions">'+(p.pdf?'<a class="paper-btn quiet" '+(preview?'data-action="preview-file" href="#paper-app"':'href="/api/paper/file?projectId='+p.id+'"')+'>'+esc(p.pdf.name)+' ↗</a>'+btn('첨부 해제','detach','quiet'):'<span>논문 PDF를 첨부하면 초안에 함께 참고합니다.</span>')+'</div><div class="paper-actions">'+(p.pdf?'<label><input type="checkbox" id="paper-include-pdf" '+(includePdf?'checked':'')+'> 생성 시 PDF 포함</label>':'')+'<label class="paper-btn" for="paper-file">'+(p.pdf?'PDF 교체':'PDF 첨부')+'</label><input type="file" id="paper-file" accept="application/pdf,.pdf" hidden></div></div>'+
       '<details class="paper-context"><summary>논문 배경 및 공통 작성 지침 ＋</summary>'+field('모든 쟁점에 함께 전달할 내용','context',p.context,'논문 핵심 기여, 대응 방향, 지켜야 할 표현 등을 적어 주세요.')+'</details>'+

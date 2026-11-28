@@ -1,0 +1,179 @@
+{
+  "about": "Editions checked by hand against the conference's own pages. An edition here replaces what the public datasets say for the same conference and year. date is the time the site gives, in its own zone; dateOnly means the site gives a day but no time. A null date is a deadline the site lists as TBA.",
+  "editions": [
+    {
+      "conference": "naacl", "year": 2027, "link": "https://2027.naacl.org/",
+      "dates": "June 1-5, 2027", "place": "San Francisco, California, USA",
+      "checked": "2026-11-28", "sources": ["https://2027.naacl.org/", "https://aclrollingreview.org/dates"],
+      "deadlines": [
+        {"kind": "submission", "label": "ARR submission (October cycle)", "date": "2026-10-12 23:59", "timezone": "AoE", "source": "https://2027.naacl.org/"},
+        {"kind": "rebuttal", "label": "ARR author response (Nov 24 to 30)", "date": "2026-11-30", "timezone": "AoE", "dateOnly": true, "source": "https://aclrollingreview.org/dates"},
+        {"kind": "reviews", "label": "ARR meta-reviews released", "date": "2026-12-17", "timezone": "AoE", "dateOnly": true, "source": "https://aclrollingreview.org/dates"},
+        {"kind": "commitment", "label": "NAACL commitment", "date": "2026-12-23 23:59", "timezone": "AoE", "source": "https://2027.naacl.org/"},
+        {"kind": "notification", "label": "Notification of acceptance", "date": "2027-02-10", "timezone": "AoE", "dateOnly": true, "source": "https://2027.naacl.org/"},
+        {"kind": "camera_ready", "label": "Camera-ready papers due", "date": "2027-03-03 23:59", "timezone": "AoE", "source": "https://2027.naacl.org/"}
+      ]
+    },
+    {
+      "conference": "coling", "year": 2027, "link": "https://2027.coling-iccl.org/",
+      "dates": "May 9-14, 2027 (virtual May 6-7)", "place": "Macau, China",
+      "checked": "2026-11-28", "sources": ["https://2027.coling-iccl.org/", "https://aclrollingreview.org/dates"],
+      "deadlines": [
+        {"kind": "submission", "label": "ARR submission (October cycle)", "date": "2026-10-12 23:59", "timezone": "AoE", "source": "https://2027.coling-iccl.org/"},
+        {"kind": "rebuttal", "label": "ARR author response (Nov 24 to 30)", "date": "2026-11-30", "timezone": "AoE", "dateOnly": true, "source": "https://aclrollingreview.org/dates"},
+        {"kind": "reviews", "label": "ARR meta-reviews released", "date": "2026-12-17", "timezone": "AoE", "dateOnly": true, "source": "https://aclrollingreview.org/dates"},
+        {"kind": "commitment", "label": "Commitment after meta-reviews", "date": "2026-12-23 23:59", "timezone": "AoE", "source": "https://2027.coling-iccl.org/"},
+        {"kind": "notification", "label": "Notification of acceptance", "date": "2027-02-10", "timezone": "AoE", "dateOnly": true, "source": "https://2027.coling-iccl.org/"},
+        {"kind": "camera_ready", "label": "Camera-ready", "date": null, "timezone": "AoE", "source": "https://2027.coling-iccl.org/"}
+      ]
+    },
+    {
+      "conference": "acl", "year": 2027, "link": "https://2027.aclweb.org/",
+      "dates": "August 17-22, 2027", "place": "Kyoto, Japan",
+      "checked": "2026-11-28", "sources": ["https://2027.aclweb.org/"],
+      "deadlines": [
+        {"kind": "submission", "label": "ARR submission", "date": "2027-01-04 23:59", "timezone": "AoE", "source": "https://2027.aclweb.org/"},
+        {"kind": "commitment", "label": "Commitment deadline", "date": null, "timezone": "AoE", "source": "https://2027.aclweb.org/"},
+        {"kind": "notification", "label": "Notification of acceptance", "date": null, "timezone": "AoE", "source": "https://2027.aclweb.org/"},
+        {"kind": "camera_ready", "label": "Camera-ready deadline", "date": null, "timezone": "AoE", "source": "https://2027.aclweb.org/"}
+      ]
+    },
+    {
+      "conference": "aaai", "year": 2027, "link": "https://aaai.org/conference/aaai/aaai-27/",
+      "dates": "February 16-23, 2027", "place": "Montréal, Canada",
+      "checked": "2026-11-28", "sources": ["https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"],
+      "deadlines": [
+        {"kind": "abstract", "label": "Abstracts due", "date": "2026-07-21 23:59", "timezone": "UTC-12", "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"},
+        {"kind": "submission", "label": "Full papers due", "date": "2026-07-28 23:59", "timezone": "UTC-12", "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"},
+        {"kind": "supplementary", "label": "Supplementary material and code", "date": "2026-07-31 23:59", "timezone": "UTC-12", "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"},
+        {"kind": "notification", "label": "Phase 1 rejections", "date": "2026-09-24", "timezone": "UTC-12", "dateOnly": true, "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"},
+        {"kind": "rebuttal", "label": "Author feedback (Oct 24 to 31)", "date": "2026-10-31", "timezone": "UTC-12", "dateOnly": true, "note": "10월 19일부터 25일까지였던 기간이 바뀜", "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"},
+        {"kind": "notification", "label": "Final acceptance or rejection", "date": "2026-11-30", "timezone": "UTC-12", "dateOnly": true, "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"},
+        {"kind": "camera_ready", "label": "Camera-ready files", "date": "2026-12-14", "timezone": "UTC-12", "dateOnly": true, "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"}
+      ]
+    },
+    {
+      "conference": "iclr", "year": 2027, "link": "https://iclr.cc/Conferences/2027",
+      "dates": "April 26-30, 2027", "place": "California, USA",
+      "checked": "2026-11-28", "sources": ["https://iclr.cc/Conferences/2027/Dates", "https://iclr.cc/Conferences/2027/CallForPapers"],
+      "deadlines": [
+        {"kind": "abstract", "label": "Abstract deadline", "date": "2026-09-18 23:59", "timezone": "AoE", "source": "https://iclr.cc/Conferences/2027/Dates"},
+        {"kind": "submission", "label": "Paper deadline", "date": "2026-09-25 23:59", "timezone": "AoE", "source": "https://iclr.cc/Conferences/2027/Dates"},
+        {"kind": "reviews", "label": "Reviews released", "date": "2026-11-05", "timezone": "AoE", "dateOnly": true, "source": "https://iclr.cc/Conferences/2027/Dates"},
+        {"kind": "rebuttal", "label": "Author-reviewer discussion ends", "date": "2026-11-18", "timezone": "AoE", "dateOnly": true, "source": "https://iclr.cc/Conferences/2027/Dates"},
+        {"kind": "notification", "label": "Final decisions", "date": "2026-12-16", "timezone": "AoE", "dateOnly": true, "source": "https://iclr.cc/Conferences/2027/Dates"}
+      ]
+    },
+    {
+      "conference": "icml", "year": 2027, "link": "https://icml.cc/Conferences/2027",
+      "dates": "July 31 to August 6, 2027", "place": "Rio de Janeiro, Brazil",
+      "checked": "2026-11-28", "sources": ["https://icml.cc/Conferences/2027/CallForPapers", "https://icml.cc/Conferences/2027/Dates"],
+      "deadlines": [
+        {"kind": "abstract", "label": "Abstract submission", "date": "2027-01-14 23:59", "timezone": "AoE", "source": "https://icml.cc/Conferences/2027/CallForPapers"},
+        {"kind": "submission", "label": "Full paper submission", "date": "2027-01-22 23:59", "timezone": "AoE", "source": "https://icml.cc/Conferences/2027/CallForPapers"},
+        {"kind": "notification", "label": "First-stage rejections", "date": "2027-02-23", "timezone": "AoE", "dateOnly": true, "source": "https://icml.cc/Conferences/2027/Dates"},
+        {"kind": "notification", "label": "Author notification", "date": "2027-05-03", "timezone": "AoE", "dateOnly": true, "source": "https://icml.cc/Conferences/2027/Dates"}
+      ]
+    },
+    {
+      "conference": "ijcai", "year": 2027, "link": "https://2027.ijcai.org/",
+      "dates": "August 7-13, 2027", "place": "Kyoto, Japan",
+      "checked": "2026-11-28", "sources": ["https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/"],
+      "deadlines": [
+        {"kind": "abstract", "label": "Abstract submission", "date": "2027-01-04 23:59", "timezone": "AoE", "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/"},
+        {"kind": "submission", "label": "Full paper submission", "date": "2027-01-11 23:59", "timezone": "AoE", "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/"},
+        {"kind": "notification", "label": "Summary reject notification", "date": "2027-02-25", "timezone": "AoE", "dateOnly": true, "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/"},
+        {"kind": "rebuttal", "label": "Author response (Mar 30 to Apr 2)", "date": "2027-04-02 23:59", "timezone": "AoE", "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/"},
+        {"kind": "notification", "label": "Paper notification", "date": "2027-04-21", "timezone": "AoE", "dateOnly": true, "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/"},
+        {"kind": "camera_ready", "label": "Camera-ready copy", "date": "2027-05-07 23:59", "timezone": "AoE", "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/"}
+      ]
+    },
+    {
+      "conference": "cvpr", "year": 2027, "link": "https://cvpr.thecvf.com/Conferences/2027",
+      "dates": "June 20-24, 2027", "place": "Seattle, Washington, USA",
+      "checked": "2026-11-28", "sources": ["https://cvpr.thecvf.com/Conferences/2027/Dates"],
+      "deadlines": [
+        {"kind": "abstract", "label": "Paper registration", "date": "2026-11-10 23:59", "timezone": "AoE", "source": "https://cvpr.thecvf.com/Conferences/2027/Dates"},
+        {"kind": "submission", "label": "Paper submission", "date": "2026-11-16 23:59", "timezone": "AoE", "source": "https://cvpr.thecvf.com/Conferences/2027/Dates"},
+        {"kind": "supplementary", "label": "Supplementary materials", "date": "2026-11-23 23:59", "timezone": "AoE", "source": "https://cvpr.thecvf.com/Conferences/2027/Dates"},
+        {"kind": "reviews", "label": "Reviews released", "date": "2027-01-25", "timezone": "AoE", "dateOnly": true, "source": "https://cvpr.thecvf.com/Conferences/2027/Dates"},
+        {"kind": "rebuttal", "label": "Author rebuttal (Jan 25 to Feb 1)", "date": "2027-02-01", "timezone": "AoE", "dateOnly": true, "source": "https://cvpr.thecvf.com/Conferences/2027/Dates"},
+        {"kind": "notification", "label": "Final decisions", "date": "2027-02-25", "timezone": "AoE", "dateOnly": true, "source": "https://cvpr.thecvf.com/Conferences/2027/Dates"}
+      ]
+    },
+    {
+      "conference": "iccv", "year": 2027, "link": "https://iccv.thecvf.com/Conferences/2027",
+      "dates": "October 3-7, 2027", "place": "Hong Kong, China",
+      "checked": "2026-11-28", "sources": ["https://iccv.thecvf.com/Conferences/2027/Dates"],
+      "deadlines": [
+        {"kind": "submission", "label": "Paper submission", "date": null, "timezone": "AoE", "source": "https://iccv.thecvf.com/Conferences/2027/Dates"}
+      ]
+    },
+    {
+      "conference": "neurips", "year": 2027, "link": "https://neurips.cc/Conferences/FutureMeetings",
+      "dates": "TBA", "place": "Europe (city TBA)",
+      "checked": "2026-11-28", "sources": ["https://neurips.cc/Conferences/FutureMeetings"],
+      "deadlines": [
+        {"kind": "submission", "label": "Paper submission", "date": null, "timezone": "AoE", "source": "https://neurips.cc/Conferences/FutureMeetings"}
+      ]
+    },
+    {
+      "conference": "pakdd", "year": 2027, "link": "https://www.pakdd2027.org/",
+      "dates": "June 29 to July 2, 2027", "place": "Wellington, New Zealand",
+      "checked": "2026-11-28", "sources": ["https://www.pakdd2027.org/pages/dates"],
+      "deadlines": [
+        {"kind": "submission", "label": "Paper submission", "date": "2026-12-04 23:59", "timezone": "AoE", "note": "11월 20일에서 연장됨", "source": "https://www.pakdd2027.org/pages/dates"},
+        {"kind": "notification", "label": "Paper acceptance notification", "date": "2027-02-26", "timezone": "AoE", "dateOnly": true, "source": "https://www.pakdd2027.org/pages/dates"},
+        {"kind": "camera_ready", "label": "Camera-ready papers due", "date": "2027-03-19 23:59", "timezone": "AoE", "source": "https://www.pakdd2027.org/pages/dates"}
+      ]
+    },
+    {
+      "conference": "wsdm", "year": 2027, "link": "https://wsdm-conference.org/2027/",
+      "dates": "February 15-19, 2027", "place": "Hong Kong, China",
+      "checked": "2026-11-28", "sources": ["https://wsdm-conference.org/2027/cffp.html", "https://wsdm-conference.org/2027/cfsp.html"],
+      "deadlines": [
+        {"kind": "abstract", "label": "Full paper abstract", "date": "2026-08-17 23:59", "timezone": "AoE", "source": "https://wsdm-conference.org/2027/cffp.html"},
+        {"kind": "submission", "label": "Full paper submission", "date": "2026-08-24 23:59", "timezone": "AoE", "source": "https://wsdm-conference.org/2027/cffp.html"},
+        {"kind": "notification", "label": "Full paper notification", "date": "2026-11-02", "timezone": "AoE", "dateOnly": true, "source": "https://wsdm-conference.org/2027/cffp.html"},
+        {"kind": "submission", "label": "Short paper submission", "date": "2026-11-17 23:59", "timezone": "AoE", "source": "https://wsdm-conference.org/2027/cfsp.html"},
+        {"kind": "notification", "label": "Short paper notification", "date": "2026-12-18", "timezone": "AoE", "dateOnly": true, "source": "https://wsdm-conference.org/2027/cfsp.html"},
+        {"kind": "camera_ready", "label": "Camera-ready", "date": null, "timezone": "AoE", "source": "https://wsdm-conference.org/2027/cfsp.html"}
+      ]
+    },
+    {
+      "conference": "www", "year": 2027, "link": "https://www2027.thewebconf.org/",
+      "dates": "May 10-14, 2027", "place": "Dublin, Ireland",
+      "checked": "2026-11-28", "sources": ["https://www2027.thewebconf.org/research-track-papers/"],
+      "deadlines": [
+        {"kind": "abstract", "label": "Research track abstract", "date": "2026-10-18 23:59", "timezone": "AoE", "source": "https://www2027.thewebconf.org/research-track-papers/"},
+        {"kind": "submission", "label": "Research track full paper", "date": "2026-10-25 23:59", "timezone": "AoE", "source": "https://www2027.thewebconf.org/research-track-papers/"},
+        {"kind": "abstract", "label": "Short paper abstract", "date": "2026-11-09 23:59", "timezone": "AoE", "source": "https://www2027.thewebconf.org/research-track-papers/"},
+        {"kind": "submission", "label": "Short paper submission", "date": "2026-11-16 23:59", "timezone": "AoE", "source": "https://www2027.thewebconf.org/research-track-papers/"},
+        {"kind": "reviews", "label": "Results released", "date": "2026-12-15", "timezone": "AoE", "dateOnly": true, "source": "https://www2027.thewebconf.org/research-track-papers/"},
+        {"kind": "rebuttal", "label": "Rebuttal (Dec 15 to 20)", "date": "2026-12-20 23:59", "timezone": "AoE", "source": "https://www2027.thewebconf.org/research-track-papers/"},
+        {"kind": "notification", "label": "Notification", "date": "2027-01-04", "timezone": "AoE", "dateOnly": true, "source": "https://www2027.thewebconf.org/research-track-papers/"},
+        {"kind": "camera_ready", "label": "Final version", "date": "2027-01-31 23:59", "timezone": "AoE", "source": "https://www2027.thewebconf.org/research-track-papers/"}
+      ]
+    },
+    {
+      "conference": "kdd", "year": 2027, "link": "https://kdd2027.kdd.org/",
+      "dates": "August 1-5, 2027", "place": "San Jose, California, USA",
+      "checked": "2026-11-28", "sources": ["https://kdd2027.kdd.org/research-track-call-for-papers/"],
+      "deadlines": [
+        {"kind": "abstract", "label": "Cycle 1 abstract", "date": "2026-07-19 23:59", "timezone": "AoE", "source": "https://kdd2027.kdd.org/research-track-call-for-papers/"},
+        {"kind": "submission", "label": "Cycle 1 paper", "date": "2026-07-26 23:59", "timezone": "AoE", "source": "https://kdd2027.kdd.org/research-track-call-for-papers/"},
+        {"kind": "rebuttal", "label": "Cycle 1 rebuttal (Sep 29 to Oct 13)", "date": "2026-10-13 23:59", "timezone": "AoE", "source": "https://kdd2027.kdd.org/research-track-call-for-papers/"},
+        {"kind": "notification", "label": "Cycle 1 notification", "date": "2026-11-14", "timezone": "AoE", "dateOnly": true, "source": "https://kdd2027.kdd.org/research-track-call-for-papers/"},
+        {"kind": "submission", "label": "Cycle 2 paper (February 2027)", "date": null, "timezone": "AoE", "source": "https://kdd2027.kdd.org/research-track-call-for-papers/"}
+      ]
+    },
+    {
+      "conference": "ecmlpkdd", "year": 2027, "link": "https://ecmlpkdd.org/2027/",
+      "dates": "August 30 to September 3, 2027", "place": "Eindhoven, Netherlands",
+      "checked": "2026-11-28", "sources": ["https://ecmlpkdd.org/2027/"],
+      "deadlines": [
+        {"kind": "submission", "label": "Research track submission", "date": null, "timezone": "AoE", "source": "https://ecmlpkdd.org/2027/"}
+      ]
+    }
+  ]
+}

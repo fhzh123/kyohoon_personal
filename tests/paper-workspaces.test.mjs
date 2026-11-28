@@ -11,10 +11,12 @@ test('Paper starts with three choices, keeps each workspace\'s prompts in it, an
  Object.defineProperty(w,'crypto',{value:{randomUUID}});w.confirm=()=>true;w.scrollTo=()=>{};
  w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
  w.PAPER_PREVIEW={projects,settings:publicSettings(null,{}),defaults:DEFAULT_PROMPTS};
+ w.PAPER_DEADLINES=JSON.parse(await readFile(new URL('../server/deadlines/deadlines.json',import.meta.url),'utf8'));
+ w.eval(await readFile(new URL('../public/paper-deadlines.js',import.meta.url),'utf8'));
  w.eval(await readFile(new URL('../public/paper.js',import.meta.url),'utf8'));
  const settle=()=>new Promise(r=>setTimeout(r,10)),click=async s=>{w.document.querySelector(s).click();await settle();},titles=()=>[...w.document.querySelectorAll('.paper-row h2')].map(x=>x.textContent);
  await settle();assert.equal(w.document.querySelectorAll('.paper-choice').length,3);assert.equal(w.document.querySelectorAll('[data-open]').length,0);
- await click('[data-action=choose-deadlines]');assert.match(w.document.querySelector('.paper-construction').textContent,/공사 중/);assert.equal(w.location.hash,'#deadlines');assert.equal(w.document.querySelectorAll('.paper-choice').length,0);
+ await click('[data-action=choose-deadlines]');assert.match(w.document.querySelector('h1').textContent,/AI 컨퍼런스 데드라인/);assert.ok(w.document.querySelectorAll('.dl-card').length>0);assert.equal(w.location.hash,'#deadlines');assert.equal(w.document.querySelectorAll('.paper-choice').length,0);
  await click('[data-action=back-paper]');assert.equal(w.document.querySelectorAll('.paper-choice').length,3);
  await click('[data-action=choose-rebuttal]');assert.deepEqual(titles(),['rebuttal planned','rebuttal active','rebuttal done']);
  await click('[data-action=prompts]');assert.deepEqual([...w.document.querySelectorAll('#paper-prompt-form textarea')].map(t=>t.id),['paper-prompt-translate','paper-prompt-rebuttal']);assert.equal(w.document.querySelector('#paper-prompt-translate').value,DEFAULT_PROMPTS.translate);await click('#paper-dialog [data-action=close-dialog]');

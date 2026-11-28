@@ -8,6 +8,8 @@ on:
       - 'views/**'
       - 'server/**'
       - 'tests/**'
+      - 'public/paper*'
+      - 'scripts/deadlines-sync.mjs'
       - 'work-app/**'
       - 'types/**'
       - 'scripts/build.mjs'
@@ -36,7 +38,7 @@ jobs:
         run: node --test tests/research-features.test.mjs tests/work-dom.test.mjs
 
       - name: Verify shared home navigation
-        run: node --test tests/space-navigation.test.mjs tests/spaces.test.mjs tests/gallery.test.mjs tests/paper-preferences.test.mjs tests/paper-layout.test.mjs tests/demos.test.mjs tests/settings-access.test.mjs tests/calendar.test.mjs tests/calendar-ics.test.mjs tests/calendar-store.test.mjs
+        run: node --test tests/space-navigation.test.mjs tests/spaces.test.mjs tests/gallery.test.mjs tests/paper-preferences.test.mjs tests/paper-layout.test.mjs tests/demos.test.mjs tests/settings-access.test.mjs tests/calendar.test.mjs tests/calendar-ics.test.mjs tests/calendar-store.test.mjs tests/paper-deadlines.test.mjs tests/paper-workspaces.test.mjs
 
       - name: Verify public travel endpoints
         # On main, wait until production serves the travel.js version this commit

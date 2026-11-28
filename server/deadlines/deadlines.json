@@ -1,0 +1,3316 @@
+{
+ "generatedAt": "2026-11-28T15:00:00.000Z",
+ "schedule": "Every Thursday 09:00 KST",
+ "sources": [
+  {
+   "name": "Official conference pages",
+   "url": null,
+   "note": "Checked by hand; see each edition."
+  },
+  {
+   "name": "ccfddl/ccf-deadlines",
+   "url": "https://github.com/ccfddl/ccf-deadlines",
+   "commit": "348f2131dc995dd8b0d7a69fa4706f83f48a0ad6",
+   "committedAt": "2026-11-28T06:37:05+00:00",
+   "licence": "MIT"
+  },
+  {
+   "name": "huggingface/ai-deadlines",
+   "url": "https://github.com/huggingface/ai-deadlines",
+   "commit": "f9642a13bf765a05c627b35586f852602d2dd022",
+   "committedAt": "2026-09-23T15:41:47+02:00",
+   "licence": "MIT"
+  }
+ ],
+ "categories": [
+  {
+   "id": "nlp",
+   "name": "NLP",
+   "full": "Natural Language Processing"
+  },
+  {
+   "id": "ml",
+   "name": "ML",
+   "full": "Machine Learning / AI"
+  },
+  {
+   "id": "cv",
+   "name": "CV",
+   "full": "Computer Vision"
+  },
+  {
+   "id": "dm",
+   "name": "Data Mining & Web",
+   "full": "Data Mining, Web and Information Retrieval"
+  }
+ ],
+ "organizers": {
+  "acl": {
+   "name": "ACL",
+   "full": "Association for Computational Linguistics",
+   "url": "https://www.aclweb.org/",
+   "logo": "/icons/venues/acl.svg"
+  },
+  "iccl": {
+   "name": "ICCL",
+   "full": "International Committee on Computational Linguistics",
+   "url": "https://coling-iccl.org/"
+  },
+  "colm": {
+   "name": "COLM",
+   "full": "Conference on Language Modeling",
+   "url": "https://colmweb.org/",
+   "logo": "/icons/venues/colm.svg",
+   "tile": "dark wide"
+  },
+  "iclr": {
+   "name": "ICLR",
+   "full": "International Conference on Learning Representations",
+   "url": "https://iclr.cc/",
+   "logo": "/icons/venues/iclr.svg"
+  },
+  "imls": {
+   "name": "IMLS",
+   "full": "International Machine Learning Society",
+   "url": "https://icml.cc/",
+   "logo": "/icons/venues/icml.svg",
+   "tile": "dark"
+  },
+  "neurips": {
+   "name": "NeurIPS Foundation",
+   "full": "Neural Information Processing Systems Foundation",
+   "url": "https://neurips.cc/",
+   "logo": "/icons/venues/neurips.svg"
+  },
+  "aaai": {
+   "name": "AAAI",
+   "full": "Association for the Advancement of Artificial Intelligence",
+   "url": "https://aaai.org/",
+   "logo": "/icons/venues/aaai.svg"
+  },
+  "ijcai": {
+   "name": "IJCAI",
+   "full": "International Joint Conferences on Artificial Intelligence Organization",
+   "url": "https://www.ijcai.org/",
+   "logo": "/icons/venues/ijcai.svg",
+   "tile": "dark"
+  },
+  "cvf": {
+   "name": "IEEE/CVF",
+   "full": "IEEE Computer Society and the Computer Vision Foundation",
+   "url": "https://www.thecvf.com/",
+   "logo": "/icons/ieee.svg"
+  },
+  "ecva": {
+   "name": "ECVA",
+   "full": "European Computer Vision Association",
+   "url": "https://www.ecva.net/",
+   "logo": "/icons/venues/ecva.png",
+   "tile": "wide"
+  },
+  "acm": {
+   "name": "ACM",
+   "full": "Association for Computing Machinery",
+   "url": "https://www.acm.org/",
+   "logo": "/icons/acm.svg"
+  },
+  "pakdd": {
+   "name": "PAKDD",
+   "full": "PAKDD Steering Committee",
+   "url": "https://www.pakdd.net/"
+  },
+  "ecmlpkdd": {
+   "name": "ECML PKDD",
+   "full": "ECML PKDD Steering Committee",
+   "url": "https://ecmlpkdd.org/",
+   "logo": "/icons/venues/ecmlpkdd.svg"
+  }
+ },
+ "kinds": [
+  "abstract",
+  "submission",
+  "supplementary",
+  "reviews",
+  "rebuttal",
+  "commitment",
+  "notification",
+  "camera_ready",
+  "other"
+ ],
+ "conferences": [
+  {
+   "id": "acl",
+   "name": "ACL",
+   "full": "Annual Meeting of the Association for Computational Linguistics",
+   "categories": [
+    "nlp"
+   ],
+   "organizer": "acl",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://2025.aclweb.org/",
+     "dates": "July 28-30, 2025",
+     "place": "Vienna, Austria (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission",
+       "date": "2025-02-15 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-02-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/acl.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author response period begins",
+       "date": "2025-03-27 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-03-28T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/acl.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author response period ends",
+       "date": "2025-04-03 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-04-04T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/acl.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "ARR reviews available",
+       "date": "2025-04-15 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-04-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/acl.yml"
+      },
+      {
+       "kind": "commitment",
+       "label": "ARR commitment; reviewed papers only",
+       "date": "2025-04-20 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-04-21T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/acl.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification date",
+       "date": "2025-05-15 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/acl.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready deadline",
+       "date": "2025-05-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-31T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/acl.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://2026.aclweb.org/",
+     "dates": "July 5-7, 2026",
+     "place": "San Diego, California, United States (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Paper submission (ARR October cycle)",
+       "date": "2025-10-06 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-10-07T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/acl.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (ARR January cycle)",
+       "date": "2026-01-05 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-01-06T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/acl.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "ARR reviews available",
+       "date": "2026-03-10 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-03-11T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/acl.yml"
+      },
+      {
+       "kind": "commitment",
+       "label": "ARR commitment; reviewed papers only",
+       "date": "2026-03-14 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-03-15T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/acl.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification date",
+       "date": "2026-04-04 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-04-05T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/acl.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready deadline",
+       "date": "2026-04-19 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-04-20T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/acl.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://2027.aclweb.org/",
+     "dates": "August 17-22, 2027",
+     "place": "Kyoto, Japan",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://2027.aclweb.org/"
+     ],
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission",
+       "date": "2027-01-04 23:59",
+       "timezone": "AoE",
+       "at": "2027-01-05T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.aclweb.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "commitment",
+       "label": "Commitment deadline",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.aclweb.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification of acceptance",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.aclweb.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready deadline",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.aclweb.org/",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "emnlp",
+   "name": "EMNLP",
+   "full": "Conference on Empirical Methods in Natural Language Processing",
+   "categories": [
+    "nlp"
+   ],
+   "organizer": "acl",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://2025.emnlp.org/",
+     "dates": "November 5-7, 2025",
+     "place": "Suzhou, China (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission",
+       "date": "2025-05-19 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-05-20T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/emnlp.yml"
+      },
+      {
+       "kind": "commitment",
+       "label": "Commitment deadline for papers reviewed by ARR",
+       "date": "2025-08-01 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-08-02T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/emnlp.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://2026.emnlp.org/",
+     "dates": "October 25-27, 2026",
+     "place": "Budapest, Hungary (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission",
+       "date": "2026-05-25 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-05-26T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/emnlp.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author response period start",
+       "date": "2026-07-07 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-07-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/emnlp.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author response period end",
+       "date": "2026-07-13 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-07-14T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/emnlp.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "Meta review release",
+       "date": "2026-07-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-07-31T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/emnlp.yml"
+      },
+      {
+       "kind": "commitment",
+       "label": "Commitment deadline for papers with ARR reviews and meta-reviews",
+       "date": "2026-08-02 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-08-03T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/emnlp.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification date",
+       "date": "2026-08-20 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-08-21T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/emnlp.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready deadline",
+       "date": "2026-08-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-08-31T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/emnlp.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    }
+   ]
+  },
+  {
+   "id": "naacl",
+   "name": "NAACL",
+   "full": "Annual Conference of the North American Chapter of the ACL",
+   "categories": [
+    "nlp"
+   ],
+   "organizer": "acl",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://2025.naacl.org/",
+     "dates": "April 30-May 2, 2025",
+     "place": "Albuquerque, New Mexico, USA (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission",
+       "date": "2024-10-15 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-10-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/naacl.yml"
+      },
+      {
+       "kind": "commitment",
+       "label": "Commitment deadline for papers reviewed by ARR",
+       "date": "2024-12-16 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-12-17T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/naacl.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://2027.naacl.org/",
+     "dates": "June 1-5, 2027",
+     "place": "San Francisco, California, USA",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://2027.naacl.org/",
+      "https://aclrollingreview.org/dates"
+     ],
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission (October cycle)",
+       "date": "2026-10-12 23:59",
+       "timezone": "AoE",
+       "at": "2026-10-13T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.naacl.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "ARR author response (Nov 24 to 30)",
+       "date": "2026-11-30",
+       "timezone": "AoE",
+       "at": "2026-12-01T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://aclrollingreview.org/dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "reviews",
+       "label": "ARR meta-reviews released",
+       "date": "2026-12-17",
+       "timezone": "AoE",
+       "at": "2026-12-18T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://aclrollingreview.org/dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "commitment",
+       "label": "NAACL commitment",
+       "date": "2026-12-23 23:59",
+       "timezone": "AoE",
+       "at": "2026-12-24T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.naacl.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification of acceptance",
+       "date": "2027-02-10",
+       "timezone": "AoE",
+       "at": "2027-02-11T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://2027.naacl.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready papers due",
+       "date": "2027-03-03 23:59",
+       "timezone": "AoE",
+       "at": "2027-03-04T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.naacl.org/",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "eacl",
+   "name": "EACL",
+   "full": "Conference of the European Chapter of the ACL",
+   "categories": [
+    "nlp"
+   ],
+   "organizer": "acl",
+   "editions": [
+    {
+     "year": 2026,
+     "link": "https://2026.eacl.org/",
+     "dates": "March 25-27, 2026",
+     "place": "Rabat, Morocco (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission",
+       "date": "2025-10-06 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-07T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/eacl.yml"
+      },
+      {
+       "kind": "commitment",
+       "label": "Commitment deadline for papers reviewed by ARR",
+       "date": "2025-12-14 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-12-15T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/eacl.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://2027.eacl.org/",
+     "dates": "March 9-14, 2027",
+     "place": "Athens, Greece",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission",
+       "date": "2026-08-03 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-08-04T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/eacl.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal",
+       "date": "2026-09-19 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-09-20T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/eacl.yml"
+      },
+      {
+       "kind": "commitment",
+       "label": "EACL commitment after ARR meta-reviews; reviewed papers only",
+       "date": "2026-10-11 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-10-12T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/eacl.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification",
+       "date": "2026-11-12 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-11-13T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/eacl.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    }
+   ]
+  },
+  {
+   "id": "coling",
+   "name": "COLING",
+   "full": "International Conference on Computational Linguistics",
+   "categories": [
+    "nlp"
+   ],
+   "organizer": "iccl",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://coling2025.org/",
+     "dates": "January 21-24 (in-person) and 27-28 (virtual), 2025",
+     "place": "Abu Dhabi, UAE / Online",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Paper submission (ARR June cycle)",
+       "date": "2024-06-15 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-06-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/coling.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (ARR August cycle)",
+       "date": "2024-08-15 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-08-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/coling.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Direct submission)",
+       "date": "2024-09-16 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-09-17T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/coling.yml"
+      },
+      {
+       "kind": "commitment",
+       "label": "Commitment deadline for papers reviewed by ARR",
+       "date": "2024-10-20 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-10-21T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/coling.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://2027.coling-iccl.org/",
+     "dates": "May 9-14, 2027 (virtual May 6-7)",
+     "place": "Macau, China",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://2027.coling-iccl.org/",
+      "https://aclrollingreview.org/dates"
+     ],
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "ARR submission (October cycle)",
+       "date": "2026-10-12 23:59",
+       "timezone": "AoE",
+       "at": "2026-10-13T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.coling-iccl.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "ARR author response (Nov 24 to 30)",
+       "date": "2026-11-30",
+       "timezone": "AoE",
+       "at": "2026-12-01T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://aclrollingreview.org/dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "reviews",
+       "label": "ARR meta-reviews released",
+       "date": "2026-12-17",
+       "timezone": "AoE",
+       "at": "2026-12-18T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://aclrollingreview.org/dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "commitment",
+       "label": "Commitment after meta-reviews",
+       "date": "2026-12-23 23:59",
+       "timezone": "AoE",
+       "at": "2026-12-24T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.coling-iccl.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification of acceptance",
+       "date": "2027-02-10",
+       "timezone": "AoE",
+       "at": "2027-02-11T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://2027.coling-iccl.org/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.coling-iccl.org/",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "colm",
+   "name": "COLM",
+   "full": "Conference on Language Modeling",
+   "categories": [
+    "nlp"
+   ],
+   "organizer": "colm",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://colmweb.org/2025/cfp.html",
+     "dates": "October 7-9, 2025",
+     "place": "Palais des Congrès Montreal, Canada",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2025-03-22 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-03-23T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/colm.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-03-28 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-03-29T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/colm.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Period Start",
+       "date": "2025-05-27 00:00:00",
+       "timezone": "AoE",
+       "at": "2025-05-27T12:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/colm.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Period End",
+       "date": "2025-06-10 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-06-11T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/colm.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Decision Notification",
+       "date": "2025-07-07 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-07-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/colm.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-Ready Deadline",
+       "date": "2025-08-07 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-08-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/colm.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://colm.cc/Conferences/2026/CallForPapers",
+     "dates": "October 6-8, 2026",
+     "place": "Hilton Union Square, San Francisco, USA",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2026-03-26 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-03-27T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/colm.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2026-03-31 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-04-01T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/colm.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Period Start",
+       "date": "2026-05-22 00:00:00",
+       "timezone": "AoE",
+       "at": "2026-05-22T12:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/colm.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Period End",
+       "date": "2026-06-08 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-06-09T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/colm.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Decision Notification",
+       "date": "2026-07-08 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-07-09T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/colm.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    }
+   ]
+  },
+  {
+   "id": "iclr",
+   "name": "ICLR",
+   "full": "International Conference on Learning Representations",
+   "categories": [
+    "ml"
+   ],
+   "organizer": "iclr",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://iclr.cc/Conferences/2025",
+     "dates": "April 24-26, 2025",
+     "place": "Singapore",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2024-09-27 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-09-28T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/iclr.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2024-10-01 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-10-02T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/iclr.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://iclr.cc/Conferences/2026",
+     "dates": "April 23-25, 2026",
+     "place": "Rio de Janeiro, Brazil",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2025-09-19 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-09-20T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/iclr.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-09-24 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-09-25T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/iclr.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews Released",
+       "date": "2025-11-11 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-11-12T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/iclr.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Discussion Period End",
+       "date": "2025-12-03 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-12-04T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/iclr.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification",
+       "date": "2026-01-25 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-01-26T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/iclr.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://iclr.cc/Conferences/2027",
+     "dates": "April 26-30, 2027",
+     "place": "California, USA",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://iclr.cc/Conferences/2027/Dates",
+      "https://iclr.cc/Conferences/2027/CallForPapers"
+     ],
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract deadline",
+       "date": "2026-09-18 23:59",
+       "timezone": "AoE",
+       "at": "2026-09-19T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://iclr.cc/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper deadline",
+       "date": "2026-09-25 23:59",
+       "timezone": "AoE",
+       "at": "2026-09-26T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://iclr.cc/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews released",
+       "date": "2026-11-05",
+       "timezone": "AoE",
+       "at": "2026-11-06T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://iclr.cc/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author-reviewer discussion ends",
+       "date": "2026-11-18",
+       "timezone": "AoE",
+       "at": "2026-11-19T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://iclr.cc/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Final decisions",
+       "date": "2026-12-16",
+       "timezone": "AoE",
+       "at": "2026-12-17T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://iclr.cc/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "icml",
+   "name": "ICML",
+   "full": "International Conference on Machine Learning",
+   "categories": [
+    "ml"
+   ],
+   "organizer": "imls",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://icml.cc/Conferences/2025",
+     "dates": "July 13-19, 2025",
+     "place": "Vancouver Convention Center, Vancouver, Canada",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract (Paper Submissions Open on OpenReview Jan 08 2025 11:59 PM UTC)",
+       "date": "2025-01-23 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-01-24T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/icml.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Paper Submissions Open on OpenReview Jan 08 2025 11:59 PM UTC)",
+       "date": "2025-01-30 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-01-31T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/icml.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews Released",
+       "date": "2025-03-25 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-03-26T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/icml.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author Response Deadline",
+       "date": "2025-03-31 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-04-01T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/icml.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author Notification",
+       "date": "2025-05-01 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-02T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/icml.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera Ready Deadline",
+       "date": "2025-06-09 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-06-10T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/icml.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://icml.cc/Conferences/2026",
+     "dates": "July 6-11, 2026",
+     "place": "Seoul, Korea",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract (Paper Submissions Open on OpenReview Jan 08 2026 12:00AM UTC-0)",
+       "date": "2026-01-24 11:59:59",
+       "timezone": "UTC+0",
+       "at": "2026-01-24T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/icml.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Paper Submissions Open on OpenReview Jan 08 2026 12:00AM UTC-0)",
+       "date": "2026-01-29 11:59:59",
+       "timezone": "UTC+0",
+       "at": "2026-01-29T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/icml.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews Released",
+       "date": "2026-03-24 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-03-25T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/icml.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author Response Deadline",
+       "date": "2026-03-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-03-31T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/icml.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author Notification",
+       "date": "2026-04-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-05-01T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/icml.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://icml.cc/Conferences/2027",
+     "dates": "July 31 to August 6, 2027",
+     "place": "Rio de Janeiro, Brazil",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://icml.cc/Conferences/2027/CallForPapers",
+      "https://icml.cc/Conferences/2027/Dates"
+     ],
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract submission",
+       "date": "2027-01-14 23:59",
+       "timezone": "AoE",
+       "at": "2027-01-15T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://icml.cc/Conferences/2027/CallForPapers",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Full paper submission",
+       "date": "2027-01-22 23:59",
+       "timezone": "AoE",
+       "at": "2027-01-23T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://icml.cc/Conferences/2027/CallForPapers",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "First-stage rejections",
+       "date": "2027-02-23",
+       "timezone": "AoE",
+       "at": "2027-02-24T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://icml.cc/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification",
+       "date": "2027-05-03",
+       "timezone": "AoE",
+       "at": "2027-05-04T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://icml.cc/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "neurips",
+   "name": "NeurIPS",
+   "full": "Conference on Neural Information Processing Systems",
+   "categories": [
+    "ml"
+   ],
+   "organizer": "neurips",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://neurips.cc/Conferences/2025",
+     "dates": "December 3-5 (San Diego and Mexico City), 2025",
+     "place": "San Diego Convention Center, USA; Mexico City, Mexico",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2025-05-11 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-12T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/nips.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-05-15 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/nips.yml"
+      },
+      {
+       "kind": "supplementary",
+       "label": "Supplementary materials deadline",
+       "date": "2025-05-22 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-23T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/neurips.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author rebuttal begins",
+       "date": "2025-07-24 00:00:00",
+       "timezone": "AoE",
+       "at": "2025-07-24T12:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/neurips.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author rebuttal ends",
+       "date": "2025-07-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-07-31T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/neurips.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification",
+       "date": "2025-09-18 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-09-19T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/neurips.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready deadline",
+       "date": "2025-10-23 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-24T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/neurips.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://neurips.cc/Conferences/2026",
+     "dates": "December 8-10 (Sydney), December 9-11 (Atlanta and Paris), 2026",
+     "place": "Sydney, Australia; Atlanta, USA; Paris, France",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2026-05-05 11:59:59",
+       "timezone": "UTC+0",
+       "at": "2026-05-05T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/nips.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2026-05-07 11:59:59",
+       "timezone": "UTC+0",
+       "at": "2026-05-07T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/nips.yml"
+      },
+      {
+       "kind": "supplementary",
+       "label": "Supplementary materials deadline",
+       "date": "2026-05-06 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-05-07T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/neurips.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews released to authors",
+       "date": "2026-07-22 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-07-23T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/neurips.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal",
+       "date": "2026-08-04 11:59:59",
+       "timezone": "UTC+0",
+       "at": "2026-08-04T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/nips.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification",
+       "date": "2026-09-25 11:59:59",
+       "timezone": "UTC+0",
+       "at": "2026-09-25T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/nips.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://neurips.cc/Conferences/FutureMeetings",
+     "dates": "TBA",
+     "place": "Europe (city TBA)",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://neurips.cc/Conferences/FutureMeetings"
+     ],
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://neurips.cc/Conferences/FutureMeetings",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aaai",
+   "name": "AAAI",
+   "full": "AAAI Conference on Artificial Intelligence",
+   "categories": [
+    "ml"
+   ],
+   "organizer": "aaai",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://aaai.org/conference/aaai/aaai-25/",
+     "dates": "February 27-March 2, 2025",
+     "place": "PHILADELPHIA, PENNSYLVANIA, USA",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2024-08-07 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-08-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/aaai.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2024-08-15 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-08-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/aaai.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification",
+       "date": "2024-12-09 23:59:59",
+       "timezone": "AoE",
+       "at": "2024-12-10T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/aaai.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready deadline",
+       "date": "2024-12-19 23:59:59",
+       "timezone": "AoE",
+       "at": "2024-12-20T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/aaai.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://aaai.org/conference/aaai/aaai-26/",
+     "dates": "January 22-25, 2026",
+     "place": "Singapore EXPO",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2025-07-25 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-07-26T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/aaai.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-08-01 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-08-02T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/aaai.yml"
+      },
+      {
+       "kind": "supplementary",
+       "label": "Supplementary material and code deadline",
+       "date": "2025-08-04 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-08-05T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/aaai.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Phase 1 rejection notifications",
+       "date": "2025-09-15 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-09-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/aaai.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author feedback window start",
+       "date": "2025-10-07 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/aaai.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author feedback window end",
+       "date": "2025-10-13 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-14T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/aaai.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Final acceptance/rejection notices",
+       "date": "2025-11-08 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-11-09T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/aaai.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready deadline",
+       "date": "2025-11-13 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-11-14T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/aaai.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://aaai.org/conference/aaai/aaai-27/",
+     "dates": "February 16-23, 2027",
+     "place": "Montréal, Canada",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/"
+     ],
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstracts due",
+       "date": "2026-07-21 23:59",
+       "timezone": "UTC-12",
+       "at": "2026-07-22T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Full papers due",
+       "date": "2026-07-28 23:59",
+       "timezone": "UTC-12",
+       "at": "2026-07-29T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "supplementary",
+       "label": "Supplementary material and code",
+       "date": "2026-07-31 23:59",
+       "timezone": "UTC-12",
+       "at": "2026-08-01T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Phase 1 rejections",
+       "date": "2026-09-24",
+       "timezone": "UTC-12",
+       "at": "2026-09-25T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author feedback (Oct 24 to 31)",
+       "date": "2026-10-31",
+       "timezone": "UTC-12",
+       "at": "2026-11-01T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "10월 19일부터 25일까지였던 기간이 바뀜",
+       "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Final acceptance or rejection",
+       "date": "2026-11-30",
+       "timezone": "UTC-12",
+       "at": "2026-12-01T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready files",
+       "date": "2026-12-14",
+       "timezone": "UTC-12",
+       "at": "2026-12-15T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://aaai.org/conference/aaai/aaai-27/main-technical-track-call/",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ijcai",
+   "name": "IJCAI",
+   "full": "International Joint Conference on Artificial Intelligence",
+   "categories": [
+    "ml"
+   ],
+   "organizer": "ijcai",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://2025.ijcai.org/",
+     "dates": "August 19-22, 2025",
+     "place": "Montreal, Canada.",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract (Separate satellite event: August 29-31, 2025, Guangzhou, China)",
+       "date": "2025-01-16 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-01-17T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/ijcai.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Separate satellite event: August 29-31, 2025, Guangzhou, China)",
+       "date": "2025-01-23 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-01-24T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/ijcai.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Paper notification",
+       "date": "2025-04-28 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-04-29T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/ijcai.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://2026.ijcai.org/",
+     "dates": "August 18-21, 2026",
+     "place": "Bremen, Germany",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2026-01-12 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-01-13T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/ijcai.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2026-01-19 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2026-01-20T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/ijcai.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Phase I notification",
+       "date": "2026-03-04 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-03-05T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/ijcai.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author response period start",
+       "date": "2026-04-07 00:00:00",
+       "timezone": "AoE",
+       "at": "2026-04-07T12:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/ijcai.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author response period end",
+       "date": "2026-04-10 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-04-11T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/ijcai.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Paper notification",
+       "date": "2026-04-29 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-04-30T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/ijcai.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera ready deadline",
+       "date": "2026-05-15 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-05-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/ijcai.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://2027.ijcai.org/",
+     "dates": "August 7-13, 2027",
+     "place": "Kyoto, Japan",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/"
+     ],
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract submission",
+       "date": "2027-01-04 23:59",
+       "timezone": "AoE",
+       "at": "2027-01-05T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Full paper submission",
+       "date": "2027-01-11 23:59",
+       "timezone": "AoE",
+       "at": "2027-01-12T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Summary reject notification",
+       "date": "2027-02-25",
+       "timezone": "AoE",
+       "at": "2027-02-26T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author response (Mar 30 to Apr 2)",
+       "date": "2027-04-02 23:59",
+       "timezone": "AoE",
+       "at": "2027-04-03T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Paper notification",
+       "date": "2027-04-21",
+       "timezone": "AoE",
+       "at": "2027-04-22T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready copy",
+       "date": "2027-05-07 23:59",
+       "timezone": "AoE",
+       "at": "2027-05-08T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://2027.ijcai.org/ijcai-2027-call-for-papers-main-track/",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cvpr",
+   "name": "CVPR",
+   "full": "IEEE/CVF Conference on Computer Vision and Pattern Recognition",
+   "categories": [
+    "cv"
+   ],
+   "organizer": "cvf",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://cvpr.thecvf.com/Conferences/2025/CallForPapers",
+     "dates": "June 13-15, 2025",
+     "place": "Nashville, Tennessee, USA (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2024-11-07 23:59:59",
+       "timezone": "UTC-8",
+       "at": "2024-11-08T07:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/cvpr.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2024-11-14 23:59:59",
+       "timezone": "UTC-8",
+       "at": "2024-11-15T07:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/cvpr.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://cvpr.thecvf.com/Conferences/2026",
+     "dates": "June 5-7, 2026",
+     "place": "Denver, Colorado, United States (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2025-11-07 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-11-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/cvpr.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-11-13 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-11-14T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/cvpr.yml"
+      },
+      {
+       "kind": "supplementary",
+       "label": "Supplementary Materials",
+       "date": "2025-11-20 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-11-21T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/cvpr.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews Released",
+       "date": "2026-01-22 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-01-23T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/cvpr.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Period Starts",
+       "date": "2026-01-22 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-01-23T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/cvpr.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Period Ends",
+       "date": "2026-01-29 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-01-30T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/cvpr.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Final Decisions",
+       "date": "2026-02-20 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-02-21T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/cvpr.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://cvpr.thecvf.com/Conferences/2027",
+     "dates": "June 20-24, 2027",
+     "place": "Seattle, Washington, USA",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://cvpr.thecvf.com/Conferences/2027/Dates"
+     ],
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Paper registration",
+       "date": "2026-11-10 23:59",
+       "timezone": "AoE",
+       "at": "2026-11-11T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://cvpr.thecvf.com/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2026-11-16 23:59",
+       "timezone": "AoE",
+       "at": "2026-11-17T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://cvpr.thecvf.com/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "supplementary",
+       "label": "Supplementary materials",
+       "date": "2026-11-23 23:59",
+       "timezone": "AoE",
+       "at": "2026-11-24T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://cvpr.thecvf.com/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews released",
+       "date": "2027-01-25",
+       "timezone": "AoE",
+       "at": "2027-01-26T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://cvpr.thecvf.com/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Author rebuttal (Jan 25 to Feb 1)",
+       "date": "2027-02-01",
+       "timezone": "AoE",
+       "at": "2027-02-02T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://cvpr.thecvf.com/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Final decisions",
+       "date": "2027-02-25",
+       "timezone": "AoE",
+       "at": "2027-02-26T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://cvpr.thecvf.com/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iccv",
+   "name": "ICCV",
+   "full": "IEEE/CVF International Conference on Computer Vision",
+   "categories": [
+    "cv"
+   ],
+   "organizer": "cvf",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://iccv.thecvf.com/Conferences/2025",
+     "dates": "October 21-23, 2025",
+     "place": "Honolulu, Hawaii (Hybrid)",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2025-03-04 09:59:59",
+       "timezone": "UTC+0",
+       "at": "2025-03-04T09:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/iccv.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-03-08 09:59:59",
+       "timezone": "UTC+0",
+       "at": "2025-03-08T09:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/iccv.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews released",
+       "date": "2025-05-09 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-10T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/iccv.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal period start",
+       "date": "2025-05-10 00:00:00",
+       "timezone": "AoE",
+       "at": "2025-05-10T12:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/iccv.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal period end",
+       "date": "2025-05-16 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-17T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/iccv.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Final decision",
+       "date": "2025-06-20 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-06-21T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/iccv.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://iccv.thecvf.com/Conferences/2027",
+     "dates": "October 3-7, 2027",
+     "place": "Hong Kong, China",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://iccv.thecvf.com/Conferences/2027/Dates"
+     ],
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://iccv.thecvf.com/Conferences/2027/Dates",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "eccv",
+   "name": "ECCV",
+   "full": "European Conference on Computer Vision",
+   "categories": [
+    "cv"
+   ],
+   "organizer": "ecva",
+   "editions": [
+    {
+     "year": 2026,
+     "link": "https://eccv.ecva.net/",
+     "dates": "September 10-12, 2026",
+     "place": "Malmö, Sweden",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2026-02-26 14:00:00",
+       "timezone": "UTC-8",
+       "at": "2026-02-26T22:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/eccv.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2026-03-05 14:00:00",
+       "timezone": "UTC-8",
+       "at": "2026-03-05T22:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/AI/eccv.yml"
+      },
+      {
+       "kind": "supplementary",
+       "label": "Supplemental Materials",
+       "date": "2026-03-12 22:00:00",
+       "timezone": "UTC",
+       "at": "2026-03-12T22:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/eccv.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Tutorial/Workshop Decisions",
+       "date": "2026-04-12 20:00:00",
+       "timezone": "UTC",
+       "at": "2026-04-12T20:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/eccv.yml"
+      },
+      {
+       "kind": "reviews",
+       "label": "Reviews Released to Authors",
+       "date": "2026-05-02 23:59:59",
+       "timezone": "UTC",
+       "at": "2026-05-02T23:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/eccv.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Deadline",
+       "date": "2026-05-11 21:00:00",
+       "timezone": "UTC",
+       "at": "2026-05-11T21:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/eccv.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Final Decisions",
+       "date": "2026-06-17 23:59:59",
+       "timezone": "UTC",
+       "at": "2026-06-17T23:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/eccv.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera Ready Deadline",
+       "date": "2026-06-26 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-06-27T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/eccv.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "AI Art Acceptance Notification",
+       "date": "2026-06-29 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-06-30T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/eccv.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    }
+   ]
+  },
+  {
+   "id": "kdd",
+   "name": "KDD",
+   "full": "ACM SIGKDD Conference on Knowledge Discovery and Data Mining",
+   "categories": [
+    "dm"
+   ],
+   "organizer": "acm",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://kdd2025.kdd.org/",
+     "dates": "August 3-7, 2025",
+     "place": "Toronto, ON, Canada",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract (first round)",
+       "date": "2024-08-01 23:59:59",
+       "timezone": "AoE",
+       "at": "2024-08-02T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/sigkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (first round)",
+       "date": "2024-08-08 23:59:59",
+       "timezone": "AoE",
+       "at": "2024-08-09T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/sigkdd.yml"
+      },
+      {
+       "kind": "abstract",
+       "label": "Abstract (second round)",
+       "date": "2025-02-03 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-02-04T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/sigkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (second round)",
+       "date": "2025-02-10 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-02-11T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/sigkdd.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal period start",
+       "date": "2025-04-04 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-04-05T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal period end",
+       "date": "2025-04-18 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-04-19T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification",
+       "date": "2025-05-16 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-05-17T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://kdd2026.kdd.org/",
+     "dates": "August 10-13, 2026",
+     "place": "Jeju, Korea",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract (first round)",
+       "date": "2025-07-24 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-07-25T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/sigkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (first round)",
+       "date": "2025-07-31 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-08-01T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/sigkdd.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal period start (First Cycle)",
+       "date": "2025-10-04 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-05T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal period end (First Cycle)",
+       "date": "2025-10-18 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-19T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification (First Cycle)",
+       "date": "2025-11-23 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-11-24T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      },
+      {
+       "kind": "abstract",
+       "label": "Abstract (second round)",
+       "date": "2026-02-01 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-02-02T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/sigkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (second round)",
+       "date": "2026-02-08 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-02-09T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/sigkdd.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal period start (Second Cycle)",
+       "date": "2026-04-04 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-04-05T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal period end (Second Cycle)",
+       "date": "2026-04-17 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-04-18T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification (Second Cycle)",
+       "date": "2026-05-16 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-05-17T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/kdd.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://kdd2027.kdd.org/",
+     "dates": "August 1-5, 2027",
+     "place": "San Jose, California, USA",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://kdd2027.kdd.org/research-track-call-for-papers/"
+     ],
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Cycle 1 abstract",
+       "date": "2026-07-19 23:59",
+       "timezone": "AoE",
+       "at": "2026-07-20T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://kdd2027.kdd.org/research-track-call-for-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Cycle 1 paper",
+       "date": "2026-07-26 23:59",
+       "timezone": "AoE",
+       "at": "2026-07-27T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://kdd2027.kdd.org/research-track-call-for-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Cycle 1 rebuttal (Sep 29 to Oct 13)",
+       "date": "2026-10-13 23:59",
+       "timezone": "AoE",
+       "at": "2026-10-14T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://kdd2027.kdd.org/research-track-call-for-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Cycle 1 notification",
+       "date": "2026-11-14",
+       "timezone": "AoE",
+       "at": "2026-11-15T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://kdd2027.kdd.org/research-track-call-for-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Cycle 2 paper (February 2027)",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://kdd2027.kdd.org/research-track-call-for-papers/",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wsdm",
+   "name": "WSDM",
+   "full": "ACM International Conference on Web Search and Data Mining",
+   "categories": [
+    "dm"
+   ],
+   "organizer": "acm",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://www.wsdm-conference.org/2025/",
+     "dates": "March 11-13, 2025",
+     "place": "Hannover, Germany",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2024-08-09 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-08-10T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/wsdm.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2024-08-14 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2024-08-15T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/wsdm.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://wsdm-conference.org/2026/",
+     "dates": "February 23-25, 2026",
+     "place": "Boise, Idaho, USA",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2025-08-07 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-08-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/wsdm.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-08-14 23:59:59",
+       "timezone": "UTC-12",
+       "at": "2025-08-15T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/wsdm.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification (full papers)",
+       "date": "2025-10-23 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-24T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/wsdm.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification (short papers)",
+       "date": "2025-11-27 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-11-28T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/wsdm.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://wsdm-conference.org/2027/",
+     "dates": "February 15-19, 2027",
+     "place": "Hong Kong, China",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://wsdm-conference.org/2027/cffp.html",
+      "https://wsdm-conference.org/2027/cfsp.html"
+     ],
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Full paper abstract",
+       "date": "2026-08-17 23:59",
+       "timezone": "AoE",
+       "at": "2026-08-18T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://wsdm-conference.org/2027/cffp.html",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Full paper submission",
+       "date": "2026-08-24 23:59",
+       "timezone": "AoE",
+       "at": "2026-08-25T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://wsdm-conference.org/2027/cffp.html",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Full paper notification",
+       "date": "2026-11-02",
+       "timezone": "AoE",
+       "at": "2026-11-03T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://wsdm-conference.org/2027/cffp.html",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Short paper submission",
+       "date": "2026-11-17 23:59",
+       "timezone": "AoE",
+       "at": "2026-11-18T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://wsdm-conference.org/2027/cfsp.html",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Short paper notification",
+       "date": "2026-12-18",
+       "timezone": "AoE",
+       "at": "2026-12-19T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://wsdm-conference.org/2027/cfsp.html",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://wsdm-conference.org/2027/cfsp.html",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "www",
+   "name": "WWW",
+   "full": "The ACM Web Conference",
+   "categories": [
+    "dm"
+   ],
+   "organizer": "acm",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://www2025.thewebconf.org/",
+     "dates": "April 30 - May 2, 2025",
+     "place": "Sydney, Australia",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2024-10-07 23:59:59",
+       "timezone": "AoE",
+       "at": "2024-10-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/MX/www.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2024-10-14 23:59:59",
+       "timezone": "AoE",
+       "at": "2024-10-15T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/MX/www.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://www2026.thewebconf.org/",
+     "dates": "July 1-3, 2026",
+     "place": "Dubaï, UAE",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract",
+       "date": "2025-09-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-01T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/MX/www.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-10-07 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/MX/www.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Period Start",
+       "date": "2025-11-24 00:00:00",
+       "timezone": "AoE",
+       "at": "2025-11-24T12:00:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/www.yml"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal Period End",
+       "date": "2025-12-01 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-12-02T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/www.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification",
+       "date": "2026-01-13 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-01-14T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/www.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera Ready",
+       "date": "2026-01-25 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-01-26T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/www.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://www2027.thewebconf.org/",
+     "dates": "May 10-14, 2027",
+     "place": "Dublin, Ireland",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://www2027.thewebconf.org/research-track-papers/"
+     ],
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Research track abstract",
+       "date": "2026-10-18 23:59",
+       "timezone": "AoE",
+       "at": "2026-10-19T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://www2027.thewebconf.org/research-track-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Research track full paper",
+       "date": "2026-10-25 23:59",
+       "timezone": "AoE",
+       "at": "2026-10-26T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://www2027.thewebconf.org/research-track-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "abstract",
+       "label": "Short paper abstract",
+       "date": "2026-11-09 23:59",
+       "timezone": "AoE",
+       "at": "2026-11-10T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://www2027.thewebconf.org/research-track-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "submission",
+       "label": "Short paper submission",
+       "date": "2026-11-16 23:59",
+       "timezone": "AoE",
+       "at": "2026-11-17T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://www2027.thewebconf.org/research-track-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "reviews",
+       "label": "Results released",
+       "date": "2026-12-15",
+       "timezone": "AoE",
+       "at": "2026-12-16T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://www2027.thewebconf.org/research-track-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "rebuttal",
+       "label": "Rebuttal (Dec 15 to 20)",
+       "date": "2026-12-20 23:59",
+       "timezone": "AoE",
+       "at": "2026-12-21T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://www2027.thewebconf.org/research-track-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Notification",
+       "date": "2027-01-04",
+       "timezone": "AoE",
+       "at": "2027-01-05T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://www2027.thewebconf.org/research-track-papers/",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Final version",
+       "date": "2027-01-31 23:59",
+       "timezone": "AoE",
+       "at": "2027-02-01T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://www2027.thewebconf.org/research-track-papers/",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pakdd",
+   "name": "PAKDD",
+   "full": "Pacific-Asia Conference on Knowledge Discovery and Data Mining",
+   "categories": [
+    "dm"
+   ],
+   "organizer": "pakdd",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://pakdd2025.org",
+     "dates": "June 11-13, 2025",
+     "place": "Sydney, Australia",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2024-12-14 23:59:59",
+       "timezone": "UTC-8",
+       "at": "2024-12-15T07:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pakdd.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://www.pakdd2026.org/",
+     "dates": "June 9-12, 2026",
+     "place": "Hong Kong, China",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2025-11-25 23:59:59",
+       "timezone": "UTC-8",
+       "at": "2025-11-26T07:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pakdd.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://www.pakdd2027.org/",
+     "dates": "June 29 to July 2, 2027",
+     "place": "Wellington, New Zealand",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://www.pakdd2027.org/pages/dates"
+     ],
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Paper submission",
+       "date": "2026-12-04 23:59",
+       "timezone": "AoE",
+       "at": "2026-12-05T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "11월 20일에서 연장됨",
+       "source": "https://www.pakdd2027.org/pages/dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "notification",
+       "label": "Paper acceptance notification",
+       "date": "2027-02-26",
+       "timezone": "AoE",
+       "at": "2027-02-27T11:59:59.000Z",
+       "dateOnly": true,
+       "note": "",
+       "source": "https://www.pakdd2027.org/pages/dates",
+       "checked": "2026-11-28"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera-ready papers due",
+       "date": "2027-03-19 23:59",
+       "timezone": "AoE",
+       "at": "2027-03-20T11:59:00.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://www.pakdd2027.org/pages/dates",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ecmlpkdd",
+   "name": "ECML PKDD",
+   "full": "European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases",
+   "categories": [
+    "dm",
+    "ml"
+   ],
+   "organizer": "ecmlpkdd",
+   "editions": [
+    {
+     "year": 2025,
+     "link": "https://ecmlpkdd.org/2025/",
+     "dates": "September 15-18, 2025",
+     "place": "Porto, Portugal",
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Paper submission (Journal track, cycle 2)",
+       "date": "2024-12-13 23:59:59",
+       "timezone": "AoE",
+       "at": "2024-12-14T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Journal track, cycle 3)",
+       "date": "2025-02-14 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-02-15T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "abstract",
+       "label": "Abstract (Research track)",
+       "date": "2025-03-07 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-03-08T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Research track)",
+       "date": "2025-03-14 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-03-15T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Journal track, cycle 1; conflicting October 11/13 dates)",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2026,
+     "link": "https://ecmlpkdd.org/2026/",
+     "dates": "September 7-11, 2026",
+     "place": "Naples, Italy",
+     "deadlines": [
+      {
+       "kind": "abstract",
+       "label": "Abstract (Journal track, cycle 1; CMT abstract and journal manuscript)",
+       "date": "2025-10-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-31T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Journal track, cycle 1; CMT abstract and journal manuscript)",
+       "date": "2025-10-30 23:59:59",
+       "timezone": "AoE",
+       "at": "2025-10-31T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "abstract",
+       "label": "Abstract (Journal track, cycle 2; CMT abstract and journal manuscript)",
+       "date": "2026-01-15 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-01-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Journal track, cycle 2; CMT abstract and journal manuscript)",
+       "date": "2026-01-15 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-01-16T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "abstract",
+       "label": "Abstract (Research track)",
+       "date": "2026-03-05 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-03-06T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "submission",
+       "label": "Paper submission (Research track)",
+       "date": "2026-03-12 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-03-13T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/ccfddl/ccf-deadlines/blob/348f2131dc995dd8b0d7a69fa4706f83f48a0ad6/conference/DB/pkdd.yml"
+      },
+      {
+       "kind": "notification",
+       "label": "Author notification",
+       "date": "2026-05-27 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-05-28T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/ecml_pkdd.yml"
+      },
+      {
+       "kind": "camera_ready",
+       "label": "Camera ready submission",
+       "date": "2026-06-18 23:59:59",
+       "timezone": "AoE",
+       "at": "2026-06-19T11:59:59.000Z",
+       "dateOnly": false,
+       "note": "",
+       "source": "https://github.com/huggingface/ai-deadlines/blob/f9642a13bf765a05c627b35586f852602d2dd022/src/data/conferences/ecml_pkdd.yml"
+      }
+     ],
+     "checked": null,
+     "sources": []
+    },
+    {
+     "year": 2027,
+     "link": "https://ecmlpkdd.org/2027/",
+     "dates": "August 30 to September 3, 2027",
+     "place": "Eindhoven, Netherlands",
+     "checked": "2026-11-28",
+     "sources": [
+      "https://ecmlpkdd.org/2027/"
+     ],
+     "deadlines": [
+      {
+       "kind": "submission",
+       "label": "Research track submission",
+       "date": null,
+       "timezone": "AoE",
+       "at": null,
+       "dateOnly": false,
+       "note": "",
+       "source": "https://ecmlpkdd.org/2027/",
+       "checked": "2026-11-28"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
