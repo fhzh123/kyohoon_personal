@@ -17,6 +17,7 @@ import {loadHomeWeather} from './home-weather.mjs';
 import {markdownRoutes} from './markdown-routes.mjs';
 import {travelPage} from '../views/travel.mjs';
 import {galleryPage} from '../views/gallery.mjs';
+import {calendarPage} from '../views/calendar.mjs';
 import {IDLE_MS,SESSION_COOKIE_AGE,sealIdle,readIdle} from './idle-session.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -239,6 +240,16 @@ export function createHandler({localPreview = false, rootDir = root, environment
         if (!preview(req)) return send(res,404,{error:'찾을 수 없습니다.'});
         try { await localEnvelope(); } catch { return send(res,503,{error:'프로젝트에 업무 자료를 먼저 가져와 주세요.'}); }
         return redirect(res,'/work',setCookie('kh_local',localToken,3600));
+      }
+      // Calendar is the owner's schedule. While it is a design draft with sample events,
+      // Vercel preview deployments and the local server show it without signing in.
+      if (pathname === '/calendar' || pathname === '/calendar/') {
+        if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
+        const access=await authorize(req,res).catch(()=>null);
+        const draft=environment.VERCEL_ENV==='preview'||(environment.NODE_ENV==='development'&&!environment.VERCEL);
+        if(!draft&&!access)return redirect(res,'/login?next=%2Fcalendar');
+        if(!draft&&!canManageHomeSettings(access))return send(res,403,req.method==='HEAD'?'':accessDeniedPage({selectstarOnly:isSelectstarReader(access)}),'text/html; charset=utf-8');
+        return send(res,200,req.method==='HEAD'?'':calendarPage(access),'text/html; charset=utf-8');
       }
       if (pathname === '/personal' || pathname === '/personal/') {
         if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});

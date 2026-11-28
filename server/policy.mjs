@@ -27,7 +27,7 @@ export function safeLoginDestination(value) {
     if (url.origin !== 'https://local.invalid') return '/';
     const allowed = ['/', '/work', '/work/', '/work/demos', '/work/demos/', '/work/app/index.html', '/work/team-resources', '/work/team-resources/', '/work/expenses', '/work/expenses/', '/work/expenses/index.html', '/personal', '/personal/', '/personal/travel', '/personal/travel/'];
     if (/^\/work\/demos\/(?:ontology|document-parsing)(?:\/(?:index\.html|outputs\/(?:evaluation_results|hits5_case_analysis)\.html)?)?$/.test(url.pathname)) return url.pathname + url.search + url.hash;
-    return [...allowed,'/paper','/paper/','/settings','/settings/','/personal/gallery','/personal/gallery/','/personal/markdown','/personal/markdown/','/resume','/resume/'].includes(url.pathname) ? url.pathname + url.search + url.hash : '/';
+    return [...allowed,'/paper','/paper/','/settings','/settings/','/personal/gallery','/personal/gallery/','/personal/markdown','/personal/markdown/','/calendar','/calendar/','/resume','/resume/'].includes(url.pathname) ? url.pathname + url.search + url.hash : '/';
   } catch { return '/'; }
 }
 
