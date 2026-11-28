@@ -6,7 +6,7 @@ import {gzipSync,gunzipSync} from 'node:zlib';
 import {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import { homePage, loginPage, workPage, demosPage, personalPage, markdownPage, accessDeniedPage } from '../views/pages.mjs';
-import { previewAllowed, safeRelativePath, safeLoginDestination, validState, isSelectstarReader, canAccessMarkdown, memberLoginDestination } from './policy.mjs';
+import { previewAllowed, safeRelativePath, safeLoginDestination, validState, isSelectstarReader, canManageHomeSettings, canAccessMarkdown, memberLoginDestination } from './policy.mjs';
 import {demoRoutes} from './demo-routes.mjs';
 import {teamResourceRoutes} from './team-resource-routes.mjs';
 import { expenseRoutes } from './expense-routes.mjs';
@@ -336,7 +336,7 @@ export function createHandler({localPreview = false, rootDir = root, environment
       if (!['GET','HEAD'].includes(req.method)) return send(res,405,{error:'허용되지 않은 요청입니다.'});
       if (pathname === '/') {
         const access=await authorize(req,res);
-        return send(res,200,homePage({authenticated:Boolean(access),selectstarOnly:isSelectstarReader(access),markdownAllowed:!access||canAccessMarkdown(access)}),'text/html; charset=utf-8');
+        return send(res,200,homePage({authenticated:Boolean(access),selectstarOnly:isSelectstarReader(access),markdownAllowed:!access||canAccessMarkdown(access),manageHome:canManageHomeSettings(access)}),'text/html; charset=utf-8');
       }
       if (pathname === '/resume' || pathname === '/resume/') {
         // Keep the public CV available to everyone; only expose the Home shortcut

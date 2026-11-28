@@ -37,6 +37,11 @@ export function isSelectstarReader(access) {
 }
 
 /** @param {{role:string, mode:string, isOwner?:boolean} | null | undefined} access */
+export function canManageHomeSettings(access) {
+  return !isSelectstarReader(access) && (access?.isOwner === true || access?.mode === 'local');
+}
+
+/** @param {{role:string, mode:string, isOwner?:boolean} | null | undefined} access */
 export function canAccessMarkdown(access) {
   return access?.role === 'editor' && (access.mode === 'local' || access.isOwner === true);
 }

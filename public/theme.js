@@ -5,8 +5,9 @@
  const valid=value=>['dark','light','system'].includes(value);
  let preference='system',theme=media?.matches?'dark':'light';
  const motionKey='kyohoon-home-motion',motionMedia=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+ const manageHome=root.hasAttribute('data-manage-home');
  let homeMotion='system';
- try{const saved=localStorage.getItem(motionKey);if(['system','on','off'].includes(saved))homeMotion=saved;}catch{}
+ if(manageHome)try{const saved=localStorage.getItem(motionKey);if(['system','on','off'].includes(saved))homeMotion=saved;}catch{}
  function refreshMotion(){
   root.dataset.homeMotion=homeMotion;
   for(const field of document.querySelectorAll('[data-home-motion-select]'))field.value=homeMotion;
@@ -33,9 +34,9 @@
   refresh();
  }
  apply(preference);document.addEventListener('DOMContentLoaded',refresh);
- document.addEventListener('change',event=>{if(!event.target.matches('[data-home-motion-select]'))return;const value=event.target.value;if(!['system','on','off'].includes(value))return;homeMotion=value;try{localStorage.setItem(motionKey,value);}catch{}refreshMotion();});
+ document.addEventListener('change',event=>{if(!manageHome||!event.target.matches('[data-home-motion-select]'))return;const value=event.target.value;if(!['system','on','off'].includes(value))return;homeMotion=value;try{localStorage.setItem(motionKey,value);}catch{}refreshMotion();});
  motionMedia?.addEventListener?.('change',refreshMotion);
- window.addEventListener('storage',event=>{if(event.key===motionKey){homeMotion=['system','on','off'].includes(event.newValue)?event.newValue:'system';refreshMotion();}});
+ window.addEventListener('storage',event=>{if(manageHome&&event.key===motionKey){homeMotion=['system','on','off'].includes(event.newValue)?event.newValue:'system';refreshMotion();}});
  document.addEventListener('click',event=>{const b=event.target.closest('[data-theme-toggle],[data-theme-value]');if(b&&!b.disabled)apply(b.dataset.themeValue||(theme==='dark'?'light':'dark'),true);});
  const systemChanged=()=>{if(preference==='system')apply('system');};
  if(media?.addEventListener)media.addEventListener('change',systemChanged);else media?.addListener?.(systemChanged);

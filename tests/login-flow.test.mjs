@@ -59,3 +59,29 @@ test('password help uses native dialog, copies contact details and never sends r
  w.document.querySelector('.password-toggle').click();assert.equal(w.document.querySelector('#password').type,'text');w.document.querySelector('.password-toggle').click();assert.equal(w.document.querySelector('#password').type,'password');w.close();
 });
 
+test('only the site owner gets editable home settings and home controls',async()=>{
+ const fetcher=async url=>url.endsWith('/auth/v1/user') ? json({id:'member'}) : json([membership]);
+ let membership={user_id:'member',role:'editor',is_owner:false};
+ const handler=createHandler({environment,fetcher});
+ const token={cookie:'kh_access=test-only'};
+ for(const [headers,owner] of [[{},false],[token,false],[token,true]]){
+  membership={...membership,is_owner:owner};
+  const home=await request(handler,'/',{headers});
+  const settings=await request(handler,'/settings',{headers});
+  assert.equal(home.status,200);
+  assert.equal(settings.status,200);
+  const homeWindow=new JSDOM(home.text).window;
+  const settingsWindow=new JSDOM(settings.text).window;
+  try {
+   const homeDoc=homeWindow.document, settingsDoc=settingsWindow.document;
+   for(const control of ['[data-home-motion-select]','[data-mascot-settings]','input[name="home-title"]','[data-settings-tab="home"]']){
+    assert.equal(Boolean(settingsDoc.querySelector(control)),owner,control);
+   }
+   for(const control of ['[data-desk-edit]','[data-desk-options]','[data-desk-dialog]','[data-desk-pose]','[data-default-home-title]']){
+    assert.equal(Boolean(homeDoc.querySelector(control)),owner,control);
+   }
+   assert.ok(settingsDoc.querySelector('[data-theme-value="system"]'));
+   assert.ok(homeDoc.querySelector('[data-desk-poke]'));
+  } finally { homeWindow.close(); settingsWindow.close(); }
+ }
+});
