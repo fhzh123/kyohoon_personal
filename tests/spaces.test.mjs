@@ -7,8 +7,8 @@ import {homePage,workPage,demosPage,personalPage} from '../views/pages.mjs';
 const source=path=>readFile(new URL('../'+path,import.meta.url),'utf8');
 test('four home destinations preserve existing poses; tools use unique illustrations',()=>{
  const d=new JSDOM(homePage()).window.document;
- assert.deepEqual([...d.querySelectorAll('a.portal')].map(a=>a.getAttribute('href')),['/resume','/work','/paper','/personal']);
- const poses=[...d.querySelectorAll('a.portal')].map(a=>a.dataset.pose);assert.equal(new Set(poses).size,4,'each space has its own mascot pose');
+ assert.deepEqual([...d.querySelectorAll('.home-spaces a')].map(a=>a.getAttribute('href')),['/resume','/work','/paper','/personal']);
+ const poses=[...d.querySelectorAll('.home-spaces a')].map(a=>a.dataset.pose);assert.equal(new Set(poses).size,4,'each space has its own mascot pose');
  for(const pose of poses)assert.ok(existsSync(new URL('../public'+pose,import.meta.url)),pose);
  assert.ok(!poses.includes(d.querySelector('[data-default-pose]').getAttribute('src')),'the resting pose differs from every space pose');
  const hub=new JSDOM(workPage({mode:'supabase',role:'editor'})).window.document;
