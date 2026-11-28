@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile, mkdtemp} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
 import {Readable} from 'node:stream';
 import {expandIcs} from '../server/ics.mjs';
 import {calendarRoutes, feedUrl} from '../server/calendar-routes.mjs';
@@ -34,7 +36,8 @@ async function call(handler, access) {
   const req = Object.assign(Readable.from([]), {url: '/api/calendar/events', method: 'GET', headers: {}});
   const res = {status: 0, body: null};
   const send = (_, status, body) => { res.status = status; res.body = body; };
-  const routes = calendarRoutes({authorize: async () => access, send, ...handler});
+  const rootDir = await mkdtemp(path.join(tmpdir(), 'cal-ics-'));
+  const routes = calendarRoutes({authorize: async () => access, send, rootDir, ...handler});
   assert.equal(await routes(req, {}, new URL('https://x.invalid/api/calendar/events')), true);
   return res;
 }

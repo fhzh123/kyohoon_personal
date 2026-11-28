@@ -24,13 +24,13 @@ function mascotSettings() {
 }
 export function settingsPage({authenticated=false,manageHome=false}={}){
   const content=(tab,label)=>authenticated?`<p class="paper-subtle">${label} 설정을 불러오는 중입니다.</p>`:loginGate(tab);
-  return shell('설정',`<link rel="stylesheet" href="/paper.css?v=20261120-1"><link rel="stylesheet" href="/settings.css?v=20261120-1"><link rel="stylesheet" href="/home-mascot-settings.css?v=20261128-1"><link rel="stylesheet" href="/personal.css?v=20261116-3"><div class="paper-shell">
+  return shell('설정',`<link rel="stylesheet" href="/paper.css?v=20261120-1"><link rel="stylesheet" href="/settings.css?v=20261120-1"><link rel="stylesheet" href="/home-mascot-settings.css?v=20261128-1"><link rel="stylesheet" href="/personal.css?v=20261116-3">${manageHome ? '<link rel="stylesheet" href="/calendar/calendar-settings.css?v=20261128-1">' : ''}<div class="paper-shell">
   ${authenticated?privateHeader():publicHeader()}
   <main id="main" class="settings-main paper-main"><a class="paper-back" id="settings-return" href="/">← 돌아가기</a>
   <div class="settings-heading"><p class="paper-eyebrow">PREFERENCES</p><h1>설정</h1><p>화면과 배경, LLM 사용 환경을 설정합니다.</p></div>
   <div class="settings-layout"><nav class="settings-nav" aria-label="설정 항목">
     <a href="#appearance" data-settings-tab="appearance">화면<span>Display</span></a>
-    ${manageHome ? '<a href="#home" data-settings-tab="home">홈 설정<span>Home</span></a>' : ''}
+    ${manageHome ? '<a href="#home" data-settings-tab="home">홈 설정<span>Home</span></a><a href="#calendar" data-settings-tab="calendar">캘린더<span>Calendar</span></a>' : ''}
     <a href="#background" data-settings-tab="background">배경<span>Background</span></a>
     <a href="#llm" data-settings-tab="llm">LLM 설정<span>Models</span></a>
   </nav><div class="settings-content">
@@ -50,11 +50,15 @@ export function settingsPage({authenticated=false,manageHome=false}={}){
       </form>
     </section>
     ${mascotSettings()}</section>` : ''}
+    ${manageHome ? `<section id="calendar" class="settings-panel" hidden>
+    <div class="settings-section-title"><h2>캘린더</h2><p>Calendar에서 캘린더가 놓이는 순서와 색을 정합니다.<br>위에 있는 캘린더가 같은 시각의 일정과 종일 일정에서 먼저 보입니다.</p></div>
+    <div class="cal-settings" data-calendar-settings aria-busy="true"><p class="paper-subtle">캘린더 설정을 불러오는 중입니다.</p></div>
+    </section>` : ''}
     <section id="background" class="settings-panel" hidden><div id="background-controls" class="background-settings" data-authenticated="${authenticated}">${content('background','배경')}</div></section>
     <section id="llm" class="settings-panel" hidden><div id="llm-app" data-authenticated="${authenticated}" aria-busy="${authenticated}">${content('llm','모델')}</div></section>
   </div></div></main>${footer()}</div>
   <template id="settings-login-template">${loginGate('llm')}</template>
   <div id="settings-status" class="paper-toast" role="status" aria-live="polite" hidden></div>
-  ${manageHome ? '<script src="/home-title.js?v=1" defer></script>' : ''}<script src="/settings.js?v=20261128-2" defer></script><script src="/appearance-settings.js?v=20261115-3" defer></script>`,'settings',{manageHome});
+  ${manageHome ? '<script src="/home-title.js?v=1" defer></script><script src="/calendar/calendar-palette.js?v=20261128-3" defer></script><script src="/calendar/calendar-settings.js?v=20261128-1" defer></script>' : ''}<script src="/settings.js?v=20261128-2" defer></script><script src="/appearance-settings.js?v=20261115-3" defer></script>`,'settings',{manageHome});
 }
 

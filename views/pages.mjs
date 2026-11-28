@@ -76,7 +76,7 @@ export const homePage = ({authenticated = false, selectstarOnly = false, markdow
   const tools = HOME_TOOLS.filter(tool => (!selectstarOnly || (!tool.fullAccess && !tool.owner)) && (!tool.owner || markdownAllowed));
   const spaces = HOME_SPACES.filter(space => !selectstarOnly || space.id !== 'paper');
   // Calendar is the owner's own schedule, so only the owner sees it in the space list.
-  if (manageHome && !selectstarOnly) spaces.push({id:'calendar', href:'/calendar', title:'Calendar'});
+  if (!selectstarOnly) spaces.push({id:'calendar', href:'/calendar', title:'Calendar'});
   return shell('진교훈', `
 <div class="home">
   <header class="site-header home-header">${brand()}
@@ -221,8 +221,10 @@ export function personalPage(access) {
 
 // 마크다운 에디터: 폴더와 문서 목록, 편집기와 미리보기, PDF 내보내기.
 // 로그인하지 않은 방문자에게는 로그인 안내만 보여 줍니다.
-export function accessDeniedPage({markdown = false, selectstarOnly = false} = {}) {
-  const description = markdown
+export function accessDeniedPage({markdown = false, calendar = false, selectstarOnly = false} = {}) {
+  const description = calendar
+    ? 'Calendar는 사이트 소유자만 열 수 있습니다.'
+    : markdown
     ? '마크다운 에디터는 사이트 소유자만 열 수 있습니다.'
     : '현재 로그인한 계정에는 이 페이지를 읽을 권한이 없습니다.';
   const back = selectstarOnly ? '/work' : markdown ? '/personal' : '/';

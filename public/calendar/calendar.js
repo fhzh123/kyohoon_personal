@@ -1,6 +1,7 @@
 /* Calendar: day, week, month and year views over one list of events.
    The view and date live in the URL (?view=week&date=2026-11-28) so a reload or a shared link
-   opens the same place. Keys: D W M Y switch views, T goes to today, the arrow keys step. */
+   opens the same place. Keys: D W M Y switch views, T goes to today, N adds an event,
+   the arrow keys step. Personal and Paper events are written here; Selectstar comes from Outlook. */
 (() => {
   'use strict';
   const app = document.querySelector('[data-cal-app]');
@@ -37,7 +38,14 @@
   const shortTime = time;
 
   const calendars = new Map(sample.calendars.map(c => [c.id, c]));
-  const byStart = (a, b) => a.start - b.start || b.end - a.end;
+  const palette = window.CalendarPalette;
+  // Display order from Settings: the sidebar, and which event wins a tie (same start, same day
+  // for all-day bars, the left column when events overlap). Holidays always lead.
+  // The last saved settings are kept in this browser so the colours are right before the data arrives.
+  let config = palette ? JSON.parse(JSON.stringify(palette.defaults)) : {order: ['personal', 'work', 'paper']};
+  try { const kept = JSON.parse(localStorage.getItem('kh-calendar-config') || 'null'); if (kept?.order?.length === 3 && kept.colors) config = kept; } catch {}
+  const rank = cal => cal === 'holiday' ? -1 : (i => i < 0 ? 9 : i)(config.order.indexOf(cal));
+  const byStart = (a, b) => a.start - b.start || rank(a.cal) - rank(b.cal) || b.end - a.end;
   let events = sample.events.slice().sort(byStart);
   let shownCalendars = sample.calendars;
   const holidays = sample.holidays;
@@ -85,7 +93,7 @@
       const col = Math.round((from - first) / 864e5);
       const span = Math.round((to - from) / 864e5) + 1;
       return {e, col, span, cutStart: e.start < first, cutEnd: endDay >= last};
-    }).sort((a, b) => a.col - b.col || b.span - a.span || a.e.start - b.e.start);
+    }).sort((a, b) => a.col - b.col || rank(a.e.cal) - rank(b.e.cal) || b.span - a.span || a.e.start - b.e.start);
     const ends = [];
     for (const bar of bars) {
       let lane = ends.findIndex(end => end <= bar.col);
@@ -104,7 +112,7 @@
   // ---------------------------------------------------------------- day and week
   function layoutDay(list) {
     // Overlapping events share the width; each cluster gets as many columns as it needs.
-    const items = list.slice().sort((a, b) => a.top - b.top || b.bottom - a.bottom);
+    const items = list.slice().sort((a, b) => a.top - b.top || rank(a.e.cal) - rank(b.e.cal) || b.bottom - a.bottom);
     let cluster = [], columns = [], clusterEnd = -1;
     const close = () => { for (const item of cluster) item.cols = columns.length; cluster = []; columns = []; };
     for (const item of items) {
@@ -137,7 +145,7 @@
         return `<button ${eventAttrs(e)} data-kind="block"${short ? ' data-short' : ''} style="top:${top / 60 * HOUR}px;height:${(bottom - top) / 60 * HOUR - 2}px;left:calc(${col / cols * 100}% + 2px);width:calc(${100 / cols}% - 4px)"><span class="cal-event-title">${esc(e.title)}</span><span class="cal-event-time">${time(e.start)}${short ? '' : ` – ${time(e.end)}`}</span>${!short && e.place && bottom - top >= 90 ? `<span class="cal-event-place">${esc(e.place)}</span>` : ''}</button>`;
       }).join('');
       const nowLine = sameDay(d, now) ? `<div class="cal-now" data-now style="top:${minutes(now) / 60 * HOUR}px" aria-hidden="true"></div>` : '';
-      return `<div class="cal-col ${dayClass(d)}">${blocks}${nowLine}</div>`;
+      return `<div class="cal-col ${dayClass(d)}" data-day="${iso(d)}">${blocks}${nowLine}</div>`;
     }).join('');
     const hours = Array.from({length: 23}, (_, i) => `<span style="top:${(i + 1) * HOUR}px">${i + 1}시</span>`).join('');
     const grid = `<div class="cal-grid" style="--days:${days.length};--hour:${HOUR}px">
@@ -154,7 +162,7 @@
 
   // Day view: the same events as a readable list beside the grid, with place and memo.
   function dayAgenda(d, list) {
-    const items = list.filter(e => e.cal !== 'holiday').sort((a, b) => (b.allDay - a.allDay) || a.start - b.start);
+    const items = list.filter(e => e.cal !== 'holiday').sort((a, b) => (b.allDay - a.allDay) || (a.allDay ? rank(a.cal) - rank(b.cal) : 0) || byStart(a, b));
     const holiday = list.find(e => e.cal === 'holiday' && sameDay(e.start, d));
     const rows = items.map(e => {
       const c = calendars.get(e.cal);
@@ -205,7 +213,7 @@
         if (more > 0 && free.length) chips += `<button type="button" class="cal-more" data-goto="${iso(d)}" style="grid-column:${c + 1};grid-row:${free[free.length - 1] + 2}">${more}개 더</button>`;
         const outside = d.getMonth() !== first.getMonth();
         const holiday = isHoliday(d) ? events.find(e => e.cal === 'holiday' && sameDay(e.start, d)) : null;
-        cells += `<div class="cal-cell ${dayClass(d)}${outside ? ' is-outside' : ''}${sameDay(d, state.date) ? ' is-selected' : ''}" style="grid-column:${c + 1}"><button type="button" class="cal-date" data-goto="${iso(d)}" aria-label="${esc(fLong.format(d))}${holiday ? ', ' + esc(holiday.title) : ''} 일간 보기">${d.getDate() === 1 ? `<span class="cal-date-unit">${d.getMonth() + 1}월&nbsp;</span>1<span class="cal-date-unit">일</span>` : d.getDate()}</button></div>`;
+        cells += `<div class="cal-cell ${dayClass(d)}${outside ? ' is-outside' : ''}${sameDay(d, state.date) ? ' is-selected' : ''}" data-day="${iso(d)}" style="grid-column:${c + 1}"><button type="button" class="cal-date" data-goto="${iso(d)}" aria-label="${esc(fLong.format(d))}${holiday ? ', ' + esc(holiday.title) : ''} 일간 보기">${d.getDate() === 1 ? `<span class="cal-date-unit">${d.getMonth() + 1}월&nbsp;</span>1<span class="cal-date-unit">일</span>` : d.getDate()}</button></div>`;
       }
       rows += `<div class="cal-week">${cells}${shown.join('')}${chips}</div>`;
     }
@@ -264,7 +272,7 @@
   }
 
   function renderSources() {
-    $('[data-sources]').innerHTML = shownCalendars.map(c => `<li><label class="cal-source" data-cal="${c.id}"><input type="checkbox" value="${c.id}"${state.hidden.has(c.id) ? '' : ' checked'}><span class="cal-swatch" aria-hidden="true"></span><span class="cal-source-name">${esc(c.name)}</span><span class="cal-source-detail">${esc(c.detail)}</span></label></li>`).join('');
+    $('[data-sources]').innerHTML = shownCalendars.slice().sort((a, b) => (a.id === 'holiday') - (b.id === 'holiday') || rank(a.id) - rank(b.id)).map(c => `<li><label class="cal-source" data-cal="${c.id}"><input type="checkbox" value="${c.id}"${state.hidden.has(c.id) ? '' : ' checked'}><span class="cal-swatch" aria-hidden="true"></span><span class="cal-source-name">${esc(c.name)}</span><span class="cal-source-detail">${esc(c.detail)}</span></label></li>`).join('');
   }
 
   function renderUpcoming() {
@@ -360,7 +368,8 @@
     pop.dataset.cal = e.cal;
     pop.innerHTML = `<div class="cal-pop-head"><span class="cal-pop-cal"><span class="cal-swatch" aria-hidden="true"></span>${esc(c.name)}</span><button type="button" class="cal-icon-btn" data-pop-close aria-label="닫기"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
       <h2 id="cal-pop-title">${esc(e.title)}</h2>
-      <dl><div><dt>날짜</dt><dd>${esc(when)}</dd></div><div><dt>시간</dt><dd>${esc(hours)}</dd></div>${e.place ? `<div><dt>장소</dt><dd>${esc(e.place)}</dd></div>` : ''}${e.note ? `<div><dt>메모</dt><dd>${esc(e.note)}</dd></div>` : ''}</dl>`;
+      <dl><div><dt>날짜</dt><dd>${esc(when)}</dd></div><div><dt>시간</dt><dd>${esc(hours)}</dd></div>${e.place ? `<div><dt>장소</dt><dd>${esc(e.place)}</dd></div>` : ''}${e.note ? `<div><dt>메모</dt><dd>${esc(e.note)}</dd></div>` : ''}</dl>
+      ${e.editable ? `<div class="cal-pop-actions"><button type="button" class="btn btn--secondary" data-pop-edit="${esc(e.id)}">수정</button><button type="button" class="cal-pop-delete" data-pop-delete="${esc(e.id)}">삭제</button></div>` : e.cal === 'work' && app.dataset.source === 'live' ? '<p class="cal-pop-source">Outlook에서 읽어 온 일정이라 여기서는 고칠 수 없습니다.</p>' : ''}`;
     pop.hidden = false;
     popFrom = button;
     app.querySelectorAll('.cal-event.is-open').forEach(el => el.classList.remove('is-open'));
@@ -390,9 +399,20 @@
 
   // ---------------------------------------------------------------- events
   app.addEventListener('click', event => {
+    // A click on empty space in a day column or a month cell starts a new event there.
+    const blank = event.target.matches('.cal-col, .cal-cell') ? event.target : null;
+    if (blank && pop.hidden) {
+      const day = parseIso(blank.dataset.day);
+      if (!blank.matches('.cal-col')) return openEditor({day});
+      const y = event.clientY - blank.getBoundingClientRect().top;
+      return openEditor({day, minute: Math.min(23 * 60 + 30, Math.max(0, Math.floor(y / HOUR * 2) * 30))});
+    }
     const t = event.target.closest('button, input');
     if (!t) return;
     if (t.matches('[data-pop-close]')) return closePop({restore: true});
+    if (t.dataset.popEdit) { const e = events.find(x => x.id === t.dataset.popEdit); closePop(); return e && openEditor({event: e}); }
+    if (t.dataset.popDelete) { const e = events.find(x => x.id === t.dataset.popDelete); closePop(); return e && removeEvent(e); }
+    if (t.matches('[data-new-event]')) return openEditor({day: state.date});
     if (t.matches('.cal-event')) { event.stopPropagation(); return popFrom === t ? closePop() : openPop(t); }
     if (t.dataset.viewBtn) return go({view: t.dataset.viewBtn});
     if (t.dataset.step) return step(Number(t.dataset.step));
@@ -411,12 +431,14 @@
   });
   document.addEventListener('click', event => { if (!pop.hidden && !pop.contains(event.target)) closePop(); });
   document.addEventListener('keydown', event => {
+    if (editor.open) return;
     if (event.key === 'Escape' && !pop.hidden) return closePop({restore: true});
     if (event.metaKey || event.ctrlKey || event.altKey || event.target.closest('input, textarea, select, [contenteditable]')) return;
     const keys = {d: 'day', w: 'week', m: 'month', y: 'year'};
     const k = event.key.toLowerCase();
     if (keys[k]) { event.preventDefault(); go({view: keys[k]}); }
     else if (k === 't') { event.preventDefault(); go({date: startOfDay(new Date())}); }
+    else if (k === 'n') { event.preventDefault(); openEditor({day: state.date}); }
     else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       if (event.target.closest('[data-grid-scroll]') === null && event.target.closest('.cal-event, .cal-mini-grid')) return;
       event.preventDefault();
@@ -433,40 +455,228 @@
     app.querySelectorAll('[data-now]').forEach(line => { line.style.top = `${minutes(now) / 60 * HOUR}px`; });
   }, 30000);
 
-  // Outlook: the server reads the published .ics links and returns plain events. Until a link
-  // is set, or when the viewer is not the owner (a preview without sign-in), the sample stays.
-  const note = $('.cal-source-note');
+  // ---------------------------------------------------------------- loading
+  // The server merges Selectstar (read from the published Outlook link, cached for five
+  // minutes) with the Personal and Paper events saved here. The page asks again when it comes
+  // back into view and every five minutes while it stays open, so nothing has to be pushed.
+  const note = $('[data-source-note]');
   const fTimeOfDay = fmt({hour: 'numeric', minute: '2-digit'});
   const parseEventDate = (value, allDay) => {
     if (!allDay) return new Date(value);
     const [y, m, d] = value.split('-').map(Number);
     return new Date(y, m - 1, d);
   };
-  async function loadOutlook() {
-    let data;
-    try {
-      const response = await fetch('/api/calendar/events', {credentials: 'same-origin', headers: {accept: 'application/json'}});
-      if (!response.ok) return;
-      data = await response.json();
-    } catch { return; }
-    if (!data?.connected) {
-      note.textContent = 'Outlook 게시 링크를 아직 등록하지 않아 예시 일정을 보여 줍니다.';
-      return;
+  const fromWire = e => ({...e, start: parseEventDate(e.start, e.allDay), end: parseEventDate(e.end, e.allDay)});
+  const ownCalendars = () => sample.calendars.filter(c => c.own).sort((a, b) => rank(a.id) - rank(b.id));
+  let live = false, canEdit = false, lastLoad = 0, pendingRender = false;
+
+  function setNote(text, warning = false) {
+    note.textContent = text;
+    note.classList.toggle('is-warning', warning);
+  }
+  function applyConfig(next) {
+    if (next) {
+      config = next;
+      try { localStorage.setItem('kh-calendar-config', JSON.stringify(next)); } catch {}
     }
-    const real = data.events.filter(e => calendars.has(e.cal)).map(e => ({...e, start: parseEventDate(e.start, e.allDay), end: parseEventDate(e.end, e.allDay)}));
-    events = [...sample.events.filter(e => e.cal === 'holiday'), ...real].sort(byStart);
-    shownCalendars = sample.calendars.filter(c => c.id === 'holiday' || data.calendars.includes(c.id));
-    app.dataset.source = 'outlook';
-    const failed = data.errors.map(e => calendars.get(e.cal)?.name).filter(Boolean);
-    note.textContent = failed.length
-      ? `${failed.join(', ')} 캘린더를 새로 읽지 못해 마지막으로 받은 일정을 보여 줍니다.`
-      : `Outlook에서 ${fTimeOfDay.format(new Date(data.fetchedAt))}에 불러온 일정입니다.`;
-    note.classList.toggle('is-warning', failed.length > 0);
+    palette?.apply(config);
+  }
+  // Redraw now, or once the popover and the form are closed, so a refresh never pulls
+  // something out from under the cursor.
+  function refreshView() {
+    if (!pop.hidden || editor.open) { pendingRender = true; return; }
+    pendingRender = false;
     renderSources();
     render({keepScroll: true});
   }
 
+  async function loadEvents() {
+    let data;
+    try {
+      const response = await fetch('/api/calendar/events', {credentials: 'same-origin', headers: {accept: 'application/json'}});
+      if (!response.ok) {
+        if (!live) setNote('예시 일정입니다. 로그인하면 실제 일정이 보입니다.');
+        return;
+      }
+      data = await response.json();
+    } catch {
+      setNote(live ? '일정을 새로 불러오지 못했습니다. 잠시 뒤 다시 시도합니다.' : '일정을 불러오지 못해 예시 일정을 보여 줍니다.', true);
+      return;
+    }
+    live = true;
+    lastLoad = Date.now();
+    canEdit = data.store?.ready === true;
+    app.dataset.source = 'live';
+    applyConfig(data.settings?.config);
+    const real = data.events.filter(e => calendars.has(e.cal)).map(fromWire);
+    events = [...sample.events.filter(e => e.cal === 'holiday'), ...real].sort(byStart);
+    shownCalendars = sample.calendars.filter(c => c.id === 'holiday' || c.own || data.calendars.includes(c.id));
+    const failed = data.errors.map(e => calendars.get(e.cal)?.name).filter(Boolean);
+    if (!canEdit) setNote(`${data.store?.message || '일정 저장소에 연결하지 못했습니다.'} Personal과 Paper 일정은 아직 저장할 수 없습니다.`, true);
+    else if (failed.length) setNote(`${failed.join(', ')} 캘린더를 새로 읽지 못해 마지막으로 받은 일정을 보여 줍니다.`, true);
+    else if (data.connected) setNote(`Selectstar는 Outlook에서 ${fTimeOfDay.format(new Date(data.fetchedAt))}에 불러왔습니다.`);
+    else setNote('Selectstar Outlook 게시 링크가 아직 등록되지 않았습니다.');
+    refreshView();
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && live && Date.now() - lastLoad > 60e3) loadEvents(); });
+  setInterval(() => { if (!document.hidden && live) loadEvents(); }, 5 * 60e3);
+
+  // ---------------------------------------------------------------- toast
+  const toast = $('[data-cal-toast]');
+  let toastTimer;
+  function showToast(message, action) {
+    clearTimeout(toastTimer);
+    toast.innerHTML = `<span>${esc(message)}</span>${action ? `<button type="button" data-toast-action>${esc(action.label)}</button>` : ''}`;
+    toast.classList.toggle('is-error', !!action?.error);
+    toast.hidden = false;
+    if (action?.run) toast.querySelector('[data-toast-action]').onclick = () => { toast.hidden = true; action.run(); };
+    toastTimer = setTimeout(() => { toast.hidden = true; }, action?.run ? 8000 : 4000);
+  }
+
+  // ---------------------------------------------------------------- saving
+  async function api(url, method, payload) {
+    const response = await fetch(url, {method, credentials: 'same-origin', headers: {'Content-Type': 'application/json', accept: 'application/json'}, body: payload ? JSON.stringify(payload) : undefined});
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw Object.assign(new Error(result.error || '일정을 저장하지 못했습니다.'), {status: response.status});
+    return result;
+  }
+  const toWire = e => ({cal: e.cal, title: e.title, allDay: e.allDay, place: e.place || '', note: e.note || '',
+    start: e.allDay ? iso(e.start) : e.start.toISOString(), end: e.allDay ? iso(e.end) : e.end.toISOString()});
+  function putEvent(saved, replacing) {
+    events = events.filter(e => e.id !== replacing).concat(fromWire(saved)).sort(byStart);
+  }
+  async function removeEvent(e) {
+    try {
+      await api('/api/calendar/entries/' + encodeURIComponent(e.uid), 'DELETE');
+    } catch (error) { return showToast(error.message, {label: '닫기', error: true}); }
+    events = events.filter(x => x.id !== e.id);
+    refreshView();
+    showToast(`'${e.title}' 일정을 지웠습니다.`, {label: '되돌리기', run: async () => {
+      try { putEvent((await api('/api/calendar/entries', 'POST', toWire(e))).event); refreshView(); showToast('일정을 되살렸습니다.'); }
+      catch (error) { showToast(error.message, {label: '닫기', error: true}); }
+    }});
+  }
+
+  // ---------------------------------------------------------------- editor
+  const editor = $('[data-cal-editor]');
+  const form = $('[data-editor-form]');
+  const field = name => form.elements[name];
+  const errorBox = $('[data-editor-error]');
+  let editing = null, editorFrom = null;
+  const hhmm = d => `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  const atTime = (dateText, timeText) => {
+    const d = parseIso(dateText), m = /^(\d{2}):(\d{2})$/.exec(timeText || '');
+    return d && m ? new Date(d.getFullYear(), d.getMonth(), d.getDate(), +m[1], +m[2]) : null;
+  };
+
+  function syncAllDay() {
+    const allDay = field('allDay').checked;
+    for (const input of form.querySelectorAll('[data-time]')) input.hidden = allDay;
+    form.classList.toggle('is-allday', allDay);
+  }
+  function fill(e) {
+    $('[data-editor-cals]').innerHTML = ownCalendars().map(c => `<label class="cal-editor-cal" data-cal="${c.id}"><input type="radio" name="cal" value="${c.id}"${c.id === e.cal ? ' checked' : ''}><span class="cal-swatch" aria-hidden="true"></span>${esc(c.name)}</label>`).join('');
+    field('title').value = e.title || '';
+    field('allDay').checked = e.allDay;
+    field('startDate').value = iso(e.start);
+    field('endDate').value = iso(e.allDay ? addDays(e.end, -1) : e.end);
+    // An all-day event keeps 9:00 to 10:00 ready in case it is switched to a timed one.
+    field('startTime').value = e.allDay ? '09:00' : hhmm(e.start);
+    field('endTime').value = e.allDay ? '10:00' : hhmm(e.end);
+    field('place').value = e.place || '';
+    field('note').value = e.note || '';
+    syncAllDay();
+  }
+
+  function openEditor({event: e = null, day = state.date, minute = null} = {}) {
+    if (!live || !canEdit) {
+      return showToast(live ? '일정 저장소에 연결되지 않아 지금은 저장할 수 없습니다.' : '예시 화면이라 일정을 저장할 수 없습니다.', {label: '닫기', error: true});
+    }
+    editing = e;
+    editorFrom = document.activeElement;
+    closePop();
+    let draft = e;
+    if (!draft) {
+      const now = new Date();
+      // Today starts at the next half hour; other days at 9:00, unless a slot was clicked.
+      const start = minute != null ? new Date(day.getFullYear(), day.getMonth(), day.getDate(), 0, minute)
+        : sameDay(day, now) && now.getHours() < 23 ? new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() < 30 ? 30 : 60)
+        : new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9);
+      draft = {cal: ownCalendars()[0].id, title: '', allDay: false, start, end: new Date(+start + 3600e3)};
+    }
+    $('[data-editor-title]').textContent = e ? '일정 수정' : '새 일정';
+    $('[data-editor-delete]').hidden = !e;
+    errorBox.hidden = true;
+    fill(draft);
+    editor.showModal();
+    field('title').focus();
+  }
+  function closeEditor() {
+    if (editor.open) editor.close();
+  }
+  editor.addEventListener('close', () => {
+    editing = null;
+    if (editorFrom?.isConnected) editorFrom.focus({preventScroll: true});
+    if (pendingRender) refreshView();
+  });
+  editor.addEventListener('click', event => {
+    if (event.target === editor) return closeEditor(); // the backdrop
+    if (event.target.closest('[data-editor-cancel]')) return closeEditor();
+    if (event.target.closest('[data-editor-delete]') && editing) { const e = editing; closeEditor(); removeEvent(e); }
+  });
+  field('allDay').addEventListener('change', syncAllDay);
+  // Moving the start keeps the length of the event.
+  let lastStart = null;
+  form.addEventListener('focusin', event => { if (event.target.name === 'startDate' || event.target.name === 'startTime') lastStart = readRange().start; });
+  form.addEventListener('change', event => {
+    if (event.target.name !== 'startDate' && event.target.name !== 'startTime') return;
+    const {start, end} = readRange();
+    if (!lastStart || !start || !end) return;
+    const moved = new Date(+end + (start - lastStart));
+    field('endDate').value = iso(moved);
+    if (!field('allDay').checked) field('endTime').value = hhmm(moved);
+    lastStart = start;
+  });
+  function readRange() {
+    if (field('allDay').checked) {
+      const start = parseIso(field('startDate').value), last = parseIso(field('endDate').value);
+      return {start, end: last && addDays(last, 1)};
+    }
+    return {start: atTime(field('startDate').value, field('startTime').value), end: atTime(field('endDate').value, field('endTime').value)};
+  }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const fail = (message, input) => { errorBox.textContent = message; errorBox.hidden = false; input?.focus(); };
+    const title = field('title').value.trim();
+    if (!title) return fail('제목을 입력해 주세요.', field('title'));
+    const {start, end} = readRange();
+    if (!start || !end) return fail('날짜와 시간을 확인해 주세요.', field('startDate'));
+    if (end <= start) return fail(field('allDay').checked ? '종료일이 시작일보다 빠릅니다.' : '종료 시간이 시작 시간보다 늦어야 합니다.', field(field('allDay').checked ? 'endDate' : 'endTime'));
+    const draft = {cal: form.querySelector('[name="cal"]:checked')?.value, title, allDay: field('allDay').checked, start, end, place: field('place').value.trim(), note: field('note').value.trim()};
+    const save = $('[data-editor-save]');
+    save.disabled = true;
+    try {
+      const result = editing
+        ? await api('/api/calendar/entries/' + encodeURIComponent(editing.uid), 'PATCH', {...toWire(draft), expectedRevision: editing.revision})
+        : await api('/api/calendar/entries', 'POST', toWire(draft));
+      const replacing = editing?.id;
+      putEvent(result.event, replacing);
+      closeEditor();
+      // Show the saved event: jump to its date unless the current page already holds it.
+      const shown = state.view === 'year' ? start.getFullYear() === state.date.getFullYear()
+        : state.view === 'month' ? start.getMonth() === state.date.getMonth() && start.getFullYear() === state.date.getFullYear()
+        : state.view === 'week' ? +startOfWeek(start) === +startOfWeek(state.date) : sameDay(start, state.date);
+      if (!shown) { state.date = startOfDay(start); state.mini = new Date(start.getFullYear(), start.getMonth(), 1); }
+      refreshView();
+      showToast(replacing ? '일정을 고쳤습니다.' : '일정을 추가했습니다.');
+    } catch (error) {
+      fail(error.message);
+    } finally { save.disabled = false; }
+  });
+
+  applyConfig();
   renderSources();
   render();
-  loadOutlook();
+  loadEvents();
 })();
