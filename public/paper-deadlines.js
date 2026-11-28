@@ -117,7 +117,7 @@
       '<section class="paper-welcome paper-workspace-welcome dl-welcome"><div><p class="paper-eyebrow">Paper / 투고 일정</p><h1>AI 컨퍼런스 데드라인</h1>'+
       '<p>마감 시각은 KST로 바꿔 보여주고, 학회가 공지한 원래 시각을 함께 적습니다.</p>'+
       '<p class="dl-updated"><span>'+(g?kstDate(g)+' '+kstTime(g)+' KST 갱신':'갱신 기록 없음')+'</span><span>매주 목요일 오전 9시 자동 갱신</span></p></div>'+
-      '<img src="/mascot/paper-pose.webp" alt="" width="168" height="168"></section>'+
+      '<img src="/mascot/deadlines.webp" alt="달력에 마감일을 표시하는 마스코트" width="168" height="168"></section>'+
       '<div class="dl-sources">출처: 각 학회 공식 페이지'+src+'</div>';
   }
 

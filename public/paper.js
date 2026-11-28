@@ -40,7 +40,7 @@
       '<nav class="paper-choices" aria-label="논문 작업 선택">'+['rebuttal','review'].map(type=>{
         const count=data.projects.filter(x=>x.data.type===type&&x.data.status==='active').length;
         return '<button type="button" class="paper-choice" data-action="choose-'+type+'"><img src="/mascot/'+(type==='rebuttal'?'rebuttal.png':'journal.webp')+'" alt="" width="168" height="168"><span class="paper-choice-role">'+(type==='rebuttal'?'저자로서':'리뷰어로서')+'</span><span class="paper-choice-title">'+workspaceName(type)+'<span aria-hidden="true">→</span></span><span class="paper-choice-description">'+(type==='rebuttal'?'리뷰어별 쟁점을 정리하고<br>근거를 담은 답변을 준비합니다.':'네 항목에 평가 메모를 적고<br>영문 리뷰를 작성합니다.')+'</span><span class="paper-choice-count">진행 중인 논문 '+count+'편</span></button>';
-      }).join('')+'<button type="button" class="paper-choice" data-action="choose-deadlines"><img src="/mascot/paper-pose.webp" alt="" width="168" height="168"><span class="paper-choice-role">투고 일정</span><span class="paper-choice-title">AI 컨퍼런스 데드라인<span aria-hidden="true">→</span></span><span class="paper-choice-description">19개 학회의 마감을<br>KST 기준으로 모아 봅니다.</span><span class="paper-choice-count">매주 목요일 오전 9시 갱신</span></button></nav>';
+      }).join('')+'<button type="button" class="paper-choice" data-action="choose-deadlines"><img src="/mascot/deadlines.webp" alt="" width="168" height="168"><span class="paper-choice-role">투고 일정</span><span class="paper-choice-title">AI 컨퍼런스 데드라인<span aria-hidden="true">→</span></span><span class="paper-choice-description">19개 학회의 마감을<br>KST 기준으로 모아 봅니다.</span><span class="paper-choice-count">매주 목요일 오전 9시 갱신</span></button></nav>';
     app.setAttribute('aria-busy','false');
   }
   function renderList(){
