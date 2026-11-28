@@ -3,7 +3,7 @@ import {shell, privateHeader, publicHeader, footer} from './pages.mjs';
 // Calendar: one place for the Selectstar, Paper and Personal schedules.
 // This first version is a design draft. public/calendar/calendar-data.js fills it with
 // sample events until the Outlook connection lands.
-const CAL_V = '20261128-1';
+const CAL_V = '20261128-2';
 const chevron = d => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
 const VIEWS = [['day', '일', 'D'], ['week', '주', 'W'], ['month', '월', 'M'], ['year', '연', 'Y']];
 
