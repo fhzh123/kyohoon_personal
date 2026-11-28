@@ -75,11 +75,13 @@ function deskRecent(authenticated, selectstarOnly) {
 export const homePage = ({authenticated = false, selectstarOnly = false, markdownAllowed = !authenticated, manageHome = false} = {}) => {
   const tools = HOME_TOOLS.filter(tool => (!selectstarOnly || (!tool.fullAccess && !tool.owner)) && (!tool.owner || markdownAllowed));
   const spaces = HOME_SPACES.filter(space => !selectstarOnly || space.id !== 'paper');
+  // Calendar is the owner's own schedule, so only the owner sees it in the space list.
+  if (manageHome && !selectstarOnly) spaces.push({id:'calendar', href:'/calendar', title:'Calendar'});
   return shell('진교훈', `
 <div class="home">
   <header class="site-header home-header">${brand()}
     <nav class="home-spaces" aria-label="홈페이지 공간">
-      ${spaces.map(space => `<a href="${space.href}" data-pose="/mascot/${space.pose}">${space.title}</a>`).join('')}
+      ${spaces.map(space => `<a href="${space.href}"${space.pose ? ` data-pose="/mascot/${space.pose}"` : ''}>${space.title}</a>`).join('')}
     </nav>
     <nav class="header-actions" aria-label="계정과 설정">${selectstarOnly ? '' : themeButton()}${authenticated ? logoutButton() : '<a class="btn header-login" href="/login">로그인</a>'}</nav>
   </header>
